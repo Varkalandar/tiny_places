@@ -6,7 +6,9 @@ the Love2d game framework, the server is Java code.
 
 ## Get Love2D for Linux
 
-sudo add-apt-repository ppa:bartbes/love-stable
-sudo apt-get update
-sudo apt-get install love
+The easiest way seems to be to use the official Love2d PPA.
+
+    sudo add-apt-repository ppa:bartbes/love-stable
+    sudo apt-get update
+    sudo apt-get install love
 
