@@ -107,10 +107,9 @@ end
 
 
 local function update(dt)
-	local lmbState = love.mouse.isDown(1)
-	local mx, my = love.mouse.getPosition()
 
 	-- check position changes
+	local mx, my = love.mouse.getPosition()
 	if mx ~= mainUi.mx or my ~= mainUi.my then
 		mainUi.mx = mx
 		mainUi.my = my
@@ -122,6 +121,7 @@ local function update(dt)
 	end			
 	
 	-- check state changes
+	local lmbState = love.mouse.isDown(1)
 	if(lmbState ~= mainUi.lmbState) then
 		mainUi.lmbState = lmbState;
 		print("Left mouse button went " .. (lmbState and "down" or "up") .. " at " .. mx .. ", " .. my);
@@ -139,6 +139,7 @@ local function update(dt)
 	processCommands(commands)
 	-- print("Received: " .. commands)
 	
+	-- clear delta to collect updates till next frame
 	mainUi.wheelDelta = 0
 end
 

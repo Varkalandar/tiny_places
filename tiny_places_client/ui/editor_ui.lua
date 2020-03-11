@@ -13,6 +13,9 @@ local tileChooserPopup = require("ui/tile_chooser_popup")
 local editorUi = {}
 local mode = "place"
 
+local btSave = nil
+local btLoad = nil
+
 local btMove = nil
 local btPlace = nil
 local btSelect = nil
@@ -38,28 +41,47 @@ end
 
 
 local function setModePlace(pressed)
-  if pressed then 
+  if not pressed then 
     mode = "place" 
     btMove.pressed = false
+    btPlace.pressed = true
+    if editorUi.selectedMob then
+      editorUi.selectedMob.selected = false
+      editorUi.selectedMob = nil
+    end
   end
 end
 
 
 local function setModeMove(pressed)
-  if pressed then 
+  if not pressed then 
     mode = "move" 
+    btMove.pressed = true
     btPlace.pressed = false  
   end
 end
 
 
 local function openPopup(pressed)
-  if pressed then
-    btSelect.pressed = false   
+  if not pressed then
     editorUi.mainUi.popup = tileChooserPopup
   end
 end
 
+local function loadMap(pressed)
+  if not pressed then
+    map.clear()    
+    map.clientSocket.send("LOAD")
+    btLoad.pressed = false   
+  end
+end
+
+local function saveMap(pressed)
+  if not pressed then
+    map.clientSocket.send("SAVE")
+    btSave.pressed = false   
+  end
+end
 
 local function init(mainUi)
   print("Loading editor ui")
@@ -72,15 +94,22 @@ local function init(mainUi)
 	
   tileChooserPopup.init(mainUi, map.tileset)	
 
-  btPlace = cf.makeButton("Place Item", 16, 450, 8, 0.33, setModePlace)
+  btPlace = cf.makeButton("Place Item", 16, 450, 12, 0.33, setModePlace)
   btPlace.pressed = true
   container:add(btPlace)
   
-  btMove = cf.makeButton("Move Item", 16, 480, 8, 0.33, setModeMove)
+  btMove = cf.makeButton("Move Item", 16, 480, 12, 0.33, setModeMove)
   container:add(btMove)
 
   btSelect = cf.makeButton("Select Item", 28, 680, 8, 0.33, openPopup)
   container:add(btSelect)
+
+  btSave = cf.makeButton("Save Map", 1050, 40, 12, 0.33, saveMap)
+  container:add(btSave)
+
+  btLoad = cf.makeButton("Load Map", 1050, 70, 12, 0.33, loadMap)
+  container:add(btLoad)
+
 end
 
 
@@ -114,7 +143,7 @@ local function mousePressed(button, mx, my)
     if mode == "move" then
       editorUi.selectedMob = map.selectObject(mx, my, 50)
     else
-	    map.clientSocket.send("ADDM,"..editorUi.tile..",300,300,0.5")	
+	    map.clientSocket.send("ADDM,"..editorUi.tile..","..mx..","..my..",0.5")	
     end
   else
     container:mousePressed(mx, my)

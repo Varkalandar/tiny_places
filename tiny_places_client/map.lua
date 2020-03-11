@@ -11,6 +11,10 @@ local clientSocket = require("net/client_socket")
 local map = {}
 
 
+local function clear()
+  map.mobs = {}
+end
+
 local function addObject(id, tile, x, y, scale)
   print("Adding object " .. tile .. " with id " .. id)
 
@@ -46,12 +50,12 @@ local function init()
   
   -- host and port should come from a better place than this  
   clientSocket.connect("127.0.0.1", 9194)
+
+  -- login should be here
   clientSocket.send("HELO")
   
-  -- add something to start with
-  addObject(1000, 1, 520, 200, 0.5)
-  addObject(1001, 3, 200, 300, 0.5)
-  addObject(1002, 4, 200, 300, 0.5)
+  -- load the starting map
+  clientSocket.send("LOAD")
 
   map.clientSocket = clientSocket
 end
@@ -104,6 +108,7 @@ end
 map.init = init
 map.drawFloor = drawFloor
 map.drawObjects = drawObjects
+map.clear = clear
 map.addObject = addObject
 map.updateObject = updateObject
 map.selectObject = selectObject

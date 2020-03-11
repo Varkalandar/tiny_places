@@ -43,8 +43,8 @@ end
 local function containerMouseReleased(container, mx, my)
   for i, element in pairs(container.store) do
     if mx > element.x and my > element.y and mx < element.x + 115 and my < element.y+28 then
-      -- element.pressed = true
-      -- element.callback(element.pressed)
+      element.pressed = false
+      element.callback(element.pressed)
     end
   end
 end

@@ -1,5 +1,9 @@
 package tinyplaces.server;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import tinyplaces.server.isomap.Client;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
@@ -96,6 +100,14 @@ public class MapWorker implements ServerWorker
         {
             updateMob(dataEvent, command);
         }
+        else if(command.startsWith("SAVE"))
+        {
+            saveMap(dataEvent, command);
+        }
+        else if(command.startsWith("LOAD"))
+        {
+            loadMap(dataEvent, command);
+        }
     }
     
 	
@@ -188,6 +200,40 @@ public class MapWorker implements ServerWorker
         for(SocketChannel socket : keys)
         {
             server.send(socket, data);
+        }
+    }
+
+    private void saveMap(ServerDataEvent dataEvent, String command) 
+    {
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        
+        room.save();        
+    }
+
+    private void loadMap(ServerDataEvent dataEvent, String command) 
+    {
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        room.clear();
+
+        File file = new File("maps", "dummy_map.txt");
+        
+        try 
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            
+            String line;
+            while((line = reader.readLine()) != null)
+            {
+                addMob(dataEvent, "ADDM," + line + "\n");
+            }
+            
+            reader.close();
+        }
+        catch (IOException ex) 
+        {
+            Logger.getLogger(MapWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
