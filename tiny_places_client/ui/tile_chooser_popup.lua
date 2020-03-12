@@ -20,22 +20,24 @@ end
 
 
 local function draw()
-  love.graphics.setColor(0.5, 0.5, 0.5)
+  love.graphics.setColor(0.3, 0.3, 0.3)
   love.graphics.rectangle("fill", 100, 60, 1200-200, 720-120)
+
 
   local count = 0
   
   for index=0, 2000 do
-      local tile = tileChooser.tileset.get(index)
+      local tile = tileChooser.tileset[index]
       if tile and tile.image then
 	  
         local x = 100 + (count % 12) * 64
         local y = 60 + math.floor(count/12) * 96
         local scale = 0.25
         
-        love.graphics.setColor(0.7, 0.7, 0.7)
+        love.graphics.setColor(0.6, 0.6, 0.6)
         love.graphics.rectangle("line", x, y, 64, 96)
         
+        love.graphics.setColor(1, 1, 1)
         love.graphics.draw(tile.image, x - tile.footX*scale + 32, y - tile.footY*scale + 80, 0, scale, scale)
 
 		indexMap[count] = tile.id

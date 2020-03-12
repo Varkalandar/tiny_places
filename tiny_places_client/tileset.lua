@@ -44,28 +44,25 @@ local function readTile(tile)
 end
 
 
-local function init()
-  print("Initializing tileset")
+local function readSet(filename)
+  print("Initializing tileset " .. filename)
 
-  local file, size = love.filesystem.read("resources/objects/map_objects.tica");
+  local set = {}
+  
+  local file, size = love.filesystem.read(filename);
   local count = 0
   
   for tile in string.gmatch(file, "Description.-Tile") do
     -- print("--- Reading tile ---")
     local descriptor = readTile(tile)
-    tileset[descriptor.id] = descriptor
+    set[descriptor.id] = descriptor
     count = count + 1
   end
   
+  return set
 end
 
 
-local function get(index)
-  return tileset[index]
-end
-
-
-tileset.init = init;
-tileset.get = get;
+tileset.readSet = readSet;
 
 return tileset;

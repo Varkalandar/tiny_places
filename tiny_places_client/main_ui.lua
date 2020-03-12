@@ -141,6 +141,8 @@ local function update(dt)
 	
 	-- clear delta to collect updates till next frame
 	mainUi.wheelDelta = 0
+  
+  map.update(dt)
 end
 
 

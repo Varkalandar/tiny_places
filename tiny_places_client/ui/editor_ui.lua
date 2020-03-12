@@ -7,7 +7,6 @@
 
 local cf = require("ui/component_factory")
 local map = require("map")
-local tileset = require("tileset")
 local tileChooserPopup = require("ui/tile_chooser_popup")
 
 local editorUi = {}
@@ -86,13 +85,13 @@ end
 local function init(mainUi)
   print("Loading editor ui")
   
-	editorUi.areaImage = love.graphics.newImage("resources/ui/area_mid.png")
+  editorUi.areaImage = love.graphics.newImage("resources/ui/area_mid.png")
   
   editorUi.selectedMob = nil
   editorUi.tile = 1
   editorUi.mainUi = mainUi
 	
-  tileChooserPopup.init(mainUi, map.tileset)	
+  tileChooserPopup.init(mainUi, map.mobSet)	
 
   btPlace = cf.makeButton("Place Item", 16, 450, 12, 0.33, setModePlace)
   btPlace.pressed = true
@@ -128,7 +127,7 @@ local function draw()
   
   love.graphics.draw(editorUi.areaImage, 16, 600, 0, 0.5, 0.5)
   
-  local tile = tileset.get(editorUi.tile)
+  local tile = map.mobSet[editorUi.tile]
   local scale = 0.5
   love.graphics.setColor(1.0, 1.0, 1.0)
   love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)

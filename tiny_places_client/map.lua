@@ -9,16 +9,30 @@ local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
 
 local map = {}
-
+local mobSet = {}
+local patchSet = {}
 
 local function clear()
   map.mobs = {}
+  map.patches = {}
 end
+
+
+local function addPatch(id, tile, x, y, scale)
+  print("Adding patch " .. tile .. " with id " .. id)
+
+  table.insert(map.patches, 
+               {id=id, tile=tile, x=x, y=y, scale=scale, selected=false}
+               )
+end
+
 
 local function addObject(id, tile, x, y, scale)
   print("Adding object " .. tile .. " with id " .. id)
 
-  table.insert(map.mobs, {id=id, tile=tile, x=x, y=y, scale=scale})
+  table.insert(map.mobs, 
+               {id=id, tile=tile, x=x, y=y, scale=scale, selected=false}
+               )
 end
 
 
@@ -32,7 +46,7 @@ local function updateObject(id, tile, x, y, scale)
 	  mob.x=x
 	  mob.y=y
 	  mob.scale=scale
-	  
+    
 	  break
 	end
   end
@@ -42,12 +56,16 @@ end
 local function init()  
   print("Initializing map")
   
-  tileset.init()
+  mobSet = tileset.readSet("resources/objects/map_objects.tica")
   
   map.image = love.graphics.newImage("resources/map_floor.png")
   map.mobs = {}
-  map.tileset = tileset
+  map.patches = {}
+  -- map.tileset = tileset
   
+  map.mobSet = mobSet
+  map.patchSet = patchSet
+
   -- host and port should come from a better place than this  
   clientSocket.connect("127.0.0.1", 9194)
 
@@ -74,30 +92,33 @@ local function selectObject(x, y, catch)
 		if d < distance then
 			distance = d
 			best = mob
-			best.selected = true
 		end
   end
   
+	best.selected = true
   return best
 end
 
 
-local function drawFloor(roomNumber)
-  love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(map.image)  
+local function sortByDepth(mob1, mob2)
+  return mob1.y < mob2.y
 end
 
 
-local function drawObjects(roomNumber)
-  love.graphics.setColor(1.0, 1.0, 1.0)
+local function update(dt)
+  table.sort(map.mobs, sortByDepth)
+  table.sort(map.patches, sortByDepth)
+end
 
-  for index, mob in pairs(map.mobs) do
-	if mob.selected then
-	  love.graphics.ellipse("line", mob.x, mob.y, 30, 15)
-	end
+
+local function drawTileTable(objects, set)
+  for index, mob in ipairs(objects) do
+    if mob.selected then
+      love.graphics.ellipse("line", mob.x, mob.y, 30, 15)
+    end
 	
-	local tile = tileset.get(mob.tile)
-	local scale = mob.scale
+    local tile = set[mob.tile]
+    local scale = mob.scale
 	
     love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, mob.y - tile.footY*scale, 0, scale, scale)
@@ -105,13 +126,26 @@ local function drawObjects(roomNumber)
 end
 
 
+local function drawFloor(roomNumber)
+  love.graphics.setColor(1.0, 1.0, 1.0)
+  love.graphics.draw(map.image)  
+  drawTileTable(map.patches, patchSet)
+end
+
+
+local function drawObjects(roomNumber)
+  love.graphics.setColor(1.0, 1.0, 1.0)
+  drawTileTable(map.mobs, mobSet)
+end
+
+
 map.init = init
+map.update = update
 map.drawFloor = drawFloor
 map.drawObjects = drawObjects
 map.clear = clear
 map.addObject = addObject
 map.updateObject = updateObject
 map.selectObject = selectObject
-
 
 return map;
