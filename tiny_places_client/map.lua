@@ -9,37 +9,62 @@ local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
 
 local map = {}
+
+-- layer tilesets
 local mobSet = {}
 local patchSet = {}
+local cloudSet = {}
+
 
 local function clear()
   map.mobs = {}
   map.patches = {}
+  map.clouds = {}
 end
 
 
-local function addPatch(id, tile, x, y, scale)
-  print("Adding patch " .. tile .. " with id " .. id)
-
-  table.insert(map.patches, 
-               {id=id, tile=tile, x=x, y=y, scale=scale, selected=false}
-               )
+local function getLayerTable(layer)
+  if layer == 1 then
+    return map.patches
+  elseif layer == 3 then
+    return map.mobs
+  elseif layer == 5 then
+    return map.clouds
+  else
+    print("getLayerTable(): Error - no such layer: " .. layer)
+    return nil
+  end
 end
 
 
-local function addObject(id, tile, x, y, scale)
+local function getLayerTileset(layer)
+  if layer == 1 then
+    return patchSet
+  elseif layer == 3 then
+    return mobSet
+  elseif layer == 5 then
+    return cloudSet
+  else
+    print("getLayerTable(): Error - no such layer: " .. layer)
+    return nil
+  end
+end
+
+local function addObject(id, layer, tile, x, y, scale)
   print("Adding object " .. tile .. " with id " .. id)
 
-  table.insert(map.mobs, 
-               {id=id, tile=tile, x=x, y=y, scale=scale, selected=false}
-               )
+  local ltab = getLayerTable(layer)
+
+  table.insert(ltab, {id=id, tile=tile, x=x, y=y, scale=scale})
 end
 
 
-local function updateObject(id, tile, x, y, scale)
+local function updateObject(id, layer, tile, x, y, scale)
   print("Updating object " .. tile .. " with id " .. id)
 
-  for i, mob in pairs(map.mobs) do
+  local ltab = getLayerTable(layer)
+
+  for i, mob in pairs(ltab) do
     if mob.id == id then
 	    mob.id=id
   	  mob.tile=tile
@@ -52,12 +77,14 @@ local function updateObject(id, tile, x, y, scale)
   end
 end
 
-local function deleteObject(id)
+local function deleteObject(id, layer)
   print("Removing object with id " .. id)
+  
+  local ltab = getLayerTable(layer)
 
-  for i, mob in pairs(map.mobs) do
+  for i, mob in pairs(ltab) do
 	  if mob.id == id then
-	    table.remove(map.mobs, i)
+	    table.remove(ltab, i)
 	    break
 	  end
   end
@@ -72,28 +99,33 @@ local function init()
   map.image = love.graphics.newImage("resources/map_floor.png")
   map.mobs = {}
   map.patches = {}
-  -- map.tileset = tileset
+  map.clouds = {}
   
   map.mobSet = mobSet
   map.patchSet = patchSet
-
-  -- host and port should come from a better place than this  
-  clientSocket.connect("127.0.0.1", 9194)
-
-  -- login should be here
-  clientSocket.send("HELO")
-  
-  -- load the starting map
-  clientSocket.send("LOAD")
+  map.cloudSet = cloudSet
 
   map.clientSocket = clientSocket
+
+  -- host and port should come from a better place than this  
+  map.clientSocket.connect("127.0.0.1", 9194)
+
+  -- login should be here
+  map.clientSocket.send("HELO")
+  
+  -- load the starting map
+  map.clientSocket.send("LOAD")
+
 end
 
 
-local function selectObject(x, y, catch)
+local function selectObject(layer, x, y, catch)
+
+  local ltab = getLayerTable(layer)
   local distance = catch * catch
+  local best = nil
   
-  for index, mob in pairs(map.mobs) do
+  for index, mob in pairs(ltab) do
 		local xd = x - mob.x
 		local yd = y - mob.y
 		local d = xd*xd + yd*yd
@@ -106,7 +138,12 @@ local function selectObject(x, y, catch)
 		end
   end
   
-	best.selected = true
+  if best then
+	  best.selected = true
+	else
+	  print("map.selectObject(): Could not find an object in layer " .. layer .. " near "..x..", "..y)
+	end
+	
   return best
 end
 
@@ -119,6 +156,7 @@ end
 local function update(dt)
   table.sort(map.mobs, sortByDepth)
   table.sort(map.patches, sortByDepth)
+  table.sort(map.clouds, sortByDepth)
 end
 
 
@@ -137,23 +175,33 @@ local function drawTileTable(objects, set)
 end
 
 
-local function drawFloor(roomNumber)
+local function drawFloor()
   love.graphics.setColor(1.0, 1.0, 1.0)
   love.graphics.draw(map.image)  
   drawTileTable(map.patches, patchSet)
 end
 
 
-local function drawObjects(roomNumber)
+local function drawObjects()
   love.graphics.setColor(1.0, 1.0, 1.0)
   drawTileTable(map.mobs, mobSet)
 end
 
 
+local function drawClouds()
+  love.graphics.setColor(1.0, 1.0, 1.0)
+  drawTileTable(map.clouds, cloudSet)
+end
+
+
 map.init = init
 map.update = update
+map.getLayerTileset = getLayerTileset
+
 map.drawFloor = drawFloor
 map.drawObjects = drawObjects
+map.drawClouds = drawClouds
+
 map.clear = clear
 map.addObject = addObject
 map.updateObject = updateObject

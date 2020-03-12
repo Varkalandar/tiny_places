@@ -79,25 +79,28 @@ local function processCommands(commands)
 	  
       if cmd == "ADDM" then
         local id = tonumber(args())
+        local layer = tonumber(args())
         local tile = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
         
-        map.addObject(id, tile, x, y, scale)
+        map.addObject(id, layer, tile, x, y, scale)
       
       elseif cmd == "UPDM" then
         local id = tonumber(args())
+        local layer = tonumber(args())
         local tile = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
         
-        map.updateObject(id, tile, x, y, scale)
+        map.updateObject(id, layer, tile, x, y, scale)
         
       elseif cmd == "DELM" then
         local id = tonumber(args())
-        map.deleteObject(id)
+        local layer = tonumber(args())
+        map.deleteObject(id, layer)
         
       end
     end

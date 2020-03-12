@@ -20,6 +20,11 @@ local btPlace = nil
 local btDelete = nil
 local btSelect = nil
 
+local btPatchlayer = nil
+local btMoblayer = nil
+local btCloudlayer = nil
+
+
 -- UI element container for this UI
 local container = cf.makeContainer()
 
@@ -39,6 +44,9 @@ local function isMapArea(mx, my)
   return mi >= 0 and mi <= 1176 and mj >= 0 and mj <= 1176
 end
 
+--
+-- button callbacks
+--
 
 local function setModePlace(pressed)
   if not pressed then 
@@ -95,6 +103,38 @@ local function saveMap(pressed)
   end
 end
 
+
+local function selectPatchLayer()
+  if not pressed then
+    editorUi.activeLayer = 1
+    
+    btPatchlayer.pressed = true
+    btMoblayer.pressed = false
+    btCloudlayer.pressed = false
+  end
+end
+
+local function selectMobLayer()
+  if not pressed then
+    editorUi.activeLayer = 3
+    
+    btPatchlayer.pressed = false
+    btMoblayer.pressed = true
+    btCloudlayer.pressed = false
+  end
+end
+
+local function selectCloudLayer()
+  if not pressed then
+    editorUi.activeLayer = 5
+    
+    btPatchlayer.pressed = false
+    btMoblayer.pressed = false
+    btCloudlayer.pressed = true
+  end
+end
+
+
 local function init(mainUi)
   print("Loading editor ui")
   
@@ -102,6 +142,7 @@ local function init(mainUi)
   
   editorUi.selectedMob = nil
   editorUi.tile = 1
+	editorUi.activeLayer = 3
   editorUi.mainUi = mainUi
 	
   tileChooserPopup.init(mainUi, map.mobSet)	
@@ -118,6 +159,18 @@ local function init(mainUi)
 
   btSelect = cf.makeButton("Select Item", 28, 680, 8, 0.33, openPopup)
   container:add(btSelect)
+
+
+  btPatchlayer = cf.makeButton("Patch Layer", 180, 680, 8, 0.33, selectPatchLayer)
+  container:add(btPatchlayer)
+  
+  btMoblayer = cf.makeButton("Item Layer", 180, 650, 8, 0.33, selectMobLayer)
+  btMoblayer.pressed = true
+  container:add(btMoblayer)
+  
+  btCloudlayer = cf.makeButton("Cloud Layer", 180, 620, 8, 0.33, selectCloudLayer)
+  container:add(btCloudlayer)
+
 
   btSave = cf.makeButton("Save Map", 1050, 40, 12, 0.33, saveMap)
   container:add(btSave)
@@ -143,11 +196,14 @@ local function draw()
   
   love.graphics.draw(editorUi.areaImage, 16, 600, 0, 0.5, 0.5)
   
-  local tile = map.mobSet[editorUi.tile]
-  local scale = 0.5
-  love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
-
+  local tile = map.getLayerTileset(editorUi.activeLayer)[editorUi.tile]
+  
+  if tile then
+    local scale = 0.5
+    love.graphics.setColor(1.0, 1.0, 1.0)
+    love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
+  end
+  
   container:draw()
 end
 
@@ -156,12 +212,12 @@ local function mousePressed(button, mx, my)
 
   if isMapArea(mx, my) then  
     if mode == "move" then
-      editorUi.selectedMob = map.selectObject(mx, my, 50)
+      editorUi.selectedMob = map.selectObject(editorUi.activeLayer, mx, my, 50)
     elseif mode == "delete" then
-      editorUi.selectedMob = map.selectObject(mx, my, 50)
-	    map.clientSocket.send("DELM,"..editorUi.selectedMob.id)	
+      editorUi.selectedMob = map.selectObject(editorUi.activeLayer, mx, my, 50)
+	    map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
     else
-	    map.clientSocket.send("ADDM,"..editorUi.tile..","..mx..","..my..",0.5")	
+	    map.clientSocket.send("ADDM,"..editorUi.activeLayer..","..editorUi.tile..","..mx..","..my..",0.5")	
     end
   else
     container:mousePressed(mx, my)
@@ -177,6 +233,7 @@ local function mouseReleased(button, mx, my)
 	      editorUi.selectedMob.y = my
 	      map.clientSocket.send("UPDM,"
                               ..editorUi.selectedMob.id..","
+                              ..editorUi.activeLayer..","
                               ..editorUi.selectedMob.tile..","
                               ..editorUi.selectedMob.x..","
                               ..editorUi.selectedMob.y..","
@@ -191,12 +248,14 @@ end
 
 
 local function mouseDragged(button, mx, my)
-  if mode == "move" then
-    if editorUi.selectedMob then
-	    editorUi.selectedMob.x = mx
-	    editorUi.selectedMob.y = my
+  if isMapArea(mx, my) then  
+    if mode == "move" then
+      if editorUi.selectedMob then
+	      editorUi.selectedMob.x = mx
+	      editorUi.selectedMob.y = my
+	    end
 	  end
-	end
+  end
 end
 
 

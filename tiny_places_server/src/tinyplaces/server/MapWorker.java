@@ -137,15 +137,16 @@ public class MapWorker implements ServerWorker
 		
         Mob mob = new Mob();
         mob.id = id;
-        mob.tile = Integer.parseInt(parts[1]);
-        mob.x = Integer.parseInt(parts[2]);
-        mob.y = Integer.parseInt(parts[3]);
-        mob.scale = Float.parseFloat(parts[4]);
+        mob.tile = Integer.parseInt(parts[2]);
+        mob.x = Integer.parseInt(parts[3]);
+        mob.y = Integer.parseInt(parts[4]);
+        mob.scale = Float.parseFloat(parts[5]);
 		
-        room.addMob(mob);
+        int layer = Integer.parseInt(parts[1]);
+        room.addMob(layer, mob);
         
         roomcast(dataEvent.server,
-                 "ADDM," + id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4],
+                 "ADDM," + id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5],
                  room);
     }
     
@@ -159,13 +160,14 @@ public class MapWorker implements ServerWorker
         
         String [] parts = command.split(",");
         int id = Integer.parseInt(parts[1]);
+        int layer = Integer.parseInt(parts[2]);
 		
-        Mob mob = room.getMob(id);
+        Mob mob = room.getMob(layer, id);
         
-        mob.tile = Integer.parseInt(parts[2]);
-        mob.x = Integer.parseInt(parts[3]);
-        mob.y = Integer.parseInt(parts[4]);
-        mob.scale = Float.parseFloat(parts[5]);
+        mob.tile = Integer.parseInt(parts[3]);
+        mob.x = Integer.parseInt(parts[4]);
+        mob.y = Integer.parseInt(parts[5]);
+        mob.scale = Float.parseFloat(parts[6]);
         
         roomcast(dataEvent.server, command, room);
     }
@@ -180,8 +182,9 @@ public class MapWorker implements ServerWorker
         
         String [] parts = command.split(",");
         int id = Integer.parseInt(parts[1].trim());
+        int layer = Integer.parseInt(parts[2].trim());
 		
-        room.deleteMob(id);
+        room.deleteMob(layer, id);
         
         roomcast(dataEvent.server, command, room);
     }
