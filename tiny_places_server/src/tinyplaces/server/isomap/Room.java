@@ -34,6 +34,12 @@ public class Room
         return mobs.get(id);
     }
 
+    public Mob deleteMob(int id)
+    {
+        return mobs.remove(id);
+    }
+
+
     public void removeMob(int id)
     {
         mobs.remove(id);

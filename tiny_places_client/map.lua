@@ -40,15 +40,26 @@ local function updateObject(id, tile, x, y, scale)
   print("Updating object " .. tile .. " with id " .. id)
 
   for i, mob in pairs(map.mobs) do
-	if mob.id == id then
-	  mob.id=id
-	  mob.tile=tile
-	  mob.x=x
-	  mob.y=y
-	  mob.scale=scale
+    if mob.id == id then
+	    mob.id=id
+  	  mob.tile=tile
+	    mob.x=x
+	    mob.y=y
+	    mob.scale=scale
     
-	  break
-	end
+	    break
+	  end
+  end
+end
+
+local function deleteObject(id)
+  print("Removing object with id " .. id)
+
+  for i, mob in pairs(map.mobs) do
+	  if mob.id == id then
+	    table.remove(map.mobs, i)
+	    break
+	  end
   end
 end
 
@@ -146,6 +157,7 @@ map.drawObjects = drawObjects
 map.clear = clear
 map.addObject = addObject
 map.updateObject = updateObject
+map.deleteObject = deleteObject
 map.selectObject = selectObject
 
 return map;

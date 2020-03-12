@@ -17,6 +17,7 @@ local btLoad = nil
 
 local btMove = nil
 local btPlace = nil
+local btDelete = nil
 local btSelect = nil
 
 -- UI element container for this UI
@@ -44,6 +45,8 @@ local function setModePlace(pressed)
     mode = "place" 
     btMove.pressed = false
     btPlace.pressed = true
+    btDelete.pressed = false
+
     if editorUi.selectedMob then
       editorUi.selectedMob.selected = false
       editorUi.selectedMob = nil
@@ -57,9 +60,19 @@ local function setModeMove(pressed)
     mode = "move" 
     btMove.pressed = true
     btPlace.pressed = false  
+    btDelete.pressed = false
   end
 end
 
+
+local function setModeDelete(pressed)
+  if not pressed then 
+    mode = "delete" 
+    btMove.pressed = false
+    btPlace.pressed = false  
+    btDelete.pressed = true
+  end
+end
 
 local function openPopup(pressed)
   if not pressed then
@@ -99,6 +112,9 @@ local function init(mainUi)
   
   btMove = cf.makeButton("Move Item", 16, 480, 12, 0.33, setModeMove)
   container:add(btMove)
+
+  btDelete = cf.makeButton("Remove Item", 140, 480, 2, 0.33, setModeDelete)
+  container:add(btDelete)
 
   btSelect = cf.makeButton("Select Item", 28, 680, 8, 0.33, openPopup)
   container:add(btSelect)
@@ -141,6 +157,9 @@ local function mousePressed(button, mx, my)
   if isMapArea(mx, my) then  
     if mode == "move" then
       editorUi.selectedMob = map.selectObject(mx, my, 50)
+    elseif mode == "delete" then
+      editorUi.selectedMob = map.selectObject(mx, my, 50)
+	    map.clientSocket.send("DELM,"..editorUi.selectedMob.id)	
     else
 	    map.clientSocket.send("ADDM,"..editorUi.tile..","..mx..","..my..",0.5")	
     end

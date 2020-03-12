@@ -100,6 +100,10 @@ public class MapWorker implements ServerWorker
         {
             updateMob(dataEvent, command);
         }
+        else if(command.startsWith("DELM"))
+        {
+            deleteMob(dataEvent, command);
+        }
         else if(command.startsWith("SAVE"))
         {
             saveMap(dataEvent, command);
@@ -162,6 +166,22 @@ public class MapWorker implements ServerWorker
         mob.x = Integer.parseInt(parts[3]);
         mob.y = Integer.parseInt(parts[4]);
         mob.scale = Float.parseFloat(parts[5]);
+        
+        roomcast(dataEvent.server, command, room);
+    }
+	
+
+    private void deleteMob(ServerDataEvent dataEvent, String command)
+    {
+        System.err.println("DELM from " + dataEvent.socket);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        
+        String [] parts = command.split(",");
+        int id = Integer.parseInt(parts[1].trim());
+		
+        room.deleteMob(id);
         
         roomcast(dataEvent.server, command, room);
     }

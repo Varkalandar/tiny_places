@@ -85,8 +85,8 @@ local function processCommands(commands)
         local scale = tonumber(args())
         
         map.addObject(id, tile, x, y, scale)
-      end
-      if cmd == "UPDM" then
+      
+      elseif cmd == "UPDM" then
         local id = tonumber(args())
         local tile = tonumber(args())
         local x = tonumber(args())
@@ -94,6 +94,11 @@ local function processCommands(commands)
         local scale = tonumber(args())
         
         map.updateObject(id, tile, x, y, scale)
+        
+      elseif cmd == "DELM" then
+        local id = tonumber(args())
+        map.deleteObject(id)
+        
       end
     end
   end

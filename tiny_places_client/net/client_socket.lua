@@ -1,3 +1,10 @@
+-- 
+-- Client socket connection
+--
+-- Author: Hj. Malthaner
+-- Date: 2020/03/10
+--
+
 local socket = require("socket")
 
 
