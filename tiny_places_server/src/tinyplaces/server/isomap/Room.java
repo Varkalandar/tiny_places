@@ -46,17 +46,20 @@ public class Room
 
     public void addMob(int layer, Mob mob)
     {
-        mobs.put(mob.id, mob);
+        HashMap <Integer, Mob> lmap = getLayerMap(layer);
+        lmap.put(mob.id, mob);
     }
     
     public Mob getMob(int layer, int id)
     {
-        return mobs.get(id);
+        HashMap <Integer, Mob> lmap = getLayerMap(layer);
+        return lmap.get(id);
     }
 
     public Mob deleteMob(int layer, int id)
     {
-        return mobs.remove(id);
+        HashMap <Integer, Mob> lmap = getLayerMap(layer);
+        return lmap.remove(id);
     }
 
 

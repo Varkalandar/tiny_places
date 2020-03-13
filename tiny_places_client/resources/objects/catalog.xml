@@ -15,12 +15,12 @@
       <Description>
         <version>4</version>
         <id>1</id>
-        <width>261</width>
-        <height>273</height>
+        <width>242</width>
+        <height>251</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>160</footX>
-        <footY>269</footY>
+        <footX>141</footX>
+        <footY>246</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -1443,16 +1443,16 @@
       <Description>
         <version>4</version>
         <id>85</id>
-        <width>1</width>
-        <height>1</height>
+        <width>113</width>
+        <height>244</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>57</footX>
+        <footY>237</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tall reet</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1477,16 +1477,16 @@
       <Description>
         <version>4</version>
         <id>87</id>
-        <width>1</width>
-        <height>1</height>
+        <width>95</width>
+        <height>261</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>47</footX>
+        <footY>257</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>autumn reet</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1511,16 +1511,16 @@
       <Description>
         <version>4</version>
         <id>89</id>
-        <width>1</width>
-        <height>1</height>
+        <width>52</width>
+        <height>130</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>122</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>small green reet</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1545,16 +1545,16 @@
       <Description>
         <version>4</version>
         <id>91</id>
-        <width>1</width>
-        <height>1</height>
+        <width>96</width>
+        <height>259</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>46</footX>
+        <footY>254</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dense blue reet</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1579,16 +1579,16 @@
       <Description>
         <version>4</version>
         <id>93</id>
-        <width>1</width>
-        <height>1</height>
+        <width>84</width>
+        <height>256</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>41</footX>
+        <footY>250</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lively green reet</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5081,12 +5081,12 @@
       <Description>
         <version>4</version>
         <id>299</id>
-        <width>115</width>
-        <height>82</height>
+        <width>261</width>
+        <height>273</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>59</footX>
-        <footY>59</footY>
+        <footX>60</footX>
+        <footY>56</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -5115,8 +5115,8 @@
       <Description>
         <version>4</version>
         <id>301</id>
-        <width>98</width>
-        <height>80</height>
+        <width>261</width>
+        <height>273</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>50</footX>

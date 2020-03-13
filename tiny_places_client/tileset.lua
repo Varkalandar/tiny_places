@@ -8,7 +8,7 @@
 local tileset = {}
 
 
-local function readTile(tile)
+local function readTile(path, tile)
   local set = {}
   for line in tile:gmatch(".-\n") do
     table.insert(set, line:match("[^\n]*"))
@@ -37,24 +37,24 @@ local function readTile(tile)
 --   print(filename)    
   
   if(descriptor.width > 1 and descriptor.height > 1) then
-    descriptor.image = love.graphics.newImage("resources/objects/" .. filename)
+    descriptor.image = love.graphics.newImage(path .. filename)
   end
 
   return descriptor  
 end
 
 
-local function readSet(filename)
-  print("Initializing tileset " .. filename)
+local function readSet(path, filename)
+  print("Initializing tileset " .. path .. filename)
 
   local set = {}
   
-  local file, size = love.filesystem.read(filename);
+  local file, size = love.filesystem.read(path..filename);
   local count = 0
   
   for tile in string.gmatch(file, "Description.-Tile") do
     -- print("--- Reading tile ---")
-    local descriptor = readTile(tile)
+    local descriptor = readTile(path, tile)
     set[descriptor.id] = descriptor
     count = count + 1
   end

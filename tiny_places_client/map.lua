@@ -11,8 +11,8 @@ local clientSocket = require("net/client_socket")
 local map = {}
 
 -- layer tilesets
-local mobSet = {}
 local patchSet = {}
+local mobSet = {}
 local cloudSet = {}
 
 
@@ -51,7 +51,7 @@ local function getLayerTileset(layer)
 end
 
 local function addObject(id, layer, tile, x, y, scale)
-  print("Adding object " .. tile .. " with id " .. id)
+  print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
 
   local ltab = getLayerTable(layer)
 
@@ -77,6 +77,7 @@ local function updateObject(id, layer, tile, x, y, scale)
   end
 end
 
+
 local function deleteObject(id, layer)
   print("Removing object with id " .. id)
   
@@ -94,7 +95,8 @@ end
 local function init()  
   print("Initializing map")
   
-  mobSet = tileset.readSet("resources/objects/map_objects.tica")
+  patchSet = tileset.readSet("resources/grounds/", "map_objects.tica")
+  mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
   
   map.image = love.graphics.newImage("resources/map_floor.png")
   map.mobs = {}

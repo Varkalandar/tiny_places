@@ -15,9 +15,9 @@ Value
 Tile Description
 v.5
 1
-261 273
+242 251
 0 0
-160 269
+141 246
 End Of Header
 Item
 v.1
@@ -1359,15 +1359,15 @@ data
 Tile Description
 v.5
 85
-1 1
+113 244
 0 0
-0 0
+57 237
 End Of Header
 Item
 v.1
 data
 2
-
+tall reet
 
 1
 0
@@ -1391,15 +1391,15 @@ data
 Tile Description
 v.5
 87
-1 1
+95 261
 0 0
-0 0
+47 257
 End Of Header
 Item
 v.1
 data
 2
-
+autumn reet
 
 1
 0
@@ -1423,15 +1423,15 @@ data
 Tile Description
 v.5
 89
-1 1
+52 130
 0 0
-0 0
+24 122
 End Of Header
 Item
 v.1
 data
 2
-
+small green reet
 
 1
 0
@@ -1455,15 +1455,15 @@ data
 Tile Description
 v.5
 91
-1 1
+96 259
 0 0
-0 0
+46 254
 End Of Header
 Item
 v.1
 data
 2
-
+dense blue reet
 
 1
 0
@@ -1487,15 +1487,15 @@ data
 Tile Description
 v.5
 93
-1 1
+84 256
 0 0
-0 0
+41 250
 End Of Header
 Item
 v.1
 data
 2
-
+lively green reet
 
 1
 0
@@ -4783,9 +4783,9 @@ data
 Tile Description
 v.5
 299
-115 82
+261 273
 0 0
-59 59
+60 56
 End Of Header
 Item
 v.1
@@ -4815,7 +4815,7 @@ data
 Tile Description
 v.5
 301
-98 80
+261 273
 0 0
 50 55
 End Of Header

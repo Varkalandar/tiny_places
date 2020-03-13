@@ -202,6 +202,7 @@ local function draw()
     local scale = 0.5
     love.graphics.setColor(1.0, 1.0, 1.0)
     love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
+    love.graphics.print(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 16, 0, 1.0, 1.0)
   end
   
   container:draw()
