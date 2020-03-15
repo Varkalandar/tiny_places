@@ -156,7 +156,7 @@ end
 
 local function draw()
   love.graphics.setColor(1.0, 1.0, 1.0)
-  map.drawFloor(roomNumber)
+  map.drawFloor()
 
 	love.graphics.draw(mainUi.image)
 
@@ -164,7 +164,8 @@ local function draw()
 	  mainUi.ui.draw()
 	end
 
-  map.drawObjects(roomNumber)
+  map.drawObjects()
+  map.drawClouds()
 	
 	if mainUi.popup then
 	  mainUi.popup.draw()

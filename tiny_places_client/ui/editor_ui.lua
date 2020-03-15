@@ -111,6 +111,8 @@ local function selectPatchLayer()
     btPatchlayer.pressed = true
     btMoblayer.pressed = false
     btCloudlayer.pressed = false
+    
+    tileChooserPopup.tileset = map.patchSet
   end
 end
 
@@ -121,6 +123,8 @@ local function selectMobLayer()
     btPatchlayer.pressed = false
     btMoblayer.pressed = true
     btCloudlayer.pressed = false
+    
+    tileChooserPopup.tileset = map.mobSet
   end
 end
 
@@ -131,6 +135,8 @@ local function selectCloudLayer()
     btPatchlayer.pressed = false
     btMoblayer.pressed = false
     btCloudlayer.pressed = true
+    
+    tileChooserPopup.tileset = map.cloudSet
   end
 end
 

@@ -97,6 +97,7 @@ local function init()
   
   patchSet = tileset.readSet("resources/grounds/", "map_objects.tica")
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
+  cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
   map.image = love.graphics.newImage("resources/map_floor.png")
   map.mobs = {}
@@ -191,7 +192,7 @@ end
 
 
 local function drawClouds()
-  love.graphics.setColor(1.0, 1.0, 1.0)
+  love.graphics.setColor(1.0, 1.0, 1.0, 0.5)
   drawTileTable(map.clouds, cloudSet)
 end
 
