@@ -84,8 +84,9 @@ local function processCommands(commands)
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
+        local color = args()
         
-        map.addObject(id, layer, tile, x, y, scale)
+        map.addObject(id, layer, tile, x, y, scale, color)
       
       elseif cmd == "UPDM" then
         local id = tonumber(args())
@@ -94,8 +95,9 @@ local function processCommands(commands)
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
+        local color = args()
         
-        map.updateObject(id, layer, tile, x, y, scale)
+        map.updateObject(id, layer, tile, x, y, scale, color)
         
       elseif cmd == "DELM" then
         local id = tonumber(args())
@@ -158,6 +160,7 @@ local function draw()
   love.graphics.setColor(1.0, 1.0, 1.0)
   map.drawFloor()
 
+  love.graphics.setColor(1.0, 1.0, 1.0)
 	love.graphics.draw(mainUi.image)
 
 	if mainUi.ui then

@@ -24,6 +24,7 @@ local btPatchlayer = nil
 local btMoblayer = nil
 local btCloudlayer = nil
 
+local btColor = nil
 
 -- UI element container for this UI
 local container = cf.makeContainer()
@@ -48,7 +49,7 @@ end
 -- button callbacks
 --
 
-local function setModePlace(pressed)
+local function setModePlace(x, y, pressed)
   if not pressed then 
     mode = "place" 
     btMove.pressed = false
@@ -63,7 +64,7 @@ local function setModePlace(pressed)
 end
 
 
-local function setModeMove(pressed)
+local function setModeMove(x, y, pressed)
   if not pressed then 
     mode = "move" 
     btMove.pressed = true
@@ -73,7 +74,7 @@ local function setModeMove(pressed)
 end
 
 
-local function setModeDelete(pressed)
+local function setModeDelete(x, y, pressed)
   if not pressed then 
     mode = "delete" 
     btMove.pressed = false
@@ -82,13 +83,13 @@ local function setModeDelete(pressed)
   end
 end
 
-local function openPopup(pressed)
+local function openPopup(x, y, pressed)
   if not pressed then
     editorUi.mainUi.popup = tileChooserPopup
   end
 end
 
-local function loadMap(pressed)
+local function loadMap(x, y, pressed)
   if not pressed then
     map.clear()    
     map.clientSocket.send("LOAD")
@@ -96,7 +97,7 @@ local function loadMap(pressed)
   end
 end
 
-local function saveMap(pressed)
+local function saveMap(x, y, pressed)
   if not pressed then
     map.clientSocket.send("SAVE")
     btSave.pressed = false   
@@ -104,7 +105,7 @@ local function saveMap(pressed)
 end
 
 
-local function selectPatchLayer()
+local function selectPatchLayer(x, y, pressed)
   if not pressed then
     editorUi.activeLayer = 1
     
@@ -116,7 +117,7 @@ local function selectPatchLayer()
   end
 end
 
-local function selectMobLayer()
+local function selectMobLayer(x, y, pressed)
   if not pressed then
     editorUi.activeLayer = 3
     
@@ -128,7 +129,7 @@ local function selectMobLayer()
   end
 end
 
-local function selectCloudLayer()
+local function selectCloudLayer(x, y, pressed)
   if not pressed then
     editorUi.activeLayer = 5
     
@@ -141,8 +142,42 @@ local function selectCloudLayer()
 end
 
 
+local function sendUpdateMob(mob, layer)
+
+  map.clientSocket.send("UPDM,"
+                        ..mob.id..","
+                        ..layer..","
+                        ..mob.tile..","
+                        ..mob.x..","
+                        ..mob.y..","
+                        ..mob.scale..","
+                        ..mob.color.r.." "..mob.color.g.." "..mob.color.b.." "..mob.color.a
+                        )
+end
+
+
+local function colorChanged(x, y, pressed)
+  if not pressed then
+    local color = btColor:handleClick(x, y)
+    local mob = editorUi.selectedMob
+    
+    -- set color if there is a selected object
+    if mob then
+      mob.color.r = color.r
+      mob.color.g = color.g
+      mob.color.b = color.b
+      mob.color.a = color.a
+    
+      sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
+    end
+  end
+end
+
+
 local function init(mainUi)
   print("Loading editor ui")
+  
+  cf.init()
   
   editorUi.areaImage = love.graphics.newImage("resources/ui/area_mid.png")
   
@@ -184,6 +219,9 @@ local function init(mainUi)
   btLoad = cf.makeButton("Load Map", 1050, 70, 12, 0.33, loadMap)
   container:add(btLoad)
 
+  -- local colorInput = cf.makeInput("1.0, 1.0, 1.0", 16, 510, 160, 24, nil)
+  btColor = cf.makeColor(330, 570, colorChanged)
+  container:add(btColor)
 end
 
 
@@ -204,7 +242,7 @@ local function draw()
   
   local tile = map.getLayerTileset(editorUi.activeLayer)[editorUi.tile]
   
-  if tile then
+  if tile and tile.image then
     local scale = 0.5
     love.graphics.setColor(1.0, 1.0, 1.0)
     love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
@@ -224,7 +262,14 @@ local function mousePressed(button, mx, my)
       editorUi.selectedMob = map.selectObject(editorUi.activeLayer, mx, my, 50)
 	    map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
     else
-	    map.clientSocket.send("ADDM,"..editorUi.activeLayer..","..editorUi.tile..","..mx..","..my..",0.5")	
+	    map.clientSocket.send("ADDM,"
+	                          ..editorUi.activeLayer..","
+	                          ..editorUi.tile..","
+	                          ..mx..","
+	                          ..my..","
+	                          .."0.5,"
+	                          .."1.0 1.0 1.0 1.0"
+	                          )	
     end
   else
     container:mousePressed(mx, my)
@@ -236,16 +281,7 @@ local function mouseReleased(button, mx, my)
   if isMapArea(mx, my) then  
     if mode == "move" then
       if editorUi.selectedMob then
-	      editorUi.selectedMob.x = mx
-	      editorUi.selectedMob.y = my
-	      map.clientSocket.send("UPDM,"
-                              ..editorUi.selectedMob.id..","
-                              ..editorUi.activeLayer..","
-                              ..editorUi.selectedMob.tile..","
-                              ..editorUi.selectedMob.x..","
-                              ..editorUi.selectedMob.y..","
-                              ..editorUi.selectedMob.scale
-                              )
+	      sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
 	    end
 	  end
 	else

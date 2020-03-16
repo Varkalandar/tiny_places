@@ -50,16 +50,35 @@ local function getLayerTileset(layer)
   end
 end
 
-local function addObject(id, layer, tile, x, y, scale)
+
+local function unmarshallColor(color)
+  if color then
+    -- components are space separated
+    local iter = color:gmatch("[^ ]+")
+
+    local r = tonumber(iter())
+    local g = tonumber(iter())
+    local b = tonumber(iter())
+    local a = tonumber(iter())
+
+    return {r=r, b=b, g=g, a=a}
+  else
+    -- backwards compatibility - old objects had no color data
+    return {r=1, g=1, b=0, a=1}
+  end
+end
+
+
+local function addObject(id, layer, tile, x, y, scale, color)
   print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
 
   local ltab = getLayerTable(layer)
 
-  table.insert(ltab, {id=id, tile=tile, x=x, y=y, scale=scale})
+  table.insert(ltab, {id=id, tile=tile, x=x, y=y, scale=scale, color=unmarshallColor(color)})
 end
 
 
-local function updateObject(id, layer, tile, x, y, scale)
+local function updateObject(id, layer, tile, x, y, scale, color)
   print("Updating object " .. tile .. " with id " .. id)
 
   local ltab = getLayerTable(layer)
@@ -71,7 +90,7 @@ local function updateObject(id, layer, tile, x, y, scale)
 	    mob.x=x
 	    mob.y=y
 	    mob.scale=scale
-    
+      mob.color=unmarshallColor(color)
 	    break
 	  end
   end
@@ -168,6 +187,9 @@ local function drawTileTable(objects, set)
     if mob.selected then
       love.graphics.ellipse("line", mob.x, mob.y, 30, 15)
     end
+	
+	  local color = mob.color	  
+    love.graphics.setColor(color.r, color.g, color.b, color.a)	
 	
     local tile = set[mob.tile]
     local scale = mob.scale

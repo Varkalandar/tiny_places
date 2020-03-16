@@ -7,6 +7,7 @@
 
 local mainUi = require("main_ui")
 
+
 -- all init code goes here
 function love.load()
   mainUi.init()      

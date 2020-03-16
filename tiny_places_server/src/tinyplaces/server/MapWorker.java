@@ -2,7 +2,6 @@ package tinyplaces.server;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import tinyplaces.server.isomap.Client;
 import java.io.IOException;
@@ -141,12 +140,14 @@ public class MapWorker implements ServerWorker
         mob.x = Integer.parseInt(parts[3]);
         mob.y = Integer.parseInt(parts[4]);
         mob.scale = Float.parseFloat(parts[5]);
-		
+
+        // Todo: keep track of colors - parts[6]
+        
         int layer = Integer.parseInt(parts[1]);
         room.addMob(layer, mob);
         
         roomcast(dataEvent.server,
-                 "ADDM," + id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5],
+                 "ADDM," + id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
                  room);
     }
     
@@ -236,6 +237,8 @@ public class MapWorker implements ServerWorker
 
     private void loadMap(ServerDataEvent dataEvent, String command) 
     {
+        System.err.println("LOAD from " + dataEvent.socket);
+
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         room.clear();
@@ -249,6 +252,7 @@ public class MapWorker implements ServerWorker
             String line;
             while((line = reader.readLine()) != null)
             {
+                System.err.println(line);
                 addMob(dataEvent, "ADDM," + line + "\n");
             }
             
