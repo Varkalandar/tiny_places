@@ -98,7 +98,8 @@ public class Room
                 mob.tile + "," +
                 mob.x + "," +
                 mob.y + "," +
-                mob.scale + "\n";
+                mob.scale + "," +
+                mob.color + "\n";
 
             writer.write(line);
         }

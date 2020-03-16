@@ -49,26 +49,34 @@ public class MapWorker implements ServerWorker
     {
         while(true)
         {
-            ServerDataEvent dataEvent;
-
-            // Wait for data to become available
-            synchronized (queue)
+            try
             {
-                while(queue.isEmpty())
-                {
-                    try
-                    {
-                        queue.wait();
-                    }
-                    catch (InterruptedException e)
-                    {
-                        System.err.println("Interrupt during queue wait:" + e);
-                    }
-                }
-                dataEvent = (ServerDataEvent) queue.remove(0);
-            }
+                ServerDataEvent dataEvent;
 
-            processCommands(dataEvent);          
+                // Wait for data to become available
+                synchronized (queue)
+                {
+                    while(queue.isEmpty())
+                    {
+                        try
+                        {
+                            queue.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            System.err.println("Interrupt during queue wait:" + e);
+                        }
+                    }
+                    dataEvent = (ServerDataEvent) queue.remove(0);
+                }
+
+                processCommands(dataEvent);
+            }
+            catch(Exception ex)
+            {
+                // report but keep flying
+                Logger.getLogger(MapWorker.class.getName()).log(Level.SEVERE, null, ex);                
+            }
         }
     }
     
@@ -140,8 +148,7 @@ public class MapWorker implements ServerWorker
         mob.x = Integer.parseInt(parts[3]);
         mob.y = Integer.parseInt(parts[4]);
         mob.scale = Float.parseFloat(parts[5]);
-
-        // Todo: keep track of colors - parts[6]
+        mob.color = parts[6].trim();
         
         int layer = Integer.parseInt(parts[1]);
         room.addMob(layer, mob);
@@ -169,6 +176,7 @@ public class MapWorker implements ServerWorker
         mob.x = Integer.parseInt(parts[4]);
         mob.y = Integer.parseInt(parts[5]);
         mob.scale = Float.parseFloat(parts[6]);
+        mob.color = parts[7].trim();
         
         roomcast(dataEvent.server, command, room);
     }

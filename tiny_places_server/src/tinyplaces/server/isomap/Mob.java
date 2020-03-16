@@ -11,6 +11,7 @@ public class Mob
     public int x;
     public int y;
     public float scale;
+    public String color;
 
     @Override
     public boolean equals(Object o) {
