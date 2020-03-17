@@ -220,7 +220,7 @@ local function init(mainUi)
   container:add(btLoad)
 
   -- local colorInput = cf.makeInput("1.0, 1.0, 1.0", 16, 510, 160, 24, nil)
-  btColor = cf.makeColor(330, 570, colorChanged)
+  btColor = cf.makeColor(326, 634, colorChanged)
   container:add(btColor)
 end
 
@@ -238,8 +238,12 @@ local function draw()
   love.graphics.setColor(1.0, 1.0, 1.0)
   love.graphics.print("Edit Mode", 16, 30, 0, 2, 2)
   
+  -- tile preview area
   love.graphics.draw(editorUi.areaImage, 16, 600, 0, 0.5, 0.5)
   
+  -- color selector area
+  love.graphics.draw(editorUi.areaImage, 324, 632, 0, 0.515, 0.52)
+
   local tile = map.getLayerTileset(editorUi.activeLayer)[editorUi.tile]
   
   if tile and tile.image then

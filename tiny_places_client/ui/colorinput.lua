@@ -7,7 +7,7 @@
 
 local colorinput = {}
 
-    
+
 local function yuvToRgb(y, u, v)
 
   -- R = (y + 1.4075 * (v - 128));
@@ -37,18 +37,18 @@ end
 
 local function init()
 
-  local data = love.image.newImageData(140, 140)
+  local data = love.image.newImageData(140, 70)
   local s = 1/255
   
   -- default white  
-  for j=0, 9 do
+  for j=0, 5 do
     for i=0, 9 do
       data:setPixel(130+i, j, 1, 1, 1, 1)
     end
   end
 
   -- brightness bar
-  for j=0, 9 do
+  for j=0, 5 do
     for i=0, 127 do
       local g = i * 2 * s
       data:setPixel(i, j, g, g, g, 1.0)
@@ -56,18 +56,18 @@ local function init()
   end
  
   -- alpha bar
-  for j=0, 127 do
+  for j=0, 63 do
     for i=0, 9 do
-      local a = j * 2 * s
-      data:setPixel(i + 130, j + 12, 1, 1, 1, a)
+      local a = j * 4 * s
+      data:setPixel(i + 130, j + 6, 1, 1, 1, a)
     end
   end
 
   -- color field
-  for j=0, 127 do
+  for j=0, 63 do
     for i=0, 127 do
-      local r, g, b = yuvToRgb(64, i*2, j*2)
-      data:setPixel(i, j+12, r*s, g*s, b*s, 1.0)
+      local r, g, b = yuvToRgb(64, i*2, j*4)
+      data:setPixel(i, j+6, r*s, g*s, b*s, 1.0)
     end
   end
   
@@ -78,6 +78,14 @@ local function init()
   setWhiteColor()
 end
 
+
+-- round value to 4 digits
+local function round4(v)
+  local r = math.floor(v * 1000 + 0.5)
+  return r / 1000.0
+end
+    
+
 local function handleClick(input, mx, my)
   mx = mx - input.x
   my = my - input.y
@@ -87,9 +95,9 @@ local function handleClick(input, mx, my)
     local brightness = mx * 2
     colorinput.color.y = brightness
     local r, g, b = yuvToRgb(colorinput.color.y, colorinput.color.u, colorinput.color.v)
-    colorinput.color.r = r / 255
-    colorinput.color.g = g / 255
-    colorinput.color.b = b / 255
+    colorinput.color.r = round4(r / 255)
+    colorinput.color.g = round4(g / 255)
+    colorinput.color.b = round4(b / 255)
     
     -- default white
     if mx > 127 then
@@ -98,21 +106,21 @@ local function handleClick(input, mx, my)
   end
   
   -- alpha bar ?
-  if mx >= 130 and my >= 12 then
-    local alpha = (my - 12) * 2
-    colorinput.color.a = alpha / 255
+  if mx >= 130 and my >= 6 then
+    local alpha = (my - 6) * 4
+    colorinput.color.a = round4(alpha / 255)
   end
   
   -- color chooser ?
-  if mx >= 0 and my >= 12 and mx < 128 and my < 140 then
+  if mx >= 0 and my >= 6 and mx < 128 and my < 70 then
     colorinput.color.u = mx * 2 
-    colorinput.color.v = (my - 12) * 2
+    colorinput.color.v = (my - 12) * 4
   
     local r, g, b = yuvToRgb(colorinput.color.y, colorinput.color.u, colorinput.color.v)
 
-    colorinput.color.r = r / 255
-    colorinput.color.g = g / 255
-    colorinput.color.b = b / 255
+    colorinput.color.r = round4(r / 255)
+    colorinput.color.g = round4(g / 255)
+    colorinput.color.b = round4(b / 255)
   end
 
   print("r=" .. colorinput.color.r .. 
@@ -128,8 +136,8 @@ end
 local function draw(input)
   love.graphics.setColor(1, 1, 1)
 
-    love.graphics.draw(colorinput.image, 
-                                input.x, input.y, 0, 1, 1)
+  love.graphics.draw(colorinput.image, 
+                     input.x, input.y, 0, 1, 1)
 end
 
 colorinput.init = init
