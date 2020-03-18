@@ -17,7 +17,7 @@ import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 
 /**
- * Worker class for map altering commands. This will run in a thread of
+ * Worker class for map altering commands. This will be run in a thread of
  * its own.
  * 
  * @author Hj. Malthaner
@@ -119,6 +119,10 @@ public class MapWorker implements ServerWorker
         {
             loadMap(dataEvent, command);
         }
+        else if(command.startsWith("CHAT"))
+        {
+            sendChat(dataEvent, command);
+        }
     }
     
 	
@@ -199,42 +203,6 @@ public class MapWorker implements ServerWorker
     }
 	
 
-    /**
-     * Send a message to all clients in the given room
-     * @param server
-     * @param message 
-     */
-    private void roomcast(Server server, String message, Room room)
-    {
-        byte [] data = message.getBytes();
-        Set <SocketChannel> keys = clients.keySet();
-        
-        for(SocketChannel socket : keys)
-        {
-            Client client = clients.get(socket);
-            if(client.getCurrentRoom() == room)
-            {
-                server.send(socket, data);
-            }
-        }
-    }
-
-    /**
-     * Send a message to all clients
-     * @param server
-     * @param message 
-     */
-    private void broadcast(Server server, String message)
-    {
-        byte [] data = message.getBytes();
-        Set <SocketChannel> keys = clients.keySet();
-        
-        for(SocketChannel socket : keys)
-        {
-            server.send(socket, data);
-        }
-    }
-
     private void saveMap(ServerDataEvent dataEvent, String command) 
     {
         Client client = clients.get(dataEvent.socket);
@@ -243,6 +211,7 @@ public class MapWorker implements ServerWorker
         room.save();        
     }
 
+    
     private void loadMap(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("LOAD from " + dataEvent.socket);
@@ -269,6 +238,52 @@ public class MapWorker implements ServerWorker
         catch (IOException ex) 
         {
             Logger.getLogger(MapWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
+    private void sendChat(ServerDataEvent dataEvent, String command)
+    {
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        roomcast(dataEvent.server, command, room);
+    }
+
+
+    /**
+     * Send a message to all clients in the given room
+     * @param server
+     * @param message 
+     */
+    private void roomcast(Server server, String message, Room room)
+    {
+        byte [] data = message.getBytes();
+        Set <SocketChannel> keys = clients.keySet();
+        
+        for(SocketChannel socket : keys)
+        {
+            Client client = clients.get(socket);
+            if(client.getCurrentRoom() == room)
+            {
+                server.send(socket, data);
+            }
+        }
+    }
+
+    
+    /**
+     * Send a message to all clients
+     * @param server
+     * @param message 
+     */
+    private void broadcast(Server server, String message)
+    {
+        byte [] data = message.getBytes();
+        Set <SocketChannel> keys = clients.keySet();
+        
+        for(SocketChannel socket : keys)
+        {
+            server.send(socket, data);
         }
     }
 }

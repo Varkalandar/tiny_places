@@ -1,13 +1,27 @@
+-- 
+-- UI component factory
+--
+-- Author: Hj. Malthaner
+-- Date: 2020/03/14
+--
+
+
 local button = require("ui/button")
 local textinput = require("ui/textinput")
 local colorinput = require("ui/colorinput")
 
 local component_factory = {}
 
+local clickSoundData = nil
+local clickSoundSource = nil
 
 local function init()
   textinput.init()
   colorinput.init()
+  
+  clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
+  clickSoundSource = love.audio.newSource(clickSoundData)
+  clickSoundSource:setVolume(0.2)
 end
 
 
@@ -87,7 +101,11 @@ local function containerMousePressed(container, mx, my)
   for i, element in pairs(container.store) do
     element.focused = false
     
-    if mx > element.x and my > element.y and mx < element.x + 115 and my < element.y+28 then
+    if mx > element.x and my > element.y and mx < element.x + element.width and my < element.y + element.height then
+      
+      local success = clickSoundSource:play()
+      if not success then print("Playing click sound failed!") end 
+    
       element.pressed = true
       element.focused = true
       
