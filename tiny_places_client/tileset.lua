@@ -8,25 +8,28 @@
 local tileset = {}
 
 
-local function readTile(path, tile)
-  local set = {}
+local function readTile(path, tile, count)
+
+  local lines = {}
+  
   for line in tile:gmatch(".-\n") do
-    table.insert(set, line:match("[^\n]*"))
+    table.insert(lines, line:match("[^\n]*"))
   end
   
   local descriptor = {}
   
-  descriptor.id = tonumber(set[3])
+  descriptor.id = tonumber(lines[3])
   
-  local iter = set[4]:gmatch("[^ ]+")
+  local iter = lines[4]:gmatch("[^ ]+")
   descriptor.width = tonumber(iter())
   descriptor.height = tonumber(iter())
 
-  local iter = set[6]:gmatch("[^ ]+")
+  local iter = lines[6]:gmatch("[^ ]+")
   descriptor.footX = tonumber(iter())
   descriptor.footY = tonumber(iter())
 
-  descriptor.name = set[12]
+  descriptor.name = lines[12]
+  descriptor.uiOrder = count
   
 --  for key, value in pairs (descriptor) do
 --    print(key .. "=" .. value)    
@@ -54,7 +57,7 @@ local function readSet(path, filename)
   
   for tile in string.gmatch(file, "Description.-Tile") do
     -- print("--- Reading tile ---")
-    local descriptor = readTile(path, tile)
+    local descriptor = readTile(path, tile, count)
     set[descriptor.id] = descriptor
     count = count + 1
   end

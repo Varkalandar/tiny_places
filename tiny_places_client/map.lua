@@ -5,6 +5,7 @@
 -- Date: 2020/03/09
 --
 
+local moveFactory = require("actions/move")
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
 
@@ -111,6 +112,15 @@ local function deleteObject(id, layer)
 end
 
 
+local function addMove(id, layer, path)
+  print("Adding move for object with id " .. id)
+
+  local move = moveFactory.newMove(id, layer, path)
+  
+  table.insert(map.actions, move)  
+end
+
+
 local function init()  
   print("Initializing map")
   
@@ -126,6 +136,8 @@ local function init()
   map.mobSet = mobSet
   map.patchSet = patchSet
   map.cloudSet = cloudSet
+
+  map.actions = {}
 
   map.clientSocket = clientSocket
 
@@ -175,7 +187,26 @@ local function sortByDepth(mob1, mob2)
 end
 
 
+local function updateActions(dt)
+	local actions = map.actions
+	
+	for k, v in pairs(actions) do
+		v.update(dt)
+	end
+
+ 	for k, v in pairs(actions) do
+    if v.done() then
+		  actions[k] = nil
+    end
+	end
+
+end
+
+
 local function update(dt)
+  
+  updateActions(dt)
+  
   table.sort(map.mobs, sortByDepth)
   table.sort(map.patches, sortByDepth)
   table.sort(map.clouds, sortByDepth)

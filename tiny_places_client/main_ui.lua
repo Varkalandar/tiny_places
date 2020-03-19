@@ -104,7 +104,13 @@ local function processCommands(commands)
         local layer = tonumber(args())
         map.deleteObject(id, layer)
         
-      end
+      elseif cmd == "MOVE" then
+        local id = tonumber(args())
+        local layer = tonumber(args())
+        local path = args()
+		map.addMove(id, layer, path)
+		
+		end
     end
   end
 end
