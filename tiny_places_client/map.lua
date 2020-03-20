@@ -74,8 +74,11 @@ local function addObject(id, layer, tile, x, y, scale, color)
   print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
 
   local ltab = getLayerTable(layer)
+  local mob = {id=id, tile=tile, x=x, y=y, scale=scale, color=unmarshallColor(color)}
 
-  table.insert(ltab, {id=id, tile=tile, x=x, y=y, scale=scale, color=unmarshallColor(color)})
+  table.insert(ltab, mob)
+  
+  return mob
 end
 
 

@@ -108,7 +108,7 @@ local function mousePressed(button, mx, my)
     tileChooser.mainUi.popup = nil
     
     local index = math.floor((mx - 100) / 64)
-    index = index + math.floor((my - 60) / 96) * 12
+    index = index + math.floor((my - 60) / 96) * 16
     
     local id = indexMap[index]
     

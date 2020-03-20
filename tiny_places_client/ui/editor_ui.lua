@@ -60,6 +60,11 @@ local function setModePlace(x, y, pressed)
 			editorUi.selectedMob.selected = false
 			editorUi.selectedMob = nil
 		end
+		
+		-- add preview object (id = -1)
+		if editorUi.previewMob == nil then
+      editorUi.previewMob = map.addObject(-1, editorUi.activeLayer, editorUi.tile, 0, 0, 0.5, "1.0 1.0 1.0 0.3")
+		end
 	end
 end
 
@@ -70,6 +75,11 @@ local function setModeMove(x, y, pressed)
 		btMove.pressed = true
 		btPlace.pressed = false  
 		btDelete.pressed = false
+		
+		if editorUi.previewMob then
+		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.previewMob = nil
+		end
 	end
 end
 
@@ -80,6 +90,11 @@ local function setModeDelete(x, y, pressed)
 		btMove.pressed = false
 		btPlace.pressed = false  
 		btDelete.pressed = true
+
+		if editorUi.previewMob then
+		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.previewMob = nil
+		end
 	end
 end
 
@@ -107,37 +122,55 @@ end
 
 local function selectPatchLayer(x, y, pressed)
 	if not pressed then
-		editorUi.activeLayer = 1
-		
 		btPatchlayer.pressed = true
 		btMoblayer.pressed = false
 		btCloudlayer.pressed = false
 
 		tileChooserPopup.init(editorUi.mainUi, map.patchSet)
+		
+		if editorUi.previewMob then
+		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.previewMob = nil
+		end
+		
+		editorUi.activeLayer = 1
+		
 	end
 end
 
 local function selectMobLayer(x, y, pressed)
 	if not pressed then
-		editorUi.activeLayer = 3
-		
 		btPatchlayer.pressed = false
 		btMoblayer.pressed = true
 		btCloudlayer.pressed = false
 		
 		tileChooserPopup.init(editorUi.mainUi, map.mobSet)
+		
+		if editorUi.previewMob then
+		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.previewMob = nil
+		end
+		
+		editorUi.activeLayer = 3
+		
 	end
 end
 
 local function selectCloudLayer(x, y, pressed)
 	if not pressed then
-		editorUi.activeLayer = 5
-		
 		btPatchlayer.pressed = false
 		btMoblayer.pressed = false
 		btCloudlayer.pressed = true
 		
 		tileChooserPopup.init(editorUi.mainUi, map.cloudSet)
+		
+		if editorUi.previewMob then
+		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.previewMob = nil
+		end
+		
+		editorUi.activeLayer = 5
+		
 	end
 end
 
@@ -222,6 +255,8 @@ local function init(mainUi)
 	-- local colorInput = cf.makeInput("1.0, 1.0, 1.0", 16, 510, 160, 24, nil)
 	btColor = cf.makeColor(326, 634, colorChanged)
 	container:add(btColor)
+	
+	setModePlace()
 end
 
 
@@ -231,6 +266,16 @@ local function update(dt)
 	if editorUi.selectedMob then
 		editorUi.selectedMob.scale = editorUi.selectedMob.scale + delta
 	end
+	
+	if editorUi.previewMob then
+	  editorUi.previewMob.tile = editorUi.tile
+	
+	  if isMapArea(editorUi.mainUi.mx, editorUi.mainUi.my) then
+		  editorUi.previewMob.x = editorUi.mainUi.mx
+		  editorUi.previewMob.y = editorUi.mainUi.my
+		end
+	end
+	
 end
 
 
