@@ -70,6 +70,19 @@ local function unmarshallColor(color)
 end
 
 
+local function findMob(id, layer)
+  local ltab = getLayerTable(layer)
+
+  for i, mob in pairs(ltab) do
+    if mob.id == id then
+      return mob
+    end
+  end
+  
+  return nil
+end
+
+
 local function addObject(id, layer, tile, x, y, scale, color)
   print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
 
@@ -85,18 +98,15 @@ end
 local function updateObject(id, layer, tile, x, y, scale, color)
   print("Updating object " .. tile .. " with id " .. id)
 
-  local ltab = getLayerTable(layer)
+  local mob = findMob(id, layer)
 
-  for i, mob in pairs(ltab) do
-    if mob.id == id then
-	    mob.id=id
-  	  mob.tile=tile
-	    mob.x=x
-	    mob.y=y
-	    mob.scale=scale
-      mob.color=unmarshallColor(color)
-	    break
-	  end
+  if mob then
+    mob.id=id
+	  mob.tile=tile
+    mob.x=x
+    mob.y=y
+    mob.scale=scale
+    mob.color=unmarshallColor(color)
   end
 end
 
@@ -104,23 +114,33 @@ end
 local function deleteObject(id, layer)
   print("Removing object with id " .. id)
   
-  local ltab = getLayerTable(layer)
+  local mob = findMob(id, layer)
 
-  for i, mob in pairs(ltab) do
-	  if mob.id == id then
-	    table.remove(ltab, i)
-	    break
-	  end
+  if mob then
+    table.remove(ltab, i)
   end
 end
 
 
-local function addMove(id, layer, path)
-  print("Adding move for object with id " .. id)
+local function addMove(id, layer, x, y)
+  print("Adding move for object with id " .. id .. " to " .. x .. ", " .. y)
 
-  local move = moveFactory.newMove(id, layer, path)
+  local actions = map.actions
   
-  table.insert(map.actions, move)  
+  -- check if there is alread an ongoing move
+  -- if yes, remove it from the table
+  for k, v in pairs(actions) do
+    if v.mob.id == id then
+      print("Old move found in table, clearing old move ...")
+      table.remove(actions, k)
+    end
+  end
+
+
+  local mob = findMob(id, layer)
+  local move = moveFactory.newMove(mob, x, y)
+  
+  table.insert(actions, move)  
 end
 
 
@@ -194,12 +214,13 @@ local function updateActions(dt)
 	local actions = map.actions
 	
 	for k, v in pairs(actions) do
-		v.update(dt)
+		v:update(dt)
 	end
 
  	for k, v in pairs(actions) do
     if v.done then
-		  actions[k] = nil
+      -- print("Removing stale action: " .. v)
+		  table.remove(actions, k)
     end
 	end
 

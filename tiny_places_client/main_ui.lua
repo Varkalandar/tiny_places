@@ -115,9 +115,21 @@ local function processCommands(commands)
       elseif cmd == "MOVE" then
         local id = tonumber(args())
         local layer = tonumber(args())
-        local path = args()
-        map.addMove(id, layer, path)
+        local x = tonumber(args())
+        local y = tonumber(args())
+        map.addMove(id, layer, x, y)
 		
+      elseif cmd == "ADDP" then
+        local id = tonumber(args())
+        local layer = tonumber(args())
+        local tile = tonumber(args())
+        local x = tonumber(args())
+        local y = tonumber(args())
+        local scale = tonumber(args())
+        local color = args()
+        
+        local mob = map.addObject(id, layer, tile, x, y, scale, color)
+        mainUi.gameUi.playerMob = mob
       end
     end
   end

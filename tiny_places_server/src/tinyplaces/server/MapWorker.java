@@ -103,6 +103,10 @@ public class MapWorker implements ServerWorker
         {
             addMob(dataEvent, command);
         }
+        else if(command.startsWith("ADDP"))
+        {
+            addPlayer(dataEvent, command);
+        }
         else if(command.startsWith("UPDM"))
         {
             updateMob(dataEvent, command);
@@ -142,18 +146,11 @@ public class MapWorker implements ServerWorker
         // clients all arrive in the lobby right now
         clients.put(dataEvent.socket, new Client(Room.LOBBY));
     }
-    
-    
-    private void addMob(ServerDataEvent dataEvent, String command)
+
+    private Mob makeMob(Room room, String [] parts)
     {
-        System.err.println("ADDM from " + dataEvent.socket);
-        
-        Client client = clients.get(dataEvent.socket);
-        Room room = client.getCurrentRoom();
         int id = room.getNextObjectId();
         
-        String [] parts = command.split(",");
-		
         Mob mob = new Mob();
         mob.id = id;
         mob.tile = Integer.parseInt(parts[2]);
@@ -165,12 +162,40 @@ public class MapWorker implements ServerWorker
         int layer = Integer.parseInt(parts[1]);
         room.addMob(layer, mob);
         
+        return mob;
+    }
+    
+    private void addMob(ServerDataEvent dataEvent, String command)
+    {
+        System.err.println("ADDM from " + dataEvent.socket);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        String [] parts = command.split(",");
+
+        Mob mob = makeMob(room, parts);
+        
         roomcast(dataEvent.server,
-                 "ADDM," + id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
+                 "ADDM," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
                  room);
     }
     
+    private void addPlayer(ServerDataEvent dataEvent, String command)
+    {
+        System.err.println("ADDP from " + dataEvent.socket);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        String [] parts = command.split(",");
+
+        Mob mob = makeMob(room, parts);
+        
+        roomcast(dataEvent.server,
+                 "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
+                 room);
 	
+    }
+    
     private void updateMob(ServerDataEvent dataEvent, String command)
     {
         System.err.println("UPDM from " + dataEvent.socket);
