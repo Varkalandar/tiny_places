@@ -18,6 +18,7 @@ local function newMove(path)
   local move = {}
   move.update = update
   move.path = path
+  move.done = false
   return move
 end
 

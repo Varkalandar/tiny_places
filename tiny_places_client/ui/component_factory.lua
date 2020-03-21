@@ -15,13 +15,18 @@ local component_factory = {}
 local clickSoundData = nil
 local clickSoundSource = nil
 
+
 local function init()
-  textinput.init()
-  colorinput.init()
+
+  -- only init if not done yet
+  if clickSoundData == nil then
+    textinput.init()
+    colorinput.init()
   
-  clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
-  clickSoundSource = love.audio.newSource(clickSoundData)
-  clickSoundSource:setVolume(0.2)
+    clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
+    clickSoundSource = love.audio.newSource(clickSoundData)
+    clickSoundSource:setVolume(0.2)
+  end
 end
 
 

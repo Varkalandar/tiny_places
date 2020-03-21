@@ -123,6 +123,14 @@ public class MapWorker implements ServerWorker
         {
             sendChat(dataEvent, command);
         }
+        else if(command.startsWith("MOVE"))
+        {
+            doMove(dataEvent, command);
+        }
+        else
+        {
+            Logger.getLogger(MapWorker.class.getName()).log(Level.WARNING, "Received unknown command: '{0}'", command);
+        }
     }
     
 	
@@ -244,11 +252,22 @@ public class MapWorker implements ServerWorker
     
     private void sendChat(ServerDataEvent dataEvent, String command)
     {
+        System.err.println("CHAT from " + dataEvent.socket);
+
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         roomcast(dataEvent.server, command, room);
     }
 
+
+    private void doMove(ServerDataEvent dataEvent, String command) 
+    {
+        System.err.println("MOVE from " + dataEvent.socket);
+
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        roomcast(dataEvent.server, command, room);
+    }
 
     /**
      * Send a message to all clients in the given room
@@ -286,4 +305,5 @@ public class MapWorker implements ServerWorker
             server.send(socket, data);
         }
     }
+
 }

@@ -5,7 +5,9 @@
 -- Date: 2020/03/08
 --
 
+local gameUi = require("ui/game_ui")
 local editorUi = require("ui/editor_ui")
+
 local map = require("map")
 
 local mainUi = {};
@@ -57,10 +59,16 @@ local function init()
 	mainUi.image = love.graphics.newImage("resources/ui/main_ui.png")
 	mainUi.lmbState = love.mouse.isDown(1)
 	mainUi.popup = nil
-	mainUi.ui = editorUi
 	mainUi.wheelDelta = 0
 	
-	editorUi.init(mainUi)
+	gameUi.init(mainUi, map)
+	editorUi.init(mainUi, map)
+	
+	mainUi.gameUi = gameUi
+	mainUi.editorUi = editorUi
+
+  -- select active ui at start	
+	mainUi.ui = editorUi
 end
 
 --
@@ -108,9 +116,9 @@ local function processCommands(commands)
         local id = tonumber(args())
         local layer = tonumber(args())
         local path = args()
-		map.addMove(id, layer, path)
+        map.addMove(id, layer, path)
 		
-		end
+      end
     end
   end
 end
@@ -149,7 +157,9 @@ local function update(dt)
 		end
 	end
 
-	editorUi.update()
+	if mainUi.ui then
+    mainUi.ui.update()
+  end
 	
 	local commands = map.clientSocket.receive()
 	processCommands(commands)

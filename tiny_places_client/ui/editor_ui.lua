@@ -6,7 +6,6 @@
 --
 
 local cf = require("ui/component_factory")
-local map = require("map")
 local tileChooserPopup = require("ui/tile_chooser_popup")
 
 local editorUi = {}
@@ -14,6 +13,8 @@ local mode = "place"
 
 local btSave = nil
 local btLoad = nil
+
+local btGame = nil
 
 local btMove = nil
 local btPlace = nil
@@ -63,7 +64,7 @@ local function setModePlace(x, y, pressed)
 		
 		-- add preview object (id = -1)
 		if editorUi.previewMob == nil then
-      editorUi.previewMob = map.addObject(-1, editorUi.activeLayer, editorUi.tile, 0, 0, 0.5, "1.0 1.0 1.0 0.3")
+      editorUi.previewMob = editorUi.map.addObject(-1, editorUi.activeLayer, editorUi.tile, 0, 0, 0.5, "1.0 1.0 1.0 0.3")
 		end
 	end
 end
@@ -77,7 +78,7 @@ local function setModeMove(x, y, pressed)
 		btDelete.pressed = false
 		
 		if editorUi.previewMob then
-		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
 		  editorUi.previewMob = nil
 		end
 	end
@@ -92,7 +93,7 @@ local function setModeDelete(x, y, pressed)
 		btDelete.pressed = true
 
 		if editorUi.previewMob then
-		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
 		  editorUi.previewMob = nil
 		end
 	end
@@ -106,15 +107,15 @@ end
 
 local function loadMap(x, y, pressed)
 	if not pressed then
-		map.clear()    
-		map.clientSocket.send("LOAD")
+		editorUi.map.clear()    
+		editorUi.map.clientSocket.send("LOAD")
 		btLoad.pressed = false   
 	end
 end
 
 local function saveMap(x, y, pressed)
 	if not pressed then
-		map.clientSocket.send("SAVE")
+		editorUi.map.clientSocket.send("SAVE")
 		btSave.pressed = false   
 	end
 end
@@ -126,10 +127,10 @@ local function selectPatchLayer(x, y, pressed)
 		btMoblayer.pressed = false
 		btCloudlayer.pressed = false
 
-		tileChooserPopup.init(editorUi.mainUi, map.patchSet)
+		tileChooserPopup.init(editorUi.mainUi, editorUi.map.patchSet)
 		
 		if editorUi.previewMob then
-		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
 		  editorUi.previewMob = nil
 		end
 		
@@ -144,10 +145,10 @@ local function selectMobLayer(x, y, pressed)
 		btMoblayer.pressed = true
 		btCloudlayer.pressed = false
 		
-		tileChooserPopup.init(editorUi.mainUi, map.mobSet)
+		tileChooserPopup.init(editorUi.mainUi, editorUi.map.mobSet)
 		
 		if editorUi.previewMob then
-		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
 		  editorUi.previewMob = nil
 		end
 		
@@ -162,10 +163,10 @@ local function selectCloudLayer(x, y, pressed)
 		btMoblayer.pressed = false
 		btCloudlayer.pressed = true
 		
-		tileChooserPopup.init(editorUi.mainUi, map.cloudSet)
+		tileChooserPopup.init(editorUi.mainUi, editorUi.map.cloudSet)
 		
 		if editorUi.previewMob then
-		  map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+		  editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
 		  editorUi.previewMob = nil
 		end
 		
@@ -175,9 +176,16 @@ local function selectCloudLayer(x, y, pressed)
 end
 
 
+local function switchToGameUi()
+	if not pressed then
+    editorUi.mainUi.ui = editorUi.mainUi.gameUi
+	end
+end
+
+
 local function sendUpdateMob(mob, layer)
 
-	map.clientSocket.send("UPDM,"
+	editorUi.map.clientSocket.send("UPDM,"
 												..mob.id..","
 												..layer..","
 												..mob.tile..","
@@ -207,7 +215,7 @@ local function colorChanged(x, y, pressed)
 end
 
 
-local function init(mainUi)
+local function init(mainUi, map)
 	print("Loading editor ui")
 	
 	cf.init()
@@ -218,8 +226,9 @@ local function init(mainUi)
 	editorUi.tile = 1
 	editorUi.activeLayer = 3
 	editorUi.mainUi = mainUi
+	editorUi.map = map
 	
-	tileChooserPopup.init(mainUi, map.mobSet)	
+	tileChooserPopup.init(mainUi, editorUi.map.mobSet)	
 
 	btPlace = cf.makeButton("Place Item", 16, 450, 12, 0.33, setModePlace)
 	btPlace.pressed = true
@@ -256,6 +265,9 @@ local function init(mainUi)
 	btColor = cf.makeColor(326, 634, colorChanged)
 	container:add(btColor)
 	
+	btGame = cf.makeButton("Game Mode", 16, 70, 8, 0.33, switchToGameUi)
+	container:add(btGame)
+
 	setModePlace()
 end
 
@@ -289,7 +301,7 @@ local function draw()
 	-- color selector area
 	love.graphics.draw(editorUi.areaImage, 324, 632, 0, 0.515, 0.52)
 
-	local tile = map.getLayerTileset(editorUi.activeLayer)[editorUi.tile]
+	local tile = editorUi.map.getLayerTileset(editorUi.activeLayer)[editorUi.tile]
 	
 	if tile and tile.image then
 		local scale = 0.5
@@ -306,12 +318,12 @@ local function mousePressed(button, mx, my)
 
 	if isMapArea(mx, my) then  
 		if mode == "move" then
-			editorUi.selectedMob = map.selectObject(editorUi.activeLayer, mx, my, 50)
+			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
 		elseif mode == "delete" then
-			editorUi.selectedMob = map.selectObject(editorUi.activeLayer, mx, my, 50)
-			map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
+			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
+			editorUi.map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
 		else
-			map.clientSocket.send("ADDM,"
+			editorUi.map.clientSocket.send("ADDM,"
 														..editorUi.activeLayer..","
 														..editorUi.tile..","
 														..mx..","

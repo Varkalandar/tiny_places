@@ -198,7 +198,7 @@ local function updateActions(dt)
 	end
 
  	for k, v in pairs(actions) do
-    if v.done() then
+    if v.done then
 		  actions[k] = nil
     end
 	end
@@ -266,5 +266,6 @@ map.addObject = addObject
 map.updateObject = updateObject
 map.deleteObject = deleteObject
 map.selectObject = selectObject
+map.addMove = addMove
 
 return map;
