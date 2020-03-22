@@ -9,8 +9,11 @@ local tileChooser = {}
 local indexMap = {}
 local uiOrderedSet = {}
 
+
 local function init(mainUi, tileset)
   print("Loading tileset popup")
+  
+  uiOrderedSet = {}
   
   tileChooser.mainUi = mainUi
   tileChooser.tileset = tileset
@@ -138,6 +141,7 @@ end
 
 local function mouseReleased(button, mx, my)
 end
+
 
 local function mouseDragged(button, mx, my)
 end

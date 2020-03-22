@@ -117,6 +117,7 @@ local function deleteObject(id, layer)
   local mob = findMob(id, layer)
 
   if mob then
+    local ltab = getLayerTable(layer)
     table.remove(ltab, i)
   end
 end
