@@ -234,7 +234,7 @@ local function init(mainUi, map)
 	btPlace.pressed = true
 	container:add(btPlace)
 	
-	btMove = cf.makeButton("Move Item", 16, 480, 12, 0.33, setModeMove)
+	btMove = cf.makeButton("Edit Item", 16, 480, 16, 0.33, setModeMove)
 	container:add(btMove)
 
 	btDelete = cf.makeButton("Remove Item", 140, 480, 2, 0.33, setModeDelete)
