@@ -1,8 +1,8 @@
 -- 
--- Map editor UI
+-- Game UI
 --
 -- Author: Hj. Malthaner
--- Date: 2020/03/08
+-- Date: 2020/03/22
 --
 
 local cf = require("ui/component_factory")
