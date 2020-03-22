@@ -190,10 +190,33 @@ public class MapWorker implements ServerWorker
 
         Mob mob = makeMob(room, parts);
         
-        roomcast(dataEvent.server,
-                 "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
-                 room);
-	
+        // reply with ADDP to sender only
+
+        String message = "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6];
+        byte [] data = message.getBytes();
+        
+        SocketChannel senderSocket = dataEvent.socket;
+        Server server = dataEvent.server;
+        server.send(senderSocket, data);
+
+        // for everyone else in the room it is an ADDM
+
+        message = "ADDM," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6];
+        data = message.getBytes();
+
+        Set <SocketChannel> keys = clients.keySet();
+        
+        for(SocketChannel socket : keys)
+        {
+            if(socket != senderSocket)
+            {
+                Client c = clients.get(socket);
+                if(c.getCurrentRoom() == room)
+                {
+                    server.send(socket, data);
+                }
+            }
+        }
     }
     
     private void updateMob(ServerDataEvent dataEvent, String command)

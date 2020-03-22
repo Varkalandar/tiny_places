@@ -86,9 +86,11 @@ end
 local function addObject(id, layer, tile, x, y, scale, color)
   print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
 
-  local ltab = getLayerTable(layer)
-  local mob = {id=id, tile=tile, x=x, y=y, scale=scale, color=unmarshallColor(color)}
+  -- tile should be constant, displayTile can change during animations
+  local mob = {id=id, tile=tile, displayTile=tile,
+               x=x, y=y, scale=scale, color=unmarshallColor(color), zOff=0, zSpeed=0}
 
+  local ltab = getLayerTable(layer)
   table.insert(ltab, mob)
   
   return mob
@@ -103,6 +105,7 @@ local function updateObject(id, layer, tile, x, y, scale, color)
   if mob then
     mob.id=id
 	  mob.tile=tile
+	  mob.displayTile=tile
     mob.x=x
     mob.y=y
     mob.scale=scale
@@ -239,6 +242,7 @@ end
 
 
 local function drawTileTable(objects, set)
+
   for index, mob in ipairs(objects) do
     if mob.selected then
       love.graphics.ellipse("line", mob.x, mob.y, 30, 15)
@@ -247,11 +251,18 @@ local function drawTileTable(objects, set)
 	  local color = mob.color	  
     love.graphics.setColor(color.r, color.g, color.b, color.a)	
 	
-    local tile = set[mob.tile]
+    local tile = set[mob.displayTile]
     local scale = mob.scale
 	
-    love.graphics.draw(tile.image, 
-                       mob.x - tile.footX * scale, mob.y - tile.footY*scale, 0, scale, scale)
+	  if tile.image then
+      love.graphics.draw(tile.image, 
+                         mob.x - tile.footX * scale, 
+                         mob.y - tile.footY * scale - mob.zOff, 
+                         0, 
+                         scale, scale)
+    else
+      print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
+    end
   end
 end
 

@@ -17219,8 +17219,8 @@
       <Description>
         <version>4</version>
         <id>1001</id>
-        <width>37</width>
-        <height>35</height>
+        <width>1</width>
+        <height>1</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>22</footX>
@@ -25247,13 +25247,13 @@
         <height>1</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>34</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
@@ -25702,136 +25702,136 @@
       <Description>
         <version>4</version>
         <id>1500</id>
-        <width>1</width>
-        <height>1</height>
+        <width>34</width>
+        <height>33</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>32</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1501</id>
-        <width>1</width>
-        <height>1</height>
+        <width>37</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>34</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1502</id>
-        <width>1</width>
-        <height>1</height>
+        <width>39</width>
+        <height>34</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>33</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1503</id>
-        <width>1</width>
-        <height>1</height>
+        <width>38</width>
+        <height>36</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>34</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1504</id>
-        <width>1</width>
-        <height>1</height>
+        <width>37</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>37</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1505</id>
-        <width>1</width>
-        <height>1</height>
+        <width>39</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>41</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1506</id>
-        <width>1</width>
-        <height>1</height>
+        <width>42</width>
+        <height>42</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>39</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>1507</id>
-        <width>1</width>
-        <height>1</height>
+        <width>37</width>
+        <height>37</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>35</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>globo_bp</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>

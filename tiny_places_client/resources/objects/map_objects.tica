@@ -16207,7 +16207,7 @@ arrow
 Tile Description
 v.5
 1001
-37 35
+1 1
 0 0
 22 31
 End Of Header
@@ -23761,14 +23761,14 @@ v.5
 1473
 1 1
 0 0
-0 0
+20 34
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
@@ -24191,128 +24191,128 @@ data
 Tile Description
 v.5
 1500
-1 1
+34 33
 0 0
-0 0
+19 32
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1501
-1 1
+37 35
 0 0
-0 0
+20 34
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1502
-1 1
+39 34
 0 0
-0 0
+19 33
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1503
-1 1
+38 36
 0 0
-0 0
+19 34
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1504
-1 1
+37 39
 0 0
-0 0
+17 37
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1505
-1 1
+39 43
 0 0
-0 0
+19 41
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1506
-1 1
+42 42
 0 0
-0 0
+21 39
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
 Tile Description
 v.5
 1507
-1 1
+37 37
 0 0
-0 0
+19 35
 End Of Header
 Item
 v.1
 data
 2
-
-
+globo_bp
+rgba
 1
 0
 0
