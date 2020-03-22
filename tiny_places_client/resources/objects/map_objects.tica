@@ -4975,7 +4975,7 @@ data
 Tile Description
 v.5
 299
-261 273
+117 79
 0 0
 60 56
 End Of Header
@@ -5007,7 +5007,7 @@ data
 Tile Description
 v.5
 301
-261 273
+98 80
 0 0
 50 55
 End Of Header
@@ -5039,15 +5039,15 @@ data
 Tile Description
 v.5
 303
-1 1
+50 39
 0 0
-0 0
+26 28
 End Of Header
 Item
 v.1
 data
 2
-
+black rock 1
 
 1
 0
@@ -5071,15 +5071,15 @@ data
 Tile Description
 v.5
 305
-1 1
+64 58
 0 0
-0 0
+34 38
 End Of Header
 Item
 v.1
 data
 2
-
+umber rock 1
 
 1
 0
@@ -5087,15 +5087,15 @@ data
 Tile Description
 v.5
 306
-1 1
+87 56
 0 0
-0 0
+46 36
 End Of Header
 Item
 v.1
 data
 2
-
+umber rock 2
 
 1
 0
@@ -5103,15 +5103,15 @@ data
 Tile Description
 v.5
 307
-1 1
+84 59
 0 0
-0 0
+43 38
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 1
 
 1
 0

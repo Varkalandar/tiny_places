@@ -5285,8 +5285,8 @@
       <Description>
         <version>4</version>
         <id>299</id>
-        <width>261</width>
-        <height>273</height>
+        <width>117</width>
+        <height>79</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>60</footX>
@@ -5319,8 +5319,8 @@
       <Description>
         <version>4</version>
         <id>301</id>
-        <width>261</width>
-        <height>273</height>
+        <width>98</width>
+        <height>80</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>50</footX>
@@ -5353,16 +5353,16 @@
       <Description>
         <version>4</version>
         <id>303</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>26</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>black rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5387,16 +5387,16 @@
       <Description>
         <version>4</version>
         <id>305</id>
-        <width>1</width>
-        <height>1</height>
+        <width>64</width>
+        <height>58</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>34</footX>
+        <footY>38</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>umber rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5404,16 +5404,16 @@
       <Description>
         <version>4</version>
         <id>306</id>
-        <width>1</width>
-        <height>1</height>
+        <width>87</width>
+        <height>56</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>46</footX>
+        <footY>36</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>umber rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5421,16 +5421,16 @@
       <Description>
         <version>4</version>
         <id>307</id>
-        <width>1</width>
-        <height>1</height>
+        <width>84</width>
+        <height>59</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>38</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 1</string>
         <string></string>
       </Metadata>
     </Tile>

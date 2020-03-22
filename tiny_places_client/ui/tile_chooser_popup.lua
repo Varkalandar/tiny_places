@@ -119,7 +119,12 @@ local function mousePressed(button, mx, my)
     print("ID=" .. id)
     
     tileChooser.mainUi.ui.tile = id
-  
+
+    if tileChooser.mainUi.ui.previewMob then
+      tileChooser.mainUi.ui.previewMob.tile = id
+      tileChooser.mainUi.ui.previewMob.displayTile = id
+		end
+		  
   else
     -- no -> navigation buttons
     
