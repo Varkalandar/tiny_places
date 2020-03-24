@@ -270,14 +270,14 @@ end
 
 local function drawFloor()
   love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
-  love.graphics.draw(map.image)
+  love.graphics.draw(map.image, 0, 24)
 
   drawTileTable(map.patches, patchSet)
 
   love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
   local mode, alphamode = love.graphics.getBlendMode()
   love.graphics.setBlendMode("multiply", "premultiplied")
-  love.graphics.draw(map.bumpmap)
+  love.graphics.draw(map.bumpmap, 0, 24)
   love.graphics.setBlendMode(mode, alphamode)
 end
 
