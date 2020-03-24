@@ -319,9 +319,11 @@ local function mousePressed(button, mx, my)
 	if isMapArea(mx, my) then  
 		if mode == "move" then
 			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
+		
 		elseif mode == "delete" then
 			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
 			editorUi.map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
+		
 		else
 			editorUi.map.clientSocket.send("ADDM,"
 														..editorUi.activeLayer..","

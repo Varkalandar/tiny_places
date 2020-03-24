@@ -75,11 +75,11 @@ local function findMob(id, layer)
 
   for i, mob in pairs(ltab) do
     if mob.id == id then
-      return mob
+      return mob, i
     end
   end
   
-  return nil
+  return nil, nil
 end
 
 
@@ -115,9 +115,9 @@ end
 
 
 local function deleteObject(id, layer)
-  print("Removing object with id " .. id)
+  print("Removing object with id " .. id .. " from layer " .. layer)
   
-  local mob = findMob(id, layer)
+  local mob, i = findMob(id, layer)
 
   if mob then
     local ltab = getLayerTable(layer)
@@ -156,6 +156,7 @@ local function init()
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
   map.image = love.graphics.newImage("resources/map_floor.png")
+  map.bumpmap = love.graphics.newImage("resources/map_bumps.png")
   map.mobs = {}
   map.patches = {}
   map.clouds = {}
@@ -268,20 +269,27 @@ end
 
 
 local function drawFloor()
-  love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(map.image)  
+  love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
+  love.graphics.draw(map.image)
+
   drawTileTable(map.patches, patchSet)
+
+  love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
+  local mode, alphamode = love.graphics.getBlendMode()
+  love.graphics.setBlendMode("multiply", "premultiplied")
+  love.graphics.draw(map.bumpmap)
+  love.graphics.setBlendMode(mode, alphamode)
 end
 
 
 local function drawObjects()
-  love.graphics.setColor(1.0, 1.0, 1.0)
+  -- love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
   drawTileTable(map.mobs, mobSet)
 end
 
 
 local function drawClouds()
-  love.graphics.setColor(1.0, 1.0, 1.0, 0.5)
+  -- love.graphics.setColor(1.0, 1.0, 1.0, 0.5)
   drawTileTable(map.clouds, cloudSet)
 end
 
