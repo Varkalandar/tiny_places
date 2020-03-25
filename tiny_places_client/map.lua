@@ -155,7 +155,8 @@ local function init()
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
-  map.image = love.graphics.newImage("resources/map_floor.png")
+  -- map.image = love.graphics.newImage("resources/map_floor.png")
+  map.image = love.graphics.newImage("resources/map_wasteland.png")
   map.bumpmap = love.graphics.newImage("resources/map_bumps.png")
   map.mobs = {}
   map.patches = {}
