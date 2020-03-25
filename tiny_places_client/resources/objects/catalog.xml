@@ -6543,16 +6543,16 @@
       <Description>
         <version>4</version>
         <id>373</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>12</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>6</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6560,16 +6560,16 @@
       <Description>
         <version>4</version>
         <id>374</id>
-        <width>1</width>
-        <height>1</height>
+        <width>42</width>
+        <height>22</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>14</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6577,16 +6577,16 @@
       <Description>
         <version>4</version>
         <id>375</id>
-        <width>1</width>
-        <height>1</height>
+        <width>52</width>
+        <height>18</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6594,16 +6594,16 @@
       <Description>
         <version>4</version>
         <id>376</id>
-        <width>1</width>
-        <height>1</height>
+        <width>36</width>
+        <height>36</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>30</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6611,16 +6611,16 @@
       <Description>
         <version>4</version>
         <id>377</id>
-        <width>1</width>
-        <height>1</height>
+        <width>52</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>30</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6628,16 +6628,16 @@
       <Description>
         <version>4</version>
         <id>378</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6645,16 +6645,16 @@
       <Description>
         <version>4</version>
         <id>379</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6662,16 +6662,16 @@
       <Description>
         <version>4</version>
         <id>380</id>
-        <width>1</width>
-        <height>1</height>
+        <width>21</width>
+        <height>17</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>12</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6679,16 +6679,16 @@
       <Description>
         <version>4</version>
         <id>381</id>
-        <width>1</width>
-        <height>1</height>
+        <width>22</width>
+        <height>20</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6696,16 +6696,16 @@
       <Description>
         <version>4</version>
         <id>382</id>
-        <width>1</width>
-        <height>1</height>
+        <width>53</width>
+        <height>40</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>29</footX>
+        <footY>25</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6713,16 +6713,16 @@
       <Description>
         <version>4</version>
         <id>383</id>
-        <width>1</width>
-        <height>1</height>
+        <width>31</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6730,16 +6730,16 @@
       <Description>
         <version>4</version>
         <id>384</id>
-        <width>1</width>
-        <height>1</height>
+        <width>37</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>14</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6747,16 +6747,16 @@
       <Description>
         <version>4</version>
         <id>385</id>
-        <width>1</width>
-        <height>1</height>
+        <width>36</width>
+        <height>28</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 13</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6764,16 +6764,16 @@
       <Description>
         <version>4</version>
         <id>386</id>
-        <width>1</width>
-        <height>1</height>
+        <width>66</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>35</footX>
+        <footY>16</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grey vein rock 14</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6781,16 +6781,16 @@
       <Description>
         <version>4</version>
         <id>387</id>
-        <width>1</width>
-        <height>1</height>
+        <width>34</width>
+        <height>26</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6798,16 +6798,16 @@
       <Description>
         <version>4</version>
         <id>388</id>
-        <width>1</width>
-        <height>1</height>
+        <width>56</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6815,16 +6815,16 @@
       <Description>
         <version>4</version>
         <id>389</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6832,16 +6832,16 @@
       <Description>
         <version>4</version>
         <id>390</id>
-        <width>1</width>
-        <height>1</height>
+        <width>64</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>32</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6849,16 +6849,16 @@
       <Description>
         <version>4</version>
         <id>391</id>
-        <width>1</width>
-        <height>1</height>
+        <width>32</width>
+        <height>15</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>10</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6866,16 +6866,16 @@
       <Description>
         <version>4</version>
         <id>392</id>
-        <width>1</width>
-        <height>1</height>
+        <width>59</width>
+        <height>57</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>47</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6883,16 +6883,16 @@
       <Description>
         <version>4</version>
         <id>393</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>33</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>23</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6900,16 +6900,16 @@
       <Description>
         <version>4</version>
         <id>394</id>
-        <width>1</width>
-        <height>1</height>
+        <width>73</width>
+        <height>38</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>35</footX>
+        <footY>27</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6917,16 +6917,16 @@
       <Description>
         <version>4</version>
         <id>395</id>
-        <width>1</width>
-        <height>1</height>
+        <width>37</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6934,16 +6934,16 @@
       <Description>
         <version>4</version>
         <id>396</id>
-        <width>1</width>
-        <height>1</height>
+        <width>20</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6951,16 +6951,16 @@
       <Description>
         <version>4</version>
         <id>397</id>
-        <width>1</width>
-        <height>1</height>
+        <width>78</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>35</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6968,16 +6968,16 @@
       <Description>
         <version>4</version>
         <id>398</id>
-        <width>1</width>
-        <height>1</height>
+        <width>77</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>42</footX>
+        <footY>29</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>arctic rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6985,16 +6985,16 @@
       <Description>
         <version>4</version>
         <id>399</id>
-        <width>1</width>
-        <height>1</height>
+        <width>53</width>
+        <height>26</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>26</footX>
+        <footY>16</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7002,16 +7002,16 @@
       <Description>
         <version>4</version>
         <id>400</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>40</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>26</footX>
+        <footY>32</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7019,16 +7019,16 @@
       <Description>
         <version>4</version>
         <id>401</id>
-        <width>1</width>
-        <height>1</height>
+        <width>47</width>
+        <height>25</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7036,16 +7036,16 @@
       <Description>
         <version>4</version>
         <id>402</id>
-        <width>1</width>
-        <height>1</height>
+        <width>36</width>
+        <height>39</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>31</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7053,16 +7053,16 @@
       <Description>
         <version>4</version>
         <id>403</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>22</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7070,16 +7070,16 @@
       <Description>
         <version>4</version>
         <id>404</id>
-        <width>1</width>
-        <height>1</height>
+        <width>38</width>
+        <height>32</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>25</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7087,16 +7087,16 @@
       <Description>
         <version>4</version>
         <id>405</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>12</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7104,16 +7104,16 @@
       <Description>
         <version>4</version>
         <id>406</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>14</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>15</footX>
+        <footY>10</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7121,16 +7121,16 @@
       <Description>
         <version>4</version>
         <id>407</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>32</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>21</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7138,16 +7138,16 @@
       <Description>
         <version>4</version>
         <id>408</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>10</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>5</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7155,16 +7155,16 @@
       <Description>
         <version>4</version>
         <id>409</id>
-        <width>1</width>
-        <height>1</height>
+        <width>40</width>
+        <height>37</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7172,16 +7172,16 @@
       <Description>
         <version>4</version>
         <id>410</id>
-        <width>1</width>
-        <height>1</height>
+        <width>25</width>
+        <height>18</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7189,16 +7189,16 @@
       <Description>
         <version>4</version>
         <id>411</id>
-        <width>1</width>
-        <height>1</height>
+        <width>28</width>
+        <height>19</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>15</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 13</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7206,16 +7206,16 @@
       <Description>
         <version>4</version>
         <id>412</id>
-        <width>1</width>
-        <height>1</height>
+        <width>62</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>23</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 14</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7223,16 +7223,16 @@
       <Description>
         <version>4</version>
         <id>413</id>
-        <width>1</width>
-        <height>1</height>
+        <width>47</width>
+        <height>50</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>40</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>limestone 15</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7240,16 +7240,16 @@
       <Description>
         <version>4</version>
         <id>414</id>
-        <width>1</width>
-        <height>1</height>
+        <width>55</width>
+        <height>46</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>35</footX>
+        <footY>30</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7257,16 +7257,16 @@
       <Description>
         <version>4</version>
         <id>415</id>
-        <width>1</width>
-        <height>1</height>
+        <width>64</width>
+        <height>26</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>34</footX>
+        <footY>17</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7274,16 +7274,16 @@
       <Description>
         <version>4</version>
         <id>416</id>
-        <width>1</width>
-        <height>1</height>
+        <width>26</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7291,16 +7291,16 @@
       <Description>
         <version>4</version>
         <id>417</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>25</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7308,16 +7308,16 @@
       <Description>
         <version>4</version>
         <id>418</id>
-        <width>1</width>
-        <height>1</height>
+        <width>61</width>
+        <height>53</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>31</footX>
+        <footY>38</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7325,16 +7325,16 @@
       <Description>
         <version>4</version>
         <id>419</id>
-        <width>1</width>
-        <height>1</height>
+        <width>16</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7342,16 +7342,16 @@
       <Description>
         <version>4</version>
         <id>420</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7359,16 +7359,16 @@
       <Description>
         <version>4</version>
         <id>421</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>38</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7376,16 +7376,16 @@
       <Description>
         <version>4</version>
         <id>422</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7393,16 +7393,16 @@
       <Description>
         <version>4</version>
         <id>423</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>19</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7410,16 +7410,16 @@
       <Description>
         <version>4</version>
         <id>424</id>
-        <width>1</width>
-        <height>1</height>
+        <width>14</width>
+        <height>9</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>5</footX>
+        <footY>4</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7427,16 +7427,16 @@
       <Description>
         <version>4</version>
         <id>425</id>
-        <width>1</width>
-        <height>1</height>
+        <width>102</width>
+        <height>50</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>33</footX>
+        <footY>36</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -7444,16 +7444,16 @@
       <Description>
         <version>4</version>
         <id>426</id>
-        <width>1</width>
-        <height>1</height>
+        <width>33</width>
+        <height>29</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>23</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>sand rock 13</string>
         <string></string>
       </Metadata>
     </Tile>

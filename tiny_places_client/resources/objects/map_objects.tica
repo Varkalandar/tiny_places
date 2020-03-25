@@ -6159,15 +6159,15 @@ gold vein rock 14
 Tile Description
 v.5
 373
-1 1
+19 12
 0 0
-0 0
+10 6
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 1
 
 1
 0
@@ -6175,15 +6175,15 @@ data
 Tile Description
 v.5
 374
-1 1
+42 22
 0 0
-0 0
+19 14
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 2
 
 1
 0
@@ -6191,15 +6191,15 @@ data
 Tile Description
 v.5
 375
-1 1
+52 18
 0 0
-0 0
+22 13
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 3
 
 1
 0
@@ -6207,15 +6207,15 @@ data
 Tile Description
 v.5
 376
-1 1
+36 36
 0 0
-0 0
+19 30
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 4
 
 1
 0
@@ -6223,15 +6223,15 @@ data
 Tile Description
 v.5
 377
-1 1
+52 43
 0 0
-0 0
+23 30
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 5
 
 1
 0
@@ -6239,15 +6239,15 @@ data
 Tile Description
 v.5
 378
-1 1
+35 21
 0 0
-0 0
+16 15
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 6
 
 1
 0
@@ -6255,15 +6255,15 @@ data
 Tile Description
 v.5
 379
-1 1
+35 23
 0 0
-0 0
+18 15
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 7
 
 1
 0
@@ -6271,15 +6271,15 @@ data
 Tile Description
 v.5
 380
-1 1
+21 17
 0 0
-0 0
+10 12
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 8
 
 1
 0
@@ -6287,15 +6287,15 @@ data
 Tile Description
 v.5
 381
-1 1
+22 20
 0 0
-0 0
+10 13
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 9
 
 1
 0
@@ -6303,15 +6303,15 @@ data
 Tile Description
 v.5
 382
-1 1
+53 40
 0 0
-0 0
+29 25
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 10
 
 1
 0
@@ -6319,15 +6319,15 @@ data
 Tile Description
 v.5
 383
-1 1
+31 27
 0 0
-0 0
+16 20
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 11
 
 1
 0
@@ -6335,15 +6335,15 @@ data
 Tile Description
 v.5
 384
-1 1
+37 21
 0 0
-0 0
+19 14
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 12
 
 1
 0
@@ -6351,15 +6351,15 @@ data
 Tile Description
 v.5
 385
-1 1
+36 28
 0 0
-0 0
+18 19
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 13
 
 1
 0
@@ -6367,15 +6367,15 @@ data
 Tile Description
 v.5
 386
-1 1
+66 27
 0 0
-0 0
+35 16
 End Of Header
 Item
 v.1
 data
 2
-
+grey vein rock 14
 
 1
 0
@@ -6383,15 +6383,15 @@ data
 Tile Description
 v.5
 387
-1 1
+34 26
 0 0
-0 0
+18 19
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 1
 
 1
 0
@@ -6399,15 +6399,15 @@ data
 Tile Description
 v.5
 388
-1 1
+56 39
 0 0
-0 0
+27 28
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 2
 
 1
 0
@@ -6415,15 +6415,15 @@ data
 Tile Description
 v.5
 389
-1 1
+27 31
 0 0
-0 0
+11 22
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 3
 
 1
 0
@@ -6431,15 +6431,15 @@ data
 Tile Description
 v.5
 390
-1 1
+64 39
 0 0
-0 0
+32 28
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 4
 
 1
 0
@@ -6447,15 +6447,15 @@ data
 Tile Description
 v.5
 391
-1 1
+32 15
 0 0
-0 0
+17 10
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 5
 
 1
 0
@@ -6463,15 +6463,15 @@ data
 Tile Description
 v.5
 392
-1 1
+59 57
 0 0
-0 0
+27 47
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 6
 
 1
 0
@@ -6479,15 +6479,15 @@ data
 Tile Description
 v.5
 393
-1 1
+50 33
 0 0
-0 0
+24 23
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 7
 
 1
 0
@@ -6495,15 +6495,15 @@ data
 Tile Description
 v.5
 394
-1 1
+73 38
 0 0
-0 0
+35 27
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 8
 
 1
 0
@@ -6511,15 +6511,15 @@ data
 Tile Description
 v.5
 395
-1 1
+37 27
 0 0
-0 0
+19 20
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 9
 
 1
 0
@@ -6527,15 +6527,15 @@ data
 Tile Description
 v.5
 396
-1 1
+20 24
 0 0
-0 0
+10 18
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 10
 
 1
 0
@@ -6543,15 +6543,15 @@ data
 Tile Description
 v.5
 397
-1 1
+78 43
 0 0
-0 0
+35 24
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 11
 
 1
 0
@@ -6559,15 +6559,15 @@ data
 Tile Description
 v.5
 398
-1 1
+77 39
 0 0
-0 0
+42 29
 End Of Header
 Item
 v.1
 data
 2
-
+arctic rock 12
 
 1
 0
@@ -6575,15 +6575,15 @@ data
 Tile Description
 v.5
 399
-1 1
+53 26
 0 0
-0 0
+26 16
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 1
 
 1
 0
@@ -6591,15 +6591,15 @@ data
 Tile Description
 v.5
 400
-1 1
+51 40
 0 0
-0 0
+26 32
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 2
 
 1
 0
@@ -6607,15 +6607,15 @@ data
 Tile Description
 v.5
 401
-1 1
+47 25
 0 0
-0 0
+22 20
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 3
 
 1
 0
@@ -6623,15 +6623,15 @@ data
 Tile Description
 v.5
 402
-1 1
+36 39
 0 0
-0 0
+18 31
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 4
 
 1
 0
@@ -6639,15 +6639,15 @@ data
 Tile Description
 v.5
 403
-1 1
+27 22
 0 0
-0 0
+13 15
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 5
 
 1
 0
@@ -6655,15 +6655,15 @@ data
 Tile Description
 v.5
 404
-1 1
+38 32
 0 0
-0 0
+20 25
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 6
 
 1
 0
@@ -6671,15 +6671,15 @@ data
 Tile Description
 v.5
 405
-1 1
+44 23
 0 0
-0 0
+19 12
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 7
 
 1
 0
@@ -6687,15 +6687,15 @@ data
 Tile Description
 v.5
 406
-1 1
+27 14
 0 0
-0 0
+15 10
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 8
 
 1
 0
@@ -6703,15 +6703,15 @@ data
 Tile Description
 v.5
 407
-1 1
+50 32
 0 0
-0 0
+23 21
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 9
 
 1
 0
@@ -6719,15 +6719,15 @@ data
 Tile Description
 v.5
 408
-1 1
+24 10
 0 0
-0 0
+11 5
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 10
 
 1
 0
@@ -6735,15 +6735,15 @@ data
 Tile Description
 v.5
 409
-1 1
+40 37
 0 0
-0 0
+16 26
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 11
 
 1
 0
@@ -6751,15 +6751,15 @@ data
 Tile Description
 v.5
 410
-1 1
+25 18
 0 0
-0 0
+13 13
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 12
 
 1
 0
@@ -6767,15 +6767,15 @@ data
 Tile Description
 v.5
 411
-1 1
+28 19
 0 0
-0 0
+15 13
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 13
 
 1
 0
@@ -6783,15 +6783,15 @@ data
 Tile Description
 v.5
 412
-1 1
+62 35
 0 0
-0 0
+21 23
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 14
 
 1
 0
@@ -6799,15 +6799,15 @@ data
 Tile Description
 v.5
 413
-1 1
+47 50
 0 0
-0 0
+22 40
 End Of Header
 Item
 v.1
 data
 2
-
+limestone 15
 
 1
 0
@@ -6815,15 +6815,15 @@ data
 Tile Description
 v.5
 414
-1 1
+55 46
 0 0
-0 0
+35 30
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 1
 
 1
 0
@@ -6831,15 +6831,15 @@ data
 Tile Description
 v.5
 415
-1 1
+64 26
 0 0
-0 0
+34 17
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 2
 
 1
 0
@@ -6847,15 +6847,15 @@ data
 Tile Description
 v.5
 416
-1 1
+26 27
 0 0
-0 0
+13 22
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 3
 
 1
 0
@@ -6863,15 +6863,15 @@ data
 Tile Description
 v.5
 417
-1 1
+50 35
 0 0
-0 0
+25 25
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 4
 
 1
 0
@@ -6879,15 +6879,15 @@ data
 Tile Description
 v.5
 418
-1 1
+61 53
 0 0
-0 0
+31 38
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 5
 
 1
 0
@@ -6895,15 +6895,15 @@ data
 Tile Description
 v.5
 419
-1 1
+16 24
 0 0
-0 0
+9 18
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 6
 
 1
 0
@@ -6911,15 +6911,15 @@ data
 Tile Description
 v.5
 420
-1 1
+44 31
 0 0
-0 0
+21 19
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 7
 
 1
 0
@@ -6927,15 +6927,15 @@ data
 Tile Description
 v.5
 421
-1 1
+41 38
 0 0
-0 0
+22 26
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 8
 
 1
 0
@@ -6943,15 +6943,15 @@ data
 Tile Description
 v.5
 422
-1 1
+51 27
 0 0
-0 0
+25 20
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 9
 
 1
 0
@@ -6959,15 +6959,15 @@ data
 Tile Description
 v.5
 423
-1 1
+27 19
 0 0
-0 0
+13 13
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 10
 
 1
 0
@@ -6975,15 +6975,15 @@ data
 Tile Description
 v.5
 424
-1 1
+14 9
 0 0
-0 0
+5 4
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 11
 
 1
 0
@@ -6991,15 +6991,15 @@ data
 Tile Description
 v.5
 425
-1 1
+102 50
 0 0
-0 0
+33 36
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 12
 
 1
 0
@@ -7007,15 +7007,15 @@ data
 Tile Description
 v.5
 426
-1 1
+33 29
 0 0
-0 0
+17 23
 End Of Header
 Item
 v.1
 data
 2
-
+sand rock 13
 
 1
 0
