@@ -5693,16 +5693,16 @@
       <Description>
         <version>4</version>
         <id>323</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>17</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>12</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5710,16 +5710,16 @@
       <Description>
         <version>4</version>
         <id>324</id>
-        <width>1</width>
-        <height>1</height>
+        <width>39</width>
+        <height>25</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5727,16 +5727,16 @@
       <Description>
         <version>4</version>
         <id>325</id>
-        <width>1</width>
-        <height>1</height>
+        <width>39</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>12</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5744,16 +5744,16 @@
       <Description>
         <version>4</version>
         <id>326</id>
-        <width>1</width>
-        <height>1</height>
+        <width>16</width>
+        <height>20</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>8</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5761,16 +5761,16 @@
       <Description>
         <version>4</version>
         <id>327</id>
-        <width>1</width>
-        <height>1</height>
+        <width>30</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>17</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5778,16 +5778,16 @@
       <Description>
         <version>4</version>
         <id>328</id>
-        <width>1</width>
-        <height>1</height>
+        <width>69</width>
+        <height>46</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>37</footX>
+        <footY>35</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5795,16 +5795,16 @@
       <Description>
         <version>4</version>
         <id>329</id>
-        <width>1</width>
-        <height>1</height>
+        <width>67</width>
+        <height>38</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>33</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5812,16 +5812,16 @@
       <Description>
         <version>4</version>
         <id>330</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>20</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5829,16 +5829,16 @@
       <Description>
         <version>4</version>
         <id>331</id>
-        <width>1</width>
-        <height>1</height>
+        <width>53</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>21</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5846,16 +5846,16 @@
       <Description>
         <version>4</version>
         <id>332</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>28</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red sand rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5863,16 +5863,16 @@
       <Description>
         <version>4</version>
         <id>333</id>
-        <width>1</width>
-        <height>1</height>
+        <width>36</width>
+        <height>18</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>15</footX>
+        <footY>10</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5880,16 +5880,16 @@
       <Description>
         <version>4</version>
         <id>334</id>
-        <width>1</width>
-        <height>1</height>
+        <width>46</width>
+        <height>28</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5897,16 +5897,16 @@
       <Description>
         <version>4</version>
         <id>335</id>
-        <width>1</width>
-        <height>1</height>
+        <width>34</width>
+        <height>13</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>15</footX>
+        <footY>8</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5914,16 +5914,16 @@
       <Description>
         <version>4</version>
         <id>336</id>
-        <width>1</width>
-        <height>1</height>
+        <width>16</width>
+        <height>7</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>4</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5931,16 +5931,16 @@
       <Description>
         <version>4</version>
         <id>337</id>
-        <width>1</width>
-        <height>1</height>
+        <width>96</width>
+        <height>59</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>45</footX>
+        <footY>42</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5948,16 +5948,16 @@
       <Description>
         <version>4</version>
         <id>338</id>
-        <width>1</width>
-        <height>1</height>
+        <width>54</width>
+        <height>34</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>31</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5965,16 +5965,16 @@
       <Description>
         <version>4</version>
         <id>339</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>31</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5982,16 +5982,16 @@
       <Description>
         <version>4</version>
         <id>340</id>
-        <width>1</width>
-        <height>1</height>
+        <width>43</width>
+        <height>20</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5999,16 +5999,16 @@
       <Description>
         <version>4</version>
         <id>341</id>
-        <width>1</width>
-        <height>1</height>
+        <width>32</width>
+        <height>29</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6016,16 +6016,16 @@
       <Description>
         <version>4</version>
         <id>342</id>
-        <width>1</width>
-        <height>1</height>
+        <width>34</width>
+        <height>15</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>10</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6033,16 +6033,16 @@
       <Description>
         <version>4</version>
         <id>343</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>33</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6050,16 +6050,16 @@
       <Description>
         <version>4</version>
         <id>344</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>18</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>20</footX>
+        <footY>11</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tin ore rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6067,16 +6067,16 @@
       <Description>
         <version>4</version>
         <id>345</id>
-        <width>1</width>
-        <height>1</height>
+        <width>53</width>
+        <height>36</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6084,16 +6084,16 @@
       <Description>
         <version>4</version>
         <id>346</id>
-        <width>1</width>
-        <height>1</height>
+        <width>69</width>
+        <height>32</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>31</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6101,16 +6101,16 @@
       <Description>
         <version>4</version>
         <id>347</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6118,16 +6118,16 @@
       <Description>
         <version>4</version>
         <id>348</id>
-        <width>1</width>
-        <height>1</height>
+        <width>25</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6135,16 +6135,16 @@
       <Description>
         <version>4</version>
         <id>349</id>
-        <width>1</width>
-        <height>1</height>
+        <width>17</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>8</footX>
+        <footY>11</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6152,16 +6152,16 @@
       <Description>
         <version>4</version>
         <id>350</id>
-        <width>1</width>
-        <height>1</height>
+        <width>25</width>
+        <height>36</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>12</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6169,16 +6169,16 @@
       <Description>
         <version>4</version>
         <id>351</id>
-        <width>1</width>
-        <height>1</height>
+        <width>58</width>
+        <height>34</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>28</footX>
+        <footY>25</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6186,16 +6186,16 @@
       <Description>
         <version>4</version>
         <id>352</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>28</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>21</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6203,16 +6203,16 @@
       <Description>
         <version>4</version>
         <id>353</id>
-        <width>1</width>
-        <height>1</height>
+        <width>43</width>
+        <height>36</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6220,16 +6220,16 @@
       <Description>
         <version>4</version>
         <id>354</id>
-        <width>1</width>
-        <height>1</height>
+        <width>54</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6237,16 +6237,16 @@
       <Description>
         <version>4</version>
         <id>355</id>
-        <width>1</width>
-        <height>1</height>
+        <width>31</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>21</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6254,16 +6254,16 @@
       <Description>
         <version>4</version>
         <id>356</id>
-        <width>1</width>
-        <height>1</height>
+        <width>36</width>
+        <height>33</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>18</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6271,16 +6271,16 @@
       <Description>
         <version>4</version>
         <id>357</id>
-        <width>1</width>
-        <height>1</height>
+        <width>57</width>
+        <height>30</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>29</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 13</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6288,16 +6288,16 @@
       <Description>
         <version>4</version>
         <id>358</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>25</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>15</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper ore rock 14</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6305,16 +6305,16 @@
       <Description>
         <version>4</version>
         <id>359</id>
-        <width>1</width>
-        <height>1</height>
+        <width>59</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>31</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6322,16 +6322,16 @@
       <Description>
         <version>4</version>
         <id>360</id>
-        <width>1</width>
-        <height>1</height>
+        <width>33</width>
+        <height>32</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>25</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6339,16 +6339,16 @@
       <Description>
         <version>4</version>
         <id>361</id>
-        <width>1</width>
-        <height>1</height>
+        <width>52</width>
+        <height>29</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>26</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6356,16 +6356,16 @@
       <Description>
         <version>4</version>
         <id>362</id>
-        <width>1</width>
-        <height>1</height>
+        <width>54</width>
+        <height>15</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>9</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6373,16 +6373,16 @@
       <Description>
         <version>4</version>
         <id>363</id>
-        <width>1</width>
-        <height>1</height>
+        <width>29</width>
+        <height>19</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>11</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6390,16 +6390,16 @@
       <Description>
         <version>4</version>
         <id>364</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>17</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6407,16 +6407,16 @@
       <Description>
         <version>4</version>
         <id>365</id>
-        <width>1</width>
-        <height>1</height>
+        <width>33</width>
+        <height>20</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>15</footX>
+        <footY>13</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6424,16 +6424,16 @@
       <Description>
         <version>4</version>
         <id>366</id>
-        <width>1</width>
-        <height>1</height>
+        <width>25</width>
+        <height>25</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>17</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 8</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6441,16 +6441,16 @@
       <Description>
         <version>4</version>
         <id>367</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>14</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>12</footX>
+        <footY>9</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6458,16 +6458,16 @@
       <Description>
         <version>4</version>
         <id>368</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>12</footX>
+        <footY>11</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 10</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6475,16 +6475,16 @@
       <Description>
         <version>4</version>
         <id>369</id>
-        <width>1</width>
-        <height>1</height>
+        <width>31</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>14</footX>
+        <footY>9</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 11</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6492,16 +6492,16 @@
       <Description>
         <version>4</version>
         <id>370</id>
-        <width>1</width>
-        <height>1</height>
+        <width>22</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>10</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 12</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6509,16 +6509,16 @@
       <Description>
         <version>4</version>
         <id>371</id>
-        <width>1</width>
-        <height>1</height>
+        <width>60</width>
+        <height>32</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>30</footX>
+        <footY>20</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 13</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -6526,16 +6526,16 @@
       <Description>
         <version>4</version>
         <id>372</id>
-        <width>1</width>
-        <height>1</height>
+        <width>102</width>
+        <height>51</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>50</footX>
+        <footY>34</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gold vein rock 14</string>
         <string></string>
       </Metadata>
     </Tile>

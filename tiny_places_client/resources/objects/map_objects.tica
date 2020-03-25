@@ -5359,15 +5359,15 @@ black lava rock 1
 Tile Description
 v.5
 323
-1 1
+24 17
 0 0
-0 0
+11 12
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 1
 
 1
 0
@@ -5375,15 +5375,15 @@ data
 Tile Description
 v.5
 324
-1 1
+39 25
 0 0
-0 0
+20 18
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 2
 
 1
 0
@@ -5391,15 +5391,15 @@ data
 Tile Description
 v.5
 325
-1 1
+39 16
 0 0
-0 0
+20 12
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 3
 
 1
 0
@@ -5407,15 +5407,15 @@ data
 Tile Description
 v.5
 326
-1 1
+16 20
 0 0
-0 0
+8 15
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 4
 
 1
 0
@@ -5423,15 +5423,15 @@ data
 Tile Description
 v.5
 327
-1 1
+30 23
 0 0
-0 0
+13 17
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 5
 
 1
 0
@@ -5439,15 +5439,15 @@ data
 Tile Description
 v.5
 328
-1 1
+69 46
 0 0
-0 0
+37 35
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 6
 
 1
 0
@@ -5455,15 +5455,15 @@ data
 Tile Description
 v.5
 329
-1 1
+67 38
 0 0
-0 0
+33 28
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 7
 
 1
 0
@@ -5471,15 +5471,15 @@ data
 Tile Description
 v.5
 330
-1 1
+24 20
 0 0
-0 0
+13 13
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 8
 
 1
 0
@@ -5487,15 +5487,15 @@ data
 Tile Description
 v.5
 331
-1 1
+53 31
 0 0
-0 0
+23 21
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 9
 
 1
 0
@@ -5503,15 +5503,15 @@ data
 Tile Description
 v.5
 332
-1 1
+44 28
 0 0
-0 0
+24 18
 End Of Header
 Item
 v.1
 data
 2
-
+red sand rock 10
 
 1
 0
@@ -5519,15 +5519,15 @@ data
 Tile Description
 v.5
 333
-1 1
+36 18
 0 0
-0 0
+15 10
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 1
 
 1
 0
@@ -5535,15 +5535,15 @@ data
 Tile Description
 v.5
 334
-1 1
+46 28
 0 0
-0 0
+20 18
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 2
 
 1
 0
@@ -5551,15 +5551,15 @@ data
 Tile Description
 v.5
 335
-1 1
+34 13
 0 0
-0 0
+15 8
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 3
 
 1
 0
@@ -5567,15 +5567,15 @@ data
 Tile Description
 v.5
 336
-1 1
+16 7
 0 0
-0 0
+9 4
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 4
 
 1
 0
@@ -5583,15 +5583,15 @@ data
 Tile Description
 v.5
 337
-1 1
+96 59
 0 0
-0 0
+45 42
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 5
 
 1
 0
@@ -5599,15 +5599,15 @@ data
 Tile Description
 v.5
 338
-1 1
+54 34
 0 0
-0 0
+31 24
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 6
 
 1
 0
@@ -5615,15 +5615,15 @@ data
 Tile Description
 v.5
 339
-1 1
+45 43
 0 0
-0 0
+21 31
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 7
 
 1
 0
@@ -5631,15 +5631,15 @@ data
 Tile Description
 v.5
 340
-1 1
+43 20
 0 0
-0 0
+21 13
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 8
 
 1
 0
@@ -5647,15 +5647,15 @@ data
 Tile Description
 v.5
 341
-1 1
+32 29
 0 0
-0 0
+16 20
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 9
 
 1
 0
@@ -5663,15 +5663,15 @@ data
 Tile Description
 v.5
 342
-1 1
+34 15
 0 0
-0 0
+17 10
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 10
 
 1
 0
@@ -5679,15 +5679,15 @@ data
 Tile Description
 v.5
 343
-1 1
+35 33
 0 0
-0 0
+18 22
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 11
 
 1
 0
@@ -5695,15 +5695,15 @@ data
 Tile Description
 v.5
 344
-1 1
+41 18
 0 0
-0 0
+20 11
 End Of Header
 Item
 v.1
 data
 2
-
+tin ore rock 12
 
 1
 0
@@ -5711,15 +5711,15 @@ data
 Tile Description
 v.5
 345
-1 1
+53 36
 0 0
-0 0
+21 24
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 1
 
 1
 0
@@ -5727,15 +5727,15 @@ data
 Tile Description
 v.5
 346
-1 1
+69 32
 0 0
-0 0
+31 22
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 2
 
 1
 0
@@ -5743,15 +5743,15 @@ data
 Tile Description
 v.5
 347
-1 1
+45 27
 0 0
-0 0
+22 19
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 3
 
 1
 0
@@ -5759,15 +5759,15 @@ data
 Tile Description
 v.5
 348
-1 1
+25 23
 0 0
-0 0
+11 15
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 4
 
 1
 0
@@ -5775,15 +5775,15 @@ data
 Tile Description
 v.5
 349
-1 1
+17 16
 0 0
-0 0
+8 11
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 5
 
 1
 0
@@ -5791,15 +5791,15 @@ data
 Tile Description
 v.5
 350
-1 1
+25 36
 0 0
-0 0
+12 28
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 6
 
 1
 0
@@ -5807,15 +5807,15 @@ data
 Tile Description
 v.5
 351
-1 1
+58 34
 0 0
-0 0
+28 25
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 7
 
 1
 0
@@ -5823,15 +5823,15 @@ data
 Tile Description
 v.5
 352
-1 1
+35 28
 0 0
-0 0
+18 21
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 7
 
 1
 0
@@ -5839,15 +5839,15 @@ data
 Tile Description
 v.5
 353
-1 1
+43 36
 0 0
-0 0
+21 24
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 9
 
 1
 0
@@ -5855,15 +5855,15 @@ data
 Tile Description
 v.5
 354
-1 1
+54 31
 0 0
-0 0
+25 22
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 10
 
 1
 0
@@ -5871,15 +5871,15 @@ data
 Tile Description
 v.5
 355
-1 1
+31 31
 0 0
-0 0
+16 21
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 11
 
 1
 0
@@ -5887,15 +5887,15 @@ data
 Tile Description
 v.5
 356
-1 1
+36 33
 0 0
-0 0
+18 24
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 12
 
 1
 0
@@ -5903,15 +5903,15 @@ data
 Tile Description
 v.5
 357
-1 1
+57 30
 0 0
-0 0
+29 19
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 13
 
 1
 0
@@ -5919,15 +5919,15 @@ data
 Tile Description
 v.5
 358
-1 1
+50 25
 0 0
-0 0
+25 15
 End Of Header
 Item
 v.1
 data
 2
-
+copper ore rock 14
 
 1
 0
@@ -5935,15 +5935,15 @@ data
 Tile Description
 v.5
 359
-1 1
+59 35
 0 0
-0 0
+31 26
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 1
 
 1
 0
@@ -5951,15 +5951,15 @@ data
 Tile Description
 v.5
 360
-1 1
+33 32
 0 0
-0 0
+17 25
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 2
 
 1
 0
@@ -5967,15 +5967,15 @@ data
 Tile Description
 v.5
 361
-1 1
+52 29
 0 0
-0 0
+26 19
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 3
 
 1
 0
@@ -5983,15 +5983,15 @@ data
 Tile Description
 v.5
 362
-1 1
+54 15
 0 0
-0 0
+24 9
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 4
 
 1
 0
@@ -5999,15 +5999,15 @@ data
 Tile Description
 v.5
 363
-1 1
+29 19
 0 0
-0 0
+13 11
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 5
 
 1
 0
@@ -6015,15 +6015,15 @@ data
 Tile Description
 v.5
 364
-1 1
+27 24
 0 0
-0 0
+13 17
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 6
 
 1
 0
@@ -6031,15 +6031,15 @@ data
 Tile Description
 v.5
 365
-1 1
+33 20
 0 0
-0 0
+15 13
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 7
 
 1
 0
@@ -6047,15 +6047,15 @@ data
 Tile Description
 v.5
 366
-1 1
+25 25
 0 0
-0 0
+13 17
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 8
 
 1
 0
@@ -6063,15 +6063,15 @@ data
 Tile Description
 v.5
 367
-1 1
+24 14
 0 0
-0 0
+12 9
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 9
 
 1
 0
@@ -6079,15 +6079,15 @@ data
 Tile Description
 v.5
 368
-1 1
+24 16
 0 0
-0 0
+12 11
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 10
 
 1
 0
@@ -6095,15 +6095,15 @@ data
 Tile Description
 v.5
 369
-1 1
+31 16
 0 0
-0 0
+14 9
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 11
 
 1
 0
@@ -6111,15 +6111,15 @@ data
 Tile Description
 v.5
 370
-1 1
+22 16
 0 0
-0 0
+11 10
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 12
 
 1
 0
@@ -6127,15 +6127,15 @@ data
 Tile Description
 v.5
 371
-1 1
+60 32
 0 0
-0 0
+30 20
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 13
 
 1
 0
@@ -6143,15 +6143,15 @@ data
 Tile Description
 v.5
 372
-1 1
+102 51
 0 0
-0 0
+50 34
 End Of Header
 Item
 v.1
 data
 2
-
+gold vein rock 14
 
 1
 0

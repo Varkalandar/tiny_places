@@ -157,6 +157,7 @@ local function init()
   
   -- map.image = love.graphics.newImage("resources/map_floor.png")
   map.image = love.graphics.newImage("resources/map_wasteland.png")
+  -- map.image = love.graphics.newImage("resources/map_rough_grass.png")
   map.bumpmap = love.graphics.newImage("resources/map_bumps.png")
   map.mobs = {}
   map.patches = {}
