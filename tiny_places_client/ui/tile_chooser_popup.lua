@@ -30,6 +30,20 @@ end
 
 
 local function update(dt)
+
+  local delta = tileChooser.mainUi.wheelDelta
+
+  if delta > 0 then
+    tileChooser.page = tileChooser.page - 1
+  end
+  
+  if delta < 0 then
+    tileChooser.page = tileChooser.page + 1
+  end
+  
+  if tileChooser.page < 0 then 
+    tileChooser.page = 0 
+  end  
 end
 
 
@@ -67,6 +81,8 @@ local function drawPage(startIndex)
   love.graphics.print("< Prev Page", 100, 641, 0, 1.25, 1)
   love.graphics.print("Next Page >", 1006, 641, 0, 1.25, 1)
 
+  love.graphics.setColor(0.7, 0.7, 0.7)
+  love.graphics.print("Page " .. tileChooser.page, 580, 641, 0, 1.25, 1)
   return endIndex
 end
 
@@ -87,7 +103,8 @@ local function findStartIndexForPage(page)
     end
   end
   
-  return 0
+  -- end of set
+  return 3000 - 16*6 - 1
 end
 
 

@@ -170,8 +170,13 @@ local function update(dt)
 	end
 
 	if mainUi.ui then
-    mainUi.ui.update()
+    mainUi.ui.update(dt)
   end
+	
+	
+	if mainUi.popup then
+	  mainUi.popup.update(dt)
+	end
 	
 	local commands = map.clientSocket.receive()
 	processCommands(commands)
