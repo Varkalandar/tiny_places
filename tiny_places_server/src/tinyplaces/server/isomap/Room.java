@@ -18,6 +18,7 @@ public class Room
     public static final Room LOBBY = new Room();
     private int nextObjectId = 1;
     
+    private String backdrop;
     private final HashMap <Integer, Mob> patches = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> mobs = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
@@ -63,13 +64,14 @@ public class Room
     }
 
 
-    public void save() 
+    public void save(String filename) 
     {
         try 
         {
-            File file = new File("maps", "dummy_map.txt");
+            File file = new File("maps", filename);
             FileWriter writer = new FileWriter(file);
             
+            writer.write(backdrop + "\n");
             save(writer, 1);
             save(writer, 3);
             save(writer, 5);
@@ -92,24 +94,27 @@ public class Room
         for(Integer i : keys)
         {
             Mob mob = lmap.get(i);
+            if(!mob.player)
+            {
+                // id will not be saved but set freshly on loading the map
+                String line = "" + layer + "," +
+                    mob.tile + "," +
+                    mob.x + "," +
+                    mob.y + "," +
+                    mob.scale + "," +
+                    mob.color + "\n";
 
-            // id will not be saved but set freshly on loading the map
-            String line = "" + layer + "," +
-                mob.tile + "," +
-                mob.x + "," +
-                mob.y + "," +
-                mob.scale + "," +
-                mob.color + "\n";
-
-            writer.write(line);
+                writer.write(line);
+            }
         }
     }
 
     
-    public void clear() 
+    public void init(String backdrop) 
     {
         patches.clear();
         mobs.clear();
         clouds.clear();
+        this.backdrop = backdrop;
     }
 }

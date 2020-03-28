@@ -12,7 +12,8 @@ public class Mob
     public int y;
     public float scale;
     public String color;
-
+    public boolean player;
+    
     @Override
     public boolean equals(Object o) {
         if(o instanceof Mob)
@@ -30,5 +31,4 @@ public class Mob
         hash = 67 * hash + this.id;
         return hash;
     }
-
 }

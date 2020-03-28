@@ -189,6 +189,7 @@ public class MapWorker implements ServerWorker
         String [] parts = command.split(",");
 
         Mob mob = makeMob(room, parts);
+        mob.player = true;
         
         // reply with ADDP to sender only
 
@@ -264,7 +265,9 @@ public class MapWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         
-        room.save();        
+        String [] parts = command.split(",");
+        String filename = parts[1].trim() + ".txt";
+        room.save(filename);        
     }
 
     
@@ -274,15 +277,22 @@ public class MapWorker implements ServerWorker
 
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        room.clear();
 
-        File file = new File("maps", "dummy_map.txt");
+        String [] parts = command.split(",");
+        String filename = parts[1].trim();
+        String mapName = filename + ".txt";        
+        File file = new File("maps", mapName);
         
         try 
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            
             String line;
+
+            // map backdrop
+            line = reader.readLine();
+            room.init(line);            
+            roomcast(dataEvent.server, "LOAD," + line + "," + filename + "\n", room);
+            
             while((line = reader.readLine()) != null)
             {
                 System.err.println(line);

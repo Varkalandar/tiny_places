@@ -115,7 +115,8 @@ end
 
 local function saveMap(x, y, pressed)
 	if not pressed then
-		editorUi.map.clientSocket.send("SAVE")
+		local map = editorUi.map
+		map.clientSocket.send("SAVE," .. map.filename)
 		btSave.pressed = false   
 	end
 end
@@ -321,9 +322,11 @@ local function mousePressed(button, mx, my)
 			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
 		
 		elseif mode == "delete" then
-			editorUi.selectedMob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
-			editorUi.map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
-		
+			local mob = editorUi.map.selectObject(editorUi.activeLayer, mx, my, 50)
+			if mob then
+				editorUi.selectedMob = mob
+				editorUi.map.clientSocket.send("DELM,"..editorUi.selectedMob.id..","..editorUi.activeLayer)
+			end
 		else
 			editorUi.map.clientSocket.send("ADDM,"
 														..editorUi.activeLayer..","

@@ -21,6 +21,7 @@ local function clear()
   map.mobs = {}
   map.patches = {}
   map.clouds = {}
+  map.filename = nil
 end
 
 
@@ -148,6 +149,12 @@ local function addMove(id, layer, x, y)
 end
 
 
+local function load(backdrop, filename)
+  map.image = love.graphics.newImage("resources/map/" .. backdrop .. ".png")
+  map.filename = filename
+end
+
+
 local function init()  
   print("Initializing map")
   
@@ -155,10 +162,9 @@ local function init()
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
-  -- map.image = love.graphics.newImage("resources/map_floor.png")
-  map.image = love.graphics.newImage("resources/map_wasteland.png")
-  -- map.image = love.graphics.newImage("resources/map_rough_grass.png")
-  map.bumpmap = love.graphics.newImage("resources/map_bumps.png")
+  load("map_wasteland", nil)
+
+  map.bumpmap = love.graphics.newImage("resources/map/map_bumps.png")
   map.mobs = {}
   map.patches = {}
   map.clouds = {}
@@ -178,7 +184,8 @@ local function init()
   map.clientSocket.send("HELO")
   
   -- load the starting map
-  map.clientSocket.send("LOAD")
+  -- map.clientSocket.send("LOAD,green_and_pond")
+  map.clientSocket.send("LOAD,wasteland_and_pond")
 
 end
 
@@ -305,6 +312,7 @@ map.drawObjects = drawObjects
 map.drawClouds = drawClouds
 
 map.clear = clear
+map.load = load
 map.addObject = addObject
 map.updateObject = updateObject
 map.deleteObject = deleteObject

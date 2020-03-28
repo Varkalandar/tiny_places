@@ -112,6 +112,11 @@ local function processCommands(commands)
         local layer = tonumber(args())
         map.deleteObject(id, layer)
         
+      elseif cmd == "LOAD" then
+        local backdrop = args()
+        local filename = args()
+        map.load(backdrop, filename)
+
       elseif cmd == "MOVE" then
         local id = tonumber(args())
         local layer = tonumber(args())
