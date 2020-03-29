@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,4 +119,54 @@ public class Room
         clouds.clear();
         this.backdrop = backdrop;
     }
+
+
+    public Mob makeMob(String [] parts)
+    {
+        int layer = Integer.parseInt(parts[1]);
+        int tile = Integer.parseInt(parts[2]);
+        int x = Integer.parseInt(parts[3]);
+        int y = Integer.parseInt(parts[4]);
+        float scale = Float.parseFloat(parts[5]);
+        String color = parts[6].trim();
+
+        return makeMob(layer, tile, x, y, scale, color, Mob.TYPE_PROP);
+    }
+    
+    
+    public Mob makeMob(int layer, int tile, int x, int y, float scale, String color, int type)
+    {
+        int id = getNextObjectId();
+        
+        Mob mob = new Mob();
+        mob.id = id;
+        mob.tile = tile;
+        mob.x = x;
+        mob.y = y;
+        mob.scale = scale;
+        mob.color = color;
+        mob.type = type;
+        
+        addMob(layer, mob);
+        
+        return mob;
+    }
+
+    
+    public List <Mob> makeMobGroup()
+    {
+        ArrayList <Mob> result = new ArrayList<Mob>();
+        
+        for(int i=0; i<7; i++)
+        {
+            int x = 200 + (int)(Math.random() * 100);
+            int y = 300 + (int)(Math.random() * 100);
+
+            Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
+            result.add(mob);
+        }
+        
+        return result;
+    }
+
 }

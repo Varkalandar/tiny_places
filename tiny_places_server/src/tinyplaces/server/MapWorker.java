@@ -147,23 +147,6 @@ public class MapWorker implements ServerWorker
         clients.put(dataEvent.socket, new Client(Room.LOBBY));
     }
 
-    private Mob makeMob(Room room, String [] parts)
-    {
-        int id = room.getNextObjectId();
-        
-        Mob mob = new Mob();
-        mob.id = id;
-        mob.tile = Integer.parseInt(parts[2]);
-        mob.x = Integer.parseInt(parts[3]);
-        mob.y = Integer.parseInt(parts[4]);
-        mob.scale = Float.parseFloat(parts[5]);
-        mob.color = parts[6].trim();
-        
-        int layer = Integer.parseInt(parts[1]);
-        room.addMob(layer, mob);
-        
-        return mob;
-    }
     
     private void addMob(ServerDataEvent dataEvent, String command)
     {
@@ -173,7 +156,7 @@ public class MapWorker implements ServerWorker
         Room room = client.getCurrentRoom();
         String [] parts = command.trim().split(",");
 
-        Mob mob = makeMob(room, parts);
+        Mob mob = room.makeMob(parts);
         
         roomcast(dataEvent.server,
                  "ADDM," + mob.id + "," + 
@@ -181,6 +164,7 @@ public class MapWorker implements ServerWorker
                          "0\n",
                  room);
     }
+
     
     private void addPlayer(ServerDataEvent dataEvent, String command)
     {
@@ -190,7 +174,7 @@ public class MapWorker implements ServerWorker
         Room room = client.getCurrentRoom();
         String [] parts = command.split(",");
 
-        Mob mob = makeMob(room, parts);
+        Mob mob = room.makeMob(parts);
         mob.type = Mob.TYPE_PLAYER;
         
         // reply with ADDP to sender only
@@ -304,6 +288,11 @@ public class MapWorker implements ServerWorker
             }
             
             reader.close();
+            
+            // testing only
+            List <Mob> mobs = room.makeMobGroup();
+            addMobGroup(dataEvent, room, mobs);
+            
         }
         catch (IOException ex) 
         {
@@ -368,4 +357,23 @@ public class MapWorker implements ServerWorker
         }
     }
 
+    private void addMobGroup(ServerDataEvent dataEvent, Room room, List <Mob> mobs) 
+    {
+        for(Mob mob : mobs)
+        {
+            String command =
+                    "ADDM," +
+                    mob.id + "," +
+                    "3," +
+                    mob.tile + "," +
+                    mob.x + "," +
+                    mob.y + "," +
+                    mob.scale + "," +
+                    mob.color + "," +
+                    mob.type +
+                    "\n";
+        
+            roomcast(dataEvent.server, command, room);
+        }
+    }
 }

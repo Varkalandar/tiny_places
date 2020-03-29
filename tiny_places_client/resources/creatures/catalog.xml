@@ -15,136 +15,136 @@
       <Description>
         <version>4</version>
         <id>1</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>25</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>8</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>2</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>28</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>27</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>3</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>29</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>4</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>30</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>8</footX>
+        <footY>29</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>5</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>6</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>24</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>7</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>22</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>12</footX>
+        <footY>21</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>8</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>imp_1</string>
+        <string>rgba</string>
       </Metadata>
     </Tile>
     <Tile>
