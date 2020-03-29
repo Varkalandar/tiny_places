@@ -171,12 +171,14 @@ public class MapWorker implements ServerWorker
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        String [] parts = command.split(",");
+        String [] parts = command.trim().split(",");
 
         Mob mob = makeMob(room, parts);
         
         roomcast(dataEvent.server,
-                 "ADDM," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6],
+                 "ADDM," + mob.id + "," + 
+                         parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "," +
+                         "0\n",
                  room);
     }
     
@@ -189,7 +191,7 @@ public class MapWorker implements ServerWorker
         String [] parts = command.split(",");
 
         Mob mob = makeMob(room, parts);
-        mob.player = true;
+        mob.type = Mob.TYPE_PLAYER;
         
         // reply with ADDP to sender only
 
@@ -202,7 +204,9 @@ public class MapWorker implements ServerWorker
 
         // for everyone else in the room it is an ADDM
 
-        message = "ADDM," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6];
+        message = "ADDM," + mob.id + "," + 
+                parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "," +
+                "2";
         data = message.getBytes();
 
         Set <SocketChannel> keys = clients.keySet();
@@ -296,7 +300,7 @@ public class MapWorker implements ServerWorker
             while((line = reader.readLine()) != null)
             {
                 System.err.println(line);
-                addMob(dataEvent, "ADDM," + line + "\n");
+                addMob(dataEvent, "ADDM," + line + ",0\n");
             }
             
             reader.close();

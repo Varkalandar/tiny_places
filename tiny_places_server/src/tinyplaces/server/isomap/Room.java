@@ -94,7 +94,7 @@ public class Room
         for(Integer i : keys)
         {
             Mob mob = lmap.get(i);
-            if(!mob.player)
+            if(mob.type == Mob.TYPE_PROP)
             {
                 // id will not be saved but set freshly on loading the map
                 String line = "" + layer + "," +

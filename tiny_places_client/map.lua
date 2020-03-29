@@ -14,6 +14,8 @@ local map = {}
 -- layer tilesets
 local patchSet = {}
 local mobSet = {}
+local creatureSet = {}
+local playerSet = {}
 local cloudSet = {}
 
 
@@ -84,12 +86,15 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color)
-  print("Adding object " .. tile .. " with id " .. id .. " to layer " .. layer)
+local function addObject(id, layer, tile, x, y, scale, color, ctype)
+  print("Adding object " .. tile .. " with id " .. id .. " and type '" .. ctype .. "' to layer " .. layer)
 
   -- tile should be constant, displayTile can change during animations
   local mob = {id=id, tile=tile, displayTile=tile,
-               x=x, y=y, scale=scale, color=unmarshallColor(color), zOff=0, zSpeed=0}
+               x=x, y=y, scale=scale, 
+               color=unmarshallColor(color), 
+               type=ctype,
+               zOff=0, zSpeed=0}
 
   local ltab = getLayerTable(layer)
   table.insert(ltab, mob)
@@ -160,6 +165,8 @@ local function init()
   
   patchSet = tileset.readSet("resources/grounds/", "map_objects.tica")
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
+  creatureSet = tileset.readSet("resources/creatures/", "creatures.tica")
+  playerSet = tileset.readSet("resources/players/", "players.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
   load("map_wasteland", nil)
@@ -261,7 +268,17 @@ local function drawTileTable(objects, set)
 	  local color = mob.color	  
     love.graphics.setColor(color.r, color.g, color.b, color.a)	
 	
-    local tile = set[mob.displayTile]
+    local tile
+    
+    -- special cases
+    if mob.type == "player" then
+      tile = playerSet[mob.displayTile]
+    elseif mob.type == "creature" then
+      tile = creatureSet[mob.displayTile]
+    else
+      tile = set[mob.displayTile]
+    end
+    
     local scale = mob.scale
 	
 	  if tile.image then
@@ -292,13 +309,11 @@ end
 
 
 local function drawObjects()
-  -- love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
   drawTileTable(map.mobs, mobSet)
 end
 
 
 local function drawClouds()
-  -- love.graphics.setColor(1.0, 1.0, 1.0, 0.5)
   drawTileTable(map.clouds, cloudSet)
 end
 

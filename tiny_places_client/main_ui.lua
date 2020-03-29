@@ -93,8 +93,12 @@ local function processCommands(commands)
         local y = tonumber(args())
         local scale = tonumber(args())
         local color = args()
+        local ntype = args()
+        local ctype = "prop"
+        if ntype == "1" then ctype = "creature" end
+        if ntype == "2" then ctype = "player" end
         
-        map.addObject(id, layer, tile, x, y, scale, color)
+        map.addObject(id, layer, tile, x, y, scale, color, ctype)
       
       elseif cmd == "UPDM" then
         local id = tonumber(args())
@@ -133,7 +137,7 @@ local function processCommands(commands)
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color)
+        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player")
         mainUi.gameUi.playerMob = mob
       end
     end

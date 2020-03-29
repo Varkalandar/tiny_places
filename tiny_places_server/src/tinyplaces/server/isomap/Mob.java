@@ -6,13 +6,16 @@ package tinyplaces.server.isomap;
  */
 public class Mob 
 {
+    public static int TYPE_PROP = 0;
+    public static int TYPE_CREATURE = 1;
+    public static int TYPE_PLAYER = 2;
     public int id;
     public int tile;
     public int x;
     public int y;
     public float scale;
     public String color;
-    public boolean player;
+    public int type;
     
     @Override
     public boolean equals(Object o) {

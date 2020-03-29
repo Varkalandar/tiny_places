@@ -17,46 +17,46 @@ local container = cf.makeContainer()
 --
 local function isMapArea(mx, my)
 
-	-- normalize coordinates
-	mx = mx - 600
-	my = my - 28
+  -- normalize coordinates
+  mx = mx - 600
+  my = my - 28
 
-	local mi = mx + my * 2
-	local mj = -mx + my * 2 
-	-- print("mi=" .. mi .. " mj=" .. mj)
-	
-	return mi >= 0 and mi <= 1176 and mj >= 0 and mj <= 1176
+  local mi = mx + my * 2
+  local mj = -mx + my * 2 
+  -- print("mi=" .. mi .. " mj=" .. mj)
+  
+  return mi >= 0 and mi <= 1176 and mj >= 0 and mj <= 1176
 end
 
 
 local function sendMove(mob, layer, x, y)
 
-	gameUi.map.clientSocket.send("MOVE,"
-	        										 ..mob.id..","
-												       ..layer..","
-												       ..x..","
-												       ..y
-												       )
+  gameUi.map.clientSocket.send("MOVE,"
+                               ..mob.id..","
+                               ..layer..","
+                               ..x..","
+                               ..y
+                               )
 end
 
 
 local function init(mainUi, map)
-	print("Loading game ui")
-	
-	cf.init()
-	gameUi.map = map
-	
+  print("Loading game ui")
+  
+  cf.init()
+  gameUi.map = map
+  
   -- add player to the map
   gameUi.map.clientSocket.send("ADDP," -- add a player
-														.."3,"
-														.."1500,"  -- tile id
-														.."600,"   -- x pos
-														.."400,"   -- y pos
-														.."1.0,"   -- scale factor
-														.."1.0 1.0 1.0 1.0"
-														)  
-														
-	-- this will set gameUi.playerMob when receiving the data from the server
+                            .."3,"
+                            .."1,"  -- tile id
+                            .."600,"   -- x pos
+                            .."400,"   -- y pos
+                            .."1.0,"   -- scale factor
+                            .."1.0 1.0 1.0 1.0"
+                            )  
+                            
+  -- this will set gameUi.playerMob when receiving the data from the server
 end
 
 
@@ -66,34 +66,34 @@ end
 
 
 local function draw()
-	love.graphics.setColor(1.0, 1.0, 1.0)
-	love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
-	
-	container:draw()
+  love.graphics.setColor(1.0, 1.0, 1.0)
+  love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
+  
+  container:draw()
 end
 
 
 local function mousePressed(button, mx, my)
 
-	if isMapArea(mx, my) then  
-	  sendMove(gameUi.playerMob, 3, mx, my)
-	else
-		container:mousePressed(mx, my)
-	end
+  if isMapArea(mx, my) then  
+    sendMove(gameUi.playerMob, 3, mx, my)
+  else
+    container:mousePressed(mx, my)
+  end
 end
 
 
 local function mouseReleased(button, mx, my)
-	if isMapArea(mx, my) then  
-	else
-		container:mouseReleased(mx, my)
-	end
+  if isMapArea(mx, my) then  
+  else
+    container:mouseReleased(mx, my)
+  end
 end
 
 
 local function mouseDragged(button, mx, my)
-	if isMapArea(mx, my) then  
-	end
+  if isMapArea(mx, my) then  
+  end
 end
 
 
