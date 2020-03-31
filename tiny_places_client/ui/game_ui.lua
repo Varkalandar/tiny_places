@@ -31,12 +31,28 @@ end
 
 local function sendMove(mob, layer, x, y)
 
-	gameUi.map.clientSocket.send("MOVE,"
-															 ..mob.id..","
-															 ..layer..","
-															 ..x..","
-															 ..y
-															 )
+  local map = gameUi.map
+  
+	map.clientSocket.send("MOVE,"
+											 ..mob.id..","
+											 ..layer..","
+											 ..x..","
+											 ..y
+											 )
+end
+
+
+local function fireProjectile(mob, layer, x, y)
+
+  local map = gameUi.map
+  local ptype = 1
+	map.clientSocket.send("FIRE,"
+											 ..layer..","
+											 ..ptype..","
+											 ..x..","
+											 ..y..","
+											 )
+
 end
 
 
@@ -77,8 +93,16 @@ end
 
 local function mousePressed(button, mx, my)
 
-	if isMapArea(mx, my) then  
-		sendMove(gameUi.playerMob, 3, mx, my)
+	if isMapArea(mx, my) then
+    
+    if(button == 1) then  
+		  sendMove(gameUi.playerMob, 3, mx, my)
+    else
+      -- make the projectile appear above the ground
+      gameUi.playerMob.zOff = 12;
+      fireProjectile(gameUi.playerMob, 3, mx, my)
+    end
+    
 	else
 		container:mousePressed(mx, my)
 	end
@@ -86,7 +110,8 @@ end
 
 
 local function mouseReleased(button, mx, my)
-	if isMapArea(mx, my) then  
+	if isMapArea(mx, my) then
+    gameUi.playerMob.zOff = 0
 	else
 		container:mouseReleased(mx, my)
 	end

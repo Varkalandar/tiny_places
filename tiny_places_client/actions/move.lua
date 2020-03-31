@@ -16,7 +16,7 @@ local function update(move, dt)
 	-- advance, move by dt*speed
 
   local mob = move.mob
-  local speed = 120
+  local speed = mob.speed
   
   local dx = move.x - mob.x
   local dy = move.y - mob.y
@@ -25,31 +25,25 @@ local function update(move, dt)
   
   -- print("dx=" .. dx .. " dy=" .. dy .. " len="..len)
   
-  if len > 1 then
+  local steplen = dt * speed
+  
+  if len > steplen then
     
-    local nx = dx/len * dt * speed
-    local ny = dy/len * dt * speed
+    local nx = dx/len * steplen
+    local ny = dy/len * steplen
   
     mob.x = mob.x + nx
     mob.y = mob.y + ny
-    
-    -- calculate facing
-    local r = math.atan2(ny*2, nx)
-    
-    -- round to a segment
-    r = r + math.pi + math.pi/8
 
-    -- calculate tile offsets from 0 to 7    
-    r = 4 + math.floor((r * 8)  / (math.pi * 2))
-    if r >= 8 then r = r - 8 end
-    
-    -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r)
-
-    -- set the tile to show
-    mob.displayTile = mob.tile + r
-    
+    mob:orient(dx, dy)
+  
     -- make it jump
-    jumps.calculate(mob, dt)
+    if move.pattern == "glide" then
+      -- nothing to do here
+    else
+      -- bounce is the default
+      jumps.calculate(mob, dt)
+    end
     
     -- print("nx=" .. nx .. " ny=" .. ny .. " mob.x="..mob.x .. " mob.y="..mob.y)
   else
@@ -62,19 +56,34 @@ local function update(move, dt)
     move.done = true
     
     print("Move done! id=" .. mob.id)
+    
+    if mob.type == "projectile" then
+      print("Removing expired projectile with id=" .. mob.id)
+      
+      -- are all projectiles on layer 3?
+      move.map.deleteObject(mob.id, 3)
+    
+    end
+    
   end    
 end
 
 
-local function newMove(mob, x, y)
+local function newMove(map, mob, x, y, pattern)
   local move = {}
   
   move.update = update
+  move.map = map
   move.mob = mob
   move.x = x
-  move.y = y  
+  move.y = y
+  move.pattern = pattern  
 
   move.done = false
+  
+  if mob.type == "projectile" and pattern == "glide" then
+    mob.zOff = 20
+  end
   
   return move
 end

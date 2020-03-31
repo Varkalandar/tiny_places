@@ -291,8 +291,8 @@
         <height>1</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>96</footX>
+        <footY>99</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -304,8 +304,8 @@
       <Description>
         <version>4</version>
         <id>18</id>
-        <width>1</width>
-        <height>1</height>
+        <width>196</width>
+        <height>97</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -313,7 +313,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>highlight_1</string>
         <string></string>
       </Metadata>
     </Tile>

@@ -16,6 +16,7 @@ local patchSet = {}
 local mobSet = {}
 local creatureSet = {}
 local playerSet = {}
+local projectileSet = {}
 local cloudSet = {}
 
 
@@ -24,6 +25,25 @@ local function clear()
   map.patches = {}
   map.clouds = {}
   map.filename = nil
+end
+
+
+local function orient(mob, dx, dy)
+
+    -- calculate facing
+    local r = math.atan2(dy*2, dx)
+    
+    -- round to a segment
+    r = r + math.pi + math.pi/8
+
+    -- calculate tile offsets from 0 to 7    
+    r = 4 + math.floor((r * 8)  / (math.pi * 2))
+    if r >= 8 then r = r - 8 end
+    
+    -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r)
+
+    -- set the tile to show
+    mob.displayTile = mob.tile + r
 end
 
 
@@ -86,15 +106,16 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color, ctype)
-  print("Adding object " .. tile .. " with id " .. id .. " and type '" .. ctype .. "' to layer " .. layer)
+local function addObject(id, layer, tile, x, y, scale, color, ctype, speed)
+  print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
 
   -- tile should be constant, displayTile can change during animations
-  local mob = {id=id, tile=tile, displayTile=tile,
-               x=x, y=y, scale=scale, 
-               color=unmarshallColor(color), 
-               type=ctype,
-               zOff=0, zSpeed=0}
+  local mob = {id = id, tile = tile, displayTile = tile,
+               x = x, y = y, scale = scale, 
+               color = unmarshallColor(color), 
+               type = ctype,
+               speed = speed, zOff = 0, zSpeed = 0,
+               orient = orient}
 
   local ltab = getLayerTable(layer)
   table.insert(ltab, mob)
@@ -132,7 +153,7 @@ local function deleteObject(id, layer)
 end
 
 
-local function addMove(id, layer, x, y)
+local function addMove(id, layer, x, y, pattern)
   print("Adding move for object with id " .. id .. " to " .. x .. ", " .. y)
 
   local actions = map.actions
@@ -146,11 +167,40 @@ local function addMove(id, layer, x, y)
     end
   end
 
-
   local mob = findMob(id, layer)
-  local move = moveFactory.newMove(mob, x, y)
+  local move = moveFactory.newMove(map, mob, x, y, pattern)
   
   table.insert(actions, move)  
+end
+
+
+local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy)
+  print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
+
+  local shooter, i = findMob(source, layer)
+  
+  
+  -- there shouldbe a ptype -> tile calculation here, once
+  -- there is more than one projectile type
+  local tile = 1;
+  
+  -- make projectile appear in front of the shooter
+  local nx = dx-sx
+  local ny = dy-sy
+  local len = math.sqrt(nx*nx + ny*ny)
+  
+  nx = nx / len
+  ny = ny / len
+
+  local distance = 12
+  sx = sx + nx * distance * 2
+  sy = sy + ny * distance
+
+  
+  shooter:orient(nx, ny)
+
+  addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", 400)
+  addMove(id, layer, dx, dy, "glide")
 end
 
 
@@ -167,6 +217,7 @@ local function init()
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
   creatureSet = tileset.readSet("resources/creatures/", "creatures.tica")
   playerSet = tileset.readSet("resources/players/", "players.tica")
+  projectileSet = tileset.readSet("resources/projectiles/", "projectiles.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
   load("map_wasteland", nil)
@@ -275,20 +326,48 @@ local function drawTileTable(objects, set)
       tile = playerSet[mob.displayTile]
     elseif mob.type == "creature" then
       tile = creatureSet[mob.displayTile]
+    elseif mob.type == "projectile" then
+      tile = projectileSet[mob.displayTile]
+
+      -- testing
+      local scale = mob.scale
+      local mode, alphamode = love.graphics.getBlendMode()
+      love.graphics.setColor(1.0, 0.9, 0.5, 0.3)
+      love.graphics.setBlendMode("add", "alphamultiply")
+      love.graphics.draw(tile.image, 
+                         mob.x - tile.footX * scale, 
+                         mob.y - tile.footY * scale - mob.zOff, 
+                         0, 
+                         scale, scale)
+
+      love.graphics.setColor(1.0, 0.8, 0.4, 0.5)
+      scale = 1.5
+      love.graphics.draw(cloudSet[18].image,
+                         mob.x - 98 * scale,
+                         mob.y - 49 * scale, 
+                         0, scale, scale)
+
+
+      love.graphics.setBlendMode(mode, alphamode)
+
+      -- testing end
+      
     else
       tile = set[mob.displayTile]
     end
     
     local scale = mob.scale
 	
-	  if tile.image then
-      love.graphics.draw(tile.image, 
-                         mob.x - tile.footX * scale, 
-                         mob.y - tile.footY * scale - mob.zOff, 
-                         0, 
-                         scale, scale)
-    else
-      print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
+    if mob.type ~= "projectile" then
+      if tile.image then
+        love.graphics.draw(tile.image, 
+                           mob.x - tile.footX * scale, 
+                           mob.y - tile.footY * scale - mob.zOff, 
+                           0, 
+                           scale, scale)
+      else
+        print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
+      end
     end
   end
 end
@@ -333,5 +412,6 @@ map.updateObject = updateObject
 map.deleteObject = deleteObject
 map.selectObject = selectObject
 map.addMove = addMove
+map.addProjectile = addProjectile
 
 return map;

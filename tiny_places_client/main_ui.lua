@@ -99,7 +99,7 @@ local function processCommands(commands)
         if ntype == "1" then ctype = "creature" end
         if ntype == "2" then ctype = "player" end
         
-        map.addObject(id, layer, tile, x, y, scale, color, ctype)
+        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120)
       
       elseif cmd == "UPDM" then
         local id = tonumber(args())
@@ -127,7 +127,7 @@ local function processCommands(commands)
         local layer = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
-        map.addMove(id, layer, x, y)
+        map.addMove(id, layer, x, y, "bounce")
 		
       elseif cmd == "ADDP" then
         local id = tonumber(args())
@@ -138,8 +138,19 @@ local function processCommands(commands)
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player")
+        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120)
         mainUi.gameUi.playerMob = mob
+
+      elseif cmd == "FIRE" then
+        local source = tonumber(args())
+        local id = tonumber(args())
+        local layer = tonumber(args())
+        local ptype = tonumber(args())
+        local sx = tonumber(args())
+        local sy = tonumber(args())
+        local dx = tonumber(args())
+        local dy = tonumber(args())
+        map.addProjectile(source, id, layer, ptype, sx, sy, dx, dy)
       end
     end
   end

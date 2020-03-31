@@ -115,6 +115,10 @@ public class MapWorker implements ServerWorker
         {
             deleteMob(dataEvent, command);
         }
+        else if(command.startsWith("FIRE"))
+        {
+            fireProjectile(dataEvent, command);
+        }
         else if(command.startsWith("SAVE"))
         {
             saveMap(dataEvent, command);
@@ -176,6 +180,9 @@ public class MapWorker implements ServerWorker
 
         Mob mob = room.makeMob(parts);
         mob.type = Mob.TYPE_PLAYER;
+        
+        // set new player avatar
+        client.mob = mob;
         
         // reply with ADDP to sender only
 
@@ -315,8 +322,57 @@ public class MapWorker implements ServerWorker
     {
         System.err.println("MOVE from " + dataEvent.socket);
 
+        String [] parts = command.trim().split(",");
+
+        int id = Integer.parseInt(parts[1]);
+        int layer = Integer.parseInt(parts[2]);
+        int dx = Integer.parseInt(parts[3]);
+        int dy = Integer.parseInt(parts[4]);
+        
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
+
+        Mob mob = room.getMob(layer, id);
+        mob.x = dx;
+        mob.y = dy;
+
+        roomcast(dataEvent.server, command, room);
+    }
+
+
+    private void fireProjectile(ServerDataEvent dataEvent, String command) 
+    {
+        System.err.println("FIRE from " + dataEvent.socket);
+
+        String [] parts = command.split(",");
+        
+        int layer = Integer.parseInt(parts[1]);
+        int type = Integer.parseInt(parts[2]);
+        int dx = Integer.parseInt(parts[3]);
+        int dy = Integer.parseInt(parts[4]);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+
+        int sx = client.mob.x;
+        int sy = client.mob.y;
+
+        Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
+        
+        command = 
+                "FIRE," +
+                client.mob.id + "," +
+                projectile.id + "," +
+                layer + "," +
+                type + "," +
+                sx + "," +
+                sy + "," +
+                dx + "," +
+                dy + "\n";
+
+        // todo: make projectiles travel and expire properly
+        room.deleteMob(layer, projectile.id);
+        
         roomcast(dataEvent.server, command, room);
     }
 
@@ -376,4 +432,5 @@ public class MapWorker implements ServerWorker
             roomcast(dataEvent.server, command, room);
         }
     }
+
 }

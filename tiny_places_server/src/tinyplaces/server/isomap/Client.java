@@ -8,6 +8,9 @@ package tinyplaces.server.isomap;
 public class Client 
 {
     private Room currentRoom;
+
+    // the player avatar
+    public Mob mob;
     
     public Room getCurrentRoom()
     {
