@@ -183,6 +183,12 @@ end
 
 local function switchToGameUi()
   if not pressed then
+  
+    if editorUi.previewMob then
+      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.previewMob = nil
+    end
+
     editorUi.mainUi.ui = editorUi.mainUi.gameUi
   end
 end

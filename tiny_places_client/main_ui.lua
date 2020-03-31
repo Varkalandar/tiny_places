@@ -58,6 +58,7 @@ local function init()
 	
 	mainUi.image = love.graphics.newImage("resources/ui/main_ui.png")
 	mainUi.lmbState = love.mouse.isDown(1)
+	mainUi.rmbState = love.mouse.isDown(2)
 	mainUi.popup = nil
 	mainUi.wheelDelta = 0
 	
@@ -175,6 +176,18 @@ local function update(dt)
 			mousePressed(1)
 		else
 			mouseReleased(1)
+		end
+	end
+
+	local rmbState = love.mouse.isDown(2)
+	if(rmbState ~= mainUi.rmbState) then
+		mainUi.rmbState = rmbState;
+		print("Right mouse button went " .. (rmbState and "down" or "up") .. " at " .. mx .. ", " .. my);
+		
+		if rmbState then
+			mousePressed(2)
+		else
+			mouseReleased(2)
 		end
 	end
 

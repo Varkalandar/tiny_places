@@ -42,6 +42,7 @@ public class Server implements Runnable
      */
     public Server(InetAddress host, int port, ServerWorker worker) throws IOException
     {
+        System.out.println("Tiny Places server is starting.");
         this.host = host;
         this.port = port;
         this.selector = initSelector();
@@ -84,6 +85,8 @@ public class Server implements Runnable
     @Override
     public void run()
     {
+        System.out.println("Tiny Places server is up.");
+        
         while(true)
         {
             try
