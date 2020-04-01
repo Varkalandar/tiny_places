@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
+import tinyplaces.server.isomap.actions.MapAction;
 import tinyplaces.server.isomap.actions.Move;
 
 /**
@@ -337,6 +338,28 @@ public class CommandWorker implements ServerWorker
         Mob mob = room.getMob(layer, id);
 
         Move move = new Move(mob, layer, dx, dy, speed);
+        
+        // check and cancel former move ...
+        List <MapAction> actions = room.getActions();
+        ArrayList<MapAction> actionsCopy = new ArrayList<MapAction>(actions);
+        
+        for(MapAction action : actionsCopy)
+        {
+            if(action instanceof Move)
+            {
+                Move m = (Move)action;
+                if(m.getMob().id == mob.id)
+                {
+                    System.err.println("Removing old move for mob id=" + mob.id);
+                    
+                    synchronized(actions)
+                    {
+                        actions.remove(m);
+                    }
+                }
+            }
+        }
+        
         room.addAction(move);
         
         roomcast(dataEvent.server, command.trim() + "," + speed + "\n", room);
