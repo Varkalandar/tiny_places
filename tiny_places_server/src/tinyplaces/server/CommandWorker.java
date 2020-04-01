@@ -22,7 +22,7 @@ import tinyplaces.server.isomap.Room;
  * 
  * @author Hj. Malthaner
  */
-public class MapWorker implements ServerWorker
+public class CommandWorker implements ServerWorker
 {
     // network data queue
     private final List <ServerDataEvent> queue = new ArrayList();
@@ -75,7 +75,7 @@ public class MapWorker implements ServerWorker
             catch(Exception ex)
             {
                 // report but keep flying
-                Logger.getLogger(MapWorker.class.getName()).log(Level.SEVERE, null, ex);                
+                Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);                
             }
         }
     }
@@ -137,7 +137,7 @@ public class MapWorker implements ServerWorker
         }
         else
         {
-            Logger.getLogger(MapWorker.class.getName()).log(Level.WARNING, "Received unknown command: '{0}'", command);
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, "Received unknown command: '{0}'", command);
         }
     }
     
@@ -303,7 +303,7 @@ public class MapWorker implements ServerWorker
         }
         catch (IOException ex) 
         {
-            Logger.getLogger(MapWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

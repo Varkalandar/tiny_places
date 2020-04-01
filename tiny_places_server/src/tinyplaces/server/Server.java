@@ -266,7 +266,7 @@ public class Server implements Runnable
     {
         try
         {
-            ServerWorker worker = new MapWorker();
+            ServerWorker worker = new CommandWorker();
             new Thread(worker).start();
             
             Server server = new Server(null, 9194, worker);
