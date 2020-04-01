@@ -153,7 +153,7 @@ local function deleteObject(id, layer)
 end
 
 
-local function addMove(id, layer, x, y, pattern)
+local function addMove(id, layer, x, y, speed, pattern)
   print("Adding move for object with id " .. id .. " to " .. x .. ", " .. y)
 
   local actions = map.actions
@@ -168,13 +168,15 @@ local function addMove(id, layer, x, y, pattern)
   end
 
   local mob = findMob(id, layer)
-  local move = moveFactory.newMove(map, mob, x, y, pattern)
+  mob.speed = speed
+  
+  local move = moveFactory.newMove(map, mob, x, y, speed, pattern)
   
   table.insert(actions, move)  
 end
 
 
-local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy)
+local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
 
   local shooter, i = findMob(source, layer)
@@ -195,12 +197,11 @@ local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy)
   local distance = 12
   sx = sx + nx * distance * 2
   sy = sy + ny * distance
-
   
   shooter:orient(nx, ny)
 
-  addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", 400)
-  addMove(id, layer, dx, dy, "glide")
+  addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", speed)
+  addMove(id, layer, dx, dy, speed, "glide")
 end
 
 

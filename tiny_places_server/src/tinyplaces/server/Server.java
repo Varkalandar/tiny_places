@@ -10,6 +10,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
+import tinyplaces.server.isomap.MapWorker;
 
 /**
  * Main server class for Tiny Places
@@ -266,10 +267,13 @@ public class Server implements Runnable
     {
         try
         {
-            ServerWorker worker = new CommandWorker();
-            new Thread(worker).start();
+            ServerWorker commandWorker = new CommandWorker();
+            new Thread(commandWorker).start();
             
-            Server server = new Server(null, 9194, worker);
+            MapWorker mapWorker = new MapWorker();
+            new Thread(mapWorker).start();
+            
+            Server server = new Server(null, 9194, commandWorker);
             new Thread(server).start();
         }
         catch (IOException e)

@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
+import tinyplaces.server.isomap.actions.Move;
 
 /**
  * Worker class for map altering commands. This will be run in a thread of
@@ -62,9 +63,9 @@ public class CommandWorker implements ServerWorker
                         {
                             queue.wait();
                         }
-                        catch (InterruptedException e)
+                        catch (InterruptedException iex)
                         {
-                            System.err.println("Interrupt during queue wait:" + e);
+                            System.err.println("CommandWorker: Interrupt during queue wait:" + iex);
                         }
                     }
                     dataEvent = (ServerDataEvent) queue.remove(0);
@@ -328,15 +329,17 @@ public class CommandWorker implements ServerWorker
         int layer = Integer.parseInt(parts[2]);
         int dx = Integer.parseInt(parts[3]);
         int dy = Integer.parseInt(parts[4]);
+        int speed = 120;
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-
+        
         Mob mob = room.getMob(layer, id);
-        mob.x = dx;
-        mob.y = dy;
 
-        roomcast(dataEvent.server, command, room);
+        Move move = new Move(mob, layer, dx, dy, speed);
+        room.addAction(move);
+        
+        roomcast(dataEvent.server, command.trim() + "," + speed + "\n", room);
     }
 
 
@@ -357,6 +360,8 @@ public class CommandWorker implements ServerWorker
         int sx = client.mob.x;
         int sy = client.mob.y;
 
+        int speed = 400;
+        
         Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         
         command = 
@@ -368,10 +373,11 @@ public class CommandWorker implements ServerWorker
                 sx + "," +
                 sy + "," +
                 dx + "," +
-                dy + "\n";
+                dy + "," +
+                speed + "\n";
 
-        // todo: make projectiles travel and expire properly
-        room.deleteMob(layer, projectile.id);
+        Move move = new Move(projectile, layer, dx, dy, speed);
+        room.addAction(move);
         
         roomcast(dataEvent.server, command, room);
     }

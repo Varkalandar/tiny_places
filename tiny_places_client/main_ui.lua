@@ -127,7 +127,8 @@ local function processCommands(commands)
         local layer = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
-        map.addMove(id, layer, x, y, "bounce")
+        local speed = tonumber(args())
+        map.addMove(id, layer, x, y, speed, "bounce")
 		
       elseif cmd == "ADDP" then
         local id = tonumber(args())
@@ -150,7 +151,8 @@ local function processCommands(commands)
         local sy = tonumber(args())
         local dx = tonumber(args())
         local dy = tonumber(args())
-        map.addProjectile(source, id, layer, ptype, sx, sy, dx, dy)
+        local speed = tonumber(args())
+        map.addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
       end
     end
   end

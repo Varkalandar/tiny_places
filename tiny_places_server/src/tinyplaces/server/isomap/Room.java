@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tinyplaces.server.isomap.actions.MapAction;
+
 
 /**
  * A room (map segment)
@@ -17,7 +19,9 @@ import java.util.logging.Logger;
  */
 public class Room 
 {
+    private static final ArrayList<Room> rooms = new ArrayList<Room> (256);
     public static final Room LOBBY = new Room();
+
     private int nextObjectId = 1;
     
     private String backdrop;
@@ -25,6 +29,35 @@ public class Room
     private final HashMap <Integer, Mob> mobs = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
     
+    private final ArrayList<MapAction> actions = new ArrayList<MapAction>(256);
+
+
+    public static ArrayList<Room> rooms()
+    {
+        return rooms;
+    }
+
+
+    public Room()
+    {
+        rooms.add(this);
+    }
+
+    
+    public ArrayList<MapAction> getActions()
+    {
+        return actions;
+    }
+    
+    
+    public void addAction(MapAction move) 
+    {
+        synchronized(actions)
+        {
+            actions.add(move);
+        }
+    }
+
     
     private HashMap <Integer, Mob> getLayerMap(int layer)
     {
@@ -50,7 +83,11 @@ public class Room
     public void addMob(int layer, Mob mob)
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
-        lmap.put(mob.id, mob);
+        
+        synchronized(lmap)
+        {
+            lmap.put(mob.id, mob);
+        }
     }
     
     public Mob getMob(int layer, int id)
@@ -62,7 +99,13 @@ public class Room
     public Mob deleteMob(int layer, int id)
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
-        return lmap.remove(id);
+        Mob mob;
+        
+        synchronized(lmap)
+        {
+            mob = lmap.remove(id);
+        }
+        return mob;
     }
 
 
@@ -168,5 +211,4 @@ public class Room
         
         return result;
     }
-
 }
