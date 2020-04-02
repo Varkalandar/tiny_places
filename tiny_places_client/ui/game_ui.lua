@@ -92,9 +92,13 @@ local function draw()
 	
 	love.graphics.print("Wasteland", 1000, 30, 0, 2, 1)
 
+  
+	love.graphics.print("40/40", 600 - 184, 596, 0, 1, 0.5)
+	love.graphics.print("14/20", 600 + 146, 596, 0, 1, 0.5)
 	love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
-	love.graphics.print("Life", 600 - 188, 580, 0, 2, 1)
-	love.graphics.print("Mana", 600 + 132, 580, 0, 2, 1)
+	love.graphics.print("Life", 600 - 188, 576, 0, 2, 1)
+	love.graphics.print("Mana", 600 + 132, 576, 0, 2, 1)
+
 
   local scale = 0.33
   local w = gameUi.gaugeBg:getWidth() * scale
@@ -103,19 +107,27 @@ local function draw()
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
   
-  
+  local top = 610
   local shrink = 0.98 + beat * 0.02
   
 	love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(gameUi.gaugeBg, 600 - 100 - w, 600, 0, scale, scale)
-  love.graphics.draw(gameUi.gaugeRed, 600 - 100  - w + (w - w*shrink)*0.5, 600 + h - h*shrink, 0, scale * shrink, scale * shrink)
-  love.graphics.draw(gameUi.gaugeFg, 600 - 100 - w, 600, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeBg, 600 - 100 - w, top, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeRed, 600 - 100  - w + (w - w*shrink)*0.5, 
+                                      top + h - h*shrink - (1-shrink) * 10,
+                                      0, 
+                                      scale * shrink, 
+                                      scale * shrink)
+  love.graphics.draw(gameUi.gaugeFg, 600 - 100 - w, top, 0, scale, scale)
 
   local shrink = 0.7 + beat * 0.02
   
-  love.graphics.draw(gameUi.gaugeBg, 600 + 100 , 600, 0, scale, scale)
-  love.graphics.draw(gameUi.gaugeBlue, 600 + 100 + (w-w*shrink)*0.5, 600 + h - h*shrink, 0, scale * shrink, scale * shrink)
-  love.graphics.draw(gameUi.gaugeFg, 600 + 100 , 600, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeBg, 600 + 100 , top, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeBlue, 600 + 100 + (w-w*shrink)*0.5, 
+                                       top + h - h*shrink - (1-shrink) * 10,
+                                       0,
+                                       scale * shrink, 
+                                       scale * shrink)
+  love.graphics.draw(gameUi.gaugeFg, 600 + 100 , top, 0, scale, scale)
   
 	container:draw()
 end
