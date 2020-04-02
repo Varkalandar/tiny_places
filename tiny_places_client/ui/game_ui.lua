@@ -59,6 +59,11 @@ end
 local function init(mainUi, map)
 	print("Loading game ui")
 	
+  gameUi.gaugeFg = love.graphics.newImage("resources/ui/gauge_fg.png")
+  gameUi.gaugeBg = love.graphics.newImage("resources/ui/gauge_bg.png")
+  gameUi.gaugeRed = love.graphics.newImage("resources/ui/gauge_red.png")
+  gameUi.gaugeBlue = love.graphics.newImage("resources/ui/gauge_blue.png")
+  
 	cf.init()
 	gameUi.map = map
 	
@@ -87,6 +92,19 @@ local function draw()
 	
 	love.graphics.print("Wasteland", 1000, 30, 0, 2, 1)
 
+  local scale = 0.33
+  local w = gameUi.gaugeBg:getWidth() * scale
+  local h = gameUi.gaugeBg:getHeight() * scale
+  
+  love.graphics.draw(gameUi.gaugeBg, 600 - 100 - w, 600, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeRed, 600 - 100 - w, 600, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeFg, 600 - 100 - w, 600, 0, scale, scale)
+
+  local shrink = 0.8
+  love.graphics.draw(gameUi.gaugeBg, 600 + 100 , 600, 0, scale, scale)
+  love.graphics.draw(gameUi.gaugeBlue, 600 + 100 + (w-w*shrink)*0.5, 600 + h - h*shrink, 0, scale * shrink, scale * shrink)
+  love.graphics.draw(gameUi.gaugeFg, 600 + 100 , 600, 0, scale, scale)
+  
 	container:draw()
 end
 
