@@ -8,6 +8,7 @@
 local moveFactory = require("actions/move")
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
+local sounds = require("sounds")
 
 local map = {}
 
@@ -170,7 +171,7 @@ local function addMove(id, layer, x, y, speed, pattern)
   local mob = findMob(id, layer)
   mob.speed = speed
   
-  local move = moveFactory.newMove(map, mob, x, y, speed, pattern)
+  local move = moveFactory.newMove(map, mob, x, y, pattern)
   
   table.insert(actions, move)  
 end
@@ -233,7 +234,10 @@ local function init()
   map.cloudSet = cloudSet
 
   map.actions = {}
-
+  
+  sounds.init()
+  map.sounds = sounds
+  
   map.clientSocket = clientSocket
 
   -- host and port should come from a better place than this  
@@ -294,6 +298,12 @@ local function updateActions(dt)
     if v.done then
       -- print("Removing stale action: " .. v)
 		  table.remove(actions, k)
+      
+      if v.mob.type == "projectile" then
+        map.sounds.fireballHit:stop()
+        map.sounds.fireballHit:play()
+      end
+      
     end
 	end
 

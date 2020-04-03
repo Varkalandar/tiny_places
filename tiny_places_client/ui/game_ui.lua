@@ -53,6 +53,8 @@ local function fireProjectile(mob, layer, x, y)
 											 ..y..","
 											 )
 
+  map.sounds.fireballLaunch:stop()
+  map.sounds.fireballLaunch:play()
 end
 
 

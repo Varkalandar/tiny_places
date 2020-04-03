@@ -84,7 +84,7 @@ local function newMove(map, mob, x, y, pattern)
   if mob.type == "projectile" and pattern == "glide" then
     mob.zOff = 20
   end
-  
+
   return move
 end
 
