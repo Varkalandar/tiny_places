@@ -300,8 +300,16 @@ local function updateActions(dt)
 		  table.remove(actions, k)
       
       if v.mob.type == "projectile" then
-        map.sounds.fireballHit:stop()
-        map.sounds.fireballHit:play()
+        if math.random() < 0.7 then
+          map.sounds.fireballHit1:stop()
+          map.sounds.fireballHit1:setPitch(0.9 + math.random() * 0.2)
+          map.sounds.fireballHit1:play()
+        else
+          map.sounds.fireballHit2:stop()
+          map.sounds.fireballHit2:setPitch(0.9 + math.random() * 0.2)
+          map.sounds.fireballHit2:play()
+        end
+        
       end
       
     end

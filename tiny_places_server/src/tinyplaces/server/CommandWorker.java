@@ -383,7 +383,7 @@ public class CommandWorker implements ServerWorker
         int sx = client.mob.x;
         int sy = client.mob.y;
 
-        int speed = 400;
+        int speed = 300;
         
         Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         

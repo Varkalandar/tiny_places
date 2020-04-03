@@ -54,6 +54,7 @@ local function fireProjectile(mob, layer, x, y)
 											 )
 
   map.sounds.fireballLaunch:stop()
+  map.sounds.fireballLaunch:setPitch(0.8 + math.random() * 0.4)
   map.sounds.fireballLaunch:play()
 end
 

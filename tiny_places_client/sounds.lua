@@ -12,13 +12,17 @@ local sounds = {}
 local function init()
 
   local fireballLaunchData = love.sound.newSoundData("resources/sfx/fireball_launch.wav")
-  local fireballHitData = love.sound.newSoundData("resources/sfx/fireball_hit_3.wav")
+  local fireballHitData1 = love.sound.newSoundData("resources/sfx/fireball_hit_2a.wav")
+  local fireballHitData2 = love.sound.newSoundData("resources/sfx/fireball_hit_3a.wav")
 
   sounds.fireballLaunch = love.audio.newSource(fireballLaunchData)
   sounds.fireballLaunch:setVolume(0.15)
 
-  sounds.fireballHit = love.audio.newSource(fireballHitData)
-  sounds.fireballHit:setVolume(0.3)
+  sounds.fireballHit1 = love.audio.newSource(fireballHitData1)
+  sounds.fireballHit1:setVolume(0.3)
+
+  sounds.fireballHit2 = love.audio.newSource(fireballHitData2)
+  sounds.fireballHit2:setVolume(0.3)
 
 end
 
