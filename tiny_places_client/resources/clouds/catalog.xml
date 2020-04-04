@@ -338,8 +338,8 @@
       <Description>
         <version>4</version>
         <id>20</id>
-        <width>1</width>
-        <height>1</height>
+        <width>260</width>
+        <height>139</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -347,7 +347,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>light fade 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -355,8 +355,8 @@
       <Description>
         <version>4</version>
         <id>21</id>
-        <width>1</width>
-        <height>1</height>
+        <width>344</width>
+        <height>177</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -364,7 +364,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>light fade 3</string>
         <string></string>
       </Metadata>
     </Tile>

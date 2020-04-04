@@ -5,7 +5,7 @@
 -- Date: 2020/03/09
 --
 
-local moveFactory = require("actions/move")
+local moves = require("actions/move")
 local flash = require("actions/flash")
 
 local tileset = require("tileset")
@@ -173,7 +173,7 @@ local function addMove(id, layer, x, y, speed, pattern)
   local mob = findMob(id, layer)
   mob.speed = speed
   
-  local move = moveFactory.newMove(map, mob, x, y, pattern)
+  local move = moves.new(map, mob, x, y, pattern)
   
   table.insert(actions, move)  
 end
@@ -313,7 +313,7 @@ local function updateActions(dt)
           map.sounds.fireballHit2:play()
         end
         
-        local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[18].image)
+        local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[21].image)
         table.insert(actions, flash)
       end
       
@@ -365,10 +365,10 @@ local function drawTileTable(objects, set)
                          scale, scale)
 
       love.graphics.setColor(1.0, 0.8, 0.4, 0.5)
-      scale = 1.5
-      love.graphics.draw(cloudSet[18].image,
-                         mob.x - 98 * scale,
-                         mob.y - 49 * scale, 
+      scale = 0.9
+      love.graphics.draw(cloudSet[21].image,
+                         mob.x - 171 * scale,
+                         mob.y - 67 * scale, 
                          0, scale, scale)
 
 

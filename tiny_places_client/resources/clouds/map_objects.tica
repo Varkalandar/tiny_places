@@ -319,7 +319,7 @@ data
 Tile Description
 v.5
 20
-1 1
+260 139
 0 0
 0 0
 End Of Header
@@ -327,7 +327,7 @@ Item
 v.1
 data
 2
-
+light fade 2
 
 1
 0
@@ -335,7 +335,7 @@ data
 Tile Description
 v.5
 21
-1 1
+344 177
 0 0
 0 0
 End Of Header
@@ -343,7 +343,7 @@ Item
 v.1
 data
 2
-
+light fade 3
 
 1
 0

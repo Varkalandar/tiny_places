@@ -8,7 +8,7 @@
 
 local jumps = require("actions/movement_patterns/jumps")
 
-local moveFactory = {}
+local moves = {}
 
 
 local function update(move, dt)
@@ -69,7 +69,7 @@ local function update(move, dt)
 end
 
 
-local function newMove(map, mob, x, y, pattern)
+local function new(map, mob, x, y, pattern)
   local move = {}
   
   move.update = update
@@ -89,6 +89,6 @@ local function newMove(map, mob, x, y, pattern)
 end
 
 
-moveFactory.newMove = newMove
+moves.new = new
 
-return moveFactory
+return moves
