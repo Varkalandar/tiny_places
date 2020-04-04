@@ -6,6 +6,8 @@
 --
 
 local moveFactory = require("actions/move")
+local flash = require("actions/flash")
+
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
 local sounds = require("sounds")
@@ -162,7 +164,7 @@ local function addMove(id, layer, x, y, speed, pattern)
   -- check if there is alread an ongoing move
   -- if yes, remove it from the table
   for k, v in pairs(actions) do
-    if v.mob.id == id then
+    if v.mob and v.mob.id == id then
       print("Old move found in table, clearing old move ...")
       table.remove(actions, k)
     end
@@ -299,7 +301,8 @@ local function updateActions(dt)
       -- print("Removing stale action: " .. v)
 		  table.remove(actions, k)
       
-      if v.mob.type == "projectile" then
+      -- todo: cleanup
+      if v.mob and v.mob.type == "projectile" then
         if math.random() < 0.7 then
           map.sounds.fireballHit1:stop()
           map.sounds.fireballHit1:setPitch(0.9 + math.random() * 0.2)
@@ -310,6 +313,8 @@ local function updateActions(dt)
           map.sounds.fireballHit2:play()
         end
         
+        local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[18].image)
+        table.insert(actions, flash)
       end
       
     end
@@ -408,6 +413,12 @@ end
 
 local function drawObjects()
   drawTileTable(map.mobs, mobSet)
+  
+  -- there are drawable actions
+	for k, v in pairs(map.actions) do
+		if v.draw then v:draw() end
+	end
+  
 end
 
 
