@@ -12,7 +12,7 @@ the Love2d Lua game framework, the server is Java code.
 
 Instructions to build the server should be here ...
 
-    java -jar tiny_places_server/server.jar
+    java -jar tiny_places_server/dist/TinyPlacesServer.jar
 
 ## Get Love2D for Linux
 
