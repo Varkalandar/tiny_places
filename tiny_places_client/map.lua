@@ -30,6 +30,9 @@ local function clear()
   map.filename = nil
 end
 
+-- hack -- todo: cleanup
+local nextLocalId = 100000
+
 
 local function orient(mob, dx, dy)
 
@@ -157,7 +160,7 @@ end
 
 
 local function addMove(id, layer, x, y, speed, pattern)
-  print("Adding move for object with id " .. id .. " to " .. x .. ", " .. y)
+  -- print("Adding move for object with id " .. id .. " to " .. x .. ", " .. y)
 
   local actions = map.actions
   
@@ -175,21 +178,26 @@ local function addMove(id, layer, x, y, speed, pattern)
   
   local move = moves.new(map, mob, x, y, pattern)
   
-  table.insert(actions, move)  
+  table.insert(actions, move)
+
+  return move
 end
 
 
 local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
-  print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
+  -- print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
 
   local shooter, i = findMob(source, layer)
   
   
   -- there shouldbe a ptype -> tile calculation here, once
   -- there is more than one projectile type
-  local tile = 1;
+  local tile = 1
+
+  if ptype == 2 then
+    tile = 9
+  end
   
-  -- make projectile appear in front of the shooter
   local nx = dx-sx
   local ny = dy-sy
   local len = math.sqrt(nx*nx + ny*ny)
@@ -197,14 +205,32 @@ local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   nx = nx / len
   ny = ny / len
 
+  -- make projectile appear somewhere in front of the shooter
   local distance = 12
+  if ptype == 2 then
+    distance = 4
+  end
+  
   sx = sx + nx * distance * 2
   sy = sy + ny * distance
   
   shooter:orient(nx, ny)
 
-  addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", speed)
-  addMove(id, layer, dx, dy, speed, "glide")
+  local projectile = addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", speed)
+  projectile.ptype = ptype
+  
+  local pattern = "glide"
+  
+  if ptype == 2 then
+    pattern = "drop"
+  else
+    -- fire at half height of the shooter
+    projectile.zOff = 20
+  end
+  
+  local move = addMove(id, layer, dx, dy, speed, pattern)
+  
+  return projectile, move
 end
 
 
@@ -302,7 +328,7 @@ local function updateActions(dt)
 		  table.remove(actions, k)
       
       -- todo: cleanup
-      if v.mob and v.mob.type == "projectile" then
+      if v.mob and v.mob.type == "projectile" and v.mob.ptype == 1 then
         if math.random() < 0.7 then
           map.sounds.fireballHit1:stop()
           map.sounds.fireballHit1:setPitch(0.9 + math.random() * 0.2)
@@ -333,6 +359,38 @@ local function update(dt)
 end
 
 
+local function drawProjectile(mob, tile, scale)
+
+  local mode, alphamode = love.graphics.getBlendMode()
+  love.graphics.setBlendMode("add", "alphamultiply")
+
+  if mob.ptype == 1 then
+    love.graphics.setColor(1.0, 0.9, 0.5, 0.3)
+  else
+    love.graphics.setColor(1.0, 1.0, 1.0, 0.3)
+  end
+  
+  -- the projectile
+  love.graphics.draw(tile.image, 
+                     mob.x - tile.footX * scale, 
+                     mob.y - tile.footY * scale - mob.zOff, 
+                     0, 
+                     scale, scale)
+
+  if mob.ptype == 1 then
+    -- ground shine
+    love.graphics.setColor(1.0, 0.8, 0.4, 0.5)
+    scale = 0.9
+    love.graphics.draw(cloudSet[21].image,
+                       mob.x - 171 * scale,
+                       mob.y - 67 * scale, 
+                       0, scale, scale)
+
+  end
+  
+  love.graphics.setBlendMode(mode, alphamode)
+end
+
 local function drawTileTable(objects, set)
 
   for index, mob in ipairs(objects) do
@@ -352,43 +410,54 @@ local function drawTileTable(objects, set)
       tile = creatureSet[mob.displayTile]
     elseif mob.type == "projectile" then
       tile = projectileSet[mob.displayTile]
-
-      -- testing
-      local scale = mob.scale
-      local mode, alphamode = love.graphics.getBlendMode()
-      love.graphics.setColor(1.0, 0.9, 0.5, 0.3)
-      love.graphics.setBlendMode("add", "alphamultiply")
-      love.graphics.draw(tile.image, 
-                         mob.x - tile.footX * scale, 
-                         mob.y - tile.footY * scale - mob.zOff, 
-                         0, 
-                         scale, scale)
-
-      love.graphics.setColor(1.0, 0.8, 0.4, 0.5)
-      scale = 0.9
-      love.graphics.draw(cloudSet[21].image,
-                         mob.x - 171 * scale,
-                         mob.y - 67 * scale, 
-                         0, scale, scale)
-
-
-      love.graphics.setBlendMode(mode, alphamode)
-
-      -- testing end
-      
     else
       tile = set[mob.displayTile]
     end
     
     local scale = mob.scale
 	
-    if mob.type ~= "projectile" then
+    if mob.type == "projectile" then
+      drawProjectile(mob, tile, scale)
+    else
       if tile.image then
-        love.graphics.draw(tile.image, 
-                           mob.x - tile.footX * scale, 
-                           mob.y - tile.footY * scale - mob.zOff, 
-                           0, 
-                           scale, scale)
+        
+        if mob.tile == 9 then
+        -- vortex testing
+          local scale = 0.3
+          local time = love.timer.getTime() * 60
+          local time = time + (mob.x + mob.y) * 0.01
+          local tix = mob.tile + math.floor(time % 8)
+          tile = creatureSet[tix]
+          
+          love.graphics.draw(tile.image, 
+                             mob.x - tile.footX * scale, 
+                             mob.y - tile.footY * scale - mob.zOff, 
+                             0, 
+                             scale, scale)
+      
+          if math.random() < 0.9 then
+            local pid = nextLocalId
+            nextLocalId = nextLocalId + 1
+          
+            -- addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+            local projectile, move =
+              addProjectile(mob.id, pid, 3, 2, 
+                          mob.x, mob.y, 
+                          mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
+                          50 + math.random() * 300)
+                          
+            -- projectile.zOff = 20
+            projectile.zSpeed = 0.5 + math.random() * 1
+            projectile.scale = 0.5 + math.random() * 0.5
+          end
+        -- vortex testing end
+        else
+          love.graphics.draw(tile.image, 
+                             mob.x - tile.footX * scale, 
+                             mob.y - tile.footY * scale - mob.zOff, 
+                             0, 
+                             scale, scale)
+        end
       else
         print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
       end

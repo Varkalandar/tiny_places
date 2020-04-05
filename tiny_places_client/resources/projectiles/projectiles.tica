@@ -143,15 +143,15 @@ data
 Tile Description
 v.5
 9
-1 1
+8 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -159,15 +159,15 @@ data
 Tile Description
 v.5
 10
-1 1
+8 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -175,15 +175,15 @@ data
 Tile Description
 v.5
 11
-1 1
+7 6
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -191,15 +191,15 @@ data
 Tile Description
 v.5
 12
-1 1
+8 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -207,15 +207,15 @@ data
 Tile Description
 v.5
 13
-1 1
+8 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -223,15 +223,15 @@ data
 Tile Description
 v.5
 14
-1 1
+8 4
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -239,15 +239,15 @@ data
 Tile Description
 v.5
 15
-1 1
+7 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0
@@ -255,15 +255,15 @@ data
 Tile Description
 v.5
 16
-1 1
+8 5
 0 0
-0 0
+3 2
 End Of Header
 Item
 v.1
 data
 2
-
+debris
 
 1
 0

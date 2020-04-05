@@ -151,16 +151,16 @@
       <Description>
         <version>4</version>
         <id>9</id>
-        <width>1</width>
-        <height>1</height>
+        <width>105</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>110</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -168,16 +168,16 @@
       <Description>
         <version>4</version>
         <id>10</id>
-        <width>1</width>
-        <height>1</height>
+        <width>106</width>
+        <height>107</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>106</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -185,16 +185,16 @@
       <Description>
         <version>4</version>
         <id>11</id>
-        <width>1</width>
-        <height>1</height>
+        <width>107</width>
+        <height>107</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>106</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -202,16 +202,16 @@
       <Description>
         <version>4</version>
         <id>12</id>
-        <width>1</width>
-        <height>1</height>
+        <width>106</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>107</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -219,16 +219,16 @@
       <Description>
         <version>4</version>
         <id>13</id>
-        <width>1</width>
-        <height>1</height>
+        <width>105</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>108</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -236,16 +236,16 @@
       <Description>
         <version>4</version>
         <id>14</id>
-        <width>1</width>
-        <height>1</height>
+        <width>105</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>53</footX>
+        <footY>110</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -253,16 +253,16 @@
       <Description>
         <version>4</version>
         <id>15</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>55</footX>
+        <footY>109</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -270,16 +270,16 @@
       <Description>
         <version>4</version>
         <id>16</id>
-        <width>1</width>
-        <height>1</height>
+        <width>106</width>
+        <height>109</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>54</footX>
+        <footY>108</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>vortex</string>
         <string></string>
       </Metadata>
     </Tile>

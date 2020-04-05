@@ -7,6 +7,7 @@
 
 
 local jumps = require("actions/movement_patterns/jumps")
+local drops = require("actions/movement_patterns/drops")
 
 local moves = {}
 
@@ -40,6 +41,10 @@ local function update(move, dt)
     -- make it jump
     if move.pattern == "glide" then
       -- nothing to do here
+    elseif move.pattern == "drop" then
+      drops.calculate(mob, dt)
+      move.done = mob.zOff < 0
+
     else
       -- bounce is the default
       jumps.calculate(mob, dt)
@@ -54,18 +59,20 @@ local function update(move, dt)
     mob.zOff = 0
     mob.zSpeed = 0
     move.done = true
-    
-    print("Move done! id=" .. mob.id)
+  end    
+
+  if move.done then
+    -- print("Move done! id=" .. mob.id)
     
     if mob.type == "projectile" then
-      print("Removing expired projectile with id=" .. mob.id)
+      -- print("Removing expired projectile with id=" .. mob.id)
       
       -- are all projectiles on layer 3?
       move.map.deleteObject(mob.id, 3)
     
     end
-    
-  end    
+  end
+  
 end
 
 
@@ -81,10 +88,6 @@ local function new(map, mob, x, y, pattern)
 
   move.done = false
   
-  if mob.type == "projectile" and pattern == "glide" then
-    mob.zOff = 20
-  end
-
   return move
 end
 

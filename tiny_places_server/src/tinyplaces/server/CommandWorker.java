@@ -299,7 +299,7 @@ public class CommandWorker implements ServerWorker
             reader.close();
             
             // testing only
-            List <Mob> mobs = room.makeMobGroup();
+            List <Mob> mobs = room.makeMobGroup(20);
             addMobGroup(dataEvent, room, mobs);
             
         }

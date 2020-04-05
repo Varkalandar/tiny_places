@@ -196,16 +196,21 @@ public class Room
     }
 
     
-    public List <Mob> makeMobGroup()
+    public List <Mob> makeMobGroup(int spacing)
     {
         ArrayList <Mob> result = new ArrayList<Mob>();
         
         for(int i=0; i<7; i++)
         {
-            int x = 200 + (int)(Math.random() * 100);
-            int y = 300 + (int)(Math.random() * 100);
+            int x = 300 + spacing * 2 * (int)(Math.random() * 5);
+            int y = 300 + spacing * (int)(Math.random() * 5);
 
-            Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
+            // Imps
+            // Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
+            
+            // Vortices
+            Mob mob = makeMob(3, 9, x, y, 1.0f, "1 0.9 0.6 1", Mob.TYPE_CREATURE);
+            
             result.add(mob);
         }
         
