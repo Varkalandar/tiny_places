@@ -62,6 +62,8 @@ end
 local function init(mainUi, map)
 	print("Loading game ui")
 	
+  gameUi.areaImage = love.graphics.newImage("resources/ui/area_cut.png")
+  
   gameUi.gaugeFg = love.graphics.newImage("resources/ui/gauge_fg.png")
   gameUi.gaugeBg = love.graphics.newImage("resources/ui/gauge_bg.png")
   gameUi.gaugeRed = love.graphics.newImage("resources/ui/gauge_red.png")
@@ -89,49 +91,48 @@ local function update(dt)
 end
 
 
+local function drawGauge(x, y, filler, shrink, title, numbers)
+
+	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
+
+  local scale = 0.33
+  local w = gameUi.gaugeBg:getWidth() * scale
+  local h = gameUi.gaugeBg:getHeight() * scale
+
+  love.graphics.draw(gameUi.gaugeBg, x, y+30, 0, scale, scale)
+  love.graphics.draw(filler, x + (w - w*shrink)*0.5, 
+                                      y + 30 + h - h*shrink - (1-shrink) * 10,
+                                      0, 
+                                      scale * shrink, 
+                                      scale * shrink)
+  love.graphics.draw(gameUi.gaugeFg, x, y+30, 0, scale, scale)
+
+ 	love.graphics.print(numbers, x + 5, y+20, 0, 1, 0.5)
+	love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
+	love.graphics.print(title, x + 5, y, 0, 2, 1)
+
+end
+
+
 local function draw()
 	love.graphics.setColor(1.0, 1.0, 1.0)
 	love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
 	
 	love.graphics.print("Wasteland", 1000, 30, 0, 2, 1)
 
-  
-	love.graphics.print("40/40", 600 - 184, 596, 0, 1, 0.5)
-	love.graphics.print("14/20", 600 + 146, 596, 0, 1, 0.5)
-	love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
-	love.graphics.print("Life", 600 - 188, 576, 0, 2, 1)
-	love.graphics.print("Mana", 600 + 132, 576, 0, 2, 1)
-
-
-  local scale = 0.33
-  local w = gameUi.gaugeBg:getWidth() * scale
-  local h = gameUi.gaugeBg:getHeight() * scale
-
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
   
-  local top = 610
   local shrink = 0.98 + beat * 0.02
-  
-	love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(gameUi.gaugeBg, 600 - 100 - w, top, 0, scale, scale)
-  love.graphics.draw(gameUi.gaugeRed, 600 - 100  - w + (w - w*shrink)*0.5, 
-                                      top + h - h*shrink - (1-shrink) * 10,
-                                      0, 
-                                      scale * shrink, 
-                                      scale * shrink)
-  love.graphics.draw(gameUi.gaugeFg, 600 - 100 - w, top, 0, scale, scale)
+
+  drawGauge(5, 360, gameUi.gaugeRed, shrink, "Life", "40/40") 
 
   local shrink = 0.7 + beat * 0.02
   
-  love.graphics.draw(gameUi.gaugeBg, 600 + 100 , top, 0, scale, scale)
-  love.graphics.draw(gameUi.gaugeBlue, 600 + 100 + (w-w*shrink)*0.5, 
-                                       top + h - h*shrink - (1-shrink) * 10,
-                                       0,
-                                       scale * shrink, 
-                                       scale * shrink)
-  love.graphics.draw(gameUi.gaugeFg, 600 + 100 , top, 0, scale, scale)
-  
+  drawGauge(140, 430, gameUi.gaugeBlue, shrink, "Mana", "16/40") 
+
+	love.graphics.setColor(1.0, 1.0, 1.0)
+  love.graphics.draw(gameUi.areaImage, 840, 500, 0, 0.5, 0.5)
 	container:draw()
 end
 
