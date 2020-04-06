@@ -286,8 +286,9 @@ end
 local function update(dt)
   local delta = editorUi.mainUi.wheelDelta * 0.01
 
-  if editorUi.selectedMob then
+  if editorUi.selectedMob and delta ~= 0 then
     editorUi.selectedMob.scale = editorUi.selectedMob.scale + delta
+    sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
   end
   
   if editorUi.previewMob then
