@@ -330,19 +330,29 @@ local function updateActions(dt)
       -- todo: cleanup
       if v.mob and v.mob.type == "projectile" and v.mob.ptype == 1 then
         if math.random() < 0.7 then
-          map.sounds.fireballHit1:stop()
-          map.sounds.fireballHit1:setPitch(0.9 + math.random() * 0.2)
-          map.sounds.fireballHit1:play()
+          map.sounds.randplay(map.sounds.fireballHit1, 1, 0.1)
         else
-          map.sounds.fireballHit2:stop()
-          map.sounds.fireballHit2:setPitch(0.9 + math.random() * 0.2)
-          map.sounds.fireballHit2:play()
+          map.sounds.randplay(map.sounds.fireballHit2, 1, 0.1)
         end
         
-        local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[21].image)
+        -- make flash appear a bit in front of target
+        local flash = flash.new(v.mob.x, v.mob.y+10, cloudSet[21].image)
         table.insert(actions, flash)
       end
       
+      if v.mob and v.mob.type == "projectile" and v.mob.ptype == 2 then
+        if math.random() < 0.2 then
+          if math.random() < 0.5 then
+            map.sounds.randplay(map.sounds.debrisHit1, 2.5, 1.8)
+          else
+            map.sounds.randplay(map.sounds.debrisHit2, 2.5, 1.8)
+          end
+        end
+        
+        -- local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[21].image)
+        -- table.insert(actions, flash)
+      end
+
     end
 	end
 
@@ -367,7 +377,9 @@ local function drawProjectile(mob, tile, scale)
   if mob.ptype == 1 then
     love.graphics.setColor(1.0, 0.9, 0.5, 0.3)
   else
-    love.graphics.setColor(1.0, 1.0, 1.0, 0.3)
+    -- love.graphics.setColor(1.0, 1.0, 1.0, 0.3)
+    local color = mob.color
+    love.graphics.setColor(color.r, color.g, color.b, color.a)
   end
   
   -- the projectile
@@ -435,7 +447,7 @@ local function drawTileTable(objects, set)
                              0, 
                              scale, scale)
       
-          if math.random() < 0.9 then
+          if math.random() < 0.2 then
             local pid = nextLocalId
             nextLocalId = nextLocalId + 1
           
@@ -446,9 +458,13 @@ local function drawTileTable(objects, set)
                           mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
                           50 + math.random() * 300)
                           
-            -- projectile.zOff = 20
+            projectile.color.r = 0.2 + math.random() * 0.2
+            projectile.color.g = 0.2 + math.random() * 0.1
+            projectile.color.b = 0.2 + math.random() * 0.1
+            projectile.color.a = 0.8 + math.random() * 0.2
+            
             projectile.zSpeed = 0.5 + math.random() * 1
-            projectile.scale = 0.5 + math.random() * 0.5
+            projectile.scale = 0.2 + math.random() * 0.6
           end
         -- vortex testing end
         else

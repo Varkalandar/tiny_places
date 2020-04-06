@@ -55,6 +55,8 @@ public class MapWorker implements Runnable
                 {
                     actions.removeAll(killList);
                 }
+                
+                room.aiCall();
             }
             
             lastTime = now;

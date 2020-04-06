@@ -1,5 +1,7 @@
 package tinyplaces.server.isomap;
 
+import tinyplaces.server.CommandWorker;
+
 /**
  * Client representation on server side.
  * 

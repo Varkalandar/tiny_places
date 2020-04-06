@@ -121,6 +121,10 @@ public class CommandWorker implements ServerWorker
         {
             fireProjectile(dataEvent, command);
         }
+        else if(command.startsWith("GAME"))
+        {
+            startGame(dataEvent, command);
+        }
         else if(command.startsWith("SAVE"))
         {
             saveMap(dataEvent, command);
@@ -150,6 +154,9 @@ public class CommandWorker implements ServerWorker
         
         // log in new client .. no authentification currently
         // clients all arrive in the lobby right now
+        Room.LOBBY.setCommandWorker(this);
+        Room.LOBBY.setServer(dataEvent.server);
+        
         clients.put(dataEvent.socket, new Client(Room.LOBBY));
     }
 
@@ -229,14 +236,21 @@ public class CommandWorker implements ServerWorker
         int layer = Integer.parseInt(parts[2]);
 		
         Mob mob = room.getMob(layer, id);
-        
-        mob.tile = Integer.parseInt(parts[3]);
-        mob.x = Integer.parseInt(parts[4]);
-        mob.y = Integer.parseInt(parts[5]);
-        mob.scale = Float.parseFloat(parts[6]);
-        mob.color = parts[7].trim();
-        
-        roomcast(dataEvent.server, command, room);
+
+        if(mob != null)
+        {
+            mob.tile = Integer.parseInt(parts[3]);
+            mob.x = Integer.parseInt(parts[4]);
+            mob.y = Integer.parseInt(parts[5]);
+            mob.scale = Float.parseFloat(parts[6]);
+            mob.color = parts[7].trim();
+
+            roomcast(dataEvent.server, command, room);
+        }
+        else
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, "Could not find mob for id={0}", id);
+        }
     }
 	
 
@@ -297,11 +311,6 @@ public class CommandWorker implements ServerWorker
             }
             
             reader.close();
-            
-            // testing only
-            List <Mob> mobs = room.makeMobGroup(20);
-            addMobGroup(dataEvent, room, mobs);
-            
         }
         catch (IOException ex) 
         {
@@ -334,7 +343,12 @@ public class CommandWorker implements ServerWorker
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        
+
+        doMove(room, id, layer, dx, dy, speed, "bounce");
+    }
+
+    public void doMove(Room room, int id, int layer, int dx, int dy, int speed, String pattern)
+    {
         Mob mob = room.getMob(layer, id);
 
         Move move = new Move(mob, layer, dx, dy, speed);
@@ -360,12 +374,31 @@ public class CommandWorker implements ServerWorker
             }
         }
         
+        String command =
+                "MOVE," +
+                id + "," +
+                layer + "," +
+                dx + "," +
+                dy + "," +
+                speed + "," + 
+                pattern + "\n"
+                ;
+
         room.addAction(move);
-        
-        roomcast(dataEvent.server, command.trim() + "," + speed + "\n", room);
+        roomcast(room.getServer(), command, room);
     }
 
+    private void startGame(ServerDataEvent dataEvent, String command) 
+    {
+        System.err.println("GAME from " + dataEvent.socket);
 
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+
+        List <Mob> mobs = room.makeMobGroup(20);
+        addMobGroup(dataEvent, room, mobs);
+    }
+    
     private void fireProjectile(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("FIRE from " + dataEvent.socket);
@@ -379,17 +412,22 @@ public class CommandWorker implements ServerWorker
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-
-        int sx = client.mob.x;
-        int sy = client.mob.y;
+        
+        fireProjectile(room, client.mob, layer, type, dx, dy);
+    }
+        
+    public void fireProjectile(Room room, Mob mob, int layer, int type, int dx, int dy)   
+    {
+        int sx = mob.x;
+        int sy = mob.y;
 
         int speed = 300;
         
         Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         
-        command = 
+        String command = 
                 "FIRE," +
-                client.mob.id + "," +
+                mob.id + "," +
                 projectile.id + "," +
                 layer + "," +
                 type + "," +
@@ -402,7 +440,7 @@ public class CommandWorker implements ServerWorker
         Move move = new Move(projectile, layer, dx, dy, speed);
         room.addAction(move);
         
-        roomcast(dataEvent.server, command, room);
+        roomcast(room.getServer(), command, room);
     }
 
     /**
@@ -410,7 +448,7 @@ public class CommandWorker implements ServerWorker
      * @param server
      * @param message 
      */
-    private void roomcast(Server server, String message, Room room)
+    public void roomcast(Server server, String message, Room room)
     {
         byte [] data = message.getBytes();
         Set <SocketChannel> keys = clients.keySet();

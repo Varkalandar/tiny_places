@@ -128,7 +128,8 @@ local function processCommands(commands)
         local x = tonumber(args())
         local y = tonumber(args())
         local speed = tonumber(args())
-        map.addMove(id, layer, x, y, speed, "bounce")
+        local pattern = args()
+        map.addMove(id, layer, x, y, speed, pattern)
 		
       elseif cmd == "ADDP" then
         local id = tonumber(args())

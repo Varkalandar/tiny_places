@@ -17,6 +17,8 @@ public class Mob
     public float scale;
     public String color;
     public int type;
+    public int speed = 120;
+    public long nextAiTime;
     
     @Override
     public boolean equals(Object o) {

@@ -5,11 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tinyplaces.server.CommandWorker;
+import tinyplaces.server.Server;
 import tinyplaces.server.isomap.actions.MapAction;
 
 
@@ -30,8 +33,13 @@ public class Room
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
     
     private final ArrayList<MapAction> actions = new ArrayList<MapAction>(256);
-
-
+    private final ArrayList<CreatureGroup> groups = new ArrayList<CreatureGroup>(32);
+    
+    
+    private CommandWorker commandWorker;
+    private Server server;
+    
+    
     public static ArrayList<Room> rooms()
     {
         return rooms;
@@ -160,6 +168,10 @@ public class Room
         patches.clear();
         mobs.clear();
         clouds.clear();
+        
+        actions.clear();
+        groups.clear();
+        
         this.backdrop = backdrop;
     }
 
@@ -202,18 +214,100 @@ public class Room
         
         for(int i=0; i<7; i++)
         {
-            int x = 300 + spacing * 2 * (int)(Math.random() * 5);
-            int y = 300 + spacing * (int)(Math.random() * 5);
+            int x = 300 + spacing * 2 * (int)(Math.random() * 5 - 2.5);
+            int y = 350 + spacing * (int)(Math.random() * 5 - 2.5);
 
             // Imps
             // Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
             
             // Vortices
             Mob mob = makeMob(3, 9, x, y, 1.0f, "1 0.9 0.6 1", Mob.TYPE_CREATURE);
+            mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
+            mob.speed = 20;
             
             result.add(mob);
         }
         
+        CreatureGroup creatureGroup = new CreatureGroup(result, 300, 350);
+        groups.add(creatureGroup);
+        
+        
         return result;
     }
+    
+    /*
+     * Todo: Move this to a better place someday?
+     */
+    public void aiCall()
+    {
+        long time = System.currentTimeMillis();
+        
+        for(CreatureGroup group : groups)
+        {
+            for(Mob creature : group.creatures)
+            {
+                if(creature.nextAiTime < time)
+                {
+                    // fire at a player?
+                    if(Math.random() < 0.75)
+                    {
+                        ArrayList<Mob> moblist = new ArrayList<Mob>  (mobs.values());
+                        // find a player
+                        for(Mob mob : moblist)
+                        {
+                            if(mob.type == Mob.TYPE_PLAYER)
+                            {
+                                commandWorker.fireProjectile(this, creature, 3, 1, mob.x, mob.y);
+                            }
+                        }
+                    }
+                    
+                    // move
+                    int x, y, len;
+                    int count = 0;
+                            
+                    do
+                    {
+                        x = creature.x + 100 - (int)(Math.random() * 200);
+                        y = creature.y + 100 - (int)(Math.random() * 200);
+                        
+                        int dx = (x - group.cx);
+                        int dy = (y - group.cy);
+                        
+                        len = dx * dx + (dy * dy) * 4;
+                        count ++;
+                        
+                        // System.err.println("len=" + len);
+                    } while(len > 100 * 100 && count < 5);
+
+                    if(count >= 5)
+                    {
+                        x = group.cx + 50 - (int)(Math.random() * 100);
+                        y = group.cy + 50 - (int)(Math.random() * 100);
+                    }
+                    
+                    // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
+                    commandWorker.doMove(this, creature.id, 3, x, y, creature.speed, "glide");
+                    
+                    creature.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
+                }
+            }
+        }
+    }
+
+    public void setCommandWorker(CommandWorker commandWorker) 
+    {
+        this.commandWorker = commandWorker;
+    }
+
+    public void setServer(Server server) 
+    {
+        this.server = server;
+    }
+
+    public Server getServer() 
+    {
+        return server;
+    }
+
 }
