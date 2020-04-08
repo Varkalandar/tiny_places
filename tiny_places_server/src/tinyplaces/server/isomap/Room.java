@@ -257,7 +257,8 @@ public class Room
                         {
                             if(mob.type == Mob.TYPE_PLAYER)
                             {
-                                commandWorker.fireProjectile(this, creature, 3, 1, mob.x, mob.y);
+                                // commandWorker.fireProjectile(this, creature, 3, 1, mob.x, mob.y);
+                                commandWorker.fireProjectile(this, creature, 3, 3, mob.x, mob.y);
                             }
                         }
                     }

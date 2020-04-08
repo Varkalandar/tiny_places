@@ -5,19 +5,22 @@
 -- Date: 2020/04/04
 --
 
-local flash = {}
+local flashes = {}
 
 
-local function new(x, y, image)
+local function new(x, y, image, r, g, b)
   local newflash = 
   {
     x=x, 
     y=y, 
+    r=r,
+    g=g,
+    b=b,
     image = image,
     age = 0,
     done = false,
-    draw = flash.draw,
-    update = flash.update
+    draw = flashes.draw,
+    update = flashes.update
   }
   return newflash
 end
@@ -33,7 +36,7 @@ local function draw(flash)
   local scale = 0.9 + flash.age * 0.4
   
   local mode, alphamode = love.graphics.getBlendMode()
-  love.graphics.setColor(1.0, 0.9, 0.5, 1 / (1+flash.age*8))
+  love.graphics.setColor(flash.r, flash.g, flash.b, 1 / (1+flash.age*8))
   love.graphics.setBlendMode("add", "alphamultiply")
   love.graphics.draw(flash.image, 
                      flash.x - flash.image:getWidth() * scale * 0.5, 
@@ -45,8 +48,8 @@ local function draw(flash)
 end
 
 
-flash.new = new
-flash.update = update
-flash.draw = draw
+flashes.new = new
+flashes.update = update
+flashes.draw = draw
 
-return flash
+return flashes

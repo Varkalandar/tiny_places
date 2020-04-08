@@ -6,7 +6,7 @@
 --
 
 local moves = require("actions/move")
-local flash = require("actions/flash")
+local flashes = require("actions/flash")
 
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
@@ -184,7 +184,7 @@ local function addMove(id, layer, x, y, speed, pattern)
 end
 
 
-local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   -- print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
 
   local shooter, i = findMob(source, layer)
@@ -193,9 +193,13 @@ local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   -- there shouldbe a ptype -> tile calculation here, once
   -- there is more than one projectile type
   local tile = 1
-
+  local color = "1 1 1 1"
+  
   if ptype == 2 then
     tile = 9
+  elseif ptype == 3 then
+    tile = 17
+    color = "1 0.8 0.1 0.8"
   end
   
   local nx = dx-sx
@@ -209,6 +213,8 @@ local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   local distance = 12
   if ptype == 2 then
     distance = 4
+  elseif ptype == 3 then
+    distance = 8
   end
   
   sx = sx + nx * distance * 2
@@ -216,13 +222,18 @@ local function addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   
   shooter:orient(nx, ny)
 
-  local projectile = addObject(id, layer, tile, sx, sy, 1, "1 1 1 1", "projectile", speed)
+  local projectile = addObject(id, layer, tile, sx, sy, 1, color, "projectile", speed)
   projectile.ptype = ptype
   
   local pattern = "glide"
   
   if ptype == 2 then
     pattern = "drop"
+    
+  elseif ptype == 3 then
+    pattern = "spin"
+    projectile.scale = 0.18
+    
   else
     -- fire at half height of the shooter
     projectile.zOff = 20
@@ -327,20 +338,34 @@ local function updateActions(dt)
       -- print("Removing stale action: " .. v)
 		  table.remove(actions, k)
       
+      local mob = v.mob
+      
       -- todo: cleanup
-      if v.mob and v.mob.type == "projectile" and v.mob.ptype == 1 then
-        if math.random() < 0.7 then
-          map.sounds.randplay(map.sounds.fireballHit1, 1, 0.1)
+      if mob and mob.type == "projectile" and (mob.ptype == 1 or mob.ptype == 3) then
+      
+        if mob.ptype == 1 then
+          if math.random() < 0.7 then
+            map.sounds.randplay(map.sounds.fireballHit1, 1, 0.1)
+          else
+            map.sounds.randplay(map.sounds.fireballHit2, 1, 0.1)
+          end
         else
-          map.sounds.randplay(map.sounds.fireballHit2, 1, 0.1)
+          map.sounds.randplay(map.sounds.vortexBang1, 1.2, 0.2)
         end
         
         -- make flash appear a bit in front of target
-        local flash = flash.new(v.mob.x, v.mob.y+10, cloudSet[21].image)
+        local flash
+
+        if mob.ptype == 1 then
+          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.7, 0.4)
+        else
+          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.9, 0.4)
+        end
+        
         table.insert(actions, flash)
       end
       
-      if v.mob and v.mob.type == "projectile" and v.mob.ptype == 2 then
+      if mob and mob.type == "projectile" and mob.ptype == 2 then
         if math.random() < 0.2 then
           if math.random() < 0.5 then
             map.sounds.randplay(map.sounds.debrisHit1, 2.5, 1.8)
@@ -375,7 +400,9 @@ local function drawProjectile(mob, tile, scale)
   love.graphics.setBlendMode("add", "alphamultiply")
 
   if mob.ptype == 1 then
-    love.graphics.setColor(1.0, 0.9, 0.5, 0.3)
+    love.graphics.setColor(1.0, 0.8, 0.5, 0.3)
+  elseif mob.ptype == 3 then
+    love.graphics.setColor(1.0, 0.9, 0.4, 0.5)
   else
     -- love.graphics.setColor(1.0, 1.0, 1.0, 0.3)
     local color = mob.color
@@ -389,15 +416,24 @@ local function drawProjectile(mob, tile, scale)
                      0, 
                      scale, scale)
 
-  if mob.ptype == 1 then
+  local ptype = mob.ptype
+  if ptype == 1 then 
     -- ground shine
-    love.graphics.setColor(1.0, 0.8, 0.4, 0.5)
+    love.graphics.setColor(1.0, 0.7, 0.4, 0.5)
     scale = 0.9
     love.graphics.draw(cloudSet[21].image,
                        mob.x - 171 * scale,
                        mob.y - 67 * scale, 
                        0, scale, scale)
-
+  elseif ptype == 3 then
+    -- ground shine
+    love.graphics.setColor(1.0, 0.85, 0.5, 0.4)
+    scale = 0.4
+    love.graphics.draw(cloudSet[21].image,
+                       mob.x - 171 * scale,
+                       mob.y - 67 * scale, 
+                       0, scale, scale)
+  
   end
   
   love.graphics.setBlendMode(mode, alphamode)
@@ -451,9 +487,9 @@ local function drawTileTable(objects, set)
             local pid = nextLocalId
             nextLocalId = nextLocalId + 1
           
-            -- addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+            -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
             local projectile, move =
-              addProjectile(mob.id, pid, 3, 2, 
+              fireProjectile(mob.id, pid, 3, 2, 
                           mob.x, mob.y, 
                           mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
                           50 + math.random() * 300)
@@ -527,6 +563,6 @@ map.updateObject = updateObject
 map.deleteObject = deleteObject
 map.selectObject = selectObject
 map.addMove = addMove
-map.addProjectile = addProjectile
+map.fireProjectile = fireProjectile
 
 return map;

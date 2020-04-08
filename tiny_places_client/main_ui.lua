@@ -153,7 +153,7 @@ local function processCommands(commands)
         local dx = tonumber(args())
         local dy = tonumber(args())
         local speed = tonumber(args())
-        map.addProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+        map.fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
       end
     end
   end

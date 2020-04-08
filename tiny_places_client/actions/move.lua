@@ -45,6 +45,11 @@ local function update(move, dt)
       drops.calculate(mob, dt)
       move.done = mob.zOff < 0
 
+    elseif move.pattern == "spin" then
+      local time = mob.id * 0.123 + love.timer.getTime() * 60 * 0.02
+      local tix = mob.tile + math.floor(time % 8)
+      mob.displayTile = tix
+
     else
       -- bounce is the default
       jumps.calculate(mob, dt)
