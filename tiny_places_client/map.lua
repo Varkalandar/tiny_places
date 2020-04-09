@@ -14,6 +14,7 @@ local sounds = require("sounds")
 
 local map = {}
 
+
 -- layer tilesets
 local patchSet = {}
 local mobSet = {}
@@ -30,7 +31,7 @@ local function clear()
   map.filename = nil
 end
 
--- hack -- todo: cleanup
+-- hack for client only ids -- todo: cleanup
 local nextLocalId = 100000
 
 
@@ -349,13 +350,9 @@ local function updateActions(dt)
       if mob and mob.type == "projectile" and (mob.ptype == 1 or mob.ptype == 3) then
       
         if mob.ptype == 1 then
-          if math.random() < 0.7 then
-            map.sounds.randplay(map.sounds.fireballHit1, 1, 0.1)
-          else
-            map.sounds.randplay(map.sounds.fireballHit2, 1, 0.1)
-          end
+            map.sounds.randplay2(map.sounds.fireballHit1, map.sounds.fireballHit2, 0.7, 1, 0.1)
         else
-          map.sounds.randplay(map.sounds.vortexBang1, 1.2, 0.2)
+          map.sounds.randplay2(map.sounds.vortexBang1, map.sounds.vortexBang2, 0.5, 1.0, 0.2)
         end
         
         -- make flash appear a bit in front of target
@@ -372,15 +369,8 @@ local function updateActions(dt)
       
       if mob and mob.type == "projectile" and mob.ptype == 2 then
         if math.random() < 0.2 then
-          if math.random() < 0.5 then
-            map.sounds.randplay(map.sounds.debrisHit1, 2.5, 1.8)
-          else
-            map.sounds.randplay(map.sounds.debrisHit2, 2.5, 1.8)
-          end
+            map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.5, 1.8)
         end
-        
-        -- local flash = flash.new(v.mob.x, v.mob.y - v.mob.zOff, cloudSet[21].image)
-        -- table.insert(actions, flash)
       end
 
     end
