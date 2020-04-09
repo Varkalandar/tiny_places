@@ -188,26 +188,40 @@ public class Server implements Runnable
         }
         catch (IOException e)
         {
+            // signal error condition
+            bytesRead = -2;
+        }
+
+        int bufferBytes = bytesRead;
+        if(bytesRead < 0)
+        {
+            // purge remaining unsent data
+            this.pendingData.remove(socketChannel);
+            
+            readBuffer.put("GBYE,".getBytes());
+            readBuffer.flip();
+            bufferBytes = readBuffer.limit();
+        }
+        
+        // hand the data to the worker thread for processing
+        this.worker.processData(this, socketChannel, readBuffer.array(), bufferBytes);
+
+        if(bytesRead == -2)
+        {
             // The remote forcibly closed the connection, cancel
             // the selection key and close the channel.
             key.cancel();
             socketChannel.close();
-            
-            return;
         }
 
-        if (bytesRead == -1)
+        if(bytesRead == -1)
         {
             // Remote entity shut the socket down cleanly. Do the
             // same from our end and cancel the channel.
             key.channel().close();
             key.cancel();
-            
-            return;
         }
 
-        // hand the data to the worker thread for processing
-        this.worker.processData(this, socketChannel, readBuffer.array(), bytesRead);
     }
 
     

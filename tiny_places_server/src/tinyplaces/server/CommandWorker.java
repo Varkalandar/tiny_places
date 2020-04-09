@@ -125,6 +125,10 @@ public class CommandWorker implements ServerWorker
         {
             startGame(dataEvent, command);
         }
+        else if(command.startsWith("GBYE"))
+        {
+            logoutClient(dataEvent, command);
+        }
         else if(command.startsWith("SAVE"))
         {
             saveMap(dataEvent, command);
@@ -158,6 +162,33 @@ public class CommandWorker implements ServerWorker
         Room.LOBBY.setServer(dataEvent.server);
         
         clients.put(dataEvent.socket, new Client(Room.LOBBY));
+    }
+
+    
+    private void logoutClient(ServerDataEvent dataEvent, String command)
+    {
+        System.err.println("GBYE from " + dataEvent.socket);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        Object test;
+        
+        test = room.removeMob(3, client.mob.id);
+        if(test == null)
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
+                    "Logout problem: client avatar was not in room.");
+        }
+        
+        test = clients.remove(dataEvent.socket);
+        if(test == null)
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
+                    "Logout problem: client was not in list.");
+        }
+        
+        Logger.getLogger(CommandWorker.class.getName()).log(Level.INFO, 
+                "Remaining clients: {0}", clients.size());
     }
 
     
@@ -265,7 +296,7 @@ public class CommandWorker implements ServerWorker
         int id = Integer.parseInt(parts[1].trim());
         int layer = Integer.parseInt(parts[2].trim());
 		
-        room.deleteMob(layer, id);
+        room.removeMob(layer, id);
         
         roomcast(dataEvent.server, command, room);
     }

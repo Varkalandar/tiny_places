@@ -79,7 +79,7 @@ public class Move implements MapAction
             if(mob.type == Mob.TYPE_PROJECTILE)
             {
                 // System.err.println("Removing expired projectile with id=" + mob.id);
-                room.deleteMob(layer, mob.id);
+                room.removeMob(layer, mob.id);
             }
         }
     }

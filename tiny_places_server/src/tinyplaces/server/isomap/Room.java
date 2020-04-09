@@ -104,7 +104,8 @@ public class Room
         return lmap.get(id);
     }
 
-    public Mob deleteMob(int layer, int id)
+    
+    public Mob removeMob(int layer, int id)
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
         Mob mob;
