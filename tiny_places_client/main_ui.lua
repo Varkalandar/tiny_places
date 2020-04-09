@@ -115,7 +115,7 @@ local function processCommands(commands)
       elseif cmd == "DELM" then
         local id = tonumber(args())
         local layer = tonumber(args())
-        map.deleteObject(id, layer)
+        map.removeObject(id, layer)
         
       elseif cmd == "LOAD" then
         local backdrop = args()

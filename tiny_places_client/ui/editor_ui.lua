@@ -82,7 +82,7 @@ local function setModeMove(x, y, pressed)
     btDelete.pressed = false
     
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
   end
@@ -97,7 +97,7 @@ local function setModeDelete(x, y, pressed)
     btDelete.pressed = true
 
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
   end
@@ -135,7 +135,7 @@ local function selectPatchLayer(x, y, pressed)
     tileChooserPopup.init(editorUi.mainUi, editorUi.map.patchSet)
     
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
     
@@ -153,7 +153,7 @@ local function selectMobLayer(x, y, pressed)
     tileChooserPopup.init(editorUi.mainUi, editorUi.map.mobSet)
     
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
     
@@ -171,7 +171,7 @@ local function selectCloudLayer(x, y, pressed)
     tileChooserPopup.init(editorUi.mainUi, editorUi.map.cloudSet)
     
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
     
@@ -185,7 +185,7 @@ local function switchToGameUi()
   if not pressed then
   
     if editorUi.previewMob then
-      editorUi.map.deleteObject(editorUi.previewMob.id, editorUi.activeLayer)
+      editorUi.map.removeObject(editorUi.previewMob.id, editorUi.activeLayer)
       editorUi.previewMob = nil
     end
 

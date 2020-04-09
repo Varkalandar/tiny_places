@@ -73,7 +73,7 @@ local function update(move, dt)
       -- print("Removing expired projectile with id=" .. mob.id)
       
       -- are all projectiles on layer 3?
-      move.map.deleteObject(mob.id, 3)
+      move.map.removeObject(mob.id, 3)
     
     end
   end

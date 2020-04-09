@@ -22,33 +22,35 @@ import tinyplaces.server.isomap.actions.MapAction;
  */
 public class Room 
 {
-    private static final ArrayList<Room> rooms = new ArrayList<Room> (256);
-    public static final Room LOBBY = new Room();
+    private static final HashMap<String, Room> rooms = new HashMap<String, Room>(64);
 
     private int nextObjectId = 1;
     
-    private String backdrop;
     private final HashMap <Integer, Mob> patches = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> mobs = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
     
     private final ArrayList<MapAction> actions = new ArrayList<MapAction>(256);
     private final ArrayList<CreatureGroup> groups = new ArrayList<CreatureGroup>(32);
-    
-    
+
     private CommandWorker commandWorker;
     private Server server;
     
+    public final String name;
+    public final String backdrop;
     
-    public static ArrayList<Room> rooms()
+    
+    public static HashMap<String, Room> getRooms()
     {
         return rooms;
     }
 
 
-    public Room()
+    public Room(String name, String backdrop)
     {
-        rooms.add(this);
+        this.name = name;
+        this.backdrop = backdrop;
+        rooms.put(name, this);
     }
 
     
@@ -67,7 +69,7 @@ public class Room
     }
 
     
-    private HashMap <Integer, Mob> getLayerMap(int layer)
+    public HashMap <Integer, Mob> getLayerMap(int layer)
     {
         switch(layer)
         {
@@ -78,10 +80,11 @@ public class Room
             case 5:
                 return clouds;
             default:
-                Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "No such layer: " + layer);
+                Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "No such layer: {0}", layer);
                 return null;
         }
     }
+    
     
     public int getNextObjectId()
     {
@@ -163,7 +166,7 @@ public class Room
         }
     }
 
-    
+    /*
     public void init(String backdrop) 
     {
         patches.clear();
@@ -175,7 +178,7 @@ public class Room
         
         this.backdrop = backdrop;
     }
-
+*/
 
     public Mob makeMob(String [] parts)
     {

@@ -1,6 +1,7 @@
 package tinyplaces.server.isomap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import tinyplaces.server.isomap.actions.MapAction;
 
@@ -30,12 +31,12 @@ public class MapWorker implements Runnable
             long now = System.currentTimeMillis();
             int dt = (int)(now - lastTime);
             
-            List<Room> rooms = Room.rooms();
+            HashMap<String, Room> rooms = Room.getRooms();
 
             // System.err.println("MapWorker: dt=" + dt);
             // System.err.println("MapWorker: room count:" + rooms.size());
 
-            for(Room room : rooms)
+            for(Room room : rooms.values())
             {
                 List <MapAction> actions = room.getActions();
                 List <MapAction> killList = new ArrayList<MapAction>();

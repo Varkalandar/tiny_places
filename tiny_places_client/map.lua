@@ -113,8 +113,11 @@ end
 
 
 local function addObject(id, layer, tile, x, y, scale, color, ctype, speed)
-  print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
-
+  
+  if(id < 100000) then -- do not log client-only objects
+    print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
+  end
+  
   -- tile should be constant, displayTile can change during animations
   local mob = {id = id, tile = tile, displayTile = tile,
                x = x, y = y, scale = scale, 
@@ -147,8 +150,10 @@ local function updateObject(id, layer, tile, x, y, scale, color)
 end
 
 
-local function deleteObject(id, layer)
-  print("Removing object with id " .. id .. " from layer " .. layer)
+local function removeObject(id, layer)
+  if(id < 100000) then -- do not log client-only objects
+    print("Removing object with id " .. id .. " from layer " .. layer)
+  end
   
   local mob, i = findMob(id, layer)
 
@@ -560,7 +565,7 @@ map.clear = clear
 map.load = load
 map.addObject = addObject
 map.updateObject = updateObject
-map.deleteObject = deleteObject
+map.removeObject = removeObject
 map.selectObject = selectObject
 map.addMove = addMove
 map.fireProjectile = fireProjectile

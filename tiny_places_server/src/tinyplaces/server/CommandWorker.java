@@ -7,6 +7,7 @@ import tinyplaces.server.isomap.Client;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class CommandWorker implements ServerWorker
     // client map
     private final Map <SocketChannel, Client> clients = new HashMap();
     
+    private Room lobby;
     
     @Override
     public void processData(Server server, SocketChannel socket, byte[] data, int bytes)
@@ -49,6 +51,8 @@ public class CommandWorker implements ServerWorker
     @Override
     public void run()
     {
+        lobby = new Room("lobby", "lobby_bg.png");
+        
         while(true)
         {
             try
@@ -158,10 +162,10 @@ public class CommandWorker implements ServerWorker
         
         // log in new client .. no authentification currently
         // clients all arrive in the lobby right now
-        Room.LOBBY.setCommandWorker(this);
-        Room.LOBBY.setServer(dataEvent.server);
+        lobby.setCommandWorker(this);
+        lobby.setServer(dataEvent.server);
         
-        clients.put(dataEvent.socket, new Client(Room.LOBBY));
+        clients.put(dataEvent.socket, new Client(lobby));
     }
 
     
@@ -216,7 +220,7 @@ public class CommandWorker implements ServerWorker
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        String [] parts = command.split(",");
+        String [] parts = command.trim().split(",");
 
         Mob mob = room.makeMob(parts);
         mob.type = Mob.TYPE_PLAYER;
@@ -226,7 +230,7 @@ public class CommandWorker implements ServerWorker
         
         // reply with ADDP to sender only
 
-        String message = "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6];
+        String message = "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "\n";
         byte [] data = message.getBytes();
         
         SocketChannel senderSocket = dataEvent.socket;
@@ -237,7 +241,7 @@ public class CommandWorker implements ServerWorker
 
         message = "ADDM," + mob.id + "," + 
                 parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "," +
-                "2";
+                "2\n";
         data = message.getBytes();
 
         Set <SocketChannel> keys = clients.keySet();
@@ -318,13 +322,90 @@ public class CommandWorker implements ServerWorker
         System.err.println("LOAD from " + dataEvent.socket);
 
         Client client = clients.get(dataEvent.socket);
-        Room room = client.getCurrentRoom();
-
+        
+        // Room room = client.getCurrentRoom();
+        
         String [] parts = command.split(",");
         String filename = parts[1].trim();
-        String mapName = filename + ".txt";        
-        File file = new File("maps", mapName);
+
+        // check if the room is already loaded
+        HashMap<String, Room> rooms = Room.getRooms();
+        Room room = rooms.get(filename);
+
+        if(room == null)
+        {
+            // room not loaded yet -> load it
+            room = loadRoom(filename);
+
+            room.setCommandWorker(this);
+            room.setServer(dataEvent.server);
+            
+            client.setCurrentRoom(room);
+            roomcast(dataEvent.server, "LOAD," + room.backdrop + "," + filename + "\n", room);
+            
+            serveRoom(dataEvent, room);
+        }
+        else
+        {
+            // room is already loaded -> join it
+            client.setCurrentRoom(room);
+            serveRoom(dataEvent, room);
+        }
+    }
+
+    
+    private void serveRoom(ServerDataEvent dataEvent, Room room)
+    {
+        for(int layer = 1; layer < 6; layer += 2)
+        {
+            HashMap <Integer, Mob> map = room.getLayerMap(layer);
+            Collection <Mob> mobs = map.values();
+            
+            for(Mob mob : mobs)
+            {
+                String command = makeAddMobCommand(mob, layer);
+
+                singlecast(dataEvent, command);
+            }
+        }
+    }
+
+    
+    private Room loadRoom(String filename)
+    {
+        String mapname = filename + ".txt";        
+        File file = new File("maps", mapname);
+
+        Room result = null;
         
+        try 
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+
+            // map backdrop
+            line = reader.readLine();
+            result = new Room(filename, line);
+            while((line = reader.readLine()) != null)
+            {
+                System.err.println(line);
+                
+                String [] parts = ("ADDM," + line).split(",");
+                
+                result.makeMob(parts);
+                
+                // addMob(dataEvent, "ADDM," + line + ",0\n");
+            }
+            
+            reader.close();
+        }
+        catch (IOException ex) 
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+/*        
         try 
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -347,6 +428,9 @@ public class CommandWorker implements ServerWorker
         {
             Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
+    
+        return result;
     }
 
     
@@ -427,7 +511,7 @@ public class CommandWorker implements ServerWorker
         Room room = client.getCurrentRoom();
 
         List <Mob> mobs = room.makeMobGroup(20);
-        addMobGroup(dataEvent, room, mobs);
+        addMobGroup(dataEvent, room, mobs, 3);    
     }
     
     private void fireProjectile(ServerDataEvent dataEvent, String command) 
@@ -474,6 +558,12 @@ public class CommandWorker implements ServerWorker
         roomcast(room.getServer(), command, room);
     }
 
+    public void singlecast(ServerDataEvent dataEvent, String message)
+    {
+        byte [] data = message.getBytes();
+        dataEvent.server.send(dataEvent.socket, data);
+    }
+    
     /**
      * Send a message to all clients in the given room
      * @param server
@@ -511,21 +601,30 @@ public class CommandWorker implements ServerWorker
         }
     }
 
-    private void addMobGroup(ServerDataEvent dataEvent, Room room, List <Mob> mobs) 
+    
+    private String makeAddMobCommand(Mob mob, int layer)
+    {
+        String command =
+                "ADDM," +
+                mob.id + "," +
+                layer + "," +
+                mob.tile + "," +
+                mob.x + "," +
+                mob.y + "," +
+                mob.scale + "," +
+                mob.color + "," +
+                mob.type +
+                "\n";
+
+        return command;
+    }
+    
+    
+    private void addMobGroup(ServerDataEvent dataEvent, Room room, Collection <Mob> mobs, int layer) 
     {
         for(Mob mob : mobs)
         {
-            String command =
-                    "ADDM," +
-                    mob.id + "," +
-                    "3," +
-                    mob.tile + "," +
-                    mob.x + "," +
-                    mob.y + "," +
-                    mob.scale + "," +
-                    mob.color + "," +
-                    mob.type +
-                    "\n";
+            String command = makeAddMobCommand(mob, layer);
         
             roomcast(dataEvent.server, command, room);
         }
