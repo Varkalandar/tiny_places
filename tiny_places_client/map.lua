@@ -350,7 +350,7 @@ local function updateActions(dt)
       if mob and mob.type == "projectile" and (mob.ptype == 1 or mob.ptype == 3) then
       
         if mob.ptype == 1 then
-            map.sounds.randplay2(map.sounds.fireballHit1, map.sounds.fireballHit2, 0.7, 1, 0.1)
+          map.sounds.randplay2(map.sounds.fireballHit1, map.sounds.fireballHit2, 0.7, 1, 0.1)
         else
           map.sounds.randplay2(map.sounds.vortexBang1, map.sounds.vortexBang2, 0.5, 1.0, 0.2)
         end
@@ -369,7 +369,7 @@ local function updateActions(dt)
       
       if mob and mob.type == "projectile" and mob.ptype == 2 then
         if math.random() < 0.2 then
-            map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.5, 1.8)
+          map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.5, 1.8)
         end
       end
 
