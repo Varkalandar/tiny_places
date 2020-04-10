@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.CommandWorker;
 import tinyplaces.server.Server;
+import tinyplaces.server.ServerDataEvent;
 import tinyplaces.server.isomap.actions.MapAction;
 
 
@@ -128,10 +129,12 @@ public class Room
             File file = new File("maps", filename);
             FileWriter writer = new FileWriter(file);
             
+            writer.write("v10\n");
+            writer.write(name + "\n");
             writer.write(backdrop + "\n");
-            save(writer, 1);
-            save(writer, 3);
-            save(writer, 5);
+            saveLayer(writer, 1);
+            saveLayer(writer, 3);
+            saveLayer(writer, 5);
             
             writer.close();
         }
@@ -142,7 +145,7 @@ public class Room
     }
     
     
-    private void save(Writer writer, int layer) throws IOException 
+    private void saveLayer(Writer writer, int layer) throws IOException 
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
 
@@ -292,7 +295,7 @@ public class Room
                     }
                     
                     // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
-                    commandWorker.doMove(this, creature.id, 3, x, y, creature.speed, "glide");
+                    commandWorker.doMove(null, this, creature.id, 3, x, y, creature.speed, "glide");
                     
                     creature.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                 }
@@ -313,6 +316,14 @@ public class Room
     public Server getServer() 
     {
         return server;
+    }
+
+    /**
+     * Transit player to a new room
+     */ 
+    void transit(ServerDataEvent dataEvent, Mob mob, String roomname) 
+    {
+        commandWorker.transit(dataEvent, mob, this, roomname);
     }
 
 }

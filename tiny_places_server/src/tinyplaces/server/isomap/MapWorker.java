@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import tinyplaces.server.isomap.actions.MapAction;
+import tinyplaces.server.isomap.actions.Move;
 
 /**
  * Worker thread to process ongoing actions.
@@ -43,13 +44,22 @@ public class MapWorker implements Runnable
 
                 // System.err.println("MapWorker: action count:" + actions.size());
                 
-                for(MapAction action : actions)
+                synchronized(actions)
                 {
-                   action.process(room, dt);
-                   if(action.isDone())
-                   {
-                       killList.add(action);
-                   }
+                    for(MapAction action : actions)
+                    {
+                       action.process(room, dt);
+                       if(action.isDone())
+                       {
+                           killList.add(action);
+                       }
+                    }
+                }
+
+                for(MapAction action : killList)
+                {
+                    // hack - this needs some proper implementation
+                    checkMapTransition(room, action);
                 }
                 
                 synchronized(actions)
@@ -61,6 +71,23 @@ public class MapWorker implements Runnable
             }
             
             lastTime = now;
+        }
+    }
+
+    private void checkMapTransition(Room room, MapAction action) 
+    {
+        if("Lobby".equals(room.name) && (action instanceof Move))
+        {
+            Move move = (Move)action;
+            int dx = move.x - 837;
+            int dy = move.y - 168;
+            int d2 = dx * dx + dy * dy;
+            
+            // monsters have no data event ... cannot transit to another room
+            if(d2 < 250 && move.dataEvent != null)
+            {
+                room.transit(move.dataEvent, move.mob, "wasteland_and_pond");
+            }
         }
     }
 }

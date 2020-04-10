@@ -24,8 +24,7 @@ public class Client
         this.currentRoom = room;
     }
     
-    public Client(Room room)
+    public Client()
     {
-        currentRoom = room;
     }
 }

@@ -29,7 +29,9 @@ local function clear()
   map.patches = {}
   map.clouds = {}
   map.filename = nil
+  map.name = "unnamed"
 end
+
 
 -- hack for client only ids -- todo: cleanup
 local nextLocalId = 100000
@@ -251,7 +253,11 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
 end
 
 
-local function load(backdrop, filename)
+local function load(name, backdrop, filename)
+  print("loading map '" .. name .. "' with backdrop '" .. backdrop .. "'")
+  
+  map.clear()
+  map.name = name
   map.image = love.graphics.newImage("resources/map/" .. backdrop .. ".png")
   map.filename = filename
 end
@@ -267,7 +273,7 @@ local function init()
   projectileSet = tileset.readSet("resources/projectiles/", "projectiles.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   
-  load("map_wasteland", nil)
+  load("Wasteland", "map_wasteland", "")
 
   map.bumpmap = love.graphics.newImage("resources/map/map_bumps.png")
   map.mobs = {}
@@ -293,8 +299,8 @@ local function init()
   
   -- load the starting map
   -- map.clientSocket.send("LOAD,green_and_pond")
-  map.clientSocket.send("LOAD,wasteland_and_pond")
-
+  -- map.clientSocket.send("LOAD,wasteland_and_pond")
+  map.clientSocket.send("LOAD,lobby")
 end
 
 

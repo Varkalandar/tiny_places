@@ -559,16 +559,16 @@
       <Description>
         <version>4</version>
         <id>33</id>
-        <width>1</width>
-        <height>1</height>
+        <width>141</width>
+        <height>102</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>49</footX>
+        <footY>71</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>wasteland_patch</string>
         <string></string>
       </Metadata>
     </Tile>

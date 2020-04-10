@@ -54,7 +54,7 @@ end
 local function init()
   map.init()      
 
-	print("Loading main ui")
+	print("Initializing main ui")
 	
 	mainUi.image = love.graphics.newImage("resources/ui/main_ui.png")
 	mainUi.lmbState = love.mouse.isDown(1)
@@ -118,9 +118,10 @@ local function processCommands(commands)
         map.removeObject(id, layer)
         
       elseif cmd == "LOAD" then
+        local name = args()
         local backdrop = args()
         local filename = args()
-        map.load(backdrop, filename)
+        map.load(name, backdrop, filename)
 
       elseif cmd == "MOVE" then
         local id = tonumber(args())

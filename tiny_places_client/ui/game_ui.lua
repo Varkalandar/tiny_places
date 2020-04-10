@@ -118,7 +118,7 @@ local function draw()
 	love.graphics.setColor(1.0, 1.0, 1.0)
 	love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
 	
-	love.graphics.print("Wasteland", 1000, 30, 0, 2, 1)
+	love.graphics.print(gameUi.map.name, 1000, 30, 0, 2, 1)
 
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)

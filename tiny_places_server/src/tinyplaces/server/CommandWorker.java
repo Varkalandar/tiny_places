@@ -33,8 +33,6 @@ public class CommandWorker implements ServerWorker
     // client map
     private final Map <SocketChannel, Client> clients = new HashMap();
     
-    private Room lobby;
-    
     @Override
     public void processData(Server server, SocketChannel socket, byte[] data, int bytes)
     {
@@ -51,8 +49,6 @@ public class CommandWorker implements ServerWorker
     @Override
     public void run()
     {
-        lobby = new Room("lobby", "lobby_bg.png");
-        
         while(true)
         {
             try
@@ -160,12 +156,7 @@ public class CommandWorker implements ServerWorker
     {
         System.err.println("HELO from " + dataEvent.socket);
         
-        // log in new client .. no authentification currently
-        // clients all arrive in the lobby right now
-        lobby.setCommandWorker(this);
-        lobby.setServer(dataEvent.server);
-        
-        clients.put(dataEvent.socket, new Client(lobby));
+        clients.put(dataEvent.socket, new Client());
     }
 
     
@@ -341,13 +332,14 @@ public class CommandWorker implements ServerWorker
             room.setServer(dataEvent.server);
             
             client.setCurrentRoom(room);
-            roomcast(dataEvent.server, "LOAD," + room.backdrop + "," + filename + "\n", room);
+            roomcast(dataEvent.server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
             
             serveRoom(dataEvent, room);
         }
         else
         {
             // room is already loaded -> join it
+            singlecast(dataEvent, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
             client.setCurrentRoom(room);
             serveRoom(dataEvent, room);
         }
@@ -381,11 +373,14 @@ public class CommandWorker implements ServerWorker
         try 
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
 
-            // map backdrop
-            line = reader.readLine();
-            result = new Room(filename, line);
+            String version = reader.readLine();
+            String roomname = reader.readLine();
+            String backdrop = reader.readLine();
+
+            result = new Room(roomname, backdrop);
+            
+            String line;
             while((line = reader.readLine()) != null)
             {
                 System.err.println(line);
@@ -404,32 +399,6 @@ public class CommandWorker implements ServerWorker
             Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
-/*        
-        try 
-        {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-
-            // map backdrop
-            line = reader.readLine();
-            room.init(line);            
-            roomcast(dataEvent.server, "LOAD," + line + "," + filename + "\n", room);
-            
-            while((line = reader.readLine()) != null)
-            {
-                System.err.println(line);
-                addMob(dataEvent, "ADDM," + line + ",0\n");
-            }
-            
-            reader.close();
-        }
-        catch (IOException ex) 
-        {
-            Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-    
         return result;
     }
 
@@ -459,14 +428,15 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
 
-        doMove(room, id, layer, dx, dy, speed, "bounce");
+        doMove(dataEvent, room, id, layer, dx, dy, speed, "bounce");
     }
 
-    public void doMove(Room room, int id, int layer, int dx, int dy, int speed, String pattern)
+    public void doMove(ServerDataEvent dataEvent,
+                       Room room, int id, int layer, int dx, int dy, int speed, String pattern)
     {
         Mob mob = room.getMob(layer, id);
 
-        Move move = new Move(mob, layer, dx, dy, speed);
+        Move move = new Move(dataEvent, mob, layer, dx, dy, speed);
         
         // check and cancel former move ...
         List <MapAction> actions = room.getActions();
@@ -503,15 +473,40 @@ public class CommandWorker implements ServerWorker
         roomcast(room.getServer(), command, room);
     }
 
+    
+    public void transit(ServerDataEvent dataEvent, Mob mob, Room from, String roomname) 
+    {
+        from.removeMob(3, mob.id);
+        
+        String command = "LOAD," + roomname + "\n";
+        
+        loadMap(dataEvent, command);
+
+        command =
+            "ADDP," + 
+            "3," + // layer
+	    "1," + // tile id
+	    "360," + // x pos
+	    "480," + // y pos
+	    "1.0," + // scale factor
+            "1.0 1.0 1.0 1.0"; // color string
+
+        addPlayer(dataEvent, command);
+        
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+
+        List <Mob> mobs = room.makeMobGroup(20);
+        addMobGroup(dataEvent, room, mobs, 3);    
+    }
+    
+    
     private void startGame(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("GAME from " + dataEvent.socket);
 
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-
-        List <Mob> mobs = room.makeMobGroup(20);
-        addMobGroup(dataEvent, room, mobs, 3);    
     }
     
     private void fireProjectile(ServerDataEvent dataEvent, String command) 
@@ -552,7 +547,7 @@ public class CommandWorker implements ServerWorker
                 dy + "," +
                 speed + "\n";
 
-        Move move = new Move(projectile, layer, dx, dy, speed);
+        Move move = new Move(null, projectile, layer, dx, dy, speed);
         room.addAction(move);
         
         roomcast(room.getServer(), command, room);
@@ -629,5 +624,4 @@ public class CommandWorker implements ServerWorker
             roomcast(dataEvent.server, command, room);
         }
     }
-
 }
