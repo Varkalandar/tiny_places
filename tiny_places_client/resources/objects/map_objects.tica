@@ -8223,15 +8223,15 @@ data
 Tile Description
 v.5
 502
-1 1
+107 69
 0 0
-0 0
+50 43
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 1
 
 1
 0
@@ -8239,15 +8239,15 @@ data
 Tile Description
 v.5
 503
-1 1
+120 102
 0 0
-0 0
+52 69
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 2
 
 1
 0
@@ -8255,15 +8255,15 @@ data
 Tile Description
 v.5
 504
-1 1
+107 94
 0 0
-0 0
+40 63
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 3
 
 1
 0
@@ -8271,15 +8271,15 @@ data
 Tile Description
 v.5
 505
-1 1
+24 54
 0 0
-0 0
+11 51
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall pillar 1
 
 1
 0
@@ -8287,15 +8287,15 @@ data
 Tile Description
 v.5
 506
-1 1
+120 189
 0 0
-0 0
+51 155
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 4
 
 1
 0
@@ -8303,15 +8303,15 @@ data
 Tile Description
 v.5
 507
-1 1
+24 142
 0 0
-0 0
+12 138
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall pillar 2
 
 1
 0
@@ -8319,15 +8319,15 @@ data
 Tile Description
 v.5
 508
-1 1
+107 94
 0 0
-0 0
+65 64
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 5
 
 1
 0
@@ -8335,15 +8335,15 @@ data
 Tile Description
 v.5
 509
-1 1
+120 102
 0 0
-0 0
+66 70
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 6
 
 1
 0
@@ -8351,15 +8351,15 @@ data
 Tile Description
 v.5
 510
-1 1
+107 69
 0 0
-0 0
+48 46
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 7
 
 1
 0
@@ -8367,15 +8367,15 @@ data
 Tile Description
 v.5
 511
-1 1
+120 190
 0 0
-0 0
+68 157
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 8
 
 1
 0

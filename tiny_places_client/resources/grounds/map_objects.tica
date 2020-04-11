@@ -79,15 +79,15 @@ data
 Tile Description
 v.5
 5
-1 1
+82 48
 0 0
-0 0
+13 38
 End Of Header
 Item
 v.1
 data
 2
-
+grass border 1
 
 1
 0
@@ -95,15 +95,15 @@ data
 Tile Description
 v.5
 6
-1 1
+82 48
 0 0
-0 0
+67 44
 End Of Header
 Item
 v.1
 data
 2
-
+grass border 2
 
 1
 0
@@ -785,7 +785,7 @@ v.5
 49
 216 108
 0 0
-107 107
+107 52
 End Of Header
 Item
 v.1
@@ -799,15 +799,15 @@ roman_tiles
 Tile Description
 v.5
 50
-1 1
+216 108
 0 0
-0 0
+104 51
 End Of Header
 Item
 v.1
 data
 2
-
+dark roman tiles
 
 1
 0

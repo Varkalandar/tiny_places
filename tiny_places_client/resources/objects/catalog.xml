@@ -8736,16 +8736,16 @@
       <Description>
         <version>4</version>
         <id>502</id>
-        <width>1</width>
-        <height>1</height>
+        <width>107</width>
+        <height>69</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>50</footX>
+        <footY>43</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8753,16 +8753,16 @@
       <Description>
         <version>4</version>
         <id>503</id>
-        <width>1</width>
-        <height>1</height>
+        <width>120</width>
+        <height>102</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>69</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8770,16 +8770,16 @@
       <Description>
         <version>4</version>
         <id>504</id>
-        <width>1</width>
-        <height>1</height>
+        <width>107</width>
+        <height>94</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>40</footX>
+        <footY>63</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8787,16 +8787,16 @@
       <Description>
         <version>4</version>
         <id>505</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>54</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>11</footX>
+        <footY>51</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall pillar 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8804,16 +8804,16 @@
       <Description>
         <version>4</version>
         <id>506</id>
-        <width>1</width>
-        <height>1</height>
+        <width>120</width>
+        <height>189</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>51</footX>
+        <footY>155</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8821,16 +8821,16 @@
       <Description>
         <version>4</version>
         <id>507</id>
-        <width>1</width>
-        <height>1</height>
+        <width>24</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>12</footX>
+        <footY>138</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall pillar 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8838,16 +8838,16 @@
       <Description>
         <version>4</version>
         <id>508</id>
-        <width>1</width>
-        <height>1</height>
+        <width>107</width>
+        <height>94</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>65</footX>
+        <footY>64</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8855,16 +8855,16 @@
       <Description>
         <version>4</version>
         <id>509</id>
-        <width>1</width>
-        <height>1</height>
+        <width>120</width>
+        <height>102</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>66</footX>
+        <footY>70</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 6</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8872,16 +8872,16 @@
       <Description>
         <version>4</version>
         <id>510</id>
-        <width>1</width>
-        <height>1</height>
+        <width>107</width>
+        <height>69</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>48</footX>
+        <footY>46</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 7</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8889,16 +8889,16 @@
       <Description>
         <version>4</version>
         <id>511</id>
-        <width>1</width>
-        <height>1</height>
+        <width>120</width>
+        <height>190</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>68</footX>
+        <footY>157</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>rough wall 8</string>
         <string></string>
       </Metadata>
     </Tile>

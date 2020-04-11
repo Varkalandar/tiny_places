@@ -83,16 +83,16 @@
       <Description>
         <version>4</version>
         <id>5</id>
-        <width>1</width>
-        <height>1</height>
+        <width>82</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>38</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grass border 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -100,16 +100,16 @@
       <Description>
         <version>4</version>
         <id>6</id>
-        <width>1</width>
-        <height>1</height>
+        <width>82</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>67</footX>
+        <footY>44</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>grass border 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -836,7 +836,7 @@
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>107</footX>
-        <footY>107</footY>
+        <footY>52</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -848,16 +848,16 @@
       <Description>
         <version>4</version>
         <id>50</id>
-        <width>1</width>
-        <height>1</height>
+        <width>216</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>104</footX>
+        <footY>51</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dark roman tiles</string>
         <string></string>
       </Metadata>
     </Tile>
