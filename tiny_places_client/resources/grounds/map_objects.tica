@@ -431,15 +431,15 @@ data
 Tile Description
 v.5
 27
-1 1
+236 104
 0 0
-0 0
+77 101
 End Of Header
 Item
 v.1
 data
 2
-
+soft tree shadow
 
 1
 0
@@ -447,15 +447,15 @@ data
 Tile Description
 v.5
 28
-1 1
+267 115
 0 0
-0 0
+67 114
 End Of Header
 Item
 v.1
 data
 2
-
+tree shadow 1
 
 1
 0
@@ -783,15 +783,15 @@ data
 Tile Description
 v.5
 49
-1 1
+216 108
 0 0
-0 0
+107 107
 End Of Header
 Item
 v.1
 data
 2
-
+roman_tiles
 
 1
 0

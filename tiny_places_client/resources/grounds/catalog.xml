@@ -457,16 +457,16 @@
       <Description>
         <version>4</version>
         <id>27</id>
-        <width>1</width>
-        <height>1</height>
+        <width>236</width>
+        <height>104</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>77</footX>
+        <footY>101</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>soft tree shadow</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -474,16 +474,16 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>267</width>
+        <height>115</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>67</footX>
+        <footY>114</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tree shadow 1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -831,16 +831,16 @@
       <Description>
         <version>4</version>
         <id>49</id>
-        <width>1</width>
-        <height>1</height>
+        <width>216</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>107</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>roman_tiles</string>
         <string></string>
       </Metadata>
     </Tile>
