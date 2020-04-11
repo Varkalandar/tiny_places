@@ -302,6 +302,30 @@ local function update(dt)
     end
   end
   
+  if mode == "move" then  
+    if editorUi.selectedMob then
+      if love.keyboard.isDown("up") then
+        editorUi.selectedMob.y = editorUi.selectedMob.y - 1
+        sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
+      end
+      if love.keyboard.isDown("down") then
+        editorUi.selectedMob.y = editorUi.selectedMob.y + 1
+        sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
+      end
+    
+      if love.keyboard.isDown("left") then
+        editorUi.selectedMob.x = editorUi.selectedMob.x - 1
+        sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
+      end
+      if love.keyboard.isDown("right") then
+        editorUi.selectedMob.x = editorUi.selectedMob.x + 1
+        sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
+      end
+      
+    end
+    
+  
+  end
 end
 
 
