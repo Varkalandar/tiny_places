@@ -75,10 +75,10 @@ local function init(mainUi, map)
 	-- add player to the map
 	gameUi.map.clientSocket.send("ADDP," -- add a player
 														.."3,"
-														.."1,"  -- tile id
+														.."9,"  -- tile id (1 = globo, 9 = spectre)
 														.."600,"   -- x pos
 														.."400,"   -- y pos
-														.."1.0,"   -- scale factor
+														.."0.35,"   -- scale factor (globos = 1.0, spectre 0.35)
 														.."1.0 1.0 1.0 1.0"
 														)  
 														

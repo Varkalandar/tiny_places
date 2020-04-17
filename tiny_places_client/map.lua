@@ -471,39 +471,56 @@ local function drawTileTable(objects, set)
       if tile.image then
         
         if mob.tile == 9 then
-        -- vortex testing
-          local scale = 0.3
-          local time = love.timer.getTime() * 60
-          local time = time + (mob.x + mob.y) * 0.01
-          local tix = mob.tile + math.floor(time % 8)
-          tile = creatureSet[tix]
-          
-          love.graphics.draw(tile.image, 
+          if mob.type == "player" then
+            -- spectre testing
+            local mode, alphamode = love.graphics.getBlendMode()
+            love.graphics.setColor(0.5, 0.5, 0.6)
+            love.graphics.setBlendMode("add", "alphamultiply")
+            
+            love.graphics.draw(tile.image, 
                              mob.x - tile.footX * scale, 
                              mob.y - tile.footY * scale - mob.zOff, 
                              0, 
                              scale, scale)
-      
-          if math.random() < 0.2 then
-            local pid = nextLocalId
-            nextLocalId = nextLocalId + 1
-          
-            -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
-            local projectile, move =
-              fireProjectile(mob.id, pid, 3, 2, 
-                          mob.x, mob.y, 
-                          mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
-                          50 + math.random() * 300)
-                          
-            projectile.color.r = 0.2 + math.random() * 0.2
-            projectile.color.g = 0.2 + math.random() * 0.1
-            projectile.color.b = 0.2 + math.random() * 0.1
-            projectile.color.a = 0.8 + math.random() * 0.2
             
-            projectile.zSpeed = 0.5 + math.random() * 1
-            projectile.scale = 0.2 + math.random() * 0.6
+            love.graphics.setBlendMode(mode, alphamode)
+            
+            -- spectre testing end
+          else
+            -- vortex testing
+            local scale = 0.3
+            local time = love.timer.getTime() * 60
+            local time = time + (mob.x + mob.y) * 0.01
+            local tix = mob.tile + math.floor(time % 8)
+            tile = creatureSet[tix]
+            
+            love.graphics.draw(tile.image, 
+                               mob.x - tile.footX * scale, 
+                               mob.y - tile.footY * scale - mob.zOff, 
+                               0, 
+                               scale, scale)
+        
+            if math.random() < 0.2 then
+              local pid = nextLocalId
+              nextLocalId = nextLocalId + 1
+            
+              -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+              local projectile, move =
+                fireProjectile(mob.id, pid, 3, 2, 
+                            mob.x, mob.y, 
+                            mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
+                            50 + math.random() * 300)
+                            
+              projectile.color.r = 0.2 + math.random() * 0.2
+              projectile.color.g = 0.2 + math.random() * 0.1
+              projectile.color.b = 0.2 + math.random() * 0.1
+              projectile.color.a = 0.8 + math.random() * 0.2
+              
+              projectile.zSpeed = 0.5 + math.random() * 1
+              projectile.scale = 0.2 + math.random() * 0.6
+            end
+            -- vortex testing end
           end
-        -- vortex testing end
         else
           love.graphics.draw(tile.image, 
                              mob.x - tile.footX * scale, 

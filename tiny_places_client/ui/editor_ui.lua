@@ -321,10 +321,7 @@ local function update(dt)
         editorUi.selectedMob.x = editorUi.selectedMob.x + 1
         sendUpdateMob(editorUi.selectedMob, editorUi.activeLayer)
       end
-      
     end
-    
-  
   end
 end
 

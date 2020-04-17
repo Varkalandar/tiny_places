@@ -151,16 +151,16 @@
       <Description>
         <version>4</version>
         <id>9</id>
-        <width>1</width>
-        <height>1</height>
+        <width>70</width>
+        <height>111</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>28</footX>
+        <footY>111</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -168,16 +168,16 @@
       <Description>
         <version>4</version>
         <id>10</id>
-        <width>1</width>
-        <height>1</height>
+        <width>75</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>31</footX>
+        <footY>108</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -185,16 +185,16 @@
       <Description>
         <version>4</version>
         <id>11</id>
-        <width>1</width>
-        <height>1</height>
+        <width>77</width>
+        <height>106</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>38</footX>
+        <footY>106</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -202,16 +202,16 @@
       <Description>
         <version>4</version>
         <id>12</id>
-        <width>1</width>
-        <height>1</height>
+        <width>75</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>108</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -219,16 +219,16 @@
       <Description>
         <version>4</version>
         <id>13</id>
-        <width>1</width>
-        <height>1</height>
+        <width>69</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>40</footX>
+        <footY>109</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -236,16 +236,16 @@
       <Description>
         <version>4</version>
         <id>14</id>
-        <width>1</width>
-        <height>1</height>
+        <width>75</width>
+        <height>112</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>111</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -253,16 +253,16 @@
       <Description>
         <version>4</version>
         <id>15</id>
-        <width>1</width>
-        <height>1</height>
+        <width>77</width>
+        <height>113</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>38</footX>
+        <footY>112</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -270,16 +270,16 @@
       <Description>
         <version>4</version>
         <id>16</id>
-        <width>1</width>
-        <height>1</height>
+        <width>75</width>
+        <height>112</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>32</footX>
+        <footY>111</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>cone spectre</string>
         <string></string>
       </Metadata>
     </Tile>
