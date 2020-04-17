@@ -73,16 +73,30 @@ local function init(mainUi, map)
 	gameUi.map = map
 	
 	-- add player to the map
-	gameUi.map.clientSocket.send("ADDP," -- add a player
-														.."3,"
-														.."9,"  -- tile id (1 = globo, 9 = spectre)
-														.."600,"   -- x pos
-														.."400,"   -- y pos
-														.."0.35,"   -- scale factor (globos = 1.0, spectre 0.35)
-														.."1.0 1.0 1.0 1.0"
-														)  
+  
+  -- a globo
+  --[[
+  gameUi.map.clientSocket.send("ADDP,"    -- add a player
+                               .."3,"     -- layer
+                               .."1,"     -- tile id (1 = globo, 9 = spectre)
+                               .."600,"   -- x pos
+                               .."400,"   -- y pos
+                               .."1,"     -- scale factor (globos = 1.0, spectre 0.35)
+                               .."1.0 1.0 1.0 1.0"
+                               )  
+  ]]
+  
+  -- a spectre  
+  gameUi.map.clientSocket.send("ADDP,"     -- add a player
+                               .."3,"      -- layer
+                               .."9,"      -- tile id (1 = globo, 9 = spectre)
+                               .."600,"    -- x pos
+                               .."400,"    -- y pos
+                               .."0.35,"   -- scale factor (globos = 1.0, spectre 0.35)
+                               .."1.0 1.0 1.0 1.0"
+                               )  
 														
-	-- this will set gameUi.playerMob when receiving the data from the server
+	-- the APPP will set gameUi.playerMob when receiving the response from the server
 end
 
 

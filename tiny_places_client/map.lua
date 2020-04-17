@@ -395,6 +395,40 @@ local function update(dt)
 end
 
 
+local function drawPlayer(mob, tile, scale)
+  if mob.tile == 9 then
+    -- spectre testing
+    local mode, alphamode = love.graphics.getBlendMode()
+    love.graphics.setBlendMode("add", "alphamultiply")
+    
+    love.graphics.setColor(0.5, 0.5, 0.6, 1)
+    love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+    
+    -- ground shine
+    love.graphics.setColor(0.5, 0.5, 0.6, 0.2)
+    -- scale = 0.9
+    love.graphics.draw(cloudSet[21].image,
+                       mob.x - 171 * scale,
+                       mob.y - 67 * scale, 
+                       0, scale, scale)
+
+    love.graphics.setBlendMode(mode, alphamode)
+    
+     -- spectre testing end
+  else
+    love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+  end
+end
+
+
 local function drawProjectile(mob, tile, scale)
 
   local mode, alphamode = love.graphics.getBlendMode()
@@ -440,6 +474,7 @@ local function drawProjectile(mob, tile, scale)
   love.graphics.setBlendMode(mode, alphamode)
 end
 
+
 local function drawTileTable(objects, set)
 
   for index, mob in ipairs(objects) do
@@ -467,60 +502,44 @@ local function drawTileTable(objects, set)
 	
     if mob.type == "projectile" then
       drawProjectile(mob, tile, scale)
+    else if mob.type == "player" then
+      drawPlayer(mob, tile, scale)
     else
       if tile.image then
-        
         if mob.tile == 9 then
-          if mob.type == "player" then
-            -- spectre testing
-            local mode, alphamode = love.graphics.getBlendMode()
-            love.graphics.setColor(0.5, 0.5, 0.6)
-            love.graphics.setBlendMode("add", "alphamultiply")
-            
-            love.graphics.draw(tile.image, 
+          -- vortex testing
+          local scale = 0.3
+          local time = love.timer.getTime() * 60
+          local time = time + (mob.x + mob.y) * 0.01
+          local tix = mob.tile + math.floor(time % 8)
+          tile = creatureSet[tix]
+          
+          love.graphics.draw(tile.image, 
                              mob.x - tile.footX * scale, 
                              mob.y - tile.footY * scale - mob.zOff, 
                              0, 
                              scale, scale)
+      
+          if math.random() < 0.2 then
+            local pid = nextLocalId
+            nextLocalId = nextLocalId + 1
+          
+            -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+            local projectile, move =
+              fireProjectile(mob.id, pid, 3, 2, 
+                          mob.x, mob.y, 
+                          mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
+                          50 + math.random() * 300)
+                          
+            projectile.color.r = 0.2 + math.random() * 0.2
+            projectile.color.g = 0.2 + math.random() * 0.1
+            projectile.color.b = 0.2 + math.random() * 0.1
+            projectile.color.a = 0.8 + math.random() * 0.2
             
-            love.graphics.setBlendMode(mode, alphamode)
-            
-            -- spectre testing end
-          else
-            -- vortex testing
-            local scale = 0.3
-            local time = love.timer.getTime() * 60
-            local time = time + (mob.x + mob.y) * 0.01
-            local tix = mob.tile + math.floor(time % 8)
-            tile = creatureSet[tix]
-            
-            love.graphics.draw(tile.image, 
-                               mob.x - tile.footX * scale, 
-                               mob.y - tile.footY * scale - mob.zOff, 
-                               0, 
-                               scale, scale)
-        
-            if math.random() < 0.2 then
-              local pid = nextLocalId
-              nextLocalId = nextLocalId + 1
-            
-              -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
-              local projectile, move =
-                fireProjectile(mob.id, pid, 3, 2, 
-                            mob.x, mob.y, 
-                            mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
-                            50 + math.random() * 300)
-                            
-              projectile.color.r = 0.2 + math.random() * 0.2
-              projectile.color.g = 0.2 + math.random() * 0.1
-              projectile.color.b = 0.2 + math.random() * 0.1
-              projectile.color.a = 0.8 + math.random() * 0.2
-              
-              projectile.zSpeed = 0.5 + math.random() * 1
-              projectile.scale = 0.2 + math.random() * 0.6
-            end
-            -- vortex testing end
+            projectile.zSpeed = 0.5 + math.random() * 1
+            projectile.scale = 0.2 + math.random() * 0.6
           end
+          -- vortex testing end
         else
           love.graphics.draw(tile.image, 
                              mob.x - tile.footX * scale, 
@@ -534,7 +553,7 @@ local function drawTileTable(objects, set)
     end
   end
 end
-
+end
 
 local function drawFloor()
   love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
