@@ -427,8 +427,22 @@ public class CommandWorker implements ServerWorker
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
+        Mob mob = room.getMob(layer, id);
 
-        doMove(dataEvent, room, id, layer, dx, dy, speed, "bounce");
+        
+        String pattern = "bounce";
+        
+        // todo - make some catalog of player and creatures with their properties
+        if(mob.type == Mob.TYPE_PLAYER)
+        {
+            if(mob.tile == 9)
+            {
+                // spectres glide
+                pattern = "glide";
+            }
+        }
+        
+        doMove(dataEvent, room, id, layer, dx, dy, speed, pattern);
     }
 
     public void doMove(ServerDataEvent dataEvent,
@@ -485,10 +499,10 @@ public class CommandWorker implements ServerWorker
         command =
             "ADDP," + 
             "3," + // layer
-	    "1," + // tile id
+	    mob.tile + "," + // tile id
 	    "360," + // x pos
 	    "480," + // y pos
-	    "1.0," + // scale factor
+	    mob.scale + "," + // scale factor
             "1.0 1.0 1.0 1.0"; // color string
 
         addPlayer(dataEvent, command);
