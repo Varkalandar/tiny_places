@@ -338,16 +338,16 @@
       <Description>
         <version>4</version>
         <id>20</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>75</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>75</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -355,16 +355,16 @@
       <Description>
         <version>4</version>
         <id>21</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>75</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>14</footX>
+        <footY>74</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -372,16 +372,16 @@
       <Description>
         <version>4</version>
         <id>22</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>73</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>73</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -389,16 +389,16 @@
       <Description>
         <version>4</version>
         <id>23</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>71</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>71</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -406,16 +406,16 @@
       <Description>
         <version>4</version>
         <id>24</id>
-        <width>1</width>
-        <height>1</height>
+        <width>46</width>
+        <height>71</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>22</footX>
+        <footY>71</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -423,16 +423,16 @@
       <Description>
         <version>4</version>
         <id>25</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>71</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>71</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -440,16 +440,16 @@
       <Description>
         <version>4</version>
         <id>26</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>73</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>73</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -457,16 +457,16 @@
       <Description>
         <version>4</version>
         <id>27</id>
-        <width>1</width>
-        <height>1</height>
+        <width>42</width>
+        <height>74</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>28</footX>
+        <footY>74</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -474,16 +474,16 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>75</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>75</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -491,16 +491,16 @@
       <Description>
         <version>4</version>
         <id>29</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>77</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>76</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -508,16 +508,16 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>78</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>27</footX>
+        <footY>78</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -525,16 +525,16 @@
       <Description>
         <version>4</version>
         <id>31</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>78</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>78</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -542,16 +542,16 @@
       <Description>
         <version>4</version>
         <id>32</id>
-        <width>1</width>
-        <height>1</height>
+        <width>46</width>
+        <height>78</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>78</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -559,16 +559,16 @@
       <Description>
         <version>4</version>
         <id>33</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>79</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>79</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -576,16 +576,16 @@
       <Description>
         <version>4</version>
         <id>34</id>
-        <width>1</width>
-        <height>1</height>
+        <width>44</width>
+        <height>78</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>77</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -593,16 +593,16 @@
       <Description>
         <version>4</version>
         <id>35</id>
-        <width>1</width>
-        <height>1</height>
+        <width>42</width>
+        <height>77</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>13</footX>
+        <footY>77</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>player spectre 2</string>
         <string></string>
       </Metadata>
     </Tile>
