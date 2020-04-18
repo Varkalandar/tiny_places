@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import tinyplaces.server.CommandWorker;
 import tinyplaces.server.Server;
 import tinyplaces.server.ServerDataEvent;
-import tinyplaces.server.isomap.actions.MapAction;
+import tinyplaces.server.isomap.actions.Action;
 
 
 /**
@@ -31,7 +31,7 @@ public class Room
     private final HashMap <Integer, Mob> mobs = new HashMap<Integer, Mob>();
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
     
-    private final ArrayList<MapAction> actions = new ArrayList<MapAction>(256);
+    private final ArrayList<Action> actions = new ArrayList<Action>(256);
     private final ArrayList<CreatureGroup> groups = new ArrayList<CreatureGroup>(32);
 
     private CommandWorker commandWorker;
@@ -55,13 +55,13 @@ public class Room
     }
 
     
-    public ArrayList<MapAction> getActions()
+    public ArrayList<Action> getActions()
     {
         return actions;
     }
     
     
-    public void addAction(MapAction move) 
+    public void addAction(Action move) 
     {
         synchronized(actions)
         {
@@ -113,6 +113,11 @@ public class Room
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
         Mob mob;
+    
+        for(CreatureGroup group : groups)
+        {
+            group.remove(id);
+        }
         
         synchronized(lmap)
         {
@@ -245,7 +250,7 @@ public class Room
     /*
      * Todo: Move this to a better place someday?
      */
-    public void aiCall()
+    synchronized public void aiCall()
     {
         long time = System.currentTimeMillis();
         
@@ -269,22 +274,22 @@ public class Room
                             }
                         }
                     }
-                    
+
                     // move
                     int x, y, len;
                     int count = 0;
-                            
+
                     do
                     {
                         x = creature.x + 100 - (int)(Math.random() * 200);
                         y = creature.y + 100 - (int)(Math.random() * 200);
-                        
+
                         int dx = (x - group.cx);
                         int dy = (y - group.cy);
-                        
+
                         len = dx * dx + (dy * dy) * 4;
                         count ++;
-                        
+
                         // System.err.println("len=" + len);
                     } while(len > 100 * 100 && count < 5);
 
@@ -293,16 +298,16 @@ public class Room
                         x = group.cx + 50 - (int)(Math.random() * 100);
                         y = group.cy + 50 - (int)(Math.random() * 100);
                     }
-                    
+
                     // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
                     commandWorker.doMove(null, this, creature.id, 3, x, y, creature.speed, "glide");
-                    
+
                     creature.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                 }
             }
         }
     }
-
+    
     public void setCommandWorker(CommandWorker commandWorker) 
     {
         this.commandWorker = commandWorker;
@@ -324,6 +329,35 @@ public class Room
     void transit(ServerDataEvent dataEvent, Mob mob, String roomname) 
     {
         commandWorker.transit(dataEvent, mob, this, roomname);
+    }
+
+    /**
+     * Result is indexed by distance square 
+     */
+    HashMap <Integer, Mob> findMobsNear(int x, int y, int limit) 
+    {
+        HashMap <Integer, Mob> result = new HashMap<Integer, Mob>(64);
+        int dmax = limit * limit;
+        
+        for(Mob mob : mobs.values())
+        {
+            int dx = mob.x - x;
+            int dy = mob.y - y;
+            
+            int d = dx * dx + dy * dy; 
+            
+            if(d <= dmax)
+            {
+                result.put(d, mob);
+            }
+        }
+        
+        return result;
+    }
+
+    synchronized void handleHit(Mob projectile, Mob target) 
+    {
+        commandWorker.kill(target, this);
     }
 
 }

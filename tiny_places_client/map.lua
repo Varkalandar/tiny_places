@@ -7,6 +7,7 @@
 
 local moves = require("actions/move")
 local flashes = require("actions/flash")
+local animations = require("actions/animation")
 
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
@@ -22,6 +23,7 @@ local creatureSet = {}
 local playerSet = {}
 local projectileSet = {}
 local cloudSet = {}
+local animationSet = {}
 
 
 local function clear()
@@ -38,21 +40,22 @@ local nextLocalId = 100000
 
 
 local function orient(mob, dx, dy)
+  local faces = mob.faces
+  
+  -- calculate facing
+  local r = math.atan2(dy*2, dx)
+  
+  -- round to a segment
+  r = r + math.pi + math.pi/8
 
-    -- calculate facing
-    local r = math.atan2(dy*2, dx)
-    
-    -- round to a segment
-    r = r + math.pi + math.pi/8
+  -- calculate tile offsets from 0 to faces-1    
+  r = faces/2 + math.floor((r * faces)  / (math.pi * 2))
+  if r >= faces then r = r - faces end
+  
+  -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r)
 
-    -- calculate tile offsets from 0 to 7    
-    r = 4 + math.floor((r * 8)  / (math.pi * 2))
-    if r >= 8 then r = r - 8 end
-    
-    -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r)
-
-    -- set the tile to show
-    mob.displayTile = mob.tile + r
+  -- set the tile to show
+  mob.displayTile = mob.tile + r
 end
 
 
@@ -115,7 +118,7 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color, ctype, speed)
+local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, faces)
   
   if(id < 100000) then -- do not log client-only objects
     print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
@@ -127,6 +130,7 @@ local function addObject(id, layer, tile, x, y, scale, color, ctype, speed)
                color = unmarshallColor(color), 
                type = ctype,
                speed = speed, zOff = 0, zSpeed = 0,
+               faces = faces,
                orient = orient}
 
   local ltab = getLayerTable(layer)
@@ -230,7 +234,7 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   
   shooter:orient(nx, ny)
 
-  local projectile = addObject(id, layer, tile, sx, sy, 1, color, "projectile", speed)
+  local projectile = addObject(id, layer, tile, sx, sy, 1, color, "projectile", speed, 8)
   projectile.ptype = ptype
   
   local pattern = "glide"
@@ -263,6 +267,16 @@ local function load(name, backdrop, filename)
 end
 
 
+local function playAnimation(id, layer, x, y)
+  -- x, y, tileset, scale, start, end, time, r, g, b, a
+  local animation = animations.new(x, y, animationSet, 1, 1, 20, 0.02, 1, 1, 1, 1)
+  table.insert(map.actions, animation)
+  
+  -- sound good here?
+  map.sounds.randplay(map.sounds.vortexBang, 1, 0.1)
+end
+
+
 local function init()  
   print("Initializing map")
   
@@ -272,6 +286,7 @@ local function init()
   playerSet = tileset.readSet("resources/players/", "players.tica")
   projectileSet = tileset.readSet("resources/projectiles/", "projectiles.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
+  animationSet = tileset.readSet("resources/animations/", "animations.tica")
   
   load("Wasteland", "map_wasteland", "")
 
@@ -396,12 +411,12 @@ end
 
 
 local function drawPlayer(mob, tile, scale)
-  if mob.tile == 9 then
+  if mob.tile == 20 then
     -- spectre testing
     local mode, alphamode = love.graphics.getBlendMode()
     love.graphics.setBlendMode("add", "alphamultiply")
     
-    love.graphics.setColor(0.5, 0.5, 0.6, 1)
+    love.graphics.setColor(0.6, 0.6, 0.7, 1)
     love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, 
                        mob.y - tile.footY * scale - mob.zOff, 
@@ -601,5 +616,6 @@ map.removeObject = removeObject
 map.selectObject = selectObject
 map.addMove = addMove
 map.fireProjectile = fireProjectile
+map.playAnimation = playAnimation
 
 return map;

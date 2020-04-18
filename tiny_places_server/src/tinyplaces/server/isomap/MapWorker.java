@@ -3,8 +3,9 @@ package tinyplaces.server.isomap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import tinyplaces.server.isomap.actions.MapAction;
+import java.util.Set;
 import tinyplaces.server.isomap.actions.Move;
+import tinyplaces.server.isomap.actions.Action;
 
 /**
  * Worker thread to process ongoing actions.
@@ -39,14 +40,14 @@ public class MapWorker implements Runnable
 
             for(Room room : rooms.values())
             {
-                List <MapAction> actions = room.getActions();
-                List <MapAction> killList = new ArrayList<MapAction>();
+                List <Action> actions = room.getActions();
+                List <Action> killList = new ArrayList<Action>();
 
                 // System.err.println("MapWorker: action count:" + actions.size());
                 
                 synchronized(actions)
                 {
-                    for(MapAction action : actions)
+                    for(Action action : actions)
                     {
                        action.process(room, dt);
                        if(action.isDone())
@@ -56,10 +57,9 @@ public class MapWorker implements Runnable
                     }
                 }
 
-                for(MapAction action : killList)
+                for(Action action : killList)
                 {
-                    // hack - this needs some proper implementation
-                    checkMapTransition(room, action);
+                    processActionResult(room, action);
                 }
                 
                 synchronized(actions)
@@ -74,19 +74,62 @@ public class MapWorker implements Runnable
         }
     }
 
-    private void checkMapTransition(Room room, MapAction action) 
+    private void processActionResult(Room room, Action action) 
     {
-        if("Lobby".equals(room.name) && (action instanceof Move))
+        Mob mob = action.getMob();
+        
+        if(action instanceof Move)
         {
             Move move = (Move)action;
-            int dx = move.x - 837;
-            int dy = move.y - 168;
-            int d2 = dx * dx + dy * dy;
             
-            // monsters have no data event ... cannot transit to another room
-            if(d2 < 250 && move.dataEvent != null)
+            // Player moves can result in a map change
+            if("Lobby".equals(room.name))
             {
-                room.transit(move.dataEvent, move.mob, "wasteland_and_pond");
+                int dx = move.x - 837;
+                int dy = move.y - 168;
+                int d2 = dx * dx + dy * dy;
+
+                // monsters have no data event ... cannot transit to another room
+                if(d2 < 250 && move.dataEvent != null)
+                {
+                    room.transit(move.dataEvent, mob, "wasteland_and_pond");
+                }
+            }
+        
+        
+            if(mob.type == Mob.TYPE_PROJECTILE)
+            {
+                int radius = 20;
+                HashMap <Integer, Mob> map = room.findMobsNear(mob.x, mob.y, radius);
+
+                Set <Integer> distances = map.keySet();
+
+                int nearest = radius * radius;
+
+                for(Integer i : distances)
+                {
+                    if(i < nearest)
+                    {
+                        nearest = i;
+                    }
+                }
+
+                Mob target = map.get(nearest);
+
+                if(target != null)
+                {
+                    System.err.println("MapWorker: projectile hit mob id=" + target.id);
+
+                    // for now, don't kill the player ...
+                    if(target.type != Mob.TYPE_PLAYER)
+                    {
+                        room.handleHit(mob, target);
+                    }
+                }
+                else
+                {
+                    System.err.println("MapWorker: projectile hit nothing.");
+                }
             }
         }
     }

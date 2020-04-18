@@ -16,8 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
-import tinyplaces.server.isomap.actions.MapAction;
 import tinyplaces.server.isomap.actions.Move;
+import tinyplaces.server.isomap.actions.Action;
 
 /**
  * Worker class for map altering commands. This will be run in a thread of
@@ -280,7 +280,7 @@ public class CommandWorker implements ServerWorker
     }
 	
 
-    private void deleteMob(ServerDataEvent dataEvent, String command)
+    public void deleteMob(ServerDataEvent dataEvent, String command)
     {
         System.err.println("DELM from " + dataEvent.socket);
         
@@ -435,7 +435,7 @@ public class CommandWorker implements ServerWorker
         // todo - make some catalog of player and creatures with their properties
         if(mob.type == Mob.TYPE_PLAYER)
         {
-            if(mob.tile == 9)
+            if(mob.tile == 9 || mob.tile == 20)
             {
                 // spectres glide
                 pattern = "glide";
@@ -453,10 +453,10 @@ public class CommandWorker implements ServerWorker
         Move move = new Move(dataEvent, mob, layer, dx, dy, speed);
         
         // check and cancel former move ...
-        List <MapAction> actions = room.getActions();
-        ArrayList<MapAction> actionsCopy = new ArrayList<MapAction>(actions);
+        List <Action> actions = room.getActions();
+        ArrayList<Action> actionsCopy = new ArrayList<Action>(actions);
         
-        for(MapAction action : actionsCopy)
+        for(Action action : actionsCopy)
         {
             if(action instanceof Move)
             {
@@ -515,6 +515,31 @@ public class CommandWorker implements ServerWorker
     }
     
     
+    public void kill(Mob target, Room room) 
+    {
+        int layer = 3;   // are targets always layer 3?
+        
+        String command = 
+                "DELM," +
+                target.id + "," +
+                layer + "\n";
+        
+        room.removeMob(layer, target.id);
+
+        roomcast(room.getServer(), command, room);
+
+        command = 
+                "ANIM," +
+                "1," +
+                layer + "," +
+                target.x + "," +
+                (target.y - 20) + "," +
+                "\n";
+
+        roomcast(room.getServer(), command, room);
+    }
+    
+    
     private void startGame(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("GAME from " + dataEvent.socket);
@@ -522,6 +547,7 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
     }
+    
     
     private void fireProjectile(ServerDataEvent dataEvent, String command) 
     {
@@ -638,4 +664,5 @@ public class CommandWorker implements ServerWorker
             roomcast(dataEvent.server, command, room);
         }
     }
+
 }

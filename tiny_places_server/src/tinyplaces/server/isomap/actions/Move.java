@@ -8,7 +8,7 @@ import tinyplaces.server.isomap.Room;
  *
  * @author hjm
  */
-public class Move implements MapAction
+public class Move implements Action
 {
     public final ServerDataEvent dataEvent;
     public final Mob mob;
@@ -19,6 +19,7 @@ public class Move implements MapAction
     private boolean done;
     
 
+    @Override
     public Mob getMob()
     {
         return mob;
@@ -42,7 +43,6 @@ public class Move implements MapAction
     {
         return done;
     }
-    
     
     @Override
     public void process(Room room, int dt)

@@ -96,11 +96,21 @@ local function processCommands(commands)
         local color = args()
         local ntype = args()
         local ctype = "prop"
-        if ntype == "1" then ctype = "creature" end
-        if ntype == "2" then ctype = "player" end
+        local faces = 1
         
-        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120)
+        if ntype == "1" then ctype = "creature" faces = 8 end
+        if ntype == "2" then ctype = "player" faces = 16 end
+        
+        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, faces)
       
+      elseif cmd == "ANIM" then
+        local id = tonumber(args())
+        local layer = tonumber(args())
+        local x = tonumber(args())
+        local y = tonumber(args())
+
+        map.playAnimation(id, layer, x, y)
+        
       elseif cmd == "UPDM" then
         local id = tonumber(args())
         local layer = tonumber(args())
@@ -141,7 +151,7 @@ local function processCommands(commands)
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120)
+        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120, 16)
         mainUi.gameUi.playerMob = mob
 
       elseif cmd == "FIRE" then

@@ -21,7 +21,15 @@ public class CreatureGroup
         this.cy = cy;
     }
 
-
-    
-
+    void remove(int id) 
+    {
+        for(int i=0; i<creatures.size(); i++)
+        {
+            if(creatures.get(i).id == id)
+            {
+                creatures.remove(i);
+                return;
+            }
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package tinyplaces.server.isomap.actions;
 
+import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 
 /**
@@ -7,9 +8,9 @@ import tinyplaces.server.isomap.Room;
  * 
  * @author hjm
  */
-public interface MapAction 
+public interface Action 
 {
     public void process(Room room, int dt);
-
+    public Mob getMob();
     public boolean isDone();
 }

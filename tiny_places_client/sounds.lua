@@ -18,6 +18,7 @@ local function init()
   local debrisHitData1 = love.sound.newSoundData("resources/sfx/debris.wav")
   local debrisHitData2 = love.sound.newSoundData("resources/sfx/debris_low.wav")
 
+  local vortexBangData = love.sound.newSoundData("resources/sfx/vortex_bang.mp3")
   local vortexBangData1 = love.sound.newSoundData("resources/sfx/vortex_bang_1.wav")
   local vortexBangData2 = love.sound.newSoundData("resources/sfx/vortex_bang_2.wav")
 
@@ -35,6 +36,9 @@ local function init()
 
   sounds.debrisHit2 = love.audio.newSource(debrisHitData2)
   sounds.debrisHit2:setVolume(0.02)
+
+  sounds.vortexBang = love.audio.newSource(vortexBangData)
+  sounds.vortexBang:setVolume(0.15)
 
   sounds.vortexBang1 = love.audio.newSource(vortexBangData1)
   sounds.vortexBang1:setVolume(0.15)
