@@ -1,0 +1,4 @@
+The inventory ui corner decorations and borders were created using these two public domain SVGs:
+https://freesvg.org/rose-corner-decor
+https://freesvg.org/border
+
