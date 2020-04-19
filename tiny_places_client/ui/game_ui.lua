@@ -6,6 +6,7 @@
 --
 
 local cf = require("ui/component_factory")
+local inventoryPopup = require("ui/inventory_popup")
 
 local gameUi = {}
 
@@ -62,6 +63,9 @@ end
 local function init(mainUi, map)
 	print("Loading game ui")
 	
+  inventoryPopup.init()
+  
+  gameUi.mainUi = mainUi
   gameUi.areaImage = love.graphics.newImage("resources/ui/area_cut.png")
   
   gameUi.gaugeFg = love.graphics.newImage("resources/ui/gauge_fg.png")
@@ -102,6 +106,10 @@ end
 
 local function update(dt)
 
+  if love.keyboard.isDown("i") then
+    gameUi.mainUi.popup = inventoryPopup
+  end
+  
 end
 
 
