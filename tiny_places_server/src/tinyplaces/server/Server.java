@@ -10,6 +10,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
+import tinyplaces.server.data.Spells;
 import tinyplaces.server.isomap.MapWorker;
 
 /**
@@ -48,6 +49,7 @@ public class Server implements Runnable
         this.port = port;
         this.selector = initSelector();
         this.worker = worker;
+        Spells.init();
     }
 
     
