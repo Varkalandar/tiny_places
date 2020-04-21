@@ -1,5 +1,8 @@
 package tinyplaces.server.isomap;
 
+import tinyplaces.server.data.Creature;
+import tinyplaces.server.data.Spell;
+
 /**
  * Any type of map object
  * @author hjm
@@ -17,8 +20,9 @@ public class Mob
     public float scale;
     public String color;
     public int type;
-    public int speed = 120;
     public long nextAiTime;
+    public Creature creature; // Usually only set if this is TYPE_CREATURE
+    public Spell spell; // Usually only set if this is TYPE_PROJECTILE
     
     @Override
     public boolean equals(Object o) {

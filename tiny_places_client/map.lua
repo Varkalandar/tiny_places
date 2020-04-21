@@ -52,10 +52,16 @@ local function orient(mob, dx, dy)
   r = faces/2 + math.floor((r * faces)  / (math.pi * 2))
   if r >= faces then r = r - faces end
   
-  -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r)
-
-  -- set the tile to show
-  mob.displayTile = mob.tile + r
+  -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r .. " faces=" .. faces)
+  
+  -- error, usually caused by a move of length 0
+  -- in this case r is nan and IEEE (nan ~= nan) is true 
+  if(r ~= r) then 
+    print(debug.traceback()) 
+  else
+    -- set the tile to show
+    mob.displayTile = mob.tile + r
+  end
 end
 
 
@@ -412,6 +418,10 @@ end
 
 local function drawPlayer(mob, tile, scale)
   if mob.tile == 20 then
+  
+  
+    -- print("displayTile=" .. mob.displayTile)
+  
     -- spectre testing
     local mode, alphamode = love.graphics.getBlendMode()
     love.graphics.setBlendMode("add", "alphamultiply")

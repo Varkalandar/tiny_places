@@ -11,7 +11,7 @@ import java.util.HashMap;
  * 
  * @author hjm
  */
-public class Spells 
+public class SpellCatalog 
 {
     private static final HashMap<String, Spell> allSpells = new HashMap<String, Spell> (256);
     
@@ -36,18 +36,21 @@ public class Spells
         {
             String [] parts = line.split(",");
             Spell spell = new Spell();
+            int i = 0;
             
-            spell.displayName = parts[1];
-            spell.min[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[2]);
-            spell.max[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[3]);
-            spell.min[Damage.TYPE_FIRE] = Integer.parseInt(parts[4]);
-            spell.max[Damage.TYPE_FIRE] = Integer.parseInt(parts[5]);
-            spell.min[Damage.TYPE_COLD] = Integer.parseInt(parts[6]);
-            spell.max[Damage.TYPE_COLD] = Integer.parseInt(parts[7]);
-            spell.min[Damage.TYPE_LIGHT] = Integer.parseInt(parts[8]);
-            spell.max[Damage.TYPE_LIGHT] = Integer.parseInt(parts[9]);
-            spell.min[Damage.TYPE_CHAOS] = Integer.parseInt(parts[10]);
-            spell.max[Damage.TYPE_CHAOS] = Integer.parseInt(parts[11]);
+            spell.id = parts[i++];
+            spell.displayName = parts[i++];
+            spell.min[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
+            spell.max[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
+            spell.min[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
+            spell.max[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
+            spell.min[Damage.TYPE_COLD] = Integer.parseInt(parts[i++]);
+            spell.max[Damage.TYPE_COLD] = Integer.parseInt(parts[i++]);
+            spell.min[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
+            spell.max[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
+            spell.min[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
+            spell.max[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
+            spell.speed = Integer.parseInt(parts[i++]);
             
             allSpells.put(parts[0], spell);
         }

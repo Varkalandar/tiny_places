@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tinyplaces.server.data.Spell;
+import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 import tinyplaces.server.isomap.actions.Move;
@@ -566,18 +568,20 @@ public class CommandWorker implements ServerWorker
         fireProjectile(room, client.mob, layer, type, dx, dy);
     }
         
-    public void fireProjectile(Room room, Mob mob, int layer, int type, int dx, int dy)   
+    public void fireProjectile(Room room, Mob shooter, int layer, int type, int dx, int dy)   
     {
-        int sx = mob.x;
-        int sy = mob.y;
+        int sx = shooter.x;
+        int sy = shooter.y;
 
-        int speed = 300;
-        
         Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         
+        // todo - find out which spell the shooter actually used
+        Spell spell = SpellCatalog.get("fireball");
+        projectile.spell = spell;
+
         String command = 
                 "FIRE," +
-                mob.id + "," +
+                shooter.id + "," +
                 projectile.id + "," +
                 layer + "," +
                 type + "," +
@@ -585,9 +589,9 @@ public class CommandWorker implements ServerWorker
                 sy + "," +
                 dx + "," +
                 dy + "," +
-                speed + "\n";
+                spell.speed + "\n";
 
-        Move move = new Move(null, projectile, layer, dx, dy, speed);
+        Move move = new Move(null, projectile, layer, dx, dy, spell.speed);
         room.addAction(move);
         
         roomcast(room.getServer(), command, room);

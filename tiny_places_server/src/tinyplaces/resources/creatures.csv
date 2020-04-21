@@ -1,2 +1,2 @@
-ID,Name,Min Life,Max Life,Speed
-dust_devil,Dust Devil,1,3,20
+ID,Name,Min Life,Max Life,Speed,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos
+dust_devil,Dust Devil,1,3,20,0,0,0,0,0

@@ -7,7 +7,9 @@ package tinyplaces.server.data;
  */
 public class Spell 
 {
-    String displayName;
-    int min[] = new int [5];
-    int max[] = new int [5];
+    String id;
+    public String displayName;
+    int min[] = new int [Damage.TYPE_COUNT];
+    int max[] = new int [Damage.TYPE_COUNT];
+    public int speed;
 }

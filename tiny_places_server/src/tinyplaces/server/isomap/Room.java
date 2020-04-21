@@ -14,6 +14,10 @@ import java.util.logging.Logger;
 import tinyplaces.server.CommandWorker;
 import tinyplaces.server.Server;
 import tinyplaces.server.ServerDataEvent;
+import tinyplaces.server.data.Creature;
+import tinyplaces.server.data.CreatureCatalog;
+import tinyplaces.server.data.Damage;
+import tinyplaces.server.data.Spell;
 import tinyplaces.server.isomap.actions.Action;
 
 
@@ -235,7 +239,9 @@ public class Room
             // Vortices
             Mob mob = makeMob(3, 9, x, y, 1.0f, "1 0.9 0.6 1", Mob.TYPE_CREATURE);
             mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
-            mob.speed = 20;
+            
+            Creature dustDevil = CreatureCatalog.get("dust_devil");
+            mob.creature = dustDevil.create();
             
             result.add(mob);
         }
@@ -256,21 +262,21 @@ public class Room
         
         for(CreatureGroup group : groups)
         {
-            for(Mob creature : group.creatures)
+            for(Mob mob : group.creatures)
             {
-                if(creature.nextAiTime < time)
+                if(mob.nextAiTime < time)
                 {
                     // fire at a player?
                     if(Math.random() < 0.75)
                     {
                         ArrayList<Mob> moblist = new ArrayList<Mob>  (mobs.values());
                         // find a player
-                        for(Mob mob : moblist)
+                        for(Mob target : moblist)
                         {
-                            if(mob.type == Mob.TYPE_PLAYER)
+                            if(target.type != Mob.TYPE_PROJECTILE && target.type == Mob.TYPE_PLAYER)
                             {
                                 // commandWorker.fireProjectile(this, creature, 3, 1, mob.x, mob.y);
-                                commandWorker.fireProjectile(this, creature, 3, 3, mob.x, mob.y);
+                                commandWorker.fireProjectile(this, mob, 3, 3, target.x, target.y);
                             }
                         }
                     }
@@ -281,8 +287,8 @@ public class Room
 
                     do
                     {
-                        x = creature.x + 100 - (int)(Math.random() * 200);
-                        y = creature.y + 100 - (int)(Math.random() * 200);
+                        x = mob.x + 100 - (int)(Math.random() * 200);
+                        y = mob.y + 100 - (int)(Math.random() * 200);
 
                         int dx = (x - group.cx);
                         int dy = (y - group.cy);
@@ -300,9 +306,9 @@ public class Room
                     }
 
                     // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
-                    commandWorker.doMove(null, this, creature.id, 3, x, y, creature.speed, "glide");
+                    commandWorker.doMove(null, this, mob.id, 3, x, y, mob.creature.speed, "glide");
 
-                    creature.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
+                    mob.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                 }
             }
         }
@@ -357,7 +363,24 @@ public class Room
 
     synchronized void handleHit(Mob projectile, Mob target) 
     {
-        commandWorker.kill(target, this);
+        Spell spell = projectile.spell;
+        Creature creature = target.creature;
+
+        // todo - environment hits?
+        if(spell != null && creature != null)
+        {
+            int damage = Damage.calculate(creature, spell);
+
+            System.err.println("Room: " + creature.displayName + " was hit by " + spell.displayName + " for " + damage + " damage.");
+
+
+            creature.actualLife -= damage;
+
+            if(creature.actualLife < 0)
+            {
+                commandWorker.kill(target, this);
+            }
+        }
     }
 
 }
