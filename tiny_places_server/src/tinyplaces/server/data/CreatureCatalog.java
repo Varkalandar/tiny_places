@@ -40,8 +40,6 @@ public class CreatureCatalog
             creature.displayName = parts[i++];
             creature.minLife = Integer.parseInt(parts[i++]);
             creature.maxLife = Integer.parseInt(parts[i++]);
-            
-            creature.speed = Integer.parseInt(parts[i++]);
 
             creature.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             creature.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
@@ -49,6 +47,8 @@ public class CreatureCatalog
             creature.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
             creature.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
             
+            creature.pattern = parts[i++];
+            creature.speed = Integer.parseInt(parts[i++]);
             allSpells.put(parts[0], creature);
         }
     }

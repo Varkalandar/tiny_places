@@ -16,6 +16,7 @@ public class Creature implements Cloneable
 
     public int minLife;
     public int maxLife;
+    public String pattern;  // movement pattern
     public int speed;
     int[] resistance = new int [Damage.TYPE_COUNT];
 

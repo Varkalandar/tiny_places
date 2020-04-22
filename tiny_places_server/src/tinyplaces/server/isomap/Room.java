@@ -306,7 +306,8 @@ public class Room
                     }
 
                     // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
-                    commandWorker.doMove(null, this, mob.id, 3, x, y, mob.creature.speed, "glide");
+                    commandWorker.doMove(null, this, mob.id, 3, x, y, 
+                                         mob.creature.speed, mob.creature.pattern);
 
                     mob.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                 }
