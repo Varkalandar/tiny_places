@@ -1,6 +1,7 @@
 package tinyplaces.server.isomap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -33,12 +34,14 @@ public class MapWorker implements Runnable
             long now = System.currentTimeMillis();
             int dt = (int)(now - lastTime);
             
-            HashMap<String, Room> rooms = Room.getRooms();
+            HashMap<String, Room> roomsMap = Room.getRooms();
 
             // System.err.println("MapWorker: dt=" + dt);
             // System.err.println("MapWorker: room count:" + rooms.size());
 
-            for(Room room : rooms.values())
+            ArrayList <Room> rooms = new ArrayList<Room>(roomsMap.values());
+                    
+            for(Room room : rooms)
             {
                 List <Action> actions = room.getActions();
                 List <Action> killList = new ArrayList<Action>();
@@ -85,17 +88,31 @@ public class MapWorker implements Runnable
             // Player moves can result in a map change
             if("Lobby".equals(room.name))
             {
-                int dx = move.x - 837;
-                int dy = move.y - 168;
-                int d2 = dx * dx + dy * dy;
-
-                // monsters have no data event ... cannot transit to another room
-                if(d2 < 250 && move.dataEvent != null)
                 {
-                    room.transit(move.dataEvent, mob, "wasteland_and_pond");
+                    // change to wasteland
+                    int dx = move.x - 837;
+                    int dy = move.y - 168;
+                    int d2 = dx * dx + dy * dy;
+
+                    // monsters have no data event ... cannot transit to another room
+                    if(d2 < 250 && move.dataEvent != null)
+                    {
+                        room.transit(move.dataEvent, mob, "wasteland_and_pond", 360, 480);
+                    }
                 }
-            }
-        
+                {
+                    // change to desert
+                    int dx = move.x - 392;
+                    int dy = move.y - 144;
+                    int d2 = dx * dx + dy * dy;
+
+                    // monsters have no data event ... cannot transit to another room
+                    if(d2 < 250 && move.dataEvent != null)
+                    {
+                        room.transit(move.dataEvent, mob, "desert", 867, 466);
+                    }
+                }
+            }        
         
             if(mob.type == Mob.TYPE_PROJECTILE)
             {

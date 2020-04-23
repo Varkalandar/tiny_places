@@ -54,5 +54,7 @@ public class SpellCatalog
             
             allSpells.put(parts[0], spell);
         }
+
+        reader.close();
     }
 }

@@ -12,11 +12,11 @@ import java.util.HashMap;
  */
 public class CreatureCatalog 
 {
-    private static final HashMap<String, Creature> allSpells = new HashMap<String, Creature> (256);
+    private static final HashMap<String, Creature> allCreatures = new HashMap<String, Creature> (256);
     
     public static Creature get(String id)
     {
-        return allSpells.get(id);
+        return allCreatures.get(id);
     }
     
     public static void init() throws IOException
@@ -49,8 +49,12 @@ public class CreatureCatalog
             
             creature.pattern = parts[i++];
             creature.speed = Integer.parseInt(parts[i++]);
-            allSpells.put(parts[0], creature);
+
+            creature.color = parts[i++];
+            
+            allCreatures.put(parts[0], creature);
         }
-    }
-    
+        
+        reader.close();
+    }    
 }

@@ -490,7 +490,7 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    public void transit(ServerDataEvent dataEvent, Mob mob, Room from, String roomname) 
+    public void transit(ServerDataEvent dataEvent, Mob mob, Room from, String roomname, int newx, int newy) 
     {
         from.removeMob(3, mob.id);
         
@@ -502,20 +502,23 @@ public class CommandWorker implements ServerWorker
             "ADDP," + 
             "3," + // layer
 	    mob.tile + "," + // tile id
-	    "360," + // x pos
-	    "480," + // y pos
+	    newx + "," + // x pos
+	    newy + "," + // y pos
 	    mob.scale + "," + // scale factor
-            "1.0 1.0 1.0 1.0"; // color string
+            mob.color; // color string
 
         addPlayer(dataEvent, command);
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
 
-        List <Mob> mobs = room.makeMobGroup(20);
-        addMobGroup(dataEvent, room, mobs, 3);    
-    }
-    
+        // todo - proper map population code
+        if("wasteland_and_pond".equals(roomname))
+        {
+            List <Mob> mobs = room.makeMobGroup(20);
+            addMobGroup(dataEvent, room, mobs, 3);    
+        }
+    }    
     
     public void kill(Mob target, Room room) 
     {

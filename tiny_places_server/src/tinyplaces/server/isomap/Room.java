@@ -237,11 +237,10 @@ public class Room
             // Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
             
             // Vortices
-            Mob mob = makeMob(3, 9, x, y, 1.0f, "1 0.9 0.6 1", Mob.TYPE_CREATURE);
-            mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
-            
             Creature dustDevil = CreatureCatalog.get("dust_devil");
+            Mob mob = makeMob(3, 9, x, y, 1.0f, dustDevil.color, Mob.TYPE_CREATURE);
             mob.creature = dustDevil.create();
+            mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
             
             result.add(mob);
         }
@@ -333,9 +332,9 @@ public class Room
     /**
      * Transit player to a new room
      */ 
-    void transit(ServerDataEvent dataEvent, Mob mob, String roomname) 
+    void transit(ServerDataEvent dataEvent, Mob mob, String roomname, int newx, int newy) 
     {
-        commandWorker.transit(dataEvent, mob, this, roomname);
+        commandWorker.transit(dataEvent, mob, this, roomname, newx, newy);
     }
 
     /**

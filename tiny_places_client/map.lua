@@ -321,6 +321,7 @@ local function init()
   -- load the starting map
   -- map.clientSocket.send("LOAD,green_and_pond")
   -- map.clientSocket.send("LOAD,wasteland_and_pond")
+  -- map.clientSocket.send("LOAD,desert")
   map.clientSocket.send("LOAD,lobby")
 end
 

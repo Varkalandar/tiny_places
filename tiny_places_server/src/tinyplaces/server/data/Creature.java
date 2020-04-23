@@ -19,7 +19,8 @@ public class Creature implements Cloneable
     public String pattern;  // movement pattern
     public int speed;
     int[] resistance = new int [Damage.TYPE_COUNT];
-
+    public String color;
+    
     /**
      * Creature an individual with randomized stats
      * @return 
