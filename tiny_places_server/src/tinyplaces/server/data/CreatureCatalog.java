@@ -38,6 +38,8 @@ public class CreatureCatalog
             int i = 0;
             creature.id = parts[i++];
             creature.displayName = parts[i++];
+            creature.tile = Integer.parseInt(parts[i++]);
+
             creature.minLife = Integer.parseInt(parts[i++]);
             creature.maxLife = Integer.parseInt(parts[i++]);
 
@@ -47,10 +49,13 @@ public class CreatureCatalog
             creature.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
             creature.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
             
+            creature.spellId = parts[i++];
+            
             creature.pattern = parts[i++];
             creature.speed = Integer.parseInt(parts[i++]);
 
             creature.color = parts[i++];
+            creature.scale = Float.parseFloat(parts[i++]);
             
             allCreatures.put(parts[0], creature);
         }

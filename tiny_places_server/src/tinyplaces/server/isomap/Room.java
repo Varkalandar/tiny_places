@@ -18,6 +18,7 @@ import tinyplaces.server.data.Creature;
 import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.Damage;
 import tinyplaces.server.data.Spell;
+import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.isomap.actions.Action;
 
 
@@ -224,28 +225,27 @@ public class Room
     }
 
     
-    public List <Mob> makeMobGroup(int spacing)
+    public List <Mob> makeMobGroup(String id, int centerX, int centerY, int spacing)
     {
         ArrayList <Mob> result = new ArrayList<Mob>();
         
         for(int i=0; i<7; i++)
         {
-            int x = 300 + spacing * 2 * (int)(Math.random() * 5 - 2.5);
-            int y = 350 + spacing * (int)(Math.random() * 5 - 2.5);
+            int x = centerX + spacing * 2 * (int)(Math.random() * 5 - 2.5);
+            int y = centerY + spacing * (int)(Math.random() * 5 - 2.5);
 
             // Imps
             // Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
             
-            // Vortices
-            Creature dustDevil = CreatureCatalog.get("dust_devil");
-            Mob mob = makeMob(3, 9, x, y, 1.0f, dustDevil.color, Mob.TYPE_CREATURE);
-            mob.creature = dustDevil.create();
+            Creature creature = CreatureCatalog.get(id);
+            Mob mob = makeMob(3, creature.tile, x, y, creature.scale, creature.color, Mob.TYPE_CREATURE);
+            mob.creature = creature.create();
             mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
             
             result.add(mob);
         }
         
-        CreatureGroup creatureGroup = new CreatureGroup(result, 300, 350);
+        CreatureGroup creatureGroup = new CreatureGroup(result, centerX, centerY);
         groups.add(creatureGroup);
         
         
@@ -274,8 +274,9 @@ public class Room
                         {
                             if(target.type != Mob.TYPE_PROJECTILE && target.type == Mob.TYPE_PLAYER)
                             {
-                                // commandWorker.fireProjectile(this, creature, 3, 1, mob.x, mob.y);
-                                commandWorker.fireProjectile(this, mob, 3, 3, target.x, target.y);
+                                Spell spell = SpellCatalog.get(mob.creature.spellId);
+                                
+                                commandWorker.fireProjectile(this, mob, 3, target.x, target.y, spell);
                             }
                         }
                     }

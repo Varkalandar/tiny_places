@@ -32,10 +32,10 @@ local function init()
   sounds.fireballHit2:setVolume(0.4)
 
   sounds.debrisHit1 = love.audio.newSource(debrisHitData1)
-  sounds.debrisHit1:setVolume(0.02)
+  sounds.debrisHit1:setVolume(0.05)
 
   sounds.debrisHit2 = love.audio.newSource(debrisHitData2)
-  sounds.debrisHit2:setVolume(0.02)
+  sounds.debrisHit2:setVolume(0.05)
 
   sounds.vortexBang = love.audio.newSource(vortexBangData)
   sounds.vortexBang:setVolume(0.15)

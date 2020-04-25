@@ -287,16 +287,16 @@
       <Description>
         <version>4</version>
         <id>17</id>
-        <width>1</width>
-        <height>1</height>
+        <width>111</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>61</footX>
+        <footY>33</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -304,16 +304,16 @@
       <Description>
         <version>4</version>
         <id>18</id>
-        <width>1</width>
-        <height>1</height>
+        <width>96</width>
+        <height>58</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>54</footX>
+        <footY>44</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -321,16 +321,16 @@
       <Description>
         <version>4</version>
         <id>19</id>
-        <width>1</width>
-        <height>1</height>
+        <width>86</width>
+        <height>60</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>41</footX>
+        <footY>41</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -338,16 +338,16 @@
       <Description>
         <version>4</version>
         <id>20</id>
-        <width>1</width>
-        <height>1</height>
+        <width>97</width>
+        <height>56</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>41</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -355,16 +355,16 @@
       <Description>
         <version>4</version>
         <id>21</id>
-        <width>1</width>
-        <height>1</height>
+        <width>110</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>49</footX>
+        <footY>32</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -372,16 +372,16 @@
       <Description>
         <version>4</version>
         <id>22</id>
-        <width>1</width>
-        <height>1</height>
+        <width>96</width>
+        <height>45</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>36</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -389,16 +389,16 @@
       <Description>
         <version>4</version>
         <id>23</id>
-        <width>1</width>
-        <height>1</height>
+        <width>86</width>
+        <height>45</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>23</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -406,16 +406,16 @@
       <Description>
         <version>4</version>
         <id>24</id>
-        <width>1</width>
-        <height>1</height>
+        <width>97</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>65</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -423,16 +423,16 @@
       <Description>
         <version>4</version>
         <id>25</id>
-        <width>1</width>
-        <height>1</height>
+        <width>109</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>61</footX>
+        <footY>33</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -440,16 +440,16 @@
       <Description>
         <version>4</version>
         <id>26</id>
-        <width>1</width>
-        <height>1</height>
+        <width>94</width>
+        <height>58</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>54</footX>
+        <footY>44</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -457,16 +457,16 @@
       <Description>
         <version>4</version>
         <id>27</id>
-        <width>1</width>
-        <height>1</height>
+        <width>86</width>
+        <height>58</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>41</footX>
+        <footY>41</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -474,16 +474,16 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>90</width>
+        <height>55</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>41</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -491,16 +491,16 @@
       <Description>
         <version>4</version>
         <id>29</id>
-        <width>1</width>
-        <height>1</height>
+        <width>98</width>
+        <height>48</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>49</footX>
+        <footY>32</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -508,16 +508,16 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>91</width>
+        <height>44</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>36</footX>
+        <footY>26</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -525,16 +525,16 @@
       <Description>
         <version>4</version>
         <id>31</id>
-        <width>1</width>
-        <height>1</height>
+        <width>85</width>
+        <height>43</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>43</footX>
+        <footY>23</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -542,16 +542,16 @@
       <Description>
         <version>4</version>
         <id>32</id>
-        <width>1</width>
-        <height>1</height>
+        <width>94</width>
+        <height>41</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>65</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spike_crawler</string>
         <string></string>
       </Metadata>
     </Tile>

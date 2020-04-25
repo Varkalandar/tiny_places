@@ -40,6 +40,7 @@ public class SpellCatalog
             
             spell.id = parts[i++];
             spell.displayName = parts[i++];
+            spell.ptype = Integer.parseInt(parts[i++]);
             spell.min[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             spell.max[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             spell.min[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);

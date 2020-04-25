@@ -515,7 +515,12 @@ public class CommandWorker implements ServerWorker
         // todo - proper map population code
         if("wasteland_and_pond".equals(roomname))
         {
-            List <Mob> mobs = room.makeMobGroup(20);
+            List <Mob> mobs = room.makeMobGroup("dust_devil", 300, 350, 20);
+            addMobGroup(dataEvent, room, mobs, 3);    
+        }
+        if("desert".equals(roomname))
+        {
+            List <Mob> mobs = room.makeMobGroup("spiked_crawler", 650, 170, 20);
             addMobGroup(dataEvent, room, mobs, 3);    
         }
     }    
@@ -568,26 +573,25 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         
-        fireProjectile(room, client.mob, layer, type, dx, dy);
+        Spell spell = SpellCatalog.get("fireball");
+        
+        fireProjectile(room, client.mob, layer, dx, dy, spell);
     }
         
-    public void fireProjectile(Room room, Mob shooter, int layer, int type, int dx, int dy)   
+    public void fireProjectile(Room room, Mob shooter, int layer, int dx, int dy, Spell spell)
     {
         int sx = shooter.x;
         int sy = shooter.y;
 
-        Mob projectile = room.makeMob(layer, type, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
-        
-        // todo - find out which spell the shooter actually used
-        Spell spell = SpellCatalog.get("fireball");
+        Mob projectile = room.makeMob(layer, spell.ptype, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         projectile.spell = spell;
-
+        
         String command = 
                 "FIRE," +
                 shooter.id + "," +
                 projectile.id + "," +
                 layer + "," +
-                type + "," +
+                spell.ptype + "," +
                 sx + "," +
                 sy + "," +
                 dx + "," +

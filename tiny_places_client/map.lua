@@ -218,6 +218,8 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   elseif ptype == 3 then
     tile = 17
     color = "1 0.8 0.1 0.8"
+  elseif ptype == 4 then
+    tile = 9
   end
   
   local nx = dx-sx
@@ -233,6 +235,8 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
     distance = 4
   elseif ptype == 3 then
     distance = 8
+  elseif ptype == 4 then
+    distance = 4
   end
   
   sx = sx + nx * distance * 2
@@ -252,12 +256,21 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
     pattern = "spin"
     projectile.scale = 0.18
     
+  elseif ptype == 4 then
+    projectile.scale = 0.5
+    projectile.zOff = 2
+    
   else
     -- fire at half height of the shooter
     projectile.zOff = 20
   end
   
   local move = addMove(id, layer, dx, dy, speed, pattern)
+  
+  -- projectile launching sound: todo - move player fireball sound here
+  if ptype == 4 then
+    map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
+  end
   
   return projectile, move
 end
@@ -395,9 +408,9 @@ local function updateActions(dt)
         table.insert(actions, flash)
       end
       
-      if mob and mob.type == "projectile" and mob.ptype == 2 then
-        if math.random() < 0.2 then
-          map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.5, 1.8)
+      if mob and mob.type == "projectile" and (mob.ptype == 2 or mob.ptype == 4) then
+        if math.random() < 0.2 or mob.ptype == 4 then
+          map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
         end
       end
 

@@ -28,6 +28,7 @@ local function update(move, dt)
   
   local steplen = dt * speed
   
+  -- still moving?
   if len > steplen then
     
     local nx = dx/len * steplen
@@ -41,6 +42,11 @@ local function update(move, dt)
     -- make it jump
     if move.pattern == "glide" then
       -- nothing to do here
+    elseif move.pattern == "glide2" then
+      local time = (mob.id + math.floor(love.timer.getTime() * 8))
+      local phase = time % 2
+      -- print(phase*8)
+      mob.displayTile = mob.displayTile + phase * 8
     elseif move.pattern == "drop" then
       drops.calculate(mob, dt)
       move.done = mob.zOff < 0
@@ -57,7 +63,7 @@ local function update(move, dt)
     
     -- print("nx=" .. nx .. " ny=" .. ny .. " mob.x="..mob.x .. " mob.y="..mob.y)
   else
-    
+    -- end of move now
     -- eliminate rounding errors
     mob.x = move.x
     mob.y = move.y

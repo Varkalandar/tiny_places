@@ -11,6 +11,7 @@ public class Creature implements Cloneable
 {
     public String id;
     public String displayName;
+    public int tile;
     
     public int actualLife;
 
@@ -19,7 +20,11 @@ public class Creature implements Cloneable
     public String pattern;  // movement pattern
     public int speed;
     int[] resistance = new int [Damage.TYPE_COUNT];
+    
+    public String spellId;
+    
     public String color;
+    public float scale;
     
     /**
      * Creature an individual with randomized stats
