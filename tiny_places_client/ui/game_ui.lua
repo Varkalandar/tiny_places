@@ -46,7 +46,7 @@ end
 local function fireProjectile(mob, layer, x, y)
 
   local map = gameUi.map
-  local ptype = 1
+  local ptype = "fireball"
 	map.clientSocket.send("FIRE,"
 											 ..layer..","
 											 ..ptype..","

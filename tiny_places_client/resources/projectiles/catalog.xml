@@ -423,16 +423,16 @@
       <Description>
         <version>4</version>
         <id>25</id>
-        <width>1</width>
-        <height>1</height>
+        <width>59</width>
+        <height>14</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>7</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -440,16 +440,16 @@
       <Description>
         <version>4</version>
         <id>26</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>44</footX>
+        <footY>19</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -457,16 +457,16 @@
       <Description>
         <version>4</version>
         <id>27</id>
-        <width>1</width>
-        <height>1</height>
+        <width>18</width>
+        <height>27</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>22</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -474,16 +474,16 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>50</width>
+        <height>24</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>6</footX>
+        <footY>18</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -491,16 +491,16 @@
       <Description>
         <version>4</version>
         <id>29</id>
-        <width>1</width>
-        <height>1</height>
+        <width>61</width>
+        <height>14</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>6</footX>
+        <footY>7</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -508,16 +508,16 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>6</footX>
+        <footY>6</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -525,16 +525,16 @@
       <Description>
         <version>4</version>
         <id>31</id>
-        <width>1</width>
-        <height>1</height>
+        <width>18</width>
+        <height>31</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>5</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -542,16 +542,16 @@
       <Description>
         <version>4</version>
         <id>32</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>23</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>44</footX>
+        <footY>6</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>fireball</string>
         <string></string>
       </Metadata>
     </Tile>

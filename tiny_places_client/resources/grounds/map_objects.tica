@@ -479,15 +479,15 @@ shadow area
 Tile Description
 v.5
 30
-1 1
+124 114
 0 0
-0 0
+60 73
 End Of Header
 Item
 v.1
 data
 2
-
+shadow area 2
 
 1
 0
@@ -495,15 +495,15 @@ data
 Tile Description
 v.5
 31
-1 1
+108 110
 0 0
-0 0
+51 66
 End Of Header
 Item
 v.1
 data
 2
-
+shadow area 3
 
 1
 0

@@ -508,16 +508,16 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>124</width>
+        <height>114</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>60</footX>
+        <footY>73</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>shadow area 2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -525,16 +525,16 @@
       <Description>
         <version>4</version>
         <id>31</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>110</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>51</footX>
+        <footY>66</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>shadow area 3</string>
         <string></string>
       </Metadata>
     </Tile>

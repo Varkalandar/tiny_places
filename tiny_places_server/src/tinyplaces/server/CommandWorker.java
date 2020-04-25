@@ -430,11 +430,10 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         Mob mob = room.getMob(layer, id);
-
         
         String pattern = "bounce";
         
-        // todo - make some catalog of player and creatures with their properties
+        // todo - make some catalog of players with their properties
         if(mob.type == Mob.TYPE_PLAYER)
         {
             if(mob.tile == 9 || mob.tile == 20)
@@ -566,24 +565,25 @@ public class CommandWorker implements ServerWorker
         String [] parts = command.split(",");
         
         int layer = Integer.parseInt(parts[1]);
-        int type = Integer.parseInt(parts[2]);
+        String ptype = parts[2];
         int dx = Integer.parseInt(parts[3]);
         int dy = Integer.parseInt(parts[4]);
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         
-        Spell spell = SpellCatalog.get("fireball");
+        Spell spell = SpellCatalog.get(ptype);
         
         fireProjectile(room, client.mob, layer, dx, dy, spell);
     }
-        
+
+    
     public void fireProjectile(Room room, Mob shooter, int layer, int dx, int dy, Spell spell)
     {
         int sx = shooter.x;
         int sy = shooter.y;
 
-        Mob projectile = room.makeMob(layer, spell.ptype, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
+        Mob projectile = room.makeMob(layer, 1, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         projectile.spell = spell;
         
         String command = 

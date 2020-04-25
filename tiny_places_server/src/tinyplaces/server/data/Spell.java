@@ -9,7 +9,7 @@ public class Spell
 {
     String id;
     public String displayName;
-    public int ptype;
+    public String ptype;
     
     int min[] = new int [Damage.TYPE_COUNT];
     int max[] = new int [Damage.TYPE_COUNT];

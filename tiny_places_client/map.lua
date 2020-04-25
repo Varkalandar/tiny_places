@@ -213,12 +213,15 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   local tile = 1
   local color = "1 1 1 1"
   
-  if ptype == 2 then
+  if ptype == "debris" then
     tile = 9
-  elseif ptype == 3 then
+  elseif ptype == "fireball" then
+    tile = 25
+    color = "1 1 1 1"
+  elseif ptype == "dust_vortex" then
     tile = 17
     color = "1 0.8 0.1 0.8"
-  elseif ptype == 4 then
+  elseif ptype == "dirt_shot" then
     tile = 9
   end
   
@@ -231,11 +234,11 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
 
   -- make projectile appear somewhere in front of the shooter
   local distance = 12
-  if ptype == 2 then
+  if ptype == "debris" then
     distance = 4
-  elseif ptype == 3 then
+  elseif ptype == "dust_vortex" then
     distance = 8
-  elseif ptype == 4 then
+  elseif ptype == "dirt_shot" then
     distance = 4
   end
   
@@ -249,14 +252,19 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   
   local pattern = "glide"
   
-  if ptype == 2 then
+  if ptype == "debris" then
     pattern = "drop"
     
-  elseif ptype == 3 then
+  elseif ptype == "fireball" then
+    pattern = "glide"
+    projectile.scale = 0.5
+    projectile.zOff = 20
+
+  elseif ptype == "dust_vortex" then
     pattern = "spin"
     projectile.scale = 0.18
     
-  elseif ptype == 4 then
+  elseif ptype == "dirt_shot" then
     projectile.scale = 0.5
     projectile.zOff = 2
     
@@ -268,7 +276,7 @@ local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
   local move = addMove(id, layer, dx, dy, speed, pattern)
   
   -- projectile launching sound: todo - move player fireball sound here
-  if ptype == 4 then
+  if ptype == "dirt_shot" then
     map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
   end
   
@@ -388,9 +396,9 @@ local function updateActions(dt)
       local mob = v.mob
       
       -- todo: cleanup
-      if mob and mob.type == "projectile" and (mob.ptype == 1 or mob.ptype == 3) then
+      if mob and mob.type == "projectile" and (mob.ptype == "fireball" or mob.ptype == "dust_vortex") then
       
-        if mob.ptype == 1 then
+        if mob.ptype == "fireball" then
           map.sounds.randplay2(map.sounds.fireballHit1, map.sounds.fireballHit2, 0.7, 1, 0.1)
         else
           map.sounds.randplay2(map.sounds.vortexBang1, map.sounds.vortexBang2, 0.5, 1.0, 0.2)
@@ -399,7 +407,7 @@ local function updateActions(dt)
         -- make flash appear a bit in front of target
         local flash
 
-        if mob.ptype == 1 then
+        if mob.ptype == "fireball" then
           flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.7, 0.4)
         else
           flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.9, 0.4)
@@ -408,8 +416,8 @@ local function updateActions(dt)
         table.insert(actions, flash)
       end
       
-      if mob and mob.type == "projectile" and (mob.ptype == 2 or mob.ptype == 4) then
-        if math.random() < 0.2 or mob.ptype == 4 then
+      if mob and mob.type == "projectile" and (mob.ptype == "debris" or mob.ptype == "dirt_shot") then
+        if math.random() < 0.2 or mob.ptype == "dirt_shot" then
           map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
         end
       end
@@ -470,16 +478,16 @@ end
 
 local function drawProjectile(mob, tile, scale)
 
+  local color = mob.color
   local mode, alphamode = love.graphics.getBlendMode()
   love.graphics.setBlendMode("add", "alphamultiply")
 
-  if mob.ptype == 1 then
-    love.graphics.setColor(1.0, 0.8, 0.5, 0.3)
-  elseif mob.ptype == 3 then
+  if mob.ptype == "fireball" then
+    love.graphics.setColor(color.r, color.g, color.b, color.a)
+  elseif mob.ptype == "dust_vortex" then
     love.graphics.setColor(1.0, 0.9, 0.4, 0.5)
   else
     -- love.graphics.setColor(1.0, 1.0, 1.0, 0.3)
-    local color = mob.color
     love.graphics.setColor(color.r, color.g, color.b, color.a)
   end
   
@@ -491,7 +499,7 @@ local function drawProjectile(mob, tile, scale)
                      scale, scale)
 
   local ptype = mob.ptype
-  if ptype == 1 then 
+  if ptype == "fireball" then 
     -- ground shine
     love.graphics.setColor(1.0, 0.7, 0.4, 0.5)
     scale = 0.9
@@ -499,7 +507,7 @@ local function drawProjectile(mob, tile, scale)
                        mob.x - 171 * scale,
                        mob.y - 67 * scale, 
                        0, scale, scale)
-  elseif ptype == 3 then
+  elseif ptype == "dust_vortex" then
     -- ground shine
     love.graphics.setColor(1.0, 0.85, 0.5, 0.4)
     scale = 0.4
@@ -565,7 +573,7 @@ local function drawTileTable(objects, set)
           
             -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
             local projectile, move =
-              fireProjectile(mob.id, pid, 3, 2, 
+              fireProjectile(mob.id, pid, 3, "debris", 
                           mob.x, mob.y, 
                           mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
                           50 + math.random() * 300)
