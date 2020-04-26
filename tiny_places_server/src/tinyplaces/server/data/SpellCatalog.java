@@ -52,6 +52,7 @@ public class SpellCatalog
             spell.min[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
             spell.max[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
             spell.speed = Integer.parseInt(parts[i++]);
+            spell.castTime = Integer.parseInt(parts[i++]);
             
             allSpells.put(parts[0], spell);
         }

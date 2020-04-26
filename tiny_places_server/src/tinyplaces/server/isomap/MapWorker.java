@@ -27,7 +27,7 @@ public class MapWorker implements Runnable
             }
             catch(InterruptedException iex)
             {
-                System.err.println("MapWorker: Interrupt during queue wait:" + iex);
+                System.err.println("MapWorker: Interrupt during wait:" + iex);
             }
             
             long now = System.currentTimeMillis();

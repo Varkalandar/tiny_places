@@ -20,6 +20,7 @@ import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 import tinyplaces.server.isomap.actions.Move;
 import tinyplaces.server.isomap.actions.Action;
+import tinyplaces.server.isomap.actions.SpellCast;
 
 /**
  * Worker class for map altering commands. This will be run in a thread of
@@ -584,7 +585,9 @@ public class CommandWorker implements ServerWorker
         int sy = shooter.y;
 
         Mob projectile = room.makeMob(layer, 1, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
-        projectile.spell = spell;
+        
+        SpellCast spellCast = new SpellCast(shooter, spell, projectile, layer, dx, dy);
+        room.addAction(spellCast);
         
         String command = 
                 "FIRE," +
@@ -592,15 +595,11 @@ public class CommandWorker implements ServerWorker
                 projectile.id + "," +
                 layer + "," +
                 spell.ptype + "," +
-                sx + "," +
-                sy + "," +
+                spell.castTime + "," +
                 dx + "," +
                 dy + "," +
                 spell.speed + "\n";
 
-        Move move = new Move(null, projectile, layer, dx, dy, spell.speed);
-        room.addAction(move);
-        
         roomcast(room.getServer(), command, room);
     }
 

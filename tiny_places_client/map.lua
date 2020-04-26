@@ -8,6 +8,7 @@
 local moves = require("actions/move")
 local flashes = require("actions/flash")
 local animations = require("actions/animation")
+local spells = require("actions/spell")
 
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
@@ -33,10 +34,6 @@ local function clear()
   map.filename = nil
   map.name = "unnamed"
 end
-
-
--- hack for client only ids -- todo: cleanup
-local nextLocalId = 100000
 
 
 local function orient(mob, dx, dy)
@@ -126,9 +123,7 @@ end
 
 local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, faces)
   
-  if(id < 100000) then -- do not log client-only objects
-    print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
-  end
+  print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
   
   -- tile should be constant, displayTile can change during animations
   local mob = {id = id, tile = tile, displayTile = tile,
@@ -164,9 +159,7 @@ end
 
 
 local function removeObject(id, layer)
-  if(id < 100000) then -- do not log client-only objects
-    print("Removing object with id " .. id .. " from layer " .. layer)
-  end
+  print("Removing object with id " .. id .. " from layer " .. layer)
   
   local mob, i = findMob(id, layer)
 
@@ -185,7 +178,9 @@ local function addMove(id, layer, x, y, speed, pattern)
   -- check if there is alread an ongoing move
   -- if yes, remove it from the table
   for k, v in pairs(actions) do
-    if v.mob and v.mob.id == id then
+  
+    -- hack - only move type actions have a pattern (and must have one)
+    if v.mob and v.mob.id == id and v.pattern then
       print("Old move found in table, clearing old move ...")
       table.remove(actions, k)
     end
@@ -202,85 +197,20 @@ local function addMove(id, layer, x, y, speed, pattern)
 end
 
 
-local function fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+local function fireProjectile(source, id, layer, ptype, castTime, dx, dy, speed)
   -- print("Adding projectile with type " .. ptype .. " fired at " .. dx .. ", " .. dy)
 
   local shooter, i = findMob(source, layer)
-  
-  
-  -- there shouldbe a ptype -> tile calculation here, once
-  -- there is more than one projectile type
-  local tile = 1
-  local color = "1 1 1 1"
-  
-  if ptype == "debris" then
-    tile = 9
-  elseif ptype == "fireball" then
-    tile = 25
-    color = "1 1 1 1"
-  elseif ptype == "dust_vortex" then
-    tile = 17
-    color = "1 0.8 0.1 0.8"
-  elseif ptype == "dirt_shot" then
-    tile = 9
-  end
-  
-  local nx = dx-sx
-  local ny = dy-sy
-  local len = math.sqrt(nx*nx + ny*ny)
-  
-  nx = nx / len
-  ny = ny / len
+  local nx = dx - shooter.x
+  local ny = dy - shooter.y
 
-  -- make projectile appear somewhere in front of the shooter
-  local distance = 12
-  if ptype == "debris" then
-    distance = 4
-  elseif ptype == "dust_vortex" then
-    distance = 8
-  elseif ptype == "dirt_shot" then
-    distance = 4
-  end
-  
-  sx = sx + nx * distance * 2
-  sy = sy + ny * distance
-  
   shooter:orient(nx, ny)
 
-  local projectile = addObject(id, layer, tile, sx, sy, 1, color, "projectile", speed, 8)
-  projectile.ptype = ptype
+  local spell = spells.new(map, shooter, id, layer, ptype, castTime, dx, dy, speed, animationSet)
   
-  local pattern = "glide"
-  
-  if ptype == "debris" then
-    pattern = "drop"
-    
-  elseif ptype == "fireball" then
-    pattern = "glide"
-    projectile.scale = 0.5
-    projectile.zOff = 20
+  -- some spells have a buildup time, the projectile will be fired later
+  table.insert(map.actions, spell)
 
-  elseif ptype == "dust_vortex" then
-    pattern = "spin"
-    projectile.scale = 0.18
-    
-  elseif ptype == "dirt_shot" then
-    projectile.scale = 0.5
-    projectile.zOff = 2
-    
-  else
-    -- fire at half height of the shooter
-    projectile.zOff = 20
-  end
-  
-  local move = addMove(id, layer, dx, dy, speed, pattern)
-  
-  -- projectile launching sound: todo - move player fireball sound here
-  if ptype == "dirt_shot" then
-    map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
-  end
-  
-  return projectile, move
 end
 
 
@@ -566,26 +496,6 @@ local function drawTileTable(objects, set)
                              mob.y - tile.footY * scale - mob.zOff, 
                              0, 
                              scale, scale)
-      
-          if math.random() < 0.2 then
-            local pid = nextLocalId
-            nextLocalId = nextLocalId + 1
-          
-            -- fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
-            local projectile, move =
-              fireProjectile(mob.id, pid, 3, "debris", 
-                          mob.x, mob.y, 
-                          mob.x + math.random() * 200 - 100, mob.y + math.random() * 200 - 100, 
-                          50 + math.random() * 300)
-                          
-            projectile.color.r = 0.2 + math.random() * 0.2
-            projectile.color.g = 0.2 + math.random() * 0.1
-            projectile.color.b = 0.2 + math.random() * 0.1
-            projectile.color.a = 0.8 + math.random() * 0.2
-            
-            projectile.zSpeed = 0.5 + math.random() * 1
-            projectile.scale = 0.2 + math.random() * 0.6
-          end
           -- vortex testing end
         else
           love.graphics.draw(tile.image, 

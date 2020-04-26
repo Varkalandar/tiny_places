@@ -90,6 +90,8 @@ end
 local function new(map, mob, x, y, pattern)
   local move = {}
   
+  assert(pattern, "Missing pattern type")
+  
   move.update = update
   move.map = map
   move.mob = mob

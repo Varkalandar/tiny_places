@@ -159,12 +159,11 @@ local function processCommands(commands)
         local id = tonumber(args())
         local layer = tonumber(args())
         local ptype = args()
-        local sx = tonumber(args())
-        local sy = tonumber(args())
+        local castTime = tonumber(args()) / 1000.0
         local dx = tonumber(args())
         local dy = tonumber(args())
         local speed = tonumber(args())
-        map.fireProjectile(source, id, layer, ptype, sx, sy, dx, dy, speed)
+        map.fireProjectile(source, id, layer, ptype, castTime, dx, dy, speed)
       end
     end
   end

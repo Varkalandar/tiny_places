@@ -37,6 +37,7 @@ public class Room
     private final HashMap <Integer, Mob> clouds = new HashMap<Integer, Mob>();
     
     private final ArrayList<Action> actions = new ArrayList<Action>(256);
+    private final ArrayList<Action> actionsToAdd = new ArrayList<Action>(256);
     private final ArrayList<CreatureGroup> groups = new ArrayList<CreatureGroup>(32);
 
     private CommandWorker commandWorker;
@@ -62,16 +63,21 @@ public class Room
     
     public ArrayList<Action> getActions()
     {
+        actions.addAll(actionsToAdd);
+        actionsToAdd.clear();
+        
         return actions;
     }
     
     
     public void addAction(Action move) 
     {
-        synchronized(actions)
-        {
-            actions.add(move);
-        }
+        // due to threading and the fact that some actions want to add
+        // new actions while being proccess (ConcurrentModification)
+        // new actions go into a queue first and will be added at a
+        // proper time
+
+        actionsToAdd.add(move);
     }
 
     

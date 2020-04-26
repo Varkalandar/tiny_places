@@ -14,4 +14,5 @@ public class Spell
     int min[] = new int [Damage.TYPE_COUNT];
     int max[] = new int [Damage.TYPE_COUNT];
     public int speed;
+    public int castTime; // milliseconds
 }
