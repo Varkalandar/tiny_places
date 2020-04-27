@@ -36,8 +36,11 @@ local function draw(flash)
   local scale = 0.9 + flash.age * 0.4
   
   local mode, alphamode = love.graphics.getBlendMode()
-  love.graphics.setColor(flash.r, flash.g, flash.b, 1 / (1+flash.age*8))
   love.graphics.setBlendMode("add", "alphamultiply")
+  
+  local fade = 1 / (1+flash.age*4)
+  
+  love.graphics.setColor(flash.r*fade, flash.g*fade, flash.b*fade, fade)
   love.graphics.draw(flash.image, 
                      flash.x - flash.image:getWidth() * scale * 0.5, 
                      flash.y - flash.image:getHeight() * scale * 0.5, 
