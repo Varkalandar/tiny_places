@@ -406,6 +406,59 @@ local function drawPlayer(mob, tile, scale)
 end
 
 
+local function drawCreature(mob, tile, scale)
+  
+  if mob.tile == 9 then
+    -- vortex testing
+    local time = love.timer.getTime() * 60
+    
+    -- large dust disk
+    local scale = 0.4
+                       
+    love.graphics.setColor(0.3, 0.28, 0.26, 0.9)
+    local dust = animationSet[23 + math.floor((time * 0.3 + mob.id) % 16)]
+    love.graphics.draw(dust.image, 
+                       mob.x - dust.image:getWidth()/2 * scale, 
+                       mob.y - dust.image:getHeight()/2 * scale - mob.zOff - 4, 
+                       0, 
+                       scale, scale)
+    -- small dust disk
+    local scale = 0.18
+                       
+    love.graphics.setColor(0.40, 0.38, 0.36, 0.5)
+    local dust = animationSet[23 + math.floor((time * 1.0 + mob.id) % 16)]
+    love.graphics.draw(dust.image, 
+                       mob.x - dust.image:getWidth()/2 * scale, 
+                       mob.y - dust.image:getHeight()/2 * scale - mob.zOff - 4, 
+                       0, 
+                       scale, scale)
+                       
+    -- vortex itself
+    local vtime = time + (mob.x + mob.y) * 0.01
+    local tix = mob.tile + math.floor(vtime % 8)
+    tile = creatureSet[tix]
+    
+    local scale = 0.3
+	  local color = mob.color	  
+    love.graphics.setColor(color.r, color.g, color.b, color.a)
+    
+    love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+                       
+    -- vortex testing end
+  else
+    love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+  end
+end
+
+
 local function drawProjectile(mob, tile, scale)
 
   local color = mob.color
@@ -455,62 +508,42 @@ end
 local function drawTileTable(objects, set)
 
   for index, mob in ipairs(objects) do
+  
     if mob.selected then
+      love.graphics.setColor(1, 1, 1, 1)
       love.graphics.ellipse("line", mob.x, mob.y, 30, 15)
     end
 	
 	  local color = mob.color	  
     love.graphics.setColor(color.r, color.g, color.b, color.a)	
 	
-    local tile
+    local scale = mob.scale
     
     -- special cases
     if mob.type == "player" then
-      tile = playerSet[mob.displayTile]
-    elseif mob.type == "creature" then
-      tile = creatureSet[mob.displayTile]
-    elseif mob.type == "projectile" then
-      tile = projectileSet[mob.displayTile]
-    else
-      tile = set[mob.displayTile]
-    end
-    
-    local scale = mob.scale
-	
-    if mob.type == "projectile" then
-      drawProjectile(mob, tile, scale)
-    else if mob.type == "player" then
+      local tile = playerSet[mob.displayTile]
       drawPlayer(mob, tile, scale)
+    elseif mob.type == "creature" then
+      local tile = creatureSet[mob.displayTile]
+      drawCreature(mob, tile, scale)
+    elseif mob.type == "projectile" then
+      local tile = projectileSet[mob.displayTile]
+      drawProjectile(mob, tile, scale)
     else
+      local tile = set[mob.displayTile]
       if tile.image then
-        if mob.tile == 9 then
-          -- vortex testing
-          local scale = 0.3
-          local time = love.timer.getTime() * 60
-          local time = time + (mob.x + mob.y) * 0.01
-          local tix = mob.tile + math.floor(time % 8)
-          tile = creatureSet[tix]
-          
-          love.graphics.draw(tile.image, 
-                             mob.x - tile.footX * scale, 
-                             mob.y - tile.footY * scale - mob.zOff, 
-                             0, 
-                             scale, scale)
-          -- vortex testing end
-        else
-          love.graphics.draw(tile.image, 
-                             mob.x - tile.footX * scale, 
-                             mob.y - tile.footY * scale - mob.zOff, 
-                             0, 
-                             scale, scale)
-        end
+        love.graphics.draw(tile.image, 
+                           mob.x - tile.footX * scale, 
+                           mob.y - tile.footY * scale - mob.zOff, 
+                           0, 
+                           scale, scale)
       else
         print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
       end
     end
   end
 end
-end
+
 
 local function drawFloor()
   love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
