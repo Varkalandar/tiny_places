@@ -22,6 +22,8 @@ local function init()
   local vortexBangData1 = love.sound.newSoundData("resources/sfx/vortex_bang_1.wav")
   local vortexBangData2 = love.sound.newSoundData("resources/sfx/vortex_bang_2.wav")
 
+  local noisedChirpData = love.sound.newSoundData("resources/sfx/noised_chirp.wav")
+
   sounds.fireballLaunch = love.audio.newSource(fireballLaunchData)
   sounds.fireballLaunch:setVolume(0.15)
 
@@ -46,6 +48,8 @@ local function init()
   sounds.vortexBang2 = love.audio.newSource(vortexBangData1)
   sounds.vortexBang2:setVolume(0.15)
   
+  sounds.noisedChirp = love.audio.newSource(noisedChirpData)
+  sounds.noisedChirp:setVolume(0.15)
 end
 
 

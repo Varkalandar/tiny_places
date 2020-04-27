@@ -17,7 +17,7 @@ local function update(move, dt)
 	-- advance, move by dt*speed
 
   local mob = move.mob
-  local speed = mob.speed
+  local speed = move.speed
   
   local dx = move.x - mob.x
   local dy = move.y - mob.y
@@ -87,7 +87,7 @@ local function update(move, dt)
 end
 
 
-local function new(map, mob, x, y, pattern)
+local function new(map, mob, x, y, pattern, speed)
   local move = {}
   
   assert(pattern, "Missing pattern type")
@@ -98,6 +98,7 @@ local function new(map, mob, x, y, pattern)
   move.x = x
   move.y = y
   move.pattern = pattern  
+  move.speed = speed
 
   move.done = false
   

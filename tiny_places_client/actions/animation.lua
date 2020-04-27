@@ -8,22 +8,24 @@
 local animations = {}
 
 
-local function new(x, y, tileset, scale, sf, ef, time, r, g, b, a)
+local function new(x, y, tileset, scalef, sf, ef, time, r, g, b, a, mode)
   local animation = 
   {
     x=x, 
     y=y, 
-    scale=scale,
+    scalef=scalef,
     r=r,
     g=g,
     b=b,
     a=a,
+    mode=mode,
     tileset = tileset,
     sf=sf,
     ef=ef,
     age = 0,
     time = time,
     done = false,
+    playtime = (ef - sf + 1) * time,
     draw = animations.draw,
     update = animations.update
   }
@@ -33,10 +35,7 @@ end
 
 local function update(animation, dt)
   animation.age = animation.age + dt
-  
-  playtime = (animation.ef - animation.sf + 1) * animation.time
-  
-  animation.done = animation.age > playtime
+  animation.done = animation.age > animation.playtime
 end
 
 
@@ -44,19 +43,19 @@ local function draw(animation)
 
   local mode, alphamode = love.graphics.getBlendMode()
   love.graphics.setColor(animation.r, animation.g, animation.b, animation.a)
-  love.graphics.setBlendMode("add", "alphamultiply")
+  love.graphics.setBlendMode(animation.mode, "alphamultiply")
 
   local frame = math.floor(animation.sf + animation.age / animation.time)
   
   local tile = animation.tileset[frame]
   local image = tile.image
-  local scale = animation.scale
+  local scalex, scaley = animation.scalef(animation.age / animation.playtime)
   
   love.graphics.draw(image, 
-                     animation.x - image:getWidth() * scale * 0.5, 
-                     animation.y - image:getHeight() * scale * 0.5, 
+                     animation.x - image:getWidth() * scalex * 0.5, 
+                     animation.y - image:getHeight() * scaley * 0.5, 
                      0, 
-                     scale, scale)
+                     scalex, scaley)
 
   love.graphics.setBlendMode(mode, alphamode)
 end

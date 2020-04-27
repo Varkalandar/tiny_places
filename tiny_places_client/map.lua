@@ -189,7 +189,7 @@ local function addMove(id, layer, x, y, speed, pattern)
   local mob = findMob(id, layer)
   mob.speed = speed
   
-  local move = moves.new(map, mob, x, y, pattern)
+  local move = moves.new(map, mob, x, y, pattern, speed)
   
   table.insert(actions, move)
 
@@ -225,14 +225,29 @@ end
 
 
 local function playAnimation(id, layer, x, y)
-  -- x, y, tileset, scale, start, end, time, r, g, b, a
-  local animation = animations.new(x, y, animationSet, 1, 1, 20, 0.02, 1, 1, 1, 1)
-  table.insert(map.actions, animation)
   
-  -- sound good here?
-  map.sounds.randplay(map.sounds.vortexBang, 1, 0.1)
+  if id == 1 then
+    local function scalef(t) return 1, 1 end
+    
+    -- x, y, tileset, scalef, start, end, time, r, g, b, a
+    local animation = animations.new(x, y, animationSet, scalef, 1, 20, 0.02, 1, 1, 1, 1, "add")
+    table.insert(map.actions, animation)
+    
+    -- animation sound
+    map.sounds.randplay(map.sounds.vortexBang, 1, 0.1)
+    
+  else
+    local function scalef(t) local s = math.sin(t*math.pi) * 0.3 return s, s end
+  
+    -- x, y, tileset, scalex, scaley, start, end, time, r, g, b, a
+    local animation = animations.new(x, y, animationSet, scalef, 40, 56, 0.12, 1, 1, 1, 1, "subtract")
+    table.insert(map.actions, animation)
+    
+    -- animation sound
+    map.sounds.randplay(map.sounds.noisedChirp, 1, 0.2)
+  
+  end
 end
-
 
 local function init()  
   print("Initializing map")

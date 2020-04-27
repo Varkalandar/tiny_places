@@ -224,9 +224,13 @@ local function update(dt)
 	  mainUi.popup.update(dt)
 	end
 	
-	local commands = map.clientSocket.receive()
-	processCommands(commands)
-	-- print("Received: " .. commands)
+  
+	local commands
+  repeat
+    commands = map.clientSocket.receive()
+    processCommands(commands)
+    -- print("Received: " .. commands)
+  until commands:len() <= 0
 	
 	-- clear delta to collect updates till next frame
 	mainUi.wheelDelta = 0

@@ -38,7 +38,7 @@ public class SpellCast implements Action
     {
         age += dt;
         
-        if(age > spell.castTime)
+        if(!done && age > spell.castTime)
         {
             projectile.x = mob.x;
             projectile.y = mob.y;

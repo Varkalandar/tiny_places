@@ -434,19 +434,22 @@ public class CommandWorker implements ServerWorker
         
         String pattern = "bounce";
         
-        // todo - make some catalog of players with their properties
-        if(mob.type == Mob.TYPE_PLAYER)
+        if(mob != null)
         {
-            if(mob.tile == 9 || mob.tile == 20)
+            // todo - make some catalog of players with their properties
+            if(mob.type == Mob.TYPE_PLAYER)
             {
-                // spectres glide
-                pattern = "glide";
+                if(mob.tile == 9 || mob.tile == 20)
+                {
+                    // spectres glide
+                    pattern = "glide";
+                }
             }
-        }
-        
-        doMove(dataEvent, room, id, layer, dx, dy, speed, pattern);
-    }
 
+            doMove(dataEvent, room, id, layer, dx, dy, speed, pattern);
+        }
+    }
+    
     public void doMove(ServerDataEvent dataEvent,
                        Room room, int id, int layer, int dx, int dy, int speed, String pattern)
     {
@@ -538,12 +541,22 @@ public class CommandWorker implements ServerWorker
 
         roomcast(room.getServer(), command, room);
 
+        
+        int atype = 1;  // standard explosion
+        int zoff = 20;
+        
+        if(target.tile == 17)
+        {
+            atype = 2; // black death swirl
+            zoff = 0;
+        }
+        
         command = 
                 "ANIM," +
-                "1," +
+                atype + "," +
                 layer + "," +
                 target.x + "," +
-                (target.y - 20) + "," +
+                (target.y - zoff) + "," +
                 "\n";
 
         roomcast(room.getServer(), command, room);
