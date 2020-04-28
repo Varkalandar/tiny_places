@@ -72,9 +72,8 @@ public class Server implements Runnable
                     this.pendingData.put(socket, queue);
                 }
                 
-                // What is a good buffer size here?
-                ByteBuffer dataBuffer = ByteBuffer.allocate(1 << 16);
-
+                ByteBuffer dataBuffer = ByteBuffer.allocate(data.length);
+                
                 dataBuffer.put(data);
                 dataBuffer.flip();
                 
