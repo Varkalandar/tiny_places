@@ -8,38 +8,13 @@
 local animations = {}
 
 
-local function new(x, y, tileset, scalef, sf, ef, time, r, g, b, a, mode)
-  local animation = 
-  {
-    x=x, 
-    y=y, 
-    scalef=scalef,
-    r=r,
-    g=g,
-    b=b,
-    a=a,
-    mode=mode,
-    tileset = tileset,
-    sf=sf,
-    ef=ef,
-    age = 0,
-    time = time,
-    done = false,
-    playtime = (ef - sf + 1) * time,
-    draw = animations.draw,
-    update = animations.update
-  }
-  return animation
-end
-
-
 local function update(animation, dt)
   animation.age = animation.age + dt
   animation.done = animation.age > animation.playtime
 end
 
 
-local function draw(animation)
+local function drawOver(animation)
 
   local mode, alphamode = love.graphics.getBlendMode()
   love.graphics.setColor(animation.r, animation.g, animation.b, animation.a)
@@ -61,8 +36,31 @@ local function draw(animation)
 end
 
 
+local function new(x, y, tileset, scalef, sf, ef, time, r, g, b, a, mode)
+  local animation = 
+  {
+    x=x, 
+    y=y, 
+    scalef=scalef,
+    r=r,
+    g=g,
+    b=b,
+    a=a,
+    mode=mode,
+    tileset = tileset,
+    sf=sf,
+    ef=ef,
+    age = 0,
+    time = time,
+    done = false,
+    playtime = (ef - sf + 1) * time,
+    drawOver = drawOver,
+    update = update
+  }
+  return animation
+end
+
+
 animations.new = new
-animations.update = update
-animations.draw = draw
 
 return animations

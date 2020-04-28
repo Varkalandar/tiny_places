@@ -246,6 +246,12 @@ local function playAnimation(id, layer, x, y)
     local animation = animations.new(x, y, animationSet, scalef, 40, 56, 0.12, 1, 1, 1, 1, "subtract")
     table.insert(map.actions, animation)
     
+    -- shadow "flash"
+    local flash = flashes.new(x, y+10, cloudSet[21].image, 0.18, 
+                              0.7, 0.7, 0.7, "subtract", true, 0.2)
+    table.insert(map.actions, flash)
+
+    
     -- animation sound
     map.sounds.randplay(map.sounds.noisedChirp, 1, 0.2)
   
@@ -356,9 +362,11 @@ local function updateActions(dt)
         local flash
 
         if mob.ptype == "fireball" then
-          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.7, 0.4)
+          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 
+                              1, 0.7, 0.4, "add", false, 1)
         else
-          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 0.9, 0.4)
+          flash = flashes.new(mob.x, mob.y+10, cloudSet[21].image, 1, 
+                              1, 0.9, 0.4, "add", false, 1)
         end
         
         table.insert(actions, flash)
@@ -574,6 +582,12 @@ local function drawFloor()
   love.graphics.setBlendMode("multiply", "premultiplied")
   love.graphics.draw(map.bumpmap, 0, 24)
   love.graphics.setBlendMode(mode, alphamode)
+
+  -- there are drawable actions
+	for k, v in pairs(map.actions) do
+		if v.drawUnder then v:drawUnder() end
+	end
+  
 end
 
 
@@ -582,7 +596,7 @@ local function drawObjects()
   
   -- there are drawable actions
 	for k, v in pairs(map.actions) do
-		if v.draw then v:draw() end
+		if v.drawOver then v:drawOver() end
 	end
   
 end

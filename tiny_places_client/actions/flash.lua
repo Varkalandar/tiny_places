@@ -8,35 +8,17 @@
 local flashes = {}
 
 
-local function new(x, y, image, r, g, b)
-  local newflash = 
-  {
-    x=x, 
-    y=y, 
-    r=r,
-    g=g,
-    b=b,
-    image = image,
-    age = 0,
-    done = false,
-    draw = flashes.draw,
-    update = flashes.update
-  }
-  return newflash
-end
-
-
 local function update(flash, dt)
-  flash.age = flash.age + dt
+  flash.age = flash.age + dt * flash.timelapse
   flash.done = flash.age > 4
 end
 
 
 local function draw(flash)
-  local scale = 0.9 + flash.age * 0.4
+  local scale = (0.9 + flash.age * 0.4) * flash.scale
   
   local mode, alphamode = love.graphics.getBlendMode()
-  love.graphics.setBlendMode("add", "alphamultiply")
+  love.graphics.setBlendMode(flash.mode, "alphamultiply")
   
   local fade = 1 / (1+flash.age*4)
   
@@ -51,8 +33,33 @@ local function draw(flash)
 end
 
 
+local function new(x, y, image, scale, r, g, b, mode, under, timelapse)
+  local newflash = 
+  {
+    x = x, 
+    y = y, 
+    r = r,
+    g = g,
+    b = b,
+    mode = mode,
+    image = image,
+    scale = scale,
+    timelapse = timelapse,
+    age = 0,
+    done = false,
+    drawOver = drawOver,
+    update = update
+  }
+  
+  if under then
+    newflash.drawUnder = draw  
+  else
+    newflash.drawOver = draw
+  end
+  
+  return newflash
+end
+
 flashes.new = new
-flashes.update = update
-flashes.draw = draw
 
 return flashes

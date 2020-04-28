@@ -139,7 +139,7 @@ local function drawCastAnimation(spell)
 end
 
 
-local function draw(spell)
+local function drawOver(spell)
 
   if spell.age < spell.castTime then
     drawCastAnimation(spell)
@@ -182,7 +182,7 @@ local function new(map, shooter, id, layer, ptype, castTime, dx, dy, speed, anim
 
     -- methods
     fire=fire,
-    draw=draw,
+    drawOver=drawOver,
     update=update
   }
   
