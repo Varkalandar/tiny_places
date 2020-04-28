@@ -181,13 +181,16 @@ local function addMove(id, layer, x, y, speed, pattern)
   
     -- hack - only move type actions have a pattern (and must have one)
     if v.mob and v.mob.id == id and v.pattern then
-      print("Old move found in table, clearing old move ...")
+      print("Removing old move for mob id=" .. id)
       table.remove(actions, k)
     end
   end
 
   local mob = findMob(id, layer)
   mob.speed = speed
+  
+  -- debug desyncs
+  -- if sx and sy then print("Move sync dx=" .. (sx - mob.x) .. " dy=" .. (sy - mob.y)) end
   
   local move = moves.new(map, mob, x, y, pattern, speed)
   

@@ -5,7 +5,8 @@ import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 
 /**
- *
+ * Move a mob to a given position over time.
+ * 
  * @author hjm
  */
 public class Move implements Action
@@ -17,6 +18,8 @@ public class Move implements Action
     public final int y;
     public final int speed;
     private boolean done;
+    private double xp;
+    private double yp;
     
 
     @Override
@@ -34,6 +37,8 @@ public class Move implements Action
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.xp = mob.x;
+        this.yp = mob.y;
         done = false;
     }
 
@@ -44,14 +49,12 @@ public class Move implements Action
         return done;
     }
     
+    
     @Override
     public void process(Room room, int dt)
     {
-         // todo: make projectiles travel and expire properly
-        // room.deleteMob(layer, projectile.id);
-        
-        int dx = x - mob.x;
-        int dy = y - mob.y;
+        double dx = x - xp;
+        double dy = y - yp;
 
         double len = Math.sqrt(dx * dx + dy * dy);
   
@@ -63,12 +66,18 @@ public class Move implements Action
         {
             double nx = dx/len * steplen;
             double ny = dy/len * steplen;
-  
-            mob.x += (int)(nx + 0.5);
-            mob.y += (int)(ny + 0.5);
+            xp += nx;
+            yp += ny;
+            
+            mob.x = (int)(xp + 0.5);
+            mob.y = (int)(yp + 0.5);
 
-    
-            // print("nx=" .. nx .. " ny=" .. ny .. " mob.x="..mob.x .. " mob.y="..mob.y)
+            /*
+            if(mob.id == 47)
+            {
+                System.err.println("mob.x=" + mob.x + " mob.y=" + mob.y);
+            }
+            */
         }
         else
         {    

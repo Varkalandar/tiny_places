@@ -485,8 +485,7 @@ public class CommandWorker implements ServerWorker
                 dx + "," +
                 dy + "," +
                 speed + "," + 
-                pattern + "\n"
-                ;
+                pattern + "\n";
 
         room.addAction(move);
         roomcast(room.getServer(), command, room);
@@ -687,5 +686,4 @@ public class CommandWorker implements ServerWorker
             roomcast(dataEvent.server, command, room);
         }
     }
-
 }

@@ -61,7 +61,12 @@ local function update(move, dt)
       jumps.calculate(mob, dt)
     end
     
-    -- print("nx=" .. nx .. " ny=" .. ny .. " mob.x="..mob.x .. " mob.y="..mob.y)
+    --[[
+    if mob.id == 47 then
+      print("nx=" .. nx .. " ny=" .. ny .. " mob.x="..mob.x .. " mob.y="..mob.y)
+    end
+    ]]
+    
   else
     -- end of move now
     -- eliminate rounding errors

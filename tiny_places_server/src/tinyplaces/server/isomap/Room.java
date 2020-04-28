@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -103,6 +102,7 @@ public class Room
         return nextObjectId ++;
     }
 
+    
     public void addMob(int layer, Mob mob)
     {
         HashMap <Integer, Mob> lmap = getLayerMap(layer);
@@ -112,6 +112,7 @@ public class Room
             lmap.put(mob.id, mob);
         }
     }
+    
     
     public Mob getMob(int layer, int id)
     {
@@ -185,19 +186,6 @@ public class Room
         }
     }
 
-    /*
-    public void init(String backdrop) 
-    {
-        patches.clear();
-        mobs.clear();
-        clouds.clear();
-        
-        actions.clear();
-        groups.clear();
-        
-        this.backdrop = backdrop;
-    }
-*/
 
     public Mob makeMob(String [] parts)
     {
@@ -234,15 +222,12 @@ public class Room
     public List <Mob> makeMobGroup(String id, int centerX, int centerY, int spacing)
     {
         ArrayList <Mob> result = new ArrayList<Mob>();
-        
-        for(int i=0; i<7; i++)
+        int count = 7;
+        for(int i=0; i<count; i++)
         {
             int x = centerX + spacing * 2 * (int)(Math.random() * 5 - 2.5);
             int y = centerY + spacing * (int)(Math.random() * 5 - 2.5);
 
-            // Imps
-            // Mob mob = makeMob(3, 1, x, y, 1.0f, "0.8 0.9 1 1", Mob.TYPE_CREATURE);
-            
             Creature creature = CreatureCatalog.get(id);
             Mob mob = makeMob(3, creature.tile, x, y, creature.scale, creature.color, Mob.TYPE_CREATURE);
             mob.creature = creature.create();
@@ -253,8 +238,7 @@ public class Room
         
         CreatureGroup creatureGroup = new CreatureGroup(result, centerX, centerY);
         groups.add(creatureGroup);
-        
-        
+
         return result;
     }
     
@@ -272,7 +256,7 @@ public class Room
                 if(mob.nextAiTime < time)
                 {
                     // fire at a player?
-                    if(Math.random() < 0.75)
+                    if(Math.random() < 0.25)
                     {
                         ArrayList<Mob> moblist = new ArrayList<Mob>  (mobs.values());
                         // find a player
@@ -285,37 +269,40 @@ public class Room
                                 commandWorker.fireProjectile(this, mob, 3, target.x, target.y, spell);
                             }
                         }
+                        mob.nextAiTime = time + 1000 + (int)(Math.random() * 1000);
                     }
-
-                    // move
-                    int x, y, len;
-                    int count = 0;
-
-                    do
+                    else
                     {
-                        x = mob.x + 100 - (int)(Math.random() * 200);
-                        y = mob.y + 100 - (int)(Math.random() * 200);
+                        // move
+                        int x, y, len;
+                        int count = 0;
 
-                        int dx = (x - group.cx);
-                        int dy = (y - group.cy);
+                        do
+                        {
+                            x = mob.x + 100 - (int)(Math.random() * 200);
+                            y = mob.y + 100 - (int)(Math.random() * 200);
 
-                        len = dx * dx + (dy * dy) * 4;
-                        count ++;
+                            int dx = (x - group.cx);
+                            int dy = (y - group.cy);
 
-                        // System.err.println("len=" + len);
-                    } while(len > 100 * 100 && count < 5);
+                            len = dx * dx + (dy * dy) * 4;
+                            count ++;
 
-                    if(count >= 5)
-                    {
-                        x = group.cx + 50 - (int)(Math.random() * 100);
-                        y = group.cy + 50 - (int)(Math.random() * 100);
+                            // System.err.println("len=" + len);
+                        } while(len > 100 * 100 && count < 5);
+
+                        if(count >= 5)
+                        {
+                            x = group.cx + 50 - (int)(Math.random() * 100);
+                            y = group.cy + 50 - (int)(Math.random() * 100);
+                        }
+
+                        // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
+                        commandWorker.doMove(null, this, mob.id, 3, x, y, 
+                                             mob.creature.speed, mob.creature.pattern);
+
+                        mob.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                     }
-
-                    // System.err.println("id=" + creature.id + "moves to " + x + ", " + y);
-                    commandWorker.doMove(null, this, mob.id, 3, x, y, 
-                                         mob.creature.speed, mob.creature.pattern);
-
-                    mob.nextAiTime = time + 3000 + (int)(Math.random() * 2000);
                 }
             }
         }
