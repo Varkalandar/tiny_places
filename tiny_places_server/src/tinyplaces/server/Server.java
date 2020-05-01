@@ -12,6 +12,7 @@ import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.SpellCatalog;
+import tinyplaces.server.data.TransitionCatalog;
 import tinyplaces.server.isomap.MapWorker;
 
 /**
@@ -52,6 +53,7 @@ public class Server implements Runnable
         this.worker = worker;
         SpellCatalog.init();
         CreatureCatalog.init();
+        TransitionCatalog.init();
     }
 
     

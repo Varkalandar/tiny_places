@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import tinyplaces.server.data.Transition;
+import tinyplaces.server.data.TransitionCatalog;
 import tinyplaces.server.isomap.actions.Move;
 import tinyplaces.server.isomap.actions.Action;
 
@@ -85,34 +87,8 @@ public class MapWorker implements Runnable
             Move move = (Move)action;
             
             // Player moves can result in a map change
-            if("Lobby".equals(room.name))
-            {
-                {
-                    // change to wasteland
-                    int dx = move.x - 837;
-                    int dy = move.y - 168;
-                    int d2 = dx * dx + dy * dy;
-
-                    // monsters have no data event ... cannot transit to another room
-                    if(d2 < 250 && move.dataEvent != null)
-                    {
-                        room.transit(move.dataEvent, mob, "wasteland_and_pond", 360, 480);
-                    }
-                }
-                {
-                    // change to desert
-                    int dx = move.x - 392;
-                    int dy = move.y - 144;
-                    int d2 = dx * dx + dy * dy;
-
-                    // monsters have no data event ... cannot transit to another room
-                    if(d2 < 250 && move.dataEvent != null)
-                    {
-                        room.transit(move.dataEvent, mob, "desert", 867, 466);
-                    }
-                }
-            }        
-        
+            checkTransitions(room, mob, move);
+            
             if(mob.type == Mob.TYPE_PROJECTILE)
             {
                 int radius = 20;
@@ -148,5 +124,30 @@ public class MapWorker implements Runnable
                 }
             }
         }
+    }
+
+    private Transition checkTransitions(Room room, Mob mob, Move move) 
+    {        
+        List<Transition> transitions = TransitionCatalog.get(room.name);
+        
+        // System.err.println("room=" + room.name + " has " + transitions);        
+        if(transitions != null)
+        {
+            for(Transition t : transitions)
+            {
+                int dx = move.x -t.fromX;
+                int dy = move.y - t.fromY;
+                int d2 = dx * dx + dy * dy;
+
+                // monsters have no data event ... cannot transit to another room
+                if(d2 < 250 && move.dataEvent != null)
+                {
+                    room.transit(move.dataEvent, mob, t.toMap, t.toX, t.toY);
+                    return t;
+                }
+            }
+        }
+        
+        return null;
     }
 }

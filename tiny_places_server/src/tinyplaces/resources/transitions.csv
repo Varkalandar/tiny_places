@@ -1,0 +1,5 @@
+ID,Name,From Map,From X,From Y,To Map,To X,To Y
+lobby_to_wasteland,Wasteland,Lobby,837,168,wasteland_and_pond,360,480
+lobby_to_desert,Desert,Lobby,392,144,desert,891,461
+wasteland_to_lobby,Lobby,Wasteland,326,465,lobby,837,168
+desert_to_lobby,Lobby,Desert,891,461,lobby,392,144
