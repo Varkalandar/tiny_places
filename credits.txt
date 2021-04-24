@@ -2,3 +2,9 @@ The inventory ui corner decorations and borders were created using these two pub
 https://freesvg.org/rose-corner-decor
 https://freesvg.org/border
 
+
+Fonts
+-----
+
+Humanistic by George Williams (SIL Open Font License)
+https://www.1001fonts.com/humanistic-font.html

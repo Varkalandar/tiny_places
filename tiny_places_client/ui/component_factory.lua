@@ -10,7 +10,7 @@ local button = require("ui/button")
 local textinput = require("ui/textinput")
 local colorinput = require("ui/colorinput")
 
-local component_factory = {}
+local componentFactory = {}
 
 local clickSoundData = nil
 local clickSoundSource = nil
@@ -31,22 +31,25 @@ end
 
 
 local function drawButton(bt)
-  button.draw(bt.text, bt.x, bt.y, bt.toff, bt.scale, bt.pressed)
+  button.draw(bt)
 end
+
 
 local function drawInput(input)
   textinput.draw(input)
 end
+
 
 local function drawColor(input)
   colorinput.draw(input)
 end
 
 
-local function makeButton(text, x, y, toff, scale, callback)
+local function makeButton(text, pixfont, x, y, toff, scale, callback)
   local button = {}
 
   button.text = text
+  button.pixfont = pixfont
   button.x = x
   button.y = y
   button.width = 115
@@ -57,6 +60,7 @@ local function makeButton(text, x, y, toff, scale, callback)
   button.focused = false
   button.callback = callback
   button.draw = drawButton
+  
   return button
 end
 
@@ -92,15 +96,18 @@ local function makeColor(x, y, callback)
   return input
 end
 
+
 local function drawContainer(container)
   for i, element in pairs(container.store) do
     element:draw()
   end
 end
 
+
 local function containerAdd(container, element)
   table.insert(container.store, element)
 end
+
 
 local function containerMousePressed(container, mx, my)
   for i, element in pairs(container.store) do
@@ -121,6 +128,7 @@ local function containerMousePressed(container, mx, my)
   end
 end
 
+
 local function containerMouseReleased(container, mx, my)
   for i, element in pairs(container.store) do
     if mx > element.x and my > element.y and mx < element.x + element.width and my < element.y + element.height then
@@ -132,6 +140,7 @@ local function containerMouseReleased(container, mx, my)
   end
 end
 
+
 local function makeContainer()
   local container = {}
   container.draw = drawContainer
@@ -142,12 +151,13 @@ local function makeContainer()
   return container
 end
 
-component_factory.init = init
-component_factory.makeButton = makeButton
-component_factory.makeInput = makeInput
-component_factory.makeColor = makeColor
-component_factory.makeContainer = makeContainer
 
-return component_factory
+componentFactory.init = init
+componentFactory.makeButton = makeButton
+componentFactory.makeInput = makeInput
+componentFactory.makeColor = makeColor
+componentFactory.makeContainer = makeContainer
+
+return componentFactory
 
 

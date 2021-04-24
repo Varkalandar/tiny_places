@@ -10,6 +10,8 @@ local editorUi = require("ui/editor_ui")
 
 local map = require("map")
 
+local pixfont = require("ui/pixfont")
+
 local mainUi = {};
 
 -- event handling code
@@ -56,12 +58,16 @@ local function init()
 
 	print("Initializing main ui")
 	
+  -- pixfont.init("resources/font/humanistic_128b")
+  pixfont.init("resources/font/humanistic_128bbl")
+  
 	mainUi.image = love.graphics.newImage("resources/ui/main_ui.png")
 	mainUi.lmbState = love.mouse.isDown(1)
 	mainUi.rmbState = love.mouse.isDown(2)
 	mainUi.popup = nil
 	mainUi.wheelDelta = 0
-	
+	mainUi.pixfont = pixfont
+  
 	gameUi.init(mainUi, map)
 	editorUi.init(mainUi, map)
 	

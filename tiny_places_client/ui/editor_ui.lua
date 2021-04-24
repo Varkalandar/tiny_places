@@ -245,42 +245,42 @@ local function init(mainUi, map)
   
   tileChooserPopup.init(mainUi, editorUi.map.mobSet)	
 
-  btPlace = cf.makeButton("Place Item", 16, 450, 12, 0.33, setModePlace)
+  btPlace = cf.makeButton("Place Item", mainUi.pixfont, 16, 450, 12, 0.33, setModePlace)
   btPlace.pressed = true
   container:add(btPlace)
   
-  btMove = cf.makeButton("Edit Item", 16, 480, 16, 0.33, setModeMove)
+  btMove = cf.makeButton("Edit Item", mainUi.pixfont, 16, 480, 16, 0.33, setModeMove)
   container:add(btMove)
 
-  btDelete = cf.makeButton("Remove Item", 140, 480, 2, 0.33, setModeDelete)
+  btDelete = cf.makeButton("Remove Item", mainUi.pixfont, 140, 480, 2, 0.33, setModeDelete)
   container:add(btDelete)
 
-  btSelect = cf.makeButton("Select Item", 28, 680, 8, 0.33, openPopup)
+  btSelect = cf.makeButton("Select Item", mainUi.pixfont, 28, 680, 8, 0.33, openPopup)
   container:add(btSelect)
 
 
-  btPatchlayer = cf.makeButton("Ground Layer", 180, 680, 0, 0.33, selectPatchLayer)
+  btPatchlayer = cf.makeButton("Ground Layer", mainUi.pixfont, 180, 680, 0, 0.33, selectPatchLayer)
   container:add(btPatchlayer)
   
-  btMoblayer = cf.makeButton("Item Layer", 180, 650, 10, 0.33, selectMobLayer)
+  btMoblayer = cf.makeButton("Item Layer", mainUi.pixfont, 180, 650, 10, 0.33, selectMobLayer)
   btMoblayer.pressed = true
   container:add(btMoblayer)
   
-  btCloudlayer = cf.makeButton("Cloud Layer", 180, 620, 8, 0.33, selectCloudLayer)
+  btCloudlayer = cf.makeButton("Cloud Layer", mainUi.pixfont, 180, 620, 8, 0.33, selectCloudLayer)
   container:add(btCloudlayer)
 
 
-  btSave = cf.makeButton("Save Map", 1050, 40, 12, 0.33, saveMap)
+  btSave = cf.makeButton("Save Map", mainUi.pixfont,  1050, 40, 12, 0.33, saveMap)
   container:add(btSave)
 
-  btLoad = cf.makeButton("Load Map", 1050, 70, 12, 0.33, loadMap)
+  btLoad = cf.makeButton("Load Map", mainUi.pixfont,  1050, 70, 12, 0.33, loadMap)
   container:add(btLoad)
 
   -- local colorInput = cf.makeInput("1.0, 1.0, 1.0", 16, 510, 160, 24, nil)
   btColor = cf.makeColor(326, 634, colorChanged)
   container:add(btColor)
   
-  btGame = cf.makeButton("Game Mode", 16, 70, 8, 0.33, switchToGameUi)
+  btGame = cf.makeButton("Game Mode", mainUi.pixfont, 16, 90, 8, 0.33, switchToGameUi)
   container:add(btGame)
 
   setModePlace()
@@ -329,9 +329,13 @@ end
 
 
 local function draw()
-  love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.print("Edit Mode", 16, 30, 0, 2, 2)
+
+  local pixfont = editorUi.mainUi.pixfont
   
+  love.graphics.setColor(1.0, 1.0, 1.0)
+  -- love.graphics.print("Edit Mode", 16, 30, 0, 2, 2)
+	pixfont.drawStringScaled("Edit Mode", 16, 30, 0.5)
+
   -- tile preview area
   love.graphics.draw(editorUi.areaImage, 16, 600, 0, 0.5, 0.5)
   
@@ -344,7 +348,8 @@ local function draw()
     local scale = 0.5
     love.graphics.setColor(1.0, 1.0, 1.0)
     love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
-    love.graphics.print(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 16, 0, 1.0, 1.0)
+    -- love.graphics.print(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 16, 0, 1.0, 1.0)
+    pixfont.drawStringScaled(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 26, 0.18)
   end
   
   container:draw()

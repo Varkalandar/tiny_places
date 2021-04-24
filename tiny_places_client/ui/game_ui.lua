@@ -63,7 +63,7 @@ end
 local function init(mainUi, map)
 	print("Loading game ui")
 	
-  inventoryPopup.init()
+  inventoryPopup.init(mainUi, map.itemSet)
   
   gameUi.mainUi = mainUi
   gameUi.areaImage = love.graphics.newImage("resources/ui/area_cut.png")
@@ -114,12 +114,17 @@ end
 
 
 local function drawGauge(x, y, filler, shrink, title, numbers)
+  local pixfont = gameUi.mainUi.pixfont
 
 	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
 
   local scale = 0.33
   local w = gameUi.gaugeBg:getWidth() * scale
   local h = gameUi.gaugeBg:getHeight() * scale
+
+   	-- love.graphics.print(numbers, x + 5, y+20, 0, 1, 0.5)
+  local nw = pixfont.calcStringWidth(numbers) * 0.25
+  pixfont.drawStringScaled(numbers, x + (w - nw)/2, y+10, 0.25)
 
   love.graphics.draw(gameUi.gaugeBg, x, y+30, 0, scale, scale)
   love.graphics.draw(filler, x + (w - w*shrink)*0.5, 
@@ -129,18 +134,23 @@ local function drawGauge(x, y, filler, shrink, title, numbers)
                                       scale * shrink)
   love.graphics.draw(gameUi.gaugeFg, x, y+30, 0, scale, scale)
 
- 	love.graphics.print(numbers, x + 5, y+20, 0, 1, 0.5)
+  
 	love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
-	love.graphics.print(title, x + 5, y, 0, 2, 1)
-
+	-- love.graphics.print(title, x + 5, y, 0, 2, 1)
+  local tw = pixfont.calcStringWidth(title) * 0.5
+  pixfont.drawStringScaled(title, x + (w - tw)/2 , y+80, 0.5) 
 end
 
 
 local function draw()
+  local pixfont = gameUi.mainUi.pixfont
+
 	love.graphics.setColor(1.0, 1.0, 1.0)
-	love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
+	-- love.graphics.print("Game Mode", 16, 30, 0, 2, 2)
+	pixfont.drawStringScaled("Game Mode", 16, 30, 0.5)
 	
-	love.graphics.print(gameUi.map.name, 1000, 30, 0, 2, 1)
+	-- love.graphics.print(gameUi.map.name, 1000, 30, 0, 2, 1)
+	pixfont.drawStringScaled(gameUi.map.name, 1000, 30, 0.5)
 
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)

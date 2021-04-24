@@ -18,7 +18,7 @@ function love.load()
     print("Failed to resize main window")
   end
   
-  love.window.setTitle("Tiny Places v0.04")
+  love.window.setTitle("Tiny Places v0.05")
 end
 
 -- the work that has to be done before each frame can be drawn

@@ -268,6 +268,7 @@ local function init()
   projectileSet = tileset.readSet("resources/projectiles/", "projectiles.tica")
   cloudSet = tileset.readSet("resources/clouds/", "map_objects.tica")
   animationSet = tileset.readSet("resources/animations/", "animations.tica")
+  local itemSet = tileset.readSet("resources/items/", "items.tica")
   
   load("Wasteland", "map_wasteland", "")
 
@@ -279,7 +280,8 @@ local function init()
   map.mobSet = mobSet
   map.patchSet = patchSet
   map.cloudSet = cloudSet
-
+  map.itemSet = itemSet
+  
   map.actions = {}
   
   sounds.init()
