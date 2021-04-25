@@ -10,18 +10,18 @@ import java.util.HashMap;
  *
  * @author hjm
  */
-public class CreatureCatalog 
+public class ItemCatalog 
 {
-    private static final HashMap<String, Creature> allCreatures = new HashMap<String, Creature> (256);
+    private static final HashMap<String, BaseItem> allBaseItems = new HashMap<String, BaseItem> (256);
     
-    public static Creature get(String id)
+    public static BaseItem get(String id)
     {
-        return allCreatures.get(id);
+        return allBaseItems.get(id);
     }
     
     public static void init() throws IOException
     {
-        InputStream is = Class.class.getClass().getResourceAsStream("/tinyplaces/resources/creatures.csv");
+        InputStream is = Class.class.getClass().getResourceAsStream("/tinyplaces/resources/items.csv");
         InputStreamReader sr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(sr);
 
@@ -33,31 +33,23 @@ public class CreatureCatalog
         while((line = reader.readLine()) != null)
         {
             String [] parts = line.split(",");
-            Creature creature = new Creature();
+            BaseItem baseItem = new BaseItem();
             
             int i = 0;
-            creature.id = parts[i++];
-            creature.displayName = parts[i++];
-            creature.tile = Integer.parseInt(parts[i++]);
+            baseItem.id = parts[i++];
+            baseItem.displayName = parts[i++];
+            baseItem.tile = Integer.parseInt(parts[i++]);
 
-            creature.minLife = Integer.parseInt(parts[i++]);
-            creature.maxLife = Integer.parseInt(parts[i++]);
+            baseItem.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
+            baseItem.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
+            baseItem.resistance[Damage.TYPE_COLD] = Integer.parseInt(parts[i++]);
+            baseItem.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
+            baseItem.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
 
-            creature.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
-            creature.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
-            creature.resistance[Damage.TYPE_COLD] = Integer.parseInt(parts[i++]);
-            creature.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
-            creature.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
+            baseItem.color = parts[i++];
+            baseItem.scale = Float.parseFloat(parts[i++]);
             
-            creature.spellId = parts[i++];
-            
-            creature.pattern = parts[i++];
-            creature.speed = Integer.parseInt(parts[i++]);
-
-            creature.color = parts[i++];
-            creature.scale = Float.parseFloat(parts[i++]);
-            
-            allCreatures.put(parts[0], creature);
+            allBaseItems.put(parts[0], baseItem);
         }
         
         reader.close();

@@ -1,3 +1,2 @@
-ID,Name,Tile,Min Life,Max Life,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Spell,Movement,Speed,Color,Scale
-dust_devil,Dust Devil,9,1,3,0,0,0,0,0,dust_vortex,glide,20,1 0.9 0.6 1,0.5
-spiked_crawler,Spiked Crawler,17,1,3,0,0,0,0,0,dirt_shot,glide2,20,0.8 0.8 0.8 1,0.25
+ID,Name,Tile,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
+test_item,Test Item,1,0,0,0,0,0,1 1 1, 0.5

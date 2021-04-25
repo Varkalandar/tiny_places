@@ -11,6 +11,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 import tinyplaces.server.data.CreatureCatalog;
+import tinyplaces.server.data.ItemCatalog;
 import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.data.TransitionCatalog;
 import tinyplaces.server.isomap.MapWorker;
@@ -51,6 +52,8 @@ public class Server implements Runnable
         this.port = port;
         this.selector = initSelector();
         this.worker = worker;
+        
+        ItemCatalog.init();
         SpellCatalog.init();
         CreatureCatalog.init();
         TransitionCatalog.init();
