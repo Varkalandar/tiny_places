@@ -90,16 +90,26 @@ local function init(mainUi, map)
                                )  
   ]]
   
-  -- a spectre  
+  -- a spectre
+--[[  
   gameUi.map.clientSocket.send("ADDP,"     -- add a player
                                .."3,"      -- layer
                                .."20,"      -- tile id (1 = globo, 20 = spectre)
                                .."600,"    -- x pos
                                .."400,"    -- y pos
-                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.35)
+                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
                                .."1.0 1.0 1.0 1.0"
                                )  
-														
+	]]
+  gameUi.map.clientSocket.send("ADDP,"     -- add a player
+                               .."3,"      -- layer
+                               .."39,"      -- tile id (1 = globo, 20 = spectre)
+                               .."600,"    -- x pos
+                               .."400,"    -- y pos
+                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
+                               .."1.0 1.0 1.0 1.0"
+                               )  
+  
 	-- the APPP will set gameUi.playerMob when receiving the response from the server
 end
 
@@ -167,8 +177,8 @@ local function draw()
   
   drawGauge(140, 430, gameUi.gaugeBlue, shrink, "Mana", "16/40") 
 
-	love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(gameUi.areaImage, 840, 500, 0, 0.5, 0.5)
+	-- love.graphics.setColor(1.0, 1.0, 1.0)
+  -- love.graphics.draw(gameUi.areaImage, 840, 500, 0, 0.5, 0.5)
 	container:draw()
 end
 

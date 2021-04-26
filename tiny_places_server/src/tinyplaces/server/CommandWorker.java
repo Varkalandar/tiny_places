@@ -449,7 +449,7 @@ public class CommandWorker implements ServerWorker
             // todo - make some catalog of players with their properties
             if(mob.type == Mob.TYPE_PLAYER)
             {
-                if(mob.tile == 9 || mob.tile == 20)
+                if(mob.tile == 9 || mob.tile == 20 || mob.tile == 39)
                 {
                     // spectres glide
                     pattern = "glide";

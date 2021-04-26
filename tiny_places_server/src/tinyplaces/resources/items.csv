@@ -1,2 +1,6 @@
-ID,Name,Tile,Base Value,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
-test_item,Test Item,1,50,0,0,0,0,0,1 1 1,0.5
+ID,Name,Tile,Inv Width,Inv Height,Base Value,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
+test_item,Test Item,1,1,1,50,0,0,0,0,0,1 1 1,0.5
+plh_11,Placeholder 1x1,3,1,1,1,0,0,0,0,0,1 1 1,1
+plh_21,Placeholder 2x1,5,2,1,1,0,0,0,0,0,1 1 1,1
+plh_12,Placeholder 1x2,7,1,2,1,0,0,0,0,0,1 1 1,1
+plh_22,Placeholder 2x2,9,1,1,1,0,0,0,0,0,1 1 1,1

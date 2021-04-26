@@ -46,7 +46,7 @@ local function orient(mob, dx, dy)
   r = r + math.pi + math.pi/8
 
   -- calculate tile offsets from 0 to faces-1    
-  r = faces/2 + math.floor((r * faces)  / (math.pi * 2))
+  r = faces/2 + math.floor((r * faces)  / (math.pi * 2) - 0.5)
   if r >= faces then r = r - faces end
   
   -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r .. " faces=" .. faces)

@@ -61,7 +61,7 @@ local function drawItemPopup(pixfont, xoff, yoff)
   local w = 160
   local h = 200
   
-  love.graphics.setColor(0, 0, 0, 0.5)
+  love.graphics.setColor(0.3, 0.3, 0.3, 0.5)
   love.graphics.rectangle("fill", xoff+1, yoff+1, w-2, h-2)
 
   love.graphics.setColor(0.5, 0.5, 0.5)
