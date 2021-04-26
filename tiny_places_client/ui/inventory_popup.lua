@@ -70,21 +70,21 @@ local function drawItemPopup(pixfont, xoff, yoff)
   
   love.graphics.setColor(1, 0.7, 0.2)
   local sw = pixfont.calcStringWidth("73 Coins") * 0.25
-  pixfont.drawStringScaled("73 Coins", xoff + 2 + (w - sw)/2, yoff+8, 0.25)
+  pixfont.drawStringScaled("73 Coins", xoff + 2 + (w - sw)/2, yoff+8, 0.25, 0.25)
   
   local ybase = yoff+42
   local yspace = 22
   
   love.graphics.setColor(0.9, 0.9, 0.9)
-  pixfont.drawStringScaled("Standard currency", xoff + 4, ybase + yspace * 0, 0.2)
+  pixfont.drawStringScaled("Standard currency", xoff + 4, ybase + yspace * 0, 0.2, 0.2)
 
   local ybase = ybase+32
 
   love.graphics.setColor(0.7, 0.7, 0.7)
-  pixfont.drawStringScaled("This is for testing", xoff + 4, ybase + yspace * 0, 0.2)
-  pixfont.drawStringScaled("more lines and", xoff + 4, ybase + yspace * 1, 0.2)
-  pixfont.drawStringScaled("numbers.", xoff + 4, ybase + yspace * 2, 0.2)
-  pixfont.drawStringScaled("1234567890", xoff + 4, ybase + yspace * 3, 0.2)
+  pixfont.drawStringScaled("This is for testing", xoff + 4, ybase + yspace * 0, 0.2, 0.2)
+  pixfont.drawStringScaled("more lines and", xoff + 4, ybase + yspace * 1, 0.2, 0.2)
+  pixfont.drawStringScaled("numbers.", xoff + 4, ybase + yspace * 2, 0.2, 0.2)
+  pixfont.drawStringScaled("1234567890", xoff + 4, ybase + yspace * 3, 0.2, 0.2)
 end
 
 

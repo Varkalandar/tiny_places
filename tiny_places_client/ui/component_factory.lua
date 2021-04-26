@@ -52,8 +52,8 @@ local function makeButton(text, pixfont, x, y, toff, scale, callback)
   button.pixfont = pixfont
   button.x = x
   button.y = y
-  button.width = 115
-  button.height = 28
+  button.width = 562*scale
+  button.height = 86*scale
   button.toff = toff
   button.scale = scale
   button.pressed = false

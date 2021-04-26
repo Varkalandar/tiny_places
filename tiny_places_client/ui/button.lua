@@ -1,6 +1,6 @@
 local button = {}
 
-button.image = love.graphics.newImage("resources/ui/button.png")
+button.image = love.graphics.newImage("resources/ui/silver/button.png")
 
 local function draw(bt)
 
@@ -20,11 +20,12 @@ local function draw(bt)
 
   -- love.graphics.print(text, x+10+toff, y+6, 0, 1.25, 1)
   local f = 0.66
-  local w = bt.pixfont.calcStringWidth(bt.text) * f
+  local w = bt.pixfont.calcStringWidth(bt.text) * f * 1.5
   bt.pixfont.drawStringScaled(bt.text, 
                                              bt.x + (button.image:getWidth() - w) * bt.scale / 2,
-                                             bt.y+1, 
-                                             bt.scale * f)
+                                             bt.y+5, 
+                                             bt.scale * f * 1.5, 
+                                             bt.scale * f * 0.75)
 end
 
 button.draw = draw

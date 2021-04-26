@@ -7,10 +7,6 @@
 
 local pixfont = {}
 
---    private final int letterWidths [] = new int [256];
---    private final int letterHeights [] = new int [256];
---    private final String slips [] = new String [256];
-
 
 local function readKerningInfo(path, pixfont)
 
@@ -38,6 +34,7 @@ local function readKerningInfo(path, pixfont)
   end
 
 end
+
 
 local function scanWidth(rasterX, rasterY, data, sx, sy)
 
@@ -81,6 +78,7 @@ local function scanHeight(rasterX, rasterY, data, sx, sy)
   end
   return 0
 end
+
 
 local function scanDimensions(pixfont)
 
@@ -139,14 +137,14 @@ local function calcStringWidth(text)
 end
 
 
-local function drawCharacterScaled(x, y, character, scale)
+local function drawCharacterScaled(x, y, character, scx, scy, slx, sly)
 
   local quad = pixfont.quads[character]
-  love.graphics.draw(pixfont.image, quad, x, y, 0, scale, scale)
+  love.graphics.draw(pixfont.image, quad, x, y, 0, scx, scy, 0, 0, slx, sly)
 end
 
 
-local function drawStringScaled(text, x, y, scale)
+local function drawStringScaled(text, x, y, scx, scy, slx, sly)
 
   local letters = text:len()
         
@@ -158,7 +156,7 @@ local function drawStringScaled(text, x, y, scale)
     local c = string.byte(text, p)
     -- print("c=" .. string.char(c))
     
-    drawCharacterScaled(x+runx*scale, y, c, scale)
+    drawCharacterScaled(x+runx*scx, y, c, scx, scy, slx, sly)
 
     runx = runx + pixfont.letterWidths[c]
             
@@ -171,7 +169,7 @@ local function drawStringScaled(text, x, y, scale)
     end
   end
   
-  return runx * scale
+  return runx * scx
 end
 
 

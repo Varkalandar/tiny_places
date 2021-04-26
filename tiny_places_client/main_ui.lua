@@ -61,7 +61,7 @@ local function init()
   -- pixfont.init("resources/font/humanistic_128b")
   pixfont.init("resources/font/humanistic_128bbl")
   
-	mainUi.image = love.graphics.newImage("resources/ui/main_ui.png")
+	mainUi.image = love.graphics.newImage("resources/ui/silver/main_ui.png")
 	mainUi.lmbState = love.mouse.isDown(1)
 	mainUi.rmbState = love.mouse.isDown(2)
 	mainUi.popup = nil
