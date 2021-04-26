@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -61,5 +63,6 @@ public class CreatureCatalog
         }
         
         reader.close();
+        Logger.getLogger(CreatureCatalog.class.getName()).log(Level.INFO, "Loaded {0} creatures.", allCreatures.size());                        
     }    
 }

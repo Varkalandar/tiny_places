@@ -7,11 +7,12 @@ package tinyplaces.server.data;
 public class BaseItem 
 {
 
-    String id;
-    String displayName;
-    int tile;
-    int[] resistance = new int [Damage.TYPE_COUNT];
-    String color;
-    float scale;
+    public String id;
+    public String displayName;
+    public int tile;
+    public int baseValue;
+    public int[] resistance = new int [Damage.TYPE_COUNT];
+    public String color;
+    public float scale;
     
 }

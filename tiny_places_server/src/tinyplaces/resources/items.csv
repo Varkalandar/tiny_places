@@ -1,2 +1,2 @@
-ID,Name,Tile,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
-test_item,Test Item,1,0,0,0,0,0,1 1 1, 0.5
+ID,Name,Tile,Base Value,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
+test_item,Test Item,1,50,0,0,0,0,0,1 1 1,0.5

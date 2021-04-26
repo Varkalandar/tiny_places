@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Read and manage spell data.
@@ -58,5 +60,6 @@ public class SpellCatalog
         }
 
         reader.close();
+        Logger.getLogger(SpellCatalog.class.getName()).log(Level.INFO, "Loaded {0} spells.", allSpells.size());                        
     }
 }

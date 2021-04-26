@@ -3,7 +3,6 @@ package tinyplaces.server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import tinyplaces.server.isomap.Client;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -14,12 +13,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tinyplaces.server.data.Item;
 import tinyplaces.server.data.Spell;
 import tinyplaces.server.data.SpellCatalog;
+import tinyplaces.server.isomap.Client;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
-import tinyplaces.server.isomap.actions.Move;
 import tinyplaces.server.isomap.actions.Action;
+import tinyplaces.server.isomap.actions.Move;
 import tinyplaces.server.isomap.actions.SpellCast;
 
 /**
@@ -36,6 +37,13 @@ public class CommandWorker implements ServerWorker
     // client map
     private final Map <SocketChannel, Client> clients = new HashMap();
     
+    /**
+     * Process data sent by a client
+     * @param server The server that received the data
+     * @param socket The socket that is connected to the client
+     * @param data The actual data
+     * @param bytes The amount of bytes (the data array might have more entries, but only this much were sent by the client)
+     */
     @Override
     public void processData(Server server, SocketChannel socket, byte[] data, int bytes)
     {
@@ -49,6 +57,7 @@ public class CommandWorker implements ServerWorker
         }
     }
 
+    
     @Override
     public void run()
     {
@@ -253,6 +262,7 @@ public class CommandWorker implements ServerWorker
         }
     }
     
+    
     private void updateMob(ServerDataEvent dataEvent, String command)
     {
         System.err.println("UPDM from " + dataEvent.socket);
@@ -450,6 +460,7 @@ public class CommandWorker implements ServerWorker
         }
     }
     
+    
     public void doMove(ServerDataEvent dataEvent,
                        Room room, int id, int layer, int dx, int dy, int speed, String pattern)
     {
@@ -526,6 +537,7 @@ public class CommandWorker implements ServerWorker
             addMobGroup(dataEvent, room, mobs, 3);    
         }
     }    
+    
     
     public void kill(Mob target, Room room) 
     {
@@ -615,11 +627,28 @@ public class CommandWorker implements ServerWorker
         roomcast(room.getServer(), command, room);
     }
 
+    
+    public void addItemToRoom(Room room, Item item)
+    {      
+        String command = 
+                "ADDI," +
+                item.baseItem.id + "," +
+                item.id + "," +
+                item.where + "," +
+                item.position.x + "," +
+                item.position.y + "," +
+                "\n";
+
+        roomcast(room.getServer(), command, room);
+    }
+
+    
     public void singlecast(ServerDataEvent dataEvent, String message)
     {
         byte [] data = message.getBytes();
         dataEvent.server.send(dataEvent.socket, data);
     }
+    
     
     /**
      * Send a message to all clients in the given room

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import tinyplaces.server.CommandWorker;
 
 /**
  *
@@ -39,6 +42,7 @@ public class ItemCatalog
             baseItem.id = parts[i++];
             baseItem.displayName = parts[i++];
             baseItem.tile = Integer.parseInt(parts[i++]);
+            baseItem.baseValue = Integer.parseInt(parts[i++]);
 
             baseItem.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
@@ -53,5 +57,7 @@ public class ItemCatalog
         }
         
         reader.close();
+        
+        Logger.getLogger(ItemCatalog.class.getName()).log(Level.INFO, "Loaded {0} items.", allBaseItems.size());                
     }    
 }

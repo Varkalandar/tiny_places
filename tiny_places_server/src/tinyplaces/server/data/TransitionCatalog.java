@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,6 +64,6 @@ public class TransitionCatalog
         }
 
         reader.close();
+        Logger.getLogger(TransitionCatalog.class.getName()).log(Level.INFO, "Loaded {0} map transitions.", allTransitions.size());                        
     }
-    
 }
