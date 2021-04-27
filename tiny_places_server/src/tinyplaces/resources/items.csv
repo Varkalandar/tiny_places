@@ -1,6 +1,7 @@
-ID,Name,Tile,Inv Width,Inv Height,Base Value,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos,Color,Scale
-test_item,Test Item,1,1,1,50,0,0,0,0,0,1 1 1,0.5
-plh_11,Placeholder 1x1,3,1,1,1,0,0,0,0,0,1 1 1,1
-plh_21,Placeholder 2x1,5,2,1,1,0,0,0,0,0,1 1 1,1
-plh_12,Placeholder 1x2,7,1,2,1,0,0,0,0,0,1 1 1,1
-plh_22,Placeholder 2x2,9,1,1,1,0,0,0,0,0,1 1 1,1
+ID,Name,Tile,Inv Width,Inv Height,Color,Scale,Base Value,Energy Damage,Res Phys,Res Fire,Res Cold,Res Light,Res Chaos
+test_item,Test Item,1,1,1,1 1 1,0.5,50,0,0,0,0,0,0
+plh_11,Placeholder 1x1,3,1,1,1 1 1,1,1,0,0,0,0,0,0
+plh_21,Placeholder 2x1,5,2,1,1 1 1,1,1,0,0,0,0,0,0
+plh_12,Placeholder 1x2,7,1,2,1 1 1,1,1,0,0,0,0,0,0
+plh_22,Placeholder 2x2,9,1,1,1 1 1,1,1,0,0,0,0,0,0
+small_blaster,Small Blaster,11,1,2,1 1 1,0.34,100,10,0,0,0,0,0

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.data.Item;
+import tinyplaces.server.data.ItemBuilder;
 import tinyplaces.server.data.Spell;
 import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.isomap.Client;
@@ -260,8 +261,26 @@ public class CommandWorker implements ServerWorker
                 }
             }
         }
+        
+        // give the player their items.
+        equipPlayer(senderSocket, mob);
     }
     
+    private void equipPlayer(SocketChannel playerSocket, Mob player)
+    {
+        Client client = clients.get(playerSocket);
+        Room room = client.getCurrentRoom();        
+        // todo - player database
+        
+        // for the moment, just hand some default items to the client
+        // so there is something for testing item related code
+        
+        Item item = ItemBuilder.create("small_blaster");
+        
+        item.where = 0;  // first item slot
+        
+        addItem(room, player, item);
+    }
     
     private void updateMob(ServerDataEvent dataEvent, String command)
     {
@@ -628,15 +647,22 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    public void addItemToRoom(Room room, Item item)
+    public void addItem(Room room, Mob mob, Item item)
     {      
         String command = 
                 "ADDI," +
+                mob.id + "," +   // todo - mob == null case
                 item.baseItem.id + "," +
                 item.id + "," +
+                item.displayName + "," +
+                item.baseItem.baseValue + "," +
+                item.baseItem.tile + "," +
+                item.baseItem.color + "," +
+                item.baseItem.scale + "," +
                 item.where + "," +
                 item.position.x + "," +
                 item.position.y + "," +
+                item.baseItem.energyDamage + "," +
                 "\n";
 
         roomcast(room.getServer(), command, room);

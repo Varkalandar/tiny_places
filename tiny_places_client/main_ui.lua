@@ -92,7 +92,39 @@ local function processCommands(commands)
       local cmd = args()
       print("Cmd: " .. cmd);
 	  
-      if cmd == "ADDM" then
+      if cmd == "ADDI" then
+        local mobId = tonumber(args())
+
+        local item = 
+        {
+          baseId = args(),
+          id = tonumber(args()),
+          displayName = args(),
+          value = tonumber(args()),
+          tile = tonumber(args()),
+          color = args(),
+          scale = tonumber(args()),
+          where = tonumber(args()),
+          x = tonumber(args()),
+          y = tonumber(args()),
+          energyDamage = tonumber(args())
+        }
+
+        -- debug data
+        for k, v in pairs(item) do print("  " .. k, v) end
+        
+        if mobId == nil then
+          -- todo - place item on map ground
+        else
+          -- this item goes to the player inventory
+          -- check if mobId is the actual player?
+          
+          table.insert(map.playerInventory, item)
+        end
+        
+        -- map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, faces)
+      
+      elseif cmd == "ADDM" then
         local id = tonumber(args())
         local layer = tonumber(args())
         local tile = tonumber(args())

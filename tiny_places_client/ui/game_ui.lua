@@ -63,7 +63,7 @@ end
 local function init(mainUi, map)
 	print("Loading game ui")
 	
-  inventoryPopup.init(mainUi, map.itemSet)
+  inventoryPopup.init(mainUi, map.itemSet, map.playerInventory)
   
   gameUi.mainUi = mainUi
   gameUi.areaImage = love.graphics.newImage("resources/ui/area_cut.png")
@@ -134,7 +134,7 @@ local function drawGauge(x, y, filler, shrink, title, numbers)
 
    	-- love.graphics.print(numbers, x + 5, y+20, 0, 1, 0.5)
   local nw = pixfont.calcStringWidth(numbers) * 0.25
-  pixfont.drawStringScaled(numbers, x + (w - nw)/2, y+10, 0.25, 0.25)
+  pixfont.drawStringScaled(numbers, x + (w - nw)/2, y+4, 0.25, 0.25)
 
   love.graphics.draw(gameUi.gaugeBg, x, y+30, 0, scale, scale)
   love.graphics.draw(filler, x + (w - w*shrink)*0.5, 
@@ -147,8 +147,8 @@ local function drawGauge(x, y, filler, shrink, title, numbers)
   
 	love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
 	-- love.graphics.print(title, x + 5, y, 0, 2, 1)
-  local tw = pixfont.calcStringWidth(title) * 0.5
-  pixfont.drawStringScaled(title, x + (w - tw)/2 , y+80, 0.5, 0.5) 
+  local tw = pixfont.calcStringWidth(title) * 0.25
+  pixfont.drawStringScaled(title, x + (w - tw)/2 , y+94, 0.25, 0.25)
 end
 
 
@@ -162,20 +162,20 @@ local function draw()
 
 	
 	love.graphics.setColor(0, 0, 0)
-	pixfont.drawStringScaled(gameUi.map.name, 1000-10, 30+24, 0.5, 0.25, 0.2, 0)
+	pixfont.drawStringScaled(gameUi.map.name, 970-10, 30+24, 0.5, 0.25, 0.2, 0)
 	love.graphics.setColor(1.0, 1.0, 1.0)
-	pixfont.drawStringScaled(gameUi.map.name, 1000, 30, 0.5, 0.5)
+	pixfont.drawStringScaled(gameUi.map.name, 970, 30, 0.5, 0.5)
 
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
   
   local shrink = 0.98 + beat * 0.02
 
-  drawGauge(5, 360, gameUi.gaugeRed, shrink, "Life", "40/40") 
+  drawGauge(5, 360, gameUi.gaugeRed, shrink, "Structure", "40/40") 
 
   local shrink = 0.7 + beat * 0.02
   
-  drawGauge(140, 430, gameUi.gaugeBlue, shrink, "Mana", "16/40") 
+  drawGauge(140, 430, gameUi.gaugeBlue, shrink, "Energy", "16/40") 
 
 	-- love.graphics.setColor(1.0, 1.0, 1.0)
   -- love.graphics.draw(gameUi.areaImage, 840, 500, 0, 0.5, 0.5)

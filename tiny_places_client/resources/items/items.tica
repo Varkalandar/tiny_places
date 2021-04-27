@@ -175,7 +175,7 @@ plh_22i
 Tile Description
 v.5
 11
-1 1
+19 17
 0 0
 0 0
 End Of Header
@@ -183,7 +183,7 @@ Item
 v.1
 data
 2
-
+small_blaster_m
 
 1
 0
@@ -191,7 +191,7 @@ data
 Tile Description
 v.5
 12
-1 1
+180 188
 0 0
 0 0
 End Of Header
@@ -199,7 +199,7 @@ Item
 v.1
 data
 2
-
+small_blaster_i
 
 1
 0

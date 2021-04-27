@@ -12,11 +12,14 @@ public class Item
 {
     public static int ON_MAP = -1;
     public static int IN_INVENTORY = -2;
+
+    public final BaseItem baseItem;
+    
+    public int id;
+    public String displayName;
     
     /** Map, inventory, equipment slot. Slots have positive numbers */
     public int where = ON_MAP;
-
-    public int id;
     
     /** 
      * If the place given in "where" supports more than 1
@@ -25,7 +28,6 @@ public class Item
      */
     public final Point position;
     
-    public final BaseItem baseItem;
     
     public Item(BaseItem baseItem)
     {

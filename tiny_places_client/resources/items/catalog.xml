@@ -185,8 +185,8 @@
       <Description>
         <version>4</version>
         <id>11</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>17</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -194,7 +194,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>small_blaster_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -202,8 +202,8 @@
       <Description>
         <version>4</version>
         <id>12</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>188</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -211,7 +211,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>small_blaster_i</string>
         <string></string>
       </Metadata>
     </Tile>

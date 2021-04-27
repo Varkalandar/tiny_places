@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import tinyplaces.server.CommandWorker;
+
 
 /**
  *
@@ -17,10 +17,18 @@ public class ItemCatalog
 {
     private static final HashMap<String, BaseItem> allBaseItems = new HashMap<String, BaseItem> (256);
     
+    
     public static BaseItem get(String id)
     {
-        return allBaseItems.get(id);
+        BaseItem baseItem = allBaseItems.get(id);
+        if(baseItem == null)
+        {
+            Logger.getLogger(ItemCatalog.class.getName()).log(Level.WARNING, "BaseItem {0} not found in catalog.", id);                
+        }
+        
+        return baseItem;
     }
+    
     
     public static void init() throws IOException
     {
@@ -42,7 +50,12 @@ public class ItemCatalog
             baseItem.id = parts[i++];
             baseItem.displayName = parts[i++];
             baseItem.tile = Integer.parseInt(parts[i++]);
+            baseItem.width = Integer.parseInt(parts[i++]);
+            baseItem.height = Integer.parseInt(parts[i++]);
+            baseItem.color = parts[i++];
+            baseItem.scale = Float.parseFloat(parts[i++]);
             baseItem.baseValue = Integer.parseInt(parts[i++]);
+            baseItem.energyDamage = Float.parseFloat(parts[i++]);
 
             baseItem.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
@@ -50,8 +63,6 @@ public class ItemCatalog
             baseItem.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
 
-            baseItem.color = parts[i++];
-            baseItem.scale = Float.parseFloat(parts[i++]);
             
             allBaseItems.put(parts[0], baseItem);
         }

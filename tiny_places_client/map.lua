@@ -261,6 +261,8 @@ end
 local function init()  
   print("Initializing map")
   
+  map.playerInventory = { }
+  
   patchSet = tileset.readSet("resources/grounds/", "map_objects.tica")
   mobSet = tileset.readSet("resources/objects/", "map_objects.tica")
   creatureSet = tileset.readSet("resources/creatures/", "creatures.tica")
