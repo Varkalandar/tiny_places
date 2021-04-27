@@ -36,29 +36,26 @@ local function drawItem(xoff, yoff, itemNo, scale)
 end
 
 
+local function drawItemCentered(xoff, yoff, itemNo, scale)
+
+  local tile = inventoryPopup.itemSet[itemNo]
+  love.graphics.setColor(0, 0.1, 0.2)
+  love.graphics.rectangle("fill", xoff, yoff, 32, 32)
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.draw(tile.image, 
+                                xoff - tile.image:getWidth()/2 * scale, 
+                                yoff - tile.image:getHeight()/2 * scale,
+                                0, scale, scale) 
+
+end
+
+
 local function checkItemPopup(xoff, yoff)
   -- todo
   return 1
 end
 
 local function drawBackpack(xoff, yoff)
-
-  for k, item in pairs(inventoryPopup.playerInventory) do 
-    -- print("  " .. k, v)
-    
-    if item.where == -1 then
-      -- backpack items
-    elseif item.where == 0 then
-       -- slotted items
-       
-       -- tile is image for map, tile+1 is image for inventory view
-      drawItem(740, 52, item.tile+1, item.scale)
-       
-    end    
-  end
-
-
-  drawItem(xoff, yoff, 1)
 
   -- love.graphics.setColor(0.15, 0.15, 0.15)
   love.graphics.setColor(0.2, 0.2, 0.2)
@@ -67,6 +64,22 @@ local function drawBackpack(xoff, yoff)
       love.graphics.rectangle("line", xoff+i*32, yoff+j*32, 32, 32)
     end
   end
+
+  for k, item in pairs(inventoryPopup.playerInventory) do 
+    
+    if item.where == -2 then
+      -- backpack items
+    elseif item.where >= 0 then
+       -- slotted items
+       
+       -- tile is image for map, tile+1 is image for inventory view
+      drawItemCentered(770, 85, item.tile+1, item.scale)
+       
+    end    
+  end
+
+
+  drawItem(xoff, yoff, 1)
 
 end
 
@@ -81,8 +94,7 @@ local function drawItemPopup(item, pixfont, xoff, yoff)
 
   love.graphics.setColor(0.5, 0.5, 0.5)
   love.graphics.rectangle("line", xoff, yoff, w, h)
-  -- love.graphics.print("73 Coins", xoff+rx+1, yoff+ry+16, 0, 1, 1)
-  
+
   love.graphics.setColor(1, 0.7, 0.2)
   local sw = pixfont.calcStringWidth(item.displayName) * 0.25
   pixfont.drawStringScaled(item.displayName, xoff + 2 + (w - sw)/2, yoff+8, 0.25, 0.25)
@@ -117,7 +129,7 @@ local function draw()
   -- if mouse is over an item, draw a popup
   local item = checkItemPopup(inventoryPopup.mainUi.mx - xoff, inventoryPopup.mainUi.my - yoff)
   if item then
-    drawItemPopup(inventoryPopup.playerInventory[1], inventoryPopup.mainUi.pixfont, 770, 60)
+    drawItemPopup(inventoryPopup.playerInventory[1], inventoryPopup.mainUi.pixfont, 780, 60)
   end
   
 end
