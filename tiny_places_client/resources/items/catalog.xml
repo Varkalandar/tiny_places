@@ -228,7 +228,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>blaster_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -236,8 +236,8 @@
       <Description>
         <version>4</version>
         <id>14</id>
-        <width>1</width>
-        <height>1</height>
+        <width>90</width>
+        <height>279</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -245,7 +245,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>blaster_i</string>
         <string></string>
       </Metadata>
     </Tile>

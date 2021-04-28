@@ -169,7 +169,7 @@ public class CommandWorker implements ServerWorker
     {
         System.err.println("HELO from " + dataEvent.socket);
         
-        clients.put(dataEvent.socket, new Client());
+        clients.put(dataEvent.socket, new Client(dataEvent.socket));
     }
 
     
@@ -263,23 +263,28 @@ public class CommandWorker implements ServerWorker
         }
         
         // give the player their items.
-        equipPlayer(senderSocket, mob);
+        equipPlayer(client);
     }
     
-    private void equipPlayer(SocketChannel playerSocket, Mob player)
+    private void equipPlayer(Client client)
     {
-        Client client = clients.get(playerSocket);
-        Room room = client.getCurrentRoom();        
         // todo - player database
         
         // for the moment, just hand some default items to the client
         // so there is something for testing item related code
         
-        Item item = ItemBuilder.create("small_blaster");
+        Item item1 = ItemBuilder.create("small_blaster");
+        item1.where = Item.IN_FIRST_SLOT;
         
-        item.where = 0;  // first item slot
+        addItem(client, item1);
         
-        addItem(room, player, item);
+        Item item2 = ItemBuilder.create("blaster");
+        item2.where = Item.IN_INVENTORY;
+        if(client.findSuitableLocation(item2) != null)
+        {
+            addItem(client, item2);
+        }    
+            
     }
     
     private void updateMob(ServerDataEvent dataEvent, String command)
@@ -346,8 +351,6 @@ public class CommandWorker implements ServerWorker
 
         Client client = clients.get(dataEvent.socket);
         
-        // Room room = client.getCurrentRoom();
-        
         String [] parts = command.split(",");
         String filename = parts[1].trim();
 
@@ -366,19 +369,19 @@ public class CommandWorker implements ServerWorker
             client.setCurrentRoom(room);
             roomcast(dataEvent.server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
             
-            serveRoom(dataEvent, room);
+            serveRoom(room, dataEvent.socket);
         }
         else
         {
             // room is already loaded -> join it
-            singlecast(dataEvent, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
+            singlecast(room.getServer(), dataEvent.socket, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
             client.setCurrentRoom(room);
-            serveRoom(dataEvent, room);
+            serveRoom(room, dataEvent.socket);
         }
     }
 
     
-    private void serveRoom(ServerDataEvent dataEvent, Room room)
+    private void serveRoom(Room room, SocketChannel socket)
     {
         for(int layer = 1; layer < 6; layer += 2)
         {
@@ -389,7 +392,7 @@ public class CommandWorker implements ServerWorker
             {
                 String command = makeAddMobCommand(mob, layer);
 
-                singlecast(dataEvent, command);
+                singlecast(room.getServer(), socket, command);
             }
         }
     }
@@ -647,32 +650,66 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    public void addItem(Room room, Mob mob, Item item)
+    /**
+     * If the operation is obstructed by another item, the obstructing
+     * item will be returned.
+     * @param client The client to receive the item
+     * @param item The item to add to the client
+     * @return null or the obstructing item
+     */
+    public Item addItem(Client client, Item item)
     {      
-        String command = 
-                "ADDI," +
-                mob.id + "," +   // todo - mob == null case
-                item.baseItem.id + "," +
-                item.id + "," +
-                item.displayName + "," +
-                item.baseItem.baseValue + "," +
-                item.baseItem.tile + "," +
-                item.baseItem.color + "," +
-                item.baseItem.scale + "," +
-                item.where + "," +
-                item.position.x + "," +
-                item.position.y + "," +
-                item.baseItem.energyDamage + "," +
-                "\n";
+        Room room = client.getCurrentRoom();
+        
+        Item obstruction = null;
+        
+        if(item.where != Item.ON_MAP)
+        {
+            obstruction = client.addItem(item);
+        }
+        
+        if(obstruction == null)
+        {
+            String command = 
+                    "ADDI," +
+                    client.mob.id + "," +   // todo - mob == null case
+                    item.baseItem.id + "," +
+                    item.id + "," +
+                    item.displayName + "," +
+                    item.baseItem.baseValue + "," +
+                    item.baseItem.tile + "," +
+                    item.baseItem.color + "," +
+                    item.baseItem.scale + "," +
+                    item.where + "," +
+                    item.position.x + "," +
+                    item.position.y + "," +
+                    item.energyDamage + "," +
+                    item.physicalDamage + "," +
+                    "\n";
 
-        roomcast(room.getServer(), command, room);
+            if(item.where == Item.ON_MAP)
+            {
+                roomcast(room.getServer(), command, room);
+            }
+            else
+            {
+                System.err.println(command);
+                singlecast(room.getServer(), client.socket, command);
+            }
+        }
+        else
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, "addItem not possible, location blocked by {0}", obstruction.displayName);
+        }
+        
+        return obstruction;
     }
 
     
-    public void singlecast(ServerDataEvent dataEvent, String message)
+    public void singlecast(Server server, SocketChannel socket, String message)
     {
         byte [] data = message.getBytes();
-        dataEvent.server.send(dataEvent.socket, data);
+        server.send(socket, data);
     }
     
     

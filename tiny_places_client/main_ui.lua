@@ -107,7 +107,8 @@ local function processCommands(commands)
           where = tonumber(args()),
           x = tonumber(args()),
           y = tonumber(args()),
-          energyDamage = tonumber(args())
+          energyDamage = tonumber(args()),
+          physicalDamage = tonumber(args())
         }
 
         -- debug data

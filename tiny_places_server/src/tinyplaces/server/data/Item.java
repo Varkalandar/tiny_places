@@ -12,6 +12,7 @@ public class Item
 {
     public static int ON_MAP = -1;
     public static int IN_INVENTORY = -2;
+    public static int IN_FIRST_SLOT = 0;
 
     public final BaseItem baseItem;
     
@@ -28,10 +29,19 @@ public class Item
      */
     public final Point position;
     
+    public final int energyDamage;
+    public final int physicalDamage;
     
     public Item(BaseItem baseItem)
     {
         this.baseItem = baseItem;
         this.position = new Point();
+        energyDamage = randomFromRange(baseItem.energyDamageMin, baseItem.energyDamageMax);
+        physicalDamage = randomFromRange(baseItem.physicalDamageMin, baseItem.physicalDamageMax);
+    }
+
+    private int randomFromRange(float min, float max) 
+    {
+        return (int)(min + Math.random() * (max-min+1));
     }
 }

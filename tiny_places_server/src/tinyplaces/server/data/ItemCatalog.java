@@ -54,16 +54,21 @@ public class ItemCatalog
             baseItem.height = Integer.parseInt(parts[i++]);
             baseItem.color = parts[i++];
             baseItem.scale = Float.parseFloat(parts[i++]);
+            baseItem.canDrop = "1".equals(parts[i++]);
+            baseItem.stackSize = Integer.parseInt(parts[i++]);
             baseItem.baseValue = Integer.parseInt(parts[i++]);
-            baseItem.energyDamage = Float.parseFloat(parts[i++]);
+            baseItem.energyDamageMin = Float.parseFloat(parts[i++]);
+            baseItem.energyDamageMax = Float.parseFloat(parts[i++]);
+            baseItem.physicalDamageMin = Float.parseFloat(parts[i++]);
+            baseItem.physicalDamageMax = Float.parseFloat(parts[i++]);
 
+            /*
             baseItem.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_FIRE] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_COLD] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_LIGHT] = Integer.parseInt(parts[i++]);
             baseItem.resistance[Damage.TYPE_CHAOS] = Integer.parseInt(parts[i++]);
-
-            
+*/
             allBaseItems.put(parts[0], baseItem);
         }
         

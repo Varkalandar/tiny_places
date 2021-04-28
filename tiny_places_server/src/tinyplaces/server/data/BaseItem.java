@@ -13,10 +13,15 @@ public class BaseItem
     public int tile;
     public int width;
     public int height;
+    public boolean canDrop;
+    public int stackSize;
     public int baseValue;
     public int[] resistance = new int [Damage.TYPE_COUNT];
     public String color;
     public float scale;
-    public float energyDamage;
+    public float energyDamageMin;
+    public float energyDamageMax;
+    public float physicalDamageMin;
+    public float physicalDamageMax;
     
 }
