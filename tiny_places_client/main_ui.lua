@@ -100,6 +100,8 @@ local function processCommands(commands)
           baseId = args(),
           id = tonumber(args()),
           displayName = args(),
+          iclass = args(),
+          itype = args(),
           value = tonumber(args()),
           tile = tonumber(args()),
           color = args(),
@@ -108,7 +110,8 @@ local function processCommands(commands)
           x = tonumber(args()),
           y = tonumber(args()),
           energyDamage = tonumber(args()),
-          physicalDamage = tonumber(args())
+          physicalDamage = tonumber(args()),
+          description = args()
         }
 
         -- debug data

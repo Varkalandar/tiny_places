@@ -49,6 +49,8 @@ public class ItemCatalog
             int i = 0;
             baseItem.id = parts[i++];
             baseItem.displayName = parts[i++];
+            baseItem.iclass = parts[i++];
+            baseItem.itype = parts[i++];
             baseItem.tile = Integer.parseInt(parts[i++]);
             baseItem.width = Integer.parseInt(parts[i++]);
             baseItem.height = Integer.parseInt(parts[i++]);
@@ -61,6 +63,7 @@ public class ItemCatalog
             baseItem.energyDamageMax = Float.parseFloat(parts[i++]);
             baseItem.physicalDamageMin = Float.parseFloat(parts[i++]);
             baseItem.physicalDamageMax = Float.parseFloat(parts[i++]);
+            baseItem.description = parts[i++];
 
             /*
             baseItem.resistance[Damage.TYPE_PHYSICAL] = Integer.parseInt(parts[i++]);

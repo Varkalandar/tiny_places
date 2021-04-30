@@ -1817,16 +1817,16 @@
       <Description>
         <version>4</version>
         <id>95</id>
-        <width>1</width>
-        <height>1</height>
+        <width>152</width>
+        <height>164</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>75</footX>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>byshtal</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -3891,16 +3891,16 @@
       <Description>
         <version>4</version>
         <id>217</id>
-        <width>1</width>
-        <height>1</height>
+        <width>181</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>91</footX>
+        <footY>92</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_e</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -3925,16 +3925,16 @@
       <Description>
         <version>4</version>
         <id>219</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>143</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>90</footX>
+        <footY>95</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_s</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -3959,16 +3959,16 @@
       <Description>
         <version>4</version>
         <id>221</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>209</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>88</footX>
+        <footY>168</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_w</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -3993,16 +3993,16 @@
       <Description>
         <version>4</version>
         <id>223</id>
-        <width>1</width>
-        <height>1</height>
+        <width>181</width>
+        <height>209</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>92</footX>
+        <footY>165</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_n</string>
         <string></string>
       </Metadata>
     </Tile>

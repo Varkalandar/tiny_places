@@ -1711,15 +1711,15 @@ data
 Tile Description
 v.5
 95
-1 1
+152 164
 0 0
-0 0
+75 135
 End Of Header
 Item
 v.1
 data
 2
-
+byshtal
 
 1
 0
@@ -3663,15 +3663,15 @@ data
 Tile Description
 v.5
 217
-1 1
+181 142
 0 0
-0 0
+91 92
 End Of Header
 Item
 v.1
 data
 2
-
+uberlaser_e
 
 1
 0
@@ -3695,15 +3695,15 @@ data
 Tile Description
 v.5
 219
-1 1
+180 143
 0 0
-0 0
+90 95
 End Of Header
 Item
 v.1
 data
 2
-
+uberlaser_s
 
 1
 0
@@ -3727,15 +3727,15 @@ data
 Tile Description
 v.5
 221
-1 1
+180 209
 0 0
-0 0
+88 168
 End Of Header
 Item
 v.1
 data
 2
-
+uberlaser_w
 
 1
 0
@@ -3759,15 +3759,15 @@ data
 Tile Description
 v.5
 223
-1 1
+181 209
 0 0
-0 0
+92 165
 End Of Header
 Item
 v.1
 data
 2
-
+uberlaser_n
 
 1
 0

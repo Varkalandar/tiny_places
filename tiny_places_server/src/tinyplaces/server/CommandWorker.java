@@ -183,11 +183,15 @@ public class CommandWorker implements ServerWorker
         Room room = client.getCurrentRoom();
         Object test;
         
-        test = room.removeMob(3, client.mob.id);
-        if(test == null)
+        // if the client didn't start a game, there is no mob assigned
+        if(client.mob != null)
         {
-            Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
-                    "Logout problem: client avatar was not in room.");
+            test = room.removeMob(3, client.mob.id);
+            if(test == null)
+            {
+                Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
+                        "Logout problem: client avatar was not in room.");
+            }
         }
         
         test = clients.remove(dataEvent.socket);
@@ -280,6 +284,7 @@ public class CommandWorker implements ServerWorker
         equipPlayer(client);
     }
     
+    
     private void equipPlayer(Client client)
     {
         // todo - player database
@@ -299,6 +304,19 @@ public class CommandWorker implements ServerWorker
             addItem(client, item2);
         }    
             
+        Item item3 = ItemBuilder.create("firebolt_core");
+        item3.where = Item.IN_INVENTORY;
+        if(client.findSuitableLocation(item3) != null)
+        {
+            addItem(client, item3);
+        }    
+        
+        Item item4 = ItemBuilder.create("frostbolt_core");
+        item4.where = Item.IN_INVENTORY;
+        if(client.findSuitableLocation(item4) != null)
+        {
+            addItem(client, item4);
+        }    
     }
     
     private void updateMob(ServerDataEvent dataEvent, String command)
@@ -692,6 +710,8 @@ public class CommandWorker implements ServerWorker
                     item.baseItem.id + "," +
                     item.id + "," +
                     item.displayName + "," +
+                    item.baseItem.iclass + "," +
+                    item.baseItem.itype + "," +
                     item.baseItem.baseValue + "," +
                     item.baseItem.tile + "," +
                     item.baseItem.color + "," +
@@ -701,6 +721,7 @@ public class CommandWorker implements ServerWorker
                     item.position.y + "," +
                     item.energyDamage + "," +
                     item.physicalDamage + "," +
+                    item.baseItem.description + "," +
                     "\n";
 
             if(item.where == Item.ON_MAP)

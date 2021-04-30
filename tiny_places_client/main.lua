@@ -10,6 +10,7 @@ local mainUi = require("main_ui")
 
 -- all init code goes here
 function love.load()
+  -- love.graphics.setDefaultFilter("linear", "linear", 8)
   mainUi.init()      
 
   local flags = {vsync = true}

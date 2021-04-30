@@ -7,9 +7,13 @@ package tinyplaces.server.data;
  */
 public class BaseItem 
 {
+    public static String CLASS_CORE = "core";
+    public static String TYPE_FUNCTION = "func";
 
     public String id;
     public String displayName;
+    public String iclass;
+    public String itype;        
     public int tile;
     public int width;
     public int height;
@@ -24,4 +28,5 @@ public class BaseItem
     public float physicalDamageMin;
     public float physicalDamageMax;
     
+    public String description;
 }

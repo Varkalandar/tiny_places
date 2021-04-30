@@ -3967,15 +3967,15 @@ data
 Tile Description
 v.5
 248
-1 1
+40 35
 0 0
-0 0
+21 34
 End Of Header
 Item
 v.1
 data
 2
-
+firebolt_core_m
 
 1
 0
@@ -3983,7 +3983,7 @@ data
 Tile Description
 v.5
 249
-1 1
+78 69
 0 0
 0 0
 End Of Header
@@ -3991,7 +3991,7 @@ Item
 v.1
 data
 2
-
+firebolt_core_i
 
 1
 0
@@ -3999,15 +3999,15 @@ data
 Tile Description
 v.5
 250
-1 1
+40 35
 0 0
-0 0
+19 32
 End Of Header
 Item
 v.1
 data
 2
-
+frostbolt_core_m
 
 1
 0
@@ -4015,7 +4015,7 @@ data
 Tile Description
 v.5
 251
-1 1
+78 69
 0 0
 0 0
 End Of Header
@@ -4023,7 +4023,7 @@ Item
 v.1
 data
 2
-
+frostbolt_core_i
 
 1
 0

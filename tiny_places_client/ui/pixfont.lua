@@ -173,8 +173,33 @@ local function drawStringScaled(text, x, y, scx, scy, slx, sly)
 end
 
 
+local function drawBoxStringScaled(text, x, y, w, h, linespace, scx, scy, slx, sly)
+
+  local runx = 0
+  local lines = 0
+  local space = calcStringWidth(" ") * scx
+  local words = text:gmatch("[^ ]+")
+  
+  for word in words do  
+    -- print(word)
+    local l = calcStringWidth(word) * scx
+    if runx + l > w then
+      lines = lines + 1
+      runx = 0
+    end
+    
+    drawStringScaled(word, runx + x, y + lines * linespace, scx, scy, slx, sly)
+    
+    runx = runx + l + space
+  end
+  
+  return lines + 1
+end
+
+
 pixfont.init = init
 pixfont.drawStringScaled = drawStringScaled
+pixfont.drawBoxStringScaled = drawBoxStringScaled
 pixfont.calcStringWidth = calcStringWidth
 
 return pixfont

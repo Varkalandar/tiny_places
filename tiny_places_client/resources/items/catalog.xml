@@ -4214,16 +4214,16 @@
       <Description>
         <version>4</version>
         <id>248</id>
-        <width>1</width>
-        <height>1</height>
+        <width>40</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>34</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>firebolt_core_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4231,8 +4231,8 @@
       <Description>
         <version>4</version>
         <id>249</id>
-        <width>1</width>
-        <height>1</height>
+        <width>78</width>
+        <height>69</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -4240,7 +4240,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>firebolt_core_i</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4248,16 +4248,16 @@
       <Description>
         <version>4</version>
         <id>250</id>
-        <width>1</width>
-        <height>1</height>
+        <width>40</width>
+        <height>35</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>19</footX>
+        <footY>32</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>frostbolt_core_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4265,8 +4265,8 @@
       <Description>
         <version>4</version>
         <id>251</id>
-        <width>1</width>
-        <height>1</height>
+        <width>78</width>
+        <height>69</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -4274,7 +4274,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>frostbolt_core_i</string>
         <string></string>
       </Metadata>
     </Tile>
