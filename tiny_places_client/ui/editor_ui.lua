@@ -193,7 +193,8 @@ local function switchToGameUi()
 
     editorUi.mainUi.ui = editorUi.mainUi.gameUi
     
-    editorUi.map.clientSocket.send("GAME,")
+    editorUi.map.clientSocket.send("GAME,"
+	                                              .."CHARACTER_ID_GOES_HERE")
   end
 end
 

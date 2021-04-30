@@ -61,7 +61,7 @@ end
 
 
 local function init(mainUi, map)
-	print("Loading game ui")
+  print("Loading game ui")
 	
   inventoryPopup.init(mainUi, map.itemSet, map.playerInventory)
   
@@ -73,44 +73,9 @@ local function init(mainUi, map)
   gameUi.gaugeRed = love.graphics.newImage("resources/ui/gauge_red.png")
   gameUi.gaugeBlue = love.graphics.newImage("resources/ui/gauge_blue.png")
   
-	cf.init()
-	gameUi.map = map
+  cf.init()
+  gameUi.map = map
 	
-	-- add player to the map
-  
-  -- a globo
-  --[[
-  gameUi.map.clientSocket.send("ADDP,"    -- add a player
-                               .."3,"     -- layer
-                               .."1,"     -- tile id (1 = globo, 9 = spectre)
-                               .."600,"   -- x pos
-                               .."400,"   -- y pos
-                               .."1,"     -- scale factor (globos = 1.0, spectre 0.35)
-                               .."1.0 1.0 1.0 1.0"
-                               )  
-  ]]
-  
-  -- a spectre
---[[  
-  gameUi.map.clientSocket.send("ADDP,"     -- add a player
-                               .."3,"      -- layer
-                               .."20,"      -- tile id (1 = globo, 20 = spectre)
-                               .."600,"    -- x pos
-                               .."400,"    -- y pos
-                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
-                               .."1.0 1.0 1.0 1.0"
-                               )  
-	]]
-  gameUi.map.clientSocket.send("ADDP,"     -- add a player
-                               .."3,"      -- layer
-                               .."39,"      -- tile id (1 = globo, 20 = spectre)
-                               .."600,"    -- x pos
-                               .."400,"    -- y pos
-                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
-                               .."1.0 1.0 1.0 1.0"
-                               )  
-  
-	-- the APPP will set gameUi.playerMob when receiving the response from the server
 end
 
 

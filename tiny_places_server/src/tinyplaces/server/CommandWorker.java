@@ -118,9 +118,9 @@ public class CommandWorker implements ServerWorker
         {
             addMob(dataEvent, command);
         }
-        else if(command.startsWith("ADDP"))
+        else if(command.startsWith("GAME"))
         {
-            addPlayer(dataEvent, command);
+            startGame(dataEvent, command);
         }
         else if(command.startsWith("UPDM"))
         {
@@ -134,10 +134,12 @@ public class CommandWorker implements ServerWorker
         {
             fireProjectile(dataEvent, command);
         }
+        /*
         else if(command.startsWith("GAME"))
         {
             startGame(dataEvent, command);
         }
+        */
         else if(command.startsWith("GBYE"))
         {
             logoutClient(dataEvent, command);
@@ -218,23 +220,35 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    private void addPlayer(ServerDataEvent dataEvent, String command)
+    private void startGame(ServerDataEvent dataEvent, String command)
     {
-        System.err.println("ADDP from " + dataEvent.socket);
+        System.err.println("GAME from " + dataEvent.socket);
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        String [] parts = command.trim().split(",");
-
-        Mob mob = room.makeMob(parts);
-        mob.type = Mob.TYPE_PLAYER;
+        
+        /*
+                               .."39,"      -- tile id (1 = globo, 20 = spectre)
+                               .."600,"    -- x pos
+                               .."400,"    -- y pos
+                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
+                               .."1.0 1.0 1.0 1.0"
+        */
+        
+        
+        // String [] parts = command.trim().split(",");
+        // Mob mob = room.makeMob(parts);
+        // mob.type = Mob.TYPE_PLAYER;
+        
+        Mob mob = room.makeMob(3, 39, 600, 400, 0.5f, "1.0 1.0 1.0 1.0", Mob.TYPE_PLAYER);
         
         // set new player avatar
         client.mob = mob;
         
         // reply with ADDP to sender only
 
-        String message = "ADDP," + mob.id + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "\n";
+        String message = "ADDP," + mob.id + "," + 
+                         "3" + "," + mob.tile + "," + mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
         byte [] data = message.getBytes();
         
         SocketChannel senderSocket = dataEvent.socket;
@@ -244,7 +258,7 @@ public class CommandWorker implements ServerWorker
         // for everyone else in the room it is an ADDM
 
         message = "ADDM," + mob.id + "," + 
-                parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "," +
+                "3" + "," + mob.tile + "," + mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "," +
                 "2\n";
         data = message.getBytes();
 
@@ -450,7 +464,7 @@ public class CommandWorker implements ServerWorker
 
     private void doMove(ServerDataEvent dataEvent, String command) 
     {
-        System.err.println("MOVE from " + dataEvent.socket);
+        System.err.println("MOVE from " + dataEvent.socket + "\n  " + command);
 
         String [] parts = command.trim().split(",");
 
@@ -535,18 +549,20 @@ public class CommandWorker implements ServerWorker
 
         command =
             "ADDP," + 
+            mob.id + "," +
             "3," + // layer
 	    mob.tile + "," + // tile id
 	    newx + "," + // x pos
 	    newy + "," + // y pos
 	    mob.scale + "," + // scale factor
-            mob.color; // color string
-
-        addPlayer(dataEvent, command);
+            mob.color + "\n"; // color string
         
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-
+        room.addMob(3, mob);
+        
+        singlecast(room.getServer(), client.socket, command);
+        
         // todo - proper map population code
         if("wasteland_and_pond".equals(roomname))
         {
@@ -595,7 +611,7 @@ public class CommandWorker implements ServerWorker
         roomcast(room.getServer(), command, room);
     }
     
-    
+    /*
     private void startGame(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("GAME from " + dataEvent.socket);
@@ -603,7 +619,7 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
     }
-    
+    */
     
     private void fireProjectile(ServerDataEvent dataEvent, String command) 
     {
