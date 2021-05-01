@@ -125,11 +125,11 @@ local function draw()
 	love.graphics.setColor(1.0, 1.0, 1.0)
 	pixfont.drawStringScaled("Game Mode", 16, 30, 0.5, 0.5)
 
-	
+	local pos = 1200 - 16 - pixfont.calcStringWidth(gameUi.map.name) * 0.5
 	love.graphics.setColor(0, 0, 0)
-	pixfont.drawStringScaled(gameUi.map.name, 970-10, 30+24, 0.5, 0.25, 0.2, 0)
+	pixfont.drawStringScaled(gameUi.map.name, pos-10, 30+24, 0.5, 0.25, 0.2, 0)
 	love.graphics.setColor(1.0, 1.0, 1.0)
-	pixfont.drawStringScaled(gameUi.map.name, 970, 30, 0.5, 0.5)
+	pixfont.drawStringScaled(gameUi.map.name, pos, 30, 0.5, 0.5)
 
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
