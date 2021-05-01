@@ -474,8 +474,8 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>318</width>
+        <height>65</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -483,7 +483,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -491,8 +491,8 @@
       <Description>
         <version>4</version>
         <id>29</id>
-        <width>1</width>
-        <height>1</height>
+        <width>254</width>
+        <height>116</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -500,7 +500,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -508,8 +508,8 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>128</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -517,7 +517,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -525,8 +525,8 @@
       <Description>
         <version>4</version>
         <id>31</id>
-        <width>1</width>
-        <height>1</height>
+        <width>221</width>
+        <height>139</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -534,7 +534,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -542,8 +542,8 @@
       <Description>
         <version>4</version>
         <id>32</id>
-        <width>1</width>
-        <height>1</height>
+        <width>318</width>
+        <height>71</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -551,7 +551,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -559,8 +559,8 @@
       <Description>
         <version>4</version>
         <id>33</id>
-        <width>1</width>
-        <height>1</height>
+        <width>273</width>
+        <height>112</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -568,7 +568,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -576,8 +576,8 @@
       <Description>
         <version>4</version>
         <id>34</id>
-        <width>1</width>
-        <height>1</height>
+        <width>141</width>
+        <height>178</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -585,7 +585,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -593,8 +593,8 @@
       <Description>
         <version>4</version>
         <id>35</id>
-        <width>1</width>
-        <height>1</height>
+        <width>216</width>
+        <height>138</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -602,7 +602,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>lightning</string>
         <string></string>
       </Metadata>
     </Tile>

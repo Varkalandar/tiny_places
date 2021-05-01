@@ -3857,16 +3857,16 @@
       <Description>
         <version>4</version>
         <id>215</id>
-        <width>1</width>
-        <height>1</height>
+        <width>300</width>
+        <height>235</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>150</footX>
+        <footY>170</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>symphonium</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -3874,16 +3874,16 @@
       <Description>
         <version>4</version>
         <id>216</id>
-        <width>1</width>
-        <height>1</height>
+        <width>242</width>
+        <height>159</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>119</footX>
+        <footY>100</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>teleporter</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4027,16 +4027,16 @@
       <Description>
         <version>4</version>
         <id>225</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>96</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>8</footX>
+        <footY>91</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4044,16 +4044,16 @@
       <Description>
         <version>4</version>
         <id>226</id>
-        <width>1</width>
-        <height>1</height>
+        <width>98</width>
+        <height>86</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>39</footX>
+        <footY>82</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4061,16 +4061,16 @@
       <Description>
         <version>4</version>
         <id>227</id>
-        <width>1</width>
-        <height>1</height>
+        <width>121</width>
+        <height>80</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>61</footX>
+        <footY>76</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4078,16 +4078,16 @@
       <Description>
         <version>4</version>
         <id>228</id>
-        <width>1</width>
-        <height>1</height>
+        <width>85</width>
+        <height>90</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>56</footX>
+        <footY>87</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4095,16 +4095,16 @@
       <Description>
         <version>4</version>
         <id>229</id>
-        <width>1</width>
-        <height>1</height>
+        <width>45</width>
+        <height>96</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>37</footX>
+        <footY>91</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4112,16 +4112,16 @@
       <Description>
         <version>4</version>
         <id>230</id>
-        <width>1</width>
-        <height>1</height>
+        <width>98</width>
+        <height>90</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>60</footX>
+        <footY>86</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4129,16 +4129,16 @@
       <Description>
         <version>4</version>
         <id>231</id>
-        <width>1</width>
-        <height>1</height>
+        <width>121</width>
+        <height>81</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>59</footX>
+        <footY>78</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4146,16 +4146,16 @@
       <Description>
         <version>4</version>
         <id>232</id>
-        <width>1</width>
-        <height>1</height>
+        <width>84</width>
+        <height>93</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>29</footX>
+        <footY>90</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>gridded_radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4163,16 +4163,16 @@
       <Description>
         <version>4</version>
         <id>233</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>94</footX>
+        <footY>102</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>heatsink</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4180,16 +4180,16 @@
       <Description>
         <version>4</version>
         <id>234</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>91</footX>
+        <footY>102</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>heatsink</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4197,16 +4197,16 @@
       <Description>
         <version>4</version>
         <id>235</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>93</footX>
+        <footY>104</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>heatsink</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4214,16 +4214,16 @@
       <Description>
         <version>4</version>
         <id>236</id>
-        <width>1</width>
-        <height>1</height>
+        <width>180</width>
+        <height>142</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>90</footX>
+        <footY>107</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>heatsink</string>
         <string></string>
       </Metadata>
     </Tile>

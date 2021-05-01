@@ -3631,15 +3631,15 @@ data
 Tile Description
 v.5
 215
-1 1
+300 235
 0 0
-0 0
+150 170
 End Of Header
 Item
 v.1
 data
 2
-
+symphonium
 
 1
 0
@@ -3647,15 +3647,15 @@ data
 Tile Description
 v.5
 216
-1 1
+242 159
 0 0
-0 0
+119 100
 End Of Header
 Item
 v.1
 data
 2
-
+teleporter
 
 1
 0
@@ -3791,15 +3791,15 @@ data
 Tile Description
 v.5
 225
-1 1
+45 96
 0 0
-0 0
+8 91
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3807,15 +3807,15 @@ data
 Tile Description
 v.5
 226
-1 1
+98 86
 0 0
-0 0
+39 82
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3823,15 +3823,15 @@ data
 Tile Description
 v.5
 227
-1 1
+121 80
 0 0
-0 0
+61 76
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3839,15 +3839,15 @@ data
 Tile Description
 v.5
 228
-1 1
+85 90
 0 0
-0 0
+56 87
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3855,15 +3855,15 @@ data
 Tile Description
 v.5
 229
-1 1
+45 96
 0 0
-0 0
+37 91
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3871,15 +3871,15 @@ data
 Tile Description
 v.5
 230
-1 1
+98 90
 0 0
-0 0
+60 86
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3887,15 +3887,15 @@ data
 Tile Description
 v.5
 231
-1 1
+121 81
 0 0
-0 0
+59 78
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3903,15 +3903,15 @@ data
 Tile Description
 v.5
 232
-1 1
+84 93
 0 0
-0 0
+29 90
 End Of Header
 Item
 v.1
 data
 2
-
+gridded_radar
 
 1
 0
@@ -3919,15 +3919,15 @@ data
 Tile Description
 v.5
 233
-1 1
+180 142
 0 0
-0 0
+94 102
 End Of Header
 Item
 v.1
 data
 2
-
+heatsink
 
 1
 0
@@ -3935,15 +3935,15 @@ data
 Tile Description
 v.5
 234
-1 1
+180 142
 0 0
-0 0
+91 102
 End Of Header
 Item
 v.1
 data
 2
-
+heatsink
 
 1
 0
@@ -3951,15 +3951,15 @@ data
 Tile Description
 v.5
 235
-1 1
+180 142
 0 0
-0 0
+93 104
 End Of Header
 Item
 v.1
 data
 2
-
+heatsink
 
 1
 0
@@ -3967,15 +3967,15 @@ data
 Tile Description
 v.5
 236
-1 1
+180 142
 0 0
-0 0
+90 107
 End Of Header
 Item
 v.1
 data
 2
-
+heatsink
 
 1
 0
