@@ -273,6 +273,7 @@ local function init()
   local itemSet = tileset.readSet("resources/items/", "items.tica")
   
   load("Wasteland", "map_wasteland", "")
+  -- load("Wasteland", "map_organic_bubbles", "")
 
   map.bumpmap = love.graphics.newImage("resources/map/map_bumps.png")
   map.mobs = {}
