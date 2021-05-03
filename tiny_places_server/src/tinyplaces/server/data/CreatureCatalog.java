@@ -41,6 +41,8 @@ public class CreatureCatalog
             creature.id = parts[i++];
             creature.displayName = parts[i++];
             creature.tile = Integer.parseInt(parts[i++]);
+            creature.frames = Integer.parseInt(parts[i++]);
+            creature.phases = Integer.parseInt(parts[i++]);
 
             creature.minLife = Integer.parseInt(parts[i++]);
             creature.maxLife = Integer.parseInt(parts[i++]);
@@ -53,11 +55,13 @@ public class CreatureCatalog
             
             creature.spellId = parts[i++];
             
-            creature.pattern = parts[i++];
+            String pattern = parts[i++];
+            creature.pattern = "-".equals(pattern) ? null : pattern;
             creature.speed = Integer.parseInt(parts[i++]);
 
             creature.color = parts[i++];
             creature.scale = Float.parseFloat(parts[i++]);
+            creature.treasureClasses = parts[i++];
             
             allCreatures.put(parts[0], creature);
         }

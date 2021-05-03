@@ -37,7 +37,7 @@ end
 
 
 local function orient(mob, dx, dy)
-  local faces = mob.faces
+  local frames = mob.frames
   
   -- calculate facing
   local r = math.atan2(dy*2, dx)
@@ -45,11 +45,11 @@ local function orient(mob, dx, dy)
   -- round to a segment
   r = r + math.pi + math.pi/8
 
-  -- calculate tile offsets from 0 to faces-1    
-  r = faces/2 + math.floor((r * faces)  / (math.pi * 2) - 0.5)
-  if r >= faces then r = r - faces end
+  -- calculate tile offsets from 0 to frames-1    
+  r = frames/2 + math.floor((r * frames)  / (math.pi * 2) - 0.5)
+  if r >= frames then r = r - frames end
   
-  -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r .. " faces=" .. faces)
+  -- print("dx=" .. dx .. " dy=" .. dy .. " r="..r .. " frames=" .. frames)
   
   -- error, usually caused by a move of length 0
   -- in this case r is nan and IEEE (nan ~= nan) is true 
@@ -121,7 +121,7 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, faces)
+local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, frames, phases)
   
   print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
   
@@ -131,7 +131,7 @@ local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, face
                color = unmarshallColor(color), 
                type = ctype,
                speed = speed, zOff = 0, zSpeed = 0,
-               faces = faces,
+               frames = frames,
                orient = orient}
 
   local ltab = getLayerTable(layer)
@@ -537,6 +537,21 @@ local function drawProjectile(mob, tile, scale)
 end
 
 
+local function drawItem(mob, tile, scale)
+
+  -- debug
+  if tile == nil then
+    for k, v in pairs(item) do print("  " .. k, v) end
+  end
+  
+  love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+end
+
+
 local function drawTileTable(objects, set)
 
   for index, mob in ipairs(objects) do
@@ -561,6 +576,9 @@ local function drawTileTable(objects, set)
     elseif mob.type == "projectile" then
       local tile = projectileSet[mob.displayTile]
       drawProjectile(mob, tile, scale)
+    elseif mob.type == "item" then
+      local tile = map.itemSet[mob.displayTile]
+      drawItem(mob, tile, scale)
     else
       local tile = set[mob.displayTile]
       if tile.image then

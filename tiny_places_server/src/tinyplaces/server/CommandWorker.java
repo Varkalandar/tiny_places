@@ -214,13 +214,11 @@ public class CommandWorker implements ServerWorker
         Room room = client.getCurrentRoom();
         String [] parts = command.trim().split(",");
 
+        int layer = Integer.parseInt(parts[1]);
         Mob mob = room.makeMob(parts);
+        String cmd = makeAddMobCommand(mob, layer);
         
-        roomcast(dataEvent.server,
-                 "ADDM," + mob.id + "," + 
-                         parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6] + "," +
-                         "0\n",
-                 room);
+        roomcast(dataEvent.server, cmd, room);
     }
 
     
@@ -244,7 +242,7 @@ public class CommandWorker implements ServerWorker
         // Mob mob = room.makeMob(parts);
         // mob.type = Mob.TYPE_PLAYER;
         
-        Mob mob = room.makeMob(3, 39, 600, 400, 0.5f, "1.0 1.0 1.0 1.0", Mob.TYPE_PLAYER);
+        Mob mob = room.makeMob(3, 39, 16, 1, 600, 400, 0.5f, "1.0 1.0 1.0 1.0", Mob.TYPE_PLAYER);
         
         // set new player avatar
         client.mob = mob;
@@ -252,7 +250,8 @@ public class CommandWorker implements ServerWorker
         // reply with ADDP to sender only
 
         String message = "ADDP," + mob.id + "," + 
-                         "3" + "," + mob.tile + "," + mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
+                         "3" + "," + mob.tile + "," + mob.frames + "," + mob.phases + "," +
+                         mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
         byte [] data = message.getBytes();
         
         SocketChannel senderSocket = dataEvent.socket;
@@ -261,9 +260,7 @@ public class CommandWorker implements ServerWorker
 
         // for everyone else in the room it is an ADDM
 
-        message = "ADDM," + mob.id + "," + 
-                "3" + "," + mob.tile + "," + mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "," +
-                "2\n";
+        message = makeAddMobCommand(mob, 3);
         data = message.getBytes();
 
         Set <SocketChannel> keys = clients.keySet();
@@ -451,12 +448,25 @@ public class CommandWorker implements ServerWorker
             while((line = reader.readLine()) != null)
             {
                 System.err.println(line);
+                String [] parts = line.split(",");
                 
-                String [] parts = ("ADDM," + line).split(",");
+                int layer, tile, frames, phases, x, y;
+                float scale;
+                String color;
                 
-                result.makeMob(parts);
+                // if("v10".equals(version))
+                // {
+                    layer = Integer.parseInt(parts[0]);
+                    tile = Integer.parseInt(parts[1]);
+                    frames = 1;
+                    phases = 2;
+                    x = Integer.parseInt(parts[2]);
+                    y = Integer.parseInt(parts[3]);
+                    scale = Float.parseFloat(parts[4]);
+                    color = parts[5].trim();
+                // }
                 
-                // addMob(dataEvent, "ADDM," + line + ",0\n");
+                result.makeMob(layer, tile, frames, phases, x, y, scale, color, Mob.TYPE_PROP);
             }
             
             reader.close();
@@ -570,6 +580,8 @@ public class CommandWorker implements ServerWorker
             mob.id + "," +
             "3," + // layer
 	    mob.tile + "," + // tile id
+            mob.frames + "," +
+            mob.phases + "," +
 	    newx + "," + // x pos
 	    newy + "," + // y pos
 	    mob.scale + "," + // scale factor
@@ -590,6 +602,11 @@ public class CommandWorker implements ServerWorker
         if("desert".equals(roomname))
         {
             List <Mob> mobs = room.makeMobGroup("spiked_crawler", 650, 170, 20);
+            addMobGroup(dataEvent, room, mobs, 3);    
+        }
+        if("bubbles".equals(roomname))
+        {
+            List <Mob> mobs = room.makeMobGroup("wooden_barrel", 650, 400, 50);
             addMobGroup(dataEvent, room, mobs, 3);    
         }
     }    
@@ -664,7 +681,7 @@ public class CommandWorker implements ServerWorker
         int sx = shooter.x;
         int sy = shooter.y;
 
-        Mob projectile = room.makeMob(layer, 1, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
+        Mob projectile = room.makeMob(layer, 1, 16, 1, sx, sy, 1.0f, "1 1 1 1", Mob.TYPE_PROJECTILE);
         
         SpellCast spellCast = new SpellCast(shooter, spell, projectile, layer, dx, dy);
         room.addAction(spellCast);
@@ -709,6 +726,7 @@ public class CommandWorker implements ServerWorker
                     client.mob.id + "," +   // todo - mob == null case
                     item.baseItem.id + "," +
                     item.id + "," +
+                    item.mobId + "," +
                     item.displayName + "," +
                     item.baseItem.iclass + "," +
                     item.baseItem.itype + "," +
@@ -740,6 +758,35 @@ public class CommandWorker implements ServerWorker
         }
         
         return obstruction;
+    }
+
+    
+    public void dropItem(Room room, Item item)
+    {      
+        assert(item.where == Item.ON_MAP);
+        
+        String command = 
+                "ADDI," +
+                "-" + "," +
+                item.baseItem.id + "," +
+                item.id + "," +
+                item.mobId + "," +
+                item.displayName + "," +
+                item.baseItem.iclass + "," +
+                item.baseItem.itype + "," +
+                item.baseItem.baseValue + "," +
+                item.baseItem.tile + "," +
+                item.baseItem.color + "," +
+                item.baseItem.scale + "," +
+                item.where + "," +
+                item.position.x + "," +
+                item.position.y + "," +
+                item.energyDamage + "," +
+                item.physicalDamage + "," +
+                item.baseItem.description + "," +
+                "\n";
+
+        roomcast(room.getServer(), command, room);
     }
 
     
@@ -795,6 +842,8 @@ public class CommandWorker implements ServerWorker
                 mob.id + "," +
                 layer + "," +
                 mob.tile + "," +
+                mob.frames + "," +
+                mob.phases + "," +
                 mob.x + "," +
                 mob.y + "," +
                 mob.scale + "," +

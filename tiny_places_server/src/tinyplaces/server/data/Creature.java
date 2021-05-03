@@ -12,6 +12,8 @@ public class Creature implements Cloneable
     public String id;
     public String displayName;
     public int tile;
+    public int frames;   // animation frames
+    public int phases;   // animation phases
     
     public int actualLife;
 
@@ -25,6 +27,7 @@ public class Creature implements Cloneable
     
     public String color;
     public float scale;
+    public String treasureClasses;
     
     /**
      * Creature an individual with randomized stats

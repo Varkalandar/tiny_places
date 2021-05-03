@@ -17,6 +17,7 @@ public class Item
     public final BaseItem baseItem;
     
     public int id;
+    public int mobId; // items on map need a mob id
     public String displayName;
     
     /** Map, inventory, equipment slot. Slots have positive numbers */

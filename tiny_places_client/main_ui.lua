@@ -93,11 +93,17 @@ local function processCommands(commands)
       print("Cmd: " .. cmd);
 	  
       if cmd == "ADDI" then
-        local mobId = tonumber(args())
-
+        local mobString = args()
+        local mobId = nil
+        
+        if "-" ~= mobString then
+          mobId = tonumber(mobString)
+        end
+        
         local item = 
         {
           baseId = args(),
+          itemId = tonumber(args()),
           id = tonumber(args()),
           displayName = args(),
           iclass = args(),
@@ -118,7 +124,10 @@ local function processCommands(commands)
         for k, v in pairs(item) do print("  " .. k, v) end
         
         if mobId == nil then
-          -- todo - place item on map ground
+          -- place item on map ground
+          map.addObject(item.id, 3, item.tile, item.x, item.y, item.scale, item.color, 
+                                  "item", 0, 1, 1)
+          
         else
           -- this item goes to the player inventory
           -- check if mobId is the actual player?
@@ -132,18 +141,27 @@ local function processCommands(commands)
         local id = tonumber(args())
         local layer = tonumber(args())
         local tile = tonumber(args())
+        local frames = tonumber(args())
+        local phases = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
         local color = args()
         local ntype = args()
-        local ctype = "prop"
-        local faces = 1
+
+        local ctype
+        if ntype == "0" then
+          ctype = "prop"
+        elseif ntype == "1" then 
+          ctype = "creature" 
+        elseif ntype == "2" then 
+          ctype = "player"
+        else
+          print("Invalid ntype=" .. ntype .. " must be 0..2")
+          print(debug.traceback)
+        end
         
-        if ntype == "1" then ctype = "creature" faces = 8 end
-        if ntype == "2" then ctype = "player" faces = 16 end
-        
-        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, faces)
+        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, frames, phases)
       
       elseif cmd == "ANIM" then
         local id = tonumber(args())
@@ -188,12 +206,14 @@ local function processCommands(commands)
         local id = tonumber(args())
         local layer = tonumber(args())
         local tile = tonumber(args())
+        local frames = tonumber(args())
+        local phases = tonumber(args())
         local x = tonumber(args())
         local y = tonumber(args())
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120, 16)
+        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120, frames, phases)
         mainUi.gameUi.playerMob = mob
 
       elseif cmd == "FIRE" then

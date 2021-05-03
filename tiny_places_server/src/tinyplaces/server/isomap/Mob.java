@@ -13,8 +13,11 @@ public class Mob
     public static int TYPE_CREATURE = 1;
     public static int TYPE_PLAYER = 2;
     public static int TYPE_PROJECTILE = 3;
+    
     public int id;
     public int tile;
+    public int frames;   // animation frames
+    public int phases;   // animation phases
     public int x;
     public int y;
     public float scale;

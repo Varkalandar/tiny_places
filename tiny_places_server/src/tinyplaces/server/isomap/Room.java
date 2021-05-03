@@ -16,8 +16,12 @@ import tinyplaces.server.ServerDataEvent;
 import tinyplaces.server.data.Creature;
 import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.Damage;
+import tinyplaces.server.data.Item;
+import tinyplaces.server.data.ItemBuilder;
 import tinyplaces.server.data.Spell;
 import tinyplaces.server.data.SpellCatalog;
+import tinyplaces.server.data.TreasureClass;
+import tinyplaces.server.data.TreasureClassCatalog;
 import tinyplaces.server.isomap.actions.Action;
 
 
@@ -189,24 +193,30 @@ public class Room
 
     public Mob makeMob(String [] parts)
     {
+        assert(parts.length == 8);
+        
         int layer = Integer.parseInt(parts[1]);
         int tile = Integer.parseInt(parts[2]);
-        int x = Integer.parseInt(parts[3]);
-        int y = Integer.parseInt(parts[4]);
-        float scale = Float.parseFloat(parts[5]);
-        String color = parts[6].trim();
+        int frames = Integer.parseInt(parts[3]);
+        int phases = Integer.parseInt(parts[4]);
+        int x = Integer.parseInt(parts[5]);
+        int y = Integer.parseInt(parts[6]);
+        float scale = Float.parseFloat(parts[7]);
+        String color = parts[8].trim();
 
-        return makeMob(layer, tile, x, y, scale, color, Mob.TYPE_PROP);
+        return makeMob(layer, tile, frames, phases, x, y, scale, color, Mob.TYPE_PROP);
     }
     
     
-    public Mob makeMob(int layer, int tile, int x, int y, float scale, String color, int type)
+    public Mob makeMob(int layer, int tile, int frames, int phases, int x, int y, float scale, String color, int type)
     {
         int id = getNextObjectId();
         
         Mob mob = new Mob();
         mob.id = id;
         mob.tile = tile;
+        mob.frames = frames;
+        mob.phases = phases;
         mob.x = x;
         mob.y = y;
         mob.scale = scale;
@@ -229,7 +239,8 @@ public class Room
             int y = centerY + spacing * (int)(Math.random() * 5 - 2.5);
 
             Creature creature = CreatureCatalog.get(id);
-            Mob mob = makeMob(3, creature.tile, x, y, creature.scale, creature.color, Mob.TYPE_CREATURE);
+            Mob mob = makeMob(3, creature.tile, creature.frames, creature.phases, 
+                              x, y, creature.scale, creature.color, Mob.TYPE_CREATURE);
             mob.creature = creature.create();
             mob.nextAiTime = System.currentTimeMillis() + (int)(Math.random() * 10000);
             
@@ -265,13 +276,15 @@ public class Room
                             if(target.type != Mob.TYPE_PROJECTILE && target.type == Mob.TYPE_PLAYER)
                             {
                                 Spell spell = SpellCatalog.get(mob.creature.spellId);
-                                
-                                commandWorker.fireProjectile(this, mob, 3, target.x, target.y, spell);
+                                if(spell != null)
+                                {
+                                    commandWorker.fireProjectile(this, mob, 3, target.x, target.y, spell);
+                                }
                             }
                         }
                         mob.nextAiTime = time + 1000 + (int)(Math.random() * 1000);
                     }
-                    else
+                    else if(mob.creature.pattern != null)
                     {
                         // move
                         int x, y, len;
@@ -373,6 +386,26 @@ public class Room
             if(creature.actualLife < 0)
             {
                 commandWorker.kill(target, this);
+                handleDrops(target);
+            }
+        }
+    }
+
+    private void handleDrops(Mob target) 
+    {
+        String [] parts = target.creature.treasureClasses.split(" ");
+        for(String tc : parts)
+        {
+            TreasureClass treasure = TreasureClassCatalog.get(tc);
+            for(String itemId : treasure.items)
+            {
+                Item item = ItemBuilder.create(itemId);
+                item.mobId = getNextObjectId();
+                item.position.x = target.x + (int)(Math.random() * 40 - 20);
+                item.position.y = target.y + (int)(Math.random() * 20 - 10);
+                item.where = Item.ON_MAP;
+                
+                commandWorker.dropItem(this, item);
             }
         }
     }

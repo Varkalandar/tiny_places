@@ -1,5 +1,5 @@
 ID,Name,Class,Sub,Tile,Inv Width,Inv Height,Color,Scale,Can Drop,Stack Size,Base Value,Energy Min,Energy Max,Phys Min,PhysMax,Desc
-test_item,Test Item,dummy,dummy,1,1,1,1 1 1,0.5,0,1,50,0,0,0,0,.
+coins,Coins,cash,dummy,1,1,1,1 1 1 1,0.5,0,1,50,0,0,0,0,Dummy treasure
 plh_11,Placeholder 1x1,dummy,dummy,3,1,1,1 1 1,1,0,1,1,0,0,0,0,.
 plh_21,Placeholder 2x1,dummy,dummy,5,2,1,1 1 1,1,0,1,1,0,0,0,0,.
 plh_12,Placeholder 1x2,dummy,dummy,7,1,2,1 1 1,1,0,1,1,0,0,0,0,.

@@ -14,6 +14,7 @@ import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.ItemCatalog;
 import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.data.TransitionCatalog;
+import tinyplaces.server.data.TreasureClassCatalog;
 import tinyplaces.server.isomap.MapWorker;
 
 /**
@@ -56,6 +57,7 @@ public class Server implements Runnable
         ItemCatalog.init();
         SpellCatalog.init();
         CreatureCatalog.init();
+        TreasureClassCatalog.init();
         TransitionCatalog.init();
     }
 
