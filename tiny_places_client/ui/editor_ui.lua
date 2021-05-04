@@ -374,6 +374,8 @@ local function mousePressed(button, mx, my)
       editorUi.map.clientSocket.send("ADDM,"
                             ..editorUi.activeLayer..","
                             ..editorUi.tile..","
+							.."1,"   -- frames : todo handle animated mobs
+							.."1,"   -- phases
                             ..mx..","
                             ..my..","
                             .."0.5,"

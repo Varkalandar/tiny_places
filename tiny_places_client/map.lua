@@ -132,6 +132,7 @@ local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, fram
                type = ctype,
                speed = speed, zOff = 0, zSpeed = 0,
                frames = frames,
+               phases = phases,
                orient = orient}
 
   local ltab = getLayerTable(layer)
@@ -439,10 +440,10 @@ end
 
 
 local function drawCreature(mob, tile, scale)
-  
+  local time = love.timer.getTime() * 60
+
   if mob.tile == 9 then
     -- vortex testing
-    local time = love.timer.getTime() * 60
     
     -- large dust disk
     local scale = 0.4
@@ -482,11 +483,26 @@ local function drawCreature(mob, tile, scale)
                        
     -- vortex testing end
   else
-    love.graphics.draw(tile.image, 
-                       mob.x - tile.footX * scale, 
-                       mob.y - tile.footY * scale - mob.zOff, 
-                       0, 
-                       scale, scale)
+  
+    if mob.frames == 1 and mob.phases > 1 then
+      -- idle aninmation case
+      local vtime = time * 0.1 + (mob.x + mob.y) * 0.01
+      local tix = mob.tile + math.floor(vtime % mob.phases)
+      tile = creatureSet[tix]
+  
+      love.graphics.draw(tile.image, 
+                         mob.x - tile.footX * scale, 
+                         mob.y - tile.footY * scale - mob.zOff, 
+                         0, 
+                         scale, scale)
+    else
+      -- normal, non-animated creature
+      love.graphics.draw(tile.image, 
+                         mob.x - tile.footX * scale, 
+                         mob.y - tile.footY * scale - mob.zOff, 
+                         0, 
+                         scale, scale)
+    end
   end
 end
 

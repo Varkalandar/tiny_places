@@ -18,6 +18,8 @@ import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.Damage;
 import tinyplaces.server.data.Item;
 import tinyplaces.server.data.ItemBuilder;
+import tinyplaces.server.data.Population;
+import tinyplaces.server.data.PopulationsCatalog;
 import tinyplaces.server.data.Spell;
 import tinyplaces.server.data.SpellCatalog;
 import tinyplaces.server.data.TreasureClass;
@@ -229,15 +231,31 @@ public class Room
     }
 
     
-    public List <Mob> makeMobGroup(String id, int centerX, int centerY, int spacing)
+    public List <Mob> makeMobGroup(String id, int minCount, int maxCount, int centerX, int centerY, int spacing)
     {
-        ArrayList <Mob> result = new ArrayList<Mob>();
-        int count = 7;
+        int count = minCount + (int)(Math.random() * (maxCount - minCount + 1));
+        
+        ArrayList <Mob> result = new ArrayList<Mob>(count);        
         for(int i=0; i<count; i++)
         {
-            int x = centerX + spacing * 2 * (int)(Math.random() * 5 - 2.5);
-            int y = centerY + spacing * (int)(Math.random() * 5 - 2.5);
+            int x, y, tries = 0;
+            boolean ok;
+            
+            // don't place mobs in the same spot if possible
+            // 10 tries will be made to find a clear spot
+            do
+            {
+                x = centerX + spacing * (int)(Math.random() * 10 - 5);
+                y = centerY + (spacing / 2) * (int)(Math.random() * 10 - 5);
 
+                ok = true;
+                for(Mob mob : result)
+                {
+                    ok = (x != mob.x) && (y != mob.y);
+                }
+                tries ++;
+            } while(!ok && tries < 10);
+                    
             Creature creature = CreatureCatalog.get(id);
             Mob mob = makeMob(3, creature.tile, creature.frames, creature.phases, 
                               x, y, creature.scale, creature.color, Mob.TYPE_CREATURE);
@@ -344,6 +362,22 @@ public class Room
         commandWorker.transit(dataEvent, mob, this, roomname, newx, newy);
     }
 
+    public void populateRoom(ServerDataEvent dataEvent, String roomname)
+    {
+        List<Population> populations = PopulationsCatalog.get(roomname);
+        if(populations != null)
+        {
+            for(Population population : populations)
+            {
+                List <Mob> mobs = 
+                        makeMobGroup(population.creatureId,
+                                     population.minCount, population.maxCount,
+                                     population.x, population.y, population.spacing);
+                commandWorker.addMobGroup(dataEvent, this, mobs, 3);    
+            }
+        }
+    }
+    
     /**
      * Result is indexed by distance square 
      */

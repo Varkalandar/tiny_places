@@ -572,8 +572,16 @@ public class CommandWorker implements ServerWorker
         from.removeMob(3, mob.id);
         
         String command = "LOAD," + roomname + "\n";
-        
         loadMap(dataEvent, command);
+
+        Client client = clients.get(dataEvent.socket);
+        Room room = client.getCurrentRoom();
+        room.populateRoom(dataEvent, roomname);
+
+        // in a new room there are new mob ids. Give the player a matching new id
+        mob.id = room.getNextObjectId();
+        mob.x = newx;
+        mob.y = newy;
 
         command =
             "ADDP," + 
@@ -587,28 +595,9 @@ public class CommandWorker implements ServerWorker
 	    mob.scale + "," + // scale factor
             mob.color + "\n"; // color string
         
-        Client client = clients.get(dataEvent.socket);
-        Room room = client.getCurrentRoom();
         room.addMob(3, mob);
         
         singlecast(room.getServer(), client.socket, command);
-        
-        // todo - proper map population code
-        if("wasteland_and_pond".equals(roomname))
-        {
-            List <Mob> mobs = room.makeMobGroup("dust_devil", 300, 350, 20);
-            addMobGroup(dataEvent, room, mobs, 3);    
-        }
-        if("desert".equals(roomname))
-        {
-            List <Mob> mobs = room.makeMobGroup("spiked_crawler", 650, 170, 20);
-            addMobGroup(dataEvent, room, mobs, 3);    
-        }
-        if("bubbles".equals(roomname))
-        {
-            List <Mob> mobs = room.makeMobGroup("wooden_barrel", 650, 400, 50);
-            addMobGroup(dataEvent, room, mobs, 3);    
-        }
     }    
     
     
@@ -855,7 +844,7 @@ public class CommandWorker implements ServerWorker
     }
     
     
-    private void addMobGroup(ServerDataEvent dataEvent, Room room, Collection <Mob> mobs, int layer) 
+    public void addMobGroup(ServerDataEvent dataEvent, Room room, Collection <Mob> mobs, int layer) 
     {
         for(Mob mob : mobs)
         {

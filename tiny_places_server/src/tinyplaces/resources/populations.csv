@@ -1,0 +1,4 @@
+Map ID,Creature ID,Count Min,Count Max,X,Y,Spacing
+wasteland_and_pond,dust_devil,7,7,300,350,20
+desert,spiked_crawler,7,7,650,170,20
+bubbles,treasure_helix,5,5,600,400,50

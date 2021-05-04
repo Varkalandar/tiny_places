@@ -559,16 +559,16 @@
       <Description>
         <version>4</version>
         <id>33</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>91</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>98</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -576,16 +576,16 @@
       <Description>
         <version>4</version>
         <id>34</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>86</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>95</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -593,16 +593,16 @@
       <Description>
         <version>4</version>
         <id>35</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>81</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>92</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -610,16 +610,16 @@
       <Description>
         <version>4</version>
         <id>36</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>86</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>95</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -627,16 +627,16 @@
       <Description>
         <version>4</version>
         <id>37</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>90</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>97</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -644,16 +644,16 @@
       <Description>
         <version>4</version>
         <id>38</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>93</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>99</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -661,16 +661,16 @@
       <Description>
         <version>4</version>
         <id>39</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>94</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>16</footX>
+        <footY>99</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -678,16 +678,16 @@
       <Description>
         <version>4</version>
         <id>40</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>94</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>17</footX>
+        <footY>100</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>helix</string>
         <string></string>
       </Metadata>
     </Tile>

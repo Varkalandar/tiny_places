@@ -527,15 +527,15 @@ spike_crawler
 Tile Description
 v.5
 33
-1 1
+35 91
 0 0
-0 0
+17 98
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -543,15 +543,15 @@ data
 Tile Description
 v.5
 34
-1 1
+35 86
 0 0
-0 0
+17 95
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -559,15 +559,15 @@ data
 Tile Description
 v.5
 35
-1 1
+35 81
 0 0
-0 0
+17 92
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -575,15 +575,15 @@ data
 Tile Description
 v.5
 36
-1 1
+35 86
 0 0
-0 0
+17 95
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -591,15 +591,15 @@ data
 Tile Description
 v.5
 37
-1 1
+35 90
 0 0
-0 0
+17 97
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -607,15 +607,15 @@ data
 Tile Description
 v.5
 38
-1 1
+35 93
 0 0
-0 0
+17 99
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -623,15 +623,15 @@ data
 Tile Description
 v.5
 39
-1 1
+35 94
 0 0
-0 0
+16 99
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
@@ -639,15 +639,15 @@ data
 Tile Description
 v.5
 40
-1 1
+35 94
 0 0
-0 0
+17 100
 End Of Header
 Item
 v.1
 data
 2
-
+helix
 
 1
 0
