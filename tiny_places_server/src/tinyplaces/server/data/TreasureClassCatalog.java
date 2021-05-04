@@ -34,20 +34,23 @@ public class TreasureClassCatalog
         
         while((line = reader.readLine()) != null)
         {
+            int i = 0;
             String [] parts = line.split(",");
-            TreasureClass treasureClass = new TreasureClass();
+            String id = parts[i++];
+
+            TreasureClass treasureClass = get(id);
             
-            treasureClass.id = parts[0];
-            
-            for(int i=1; i<parts.length; i++)
+            if(treasureClass == null)
             {
-                if(parts[i].length() > 0)
-                {
-                    treasureClass.items.add(parts[i]);
-                }
+                treasureClass = new TreasureClass();
+                treasureClass.id = id;
             }
-            
-            allTresureClasses.put(parts[0], treasureClass);
+                    
+            // chances are percent strings in the input file, normalize to [0..1]
+            treasureClass.chances.add(Integer.parseInt(parts[i++]) * 0.01);
+            treasureClass.items.add(parts[i++]);
+
+            allTresureClasses.put(id, treasureClass);
         }
         
         reader.close();

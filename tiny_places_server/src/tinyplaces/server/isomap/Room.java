@@ -431,15 +431,19 @@ public class Room
         for(String tc : parts)
         {
             TreasureClass treasure = TreasureClassCatalog.get(tc);
-            for(String itemId : treasure.items)
+            for(int i=0; i<treasure.chances.size(); i++)
             {
-                Item item = ItemBuilder.create(itemId);
-                item.mobId = getNextObjectId();
-                item.position.x = target.x + (int)(Math.random() * 40 - 20);
-                item.position.y = target.y + (int)(Math.random() * 20 - 10);
-                item.where = Item.ON_MAP;
-                
-                commandWorker.dropItem(this, item);
+                if(Math.random() < treasure.chances.get(i))
+                {
+                    String itemId = treasure.items.get(i);
+                    Item item = ItemBuilder.create(itemId);
+                    item.mobId = getNextObjectId();
+                    item.position.x = target.x + (int)(Math.random() * 40 - 20);
+                    item.position.y = target.y + (int)(Math.random() * 20 - 10);
+                    item.where = Item.ON_MAP;
+
+                    commandWorker.dropItem(this, item);
+                }
             }
         }
     }

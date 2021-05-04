@@ -1,4 +1,5 @@
-ID,Item 1,Item 2,Item 3,Item 4
-nil,,,,
-cash_1,coins,coins,coins,
-
+ID,Chance,Item Id
+nil,0,nil
+cash_1,50,coins
+cash_1,50,coins
+cash_1,50,coins
