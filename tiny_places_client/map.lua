@@ -402,10 +402,8 @@ end
 
 
 local function drawPlayer(mob, tile, scale)
+
   if mob.tile == 20 then
-  
-  
-    -- print("displayTile=" .. mob.displayTile)
   
     -- spectre testing
     local mode, alphamode = love.graphics.getBlendMode()
@@ -429,6 +427,26 @@ local function drawPlayer(mob, tile, scale)
     love.graphics.setBlendMode(mode, alphamode)
     
      -- spectre testing end
+  elseif mob.tile == 39 then
+  
+    -- aircraft testing
+    
+    -- ground shadow
+    love.graphics.setColor(0.5, 0.5, 0.6, 0.3)
+    -- scale = 0.9
+    love.graphics.draw(patchSet[31].image,
+                       mob.x - 60 - tile.footX * scale,
+                       mob.y - 30 - tile.footY * scale, 
+                       0, scale * 3, scale * 1.5)
+
+    love.graphics.setColor(1, 1, 1, 1)
+                       love.graphics.draw(tile.image, 
+                       mob.x - tile.footX * scale, 
+                       mob.y - tile.footY * scale - mob.zOff, 
+                       0, 
+                       scale, scale)
+
+     -- aircraft testing end
   else
     love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, 
@@ -596,15 +614,29 @@ local function drawTileTable(objects, set)
       local tile = map.itemSet[mob.displayTile]
       drawItem(mob, tile, scale)
     else
+      local mode, alphamode = love.graphics.getBlendMode()
+        
       local tile = set[mob.displayTile]
+      local modetag = tile.tags["mode"] 
+      
+      if modetag then
+        if modetag == "multiply" then
+          love.graphics.setBlendMode("multiply", "premultiplied")
+        elseif modetag == "add" then
+          love.graphics.setBlendMode("add", "alphamultiply")
+        end
+      end
+      
       if tile.image then
         love.graphics.draw(tile.image, 
                            mob.x - tile.footX * scale, 
                            mob.y - tile.footY * scale - mob.zOff, 
                            0, 
                            scale, scale)
+      love.graphics.setBlendMode(mode, alphamode)
       else
         print("Error in map.drawTileTable(): tile #" .. mob.displayTile .. " has no image")
+        for key, value in pairs (mob) do print("  " .. key .. "=" .. value)  end
       end
     end
   end

@@ -24,7 +24,7 @@ v.1
 data
 2
 fog
-alpha
+
 1
 0
 0
@@ -40,7 +40,7 @@ v.1
 data
 2
 smooth fog
-alpha
+
 1
 0
 0
@@ -271,16 +271,16 @@ data
 Tile Description
 v.5
 17
-1 1
+196 97
 0 0
-96 99
+98 84
 End Of Header
 Item
 v.1
 data
 2
-
-
+addi_highlight_1
+mode=add
 1
 0
 0
@@ -295,7 +295,7 @@ Item
 v.1
 data
 2
-highlight_1
+alpha_highlight_1
 
 1
 0
@@ -456,7 +456,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -472,7 +472,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -488,7 +488,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -504,7 +504,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -520,7 +520,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -536,7 +536,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -552,7 +552,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0
@@ -568,7 +568,7 @@ v.1
 data
 2
 lightning
-
+mode=add
 1
 0
 0

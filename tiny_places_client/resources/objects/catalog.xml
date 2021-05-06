@@ -4996,68 +4996,68 @@
       <Description>
         <version>4</version>
         <id>282</id>
-        <width>1</width>
-        <height>1</height>
+        <width>170</width>
+        <height>181</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>117</footX>
+        <footY>186</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>wormhole</string>
+        <string>mode=add</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>283</id>
-        <width>1</width>
-        <height>1</height>
+        <width>170</width>
+        <height>181</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>42</footX>
+        <footY>196</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>wormhole</string>
+        <string>mode=add</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>284</id>
-        <width>1</width>
-        <height>1</height>
+        <width>170</width>
+        <height>181</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>188</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>wormhole</string>
+        <string>mode=add</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>285</id>
-        <width>1</width>
-        <height>1</height>
+        <width>170</width>
+        <height>181</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>95</footX>
+        <footY>190</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>wormhole</string>
+        <string>mode=add</string>
       </Metadata>
     </Tile>
     <Tile>

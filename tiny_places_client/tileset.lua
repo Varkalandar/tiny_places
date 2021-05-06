@@ -34,6 +34,15 @@ local function readTile(path, tile, count)
 --  for key, value in pairs (descriptor) do
 --    print(key .. "=" .. value)    
 --  end
+
+  descriptor.tags = {}
+  local iter = lines[13]:gmatch("[^,]+")
+  for tag in iter do
+    local split = tag:gmatch("[^=]+")
+    descriptor.tags[split()] = split()
+  end
+
+  -- for key, value in pairs (descriptor.tags) do print(key .. "=" .. value)  end
   
   local filename = descriptor.id .. "-" .. descriptor.name .. ".png"
 

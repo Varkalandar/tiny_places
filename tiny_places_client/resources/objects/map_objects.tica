@@ -4703,64 +4703,64 @@ data
 Tile Description
 v.5
 282
-1 1
+170 181
 0 0
-0 0
+117 186
 End Of Header
 Item
 v.1
 data
 2
-
-
+wormhole
+mode=add
 1
 0
 0
 Tile Description
 v.5
 283
-1 1
+170 181
 0 0
-0 0
+42 196
 End Of Header
 Item
 v.1
 data
 2
-
-
+wormhole
+mode=add
 1
 0
 0
 Tile Description
 v.5
 284
-1 1
+170 181
 0 0
-0 0
+23 188
 End Of Header
 Item
 v.1
 data
 2
-
-
+wormhole
+mode=add
 1
 0
 0
 Tile Description
 v.5
 285
-1 1
+170 181
 0 0
-0 0
+95 190
 End Of Header
 Item
 v.1
 data
 2
-
-
+wormhole
+mode=add
 1
 0
 0

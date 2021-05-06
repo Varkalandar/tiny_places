@@ -13,6 +13,11 @@ local gameUi = {}
 -- UI element container for this UI
 local container = cf.makeContainer()
 
+
+local function switchToEditorUi()
+  gameUi.mainUi.ui = gameUi.mainUi.editorUi
+end
+
 --
 -- Checks if the given screen coordinate is inside the map area
 --
@@ -85,6 +90,10 @@ local function update(dt)
     gameUi.mainUi.popup = inventoryPopup
   end
   
+  if love.keyboard.isDown("escape") then
+    gameUi.mainUi.popup = nil
+    switchToEditorUi()
+  end
 end
 
 
