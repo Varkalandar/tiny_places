@@ -5064,16 +5064,16 @@
       <Description>
         <version>4</version>
         <id>286</id>
-        <width>1</width>
-        <height>1</height>
+        <width>178</width>
+        <height>197</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>91</footX>
+        <footY>202</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>ring_wormhole</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5081,16 +5081,16 @@
       <Description>
         <version>4</version>
         <id>287</id>
-        <width>1</width>
-        <height>1</height>
+        <width>178</width>
+        <height>197</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>85</footX>
+        <footY>203</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>ring_wormhole</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5098,16 +5098,16 @@
       <Description>
         <version>4</version>
         <id>288</id>
-        <width>1</width>
-        <height>1</height>
+        <width>178</width>
+        <height>196</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>52</footX>
+        <footY>202</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>ring_wormhole</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -5115,16 +5115,16 @@
       <Description>
         <version>4</version>
         <id>289</id>
-        <width>1</width>
-        <height>1</height>
+        <width>178</width>
+        <height>196</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>129</footX>
+        <footY>203</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>ring_wormhole</string>
         <string></string>
       </Metadata>
     </Tile>

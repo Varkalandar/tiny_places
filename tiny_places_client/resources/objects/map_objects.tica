@@ -4767,15 +4767,15 @@ mode=add
 Tile Description
 v.5
 286
-1 1
+178 197
 0 0
-0 0
+91 202
 End Of Header
 Item
 v.1
 data
 2
-
+ring_wormhole
 
 1
 0
@@ -4783,15 +4783,15 @@ data
 Tile Description
 v.5
 287
-1 1
+178 197
 0 0
-0 0
+85 203
 End Of Header
 Item
 v.1
 data
 2
-
+ring_wormhole
 
 1
 0
@@ -4799,15 +4799,15 @@ data
 Tile Description
 v.5
 288
-1 1
+178 196
 0 0
-0 0
+52 202
 End Of Header
 Item
 v.1
 data
 2
-
+ring_wormhole
 
 1
 0
@@ -4815,15 +4815,15 @@ data
 Tile Description
 v.5
 289
-1 1
+178 196
 0 0
-0 0
+129 203
 End Of Header
 Item
 v.1
 data
 2
-
+ring_wormhole
 
 1
 0
