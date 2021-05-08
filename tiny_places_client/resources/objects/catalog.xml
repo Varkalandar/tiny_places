@@ -4231,16 +4231,16 @@
       <Description>
         <version>4</version>
         <id>237</id>
-        <width>1</width>
-        <height>1</height>
+        <width>124</width>
+        <height>234</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>68</footX>
+        <footY>230</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>comm_tower</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4248,16 +4248,16 @@
       <Description>
         <version>4</version>
         <id>238</id>
-        <width>1</width>
-        <height>1</height>
+        <width>124</width>
+        <height>234</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>58</footX>
+        <footY>231</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>comm_tower</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4265,16 +4265,16 @@
       <Description>
         <version>4</version>
         <id>239</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>53</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>4</footX>
+        <footY>51</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4282,16 +4282,16 @@
       <Description>
         <version>4</version>
         <id>240</id>
-        <width>1</width>
-        <height>1</height>
+        <width>41</width>
+        <height>51</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>14</footX>
+        <footY>49</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4299,16 +4299,16 @@
       <Description>
         <version>4</version>
         <id>241</id>
-        <width>1</width>
-        <height>1</height>
+        <width>46</width>
+        <height>50</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>48</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4316,16 +4316,16 @@
       <Description>
         <version>4</version>
         <id>242</id>
-        <width>1</width>
-        <height>1</height>
+        <width>32</width>
+        <height>52</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>24</footX>
+        <footY>49</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4333,16 +4333,16 @@
       <Description>
         <version>4</version>
         <id>243</id>
-        <width>1</width>
-        <height>1</height>
+        <width>27</width>
+        <height>53</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>23</footX>
+        <footY>51</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4350,16 +4350,16 @@
       <Description>
         <version>4</version>
         <id>244</id>
-        <width>1</width>
-        <height>1</height>
+        <width>40</width>
+        <height>51</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>49</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4367,16 +4367,16 @@
       <Description>
         <version>4</version>
         <id>245</id>
-        <width>1</width>
-        <height>1</height>
+        <width>46</width>
+        <height>50</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>21</footX>
+        <footY>48</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4384,16 +4384,16 @@
       <Description>
         <version>4</version>
         <id>246</id>
-        <width>1</width>
-        <height>1</height>
+        <width>32</width>
+        <height>52</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>7</footX>
+        <footY>50</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>radar</string>
         <string></string>
       </Metadata>
     </Tile>

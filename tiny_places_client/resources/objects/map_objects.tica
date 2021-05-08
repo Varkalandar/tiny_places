@@ -3983,15 +3983,15 @@ heatsink
 Tile Description
 v.5
 237
-1 1
+124 234
 0 0
-0 0
+68 230
 End Of Header
 Item
 v.1
 data
 2
-
+comm_tower
 
 1
 0
@@ -3999,15 +3999,15 @@ data
 Tile Description
 v.5
 238
-1 1
+124 234
 0 0
-0 0
+58 231
 End Of Header
 Item
 v.1
 data
 2
-
+comm_tower
 
 1
 0
@@ -4015,15 +4015,15 @@ data
 Tile Description
 v.5
 239
-1 1
+27 53
 0 0
-0 0
+4 51
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4031,15 +4031,15 @@ data
 Tile Description
 v.5
 240
-1 1
+41 51
 0 0
-0 0
+14 49
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4047,15 +4047,15 @@ data
 Tile Description
 v.5
 241
-1 1
+46 50
 0 0
-0 0
+24 48
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4063,15 +4063,15 @@ data
 Tile Description
 v.5
 242
-1 1
+32 52
 0 0
-0 0
+24 49
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4079,15 +4079,15 @@ data
 Tile Description
 v.5
 243
-1 1
+27 53
 0 0
-0 0
+23 51
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4095,15 +4095,15 @@ data
 Tile Description
 v.5
 244
-1 1
+40 51
 0 0
-0 0
+25 49
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4111,15 +4111,15 @@ data
 Tile Description
 v.5
 245
-1 1
+46 50
 0 0
-0 0
+21 48
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
@@ -4127,15 +4127,15 @@ data
 Tile Description
 v.5
 246
-1 1
+32 52
 0 0
-0 0
+7 50
 End Of Header
 Item
 v.1
 data
 2
-
+radar
 
 1
 0
