@@ -655,15 +655,15 @@ helix
 Tile Description
 v.5
 41
-1 1
+69 106
 0 0
-0 0
+34 105
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -671,15 +671,15 @@ data
 Tile Description
 v.5
 42
-1 1
+83 106
 0 0
-0 0
+41 106
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -687,15 +687,15 @@ data
 Tile Description
 v.5
 43
-1 1
+83 106
 0 0
-0 0
+41 106
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -703,15 +703,15 @@ data
 Tile Description
 v.5
 44
-1 1
+71 106
 0 0
-0 0
+35 106
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -719,15 +719,15 @@ data
 Tile Description
 v.5
 45
-1 1
+69 105
 0 0
-0 0
+34 105
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -735,15 +735,15 @@ data
 Tile Description
 v.5
 46
-1 1
+82 106
 0 0
-0 0
+40 107
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -751,15 +751,15 @@ data
 Tile Description
 v.5
 47
-1 1
+83 107
 0 0
-0 0
+41 107
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
@@ -767,15 +767,15 @@ data
 Tile Description
 v.5
 48
-1 1
+71 107
 0 0
-0 0
+35 107
 End Of Header
 Item
 v.1
 data
 2
-
+spike_drone
 
 1
 0
