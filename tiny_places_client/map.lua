@@ -466,6 +466,50 @@ local function drawPlayer(mob, tile, scale)
 end
 
 
+local function drawShadow(mob, tile, scale)
+
+  -- draw the shadow if there is one
+  if mob.shadow and mob.shadow > 0 then
+  
+    love.graphics.setColor(1, 1, 1, 0.7)
+    
+    local shadow = patchSet[mob.shadow]
+    local shadowScale = mob.shadowScale
+    local x = mob.x - tile.footX * scale
+    local y = mob.y - tile.footY * scale - mob.zOff
+    
+    love.graphics.draw(shadow.image, 
+                       x - shadow.footX * shadowScale + 20*shadowScale, 
+                       y - shadow.footY * shadowScale + 100*shadowScale, 
+                       0, 
+                       shadowScale, shadowScale)
+  end
+end
+
+
+local function drawCreatureIdleAnimation(mob, tile, scale, time)
+
+  local vtime = time * 0.1 + (mob.x + mob.y) * 0.01
+  local tix = mob.tile + math.floor(vtime % mob.phases)
+  
+  tile = creatureSet[tix]
+  
+  -- todo : real shadow data
+  mob.shadow = 29
+  mob.shadowScale = 0.2
+  drawShadow(mob, tile, scale)
+
+  local color = mob.color	  
+  love.graphics.setColor(color.r, color.g, color.b, color.a)	
+  
+  love.graphics.draw(tile.image, 
+                     mob.x - tile.footX * scale, 
+                     mob.y - tile.footY * scale - mob.zOff, 
+                     0, 
+                     scale, scale)
+end
+
+
 local function drawCreature(mob, tile, scale)
   local time = love.timer.getTime() * 60
 
@@ -513,15 +557,8 @@ local function drawCreature(mob, tile, scale)
   
     if mob.frames == 1 and mob.phases > 1 then
       -- idle aninmation case
-      local vtime = time * 0.1 + (mob.x + mob.y) * 0.01
-      local tix = mob.tile + math.floor(vtime % mob.phases)
-      tile = creatureSet[tix]
-  
-      love.graphics.draw(tile.image, 
-                         mob.x - tile.footX * scale, 
-                         mob.y - tile.footY * scale - mob.zOff, 
-                         0, 
-                         scale, scale)
+      drawCreatureIdleAnimation(mob, tile, scale, time)
+
     else
       -- normal, non-animated creature
       love.graphics.draw(tile.image, 
@@ -586,17 +623,11 @@ local function drawItem(mob, tile, scale)
   if tile == nil then
     for k, v in pairs(item) do print("  " .. k, v) end
   end
+
+  drawShadow(mob, tile, scale)
   
-  -- draw the shadow if there is one
-  if mob.shadow and mob.shadow > 0 then
-    local shadow = patchSet[mob.shadow]
-    local scale = mob.shadowScale
-    love.graphics.draw(shadow.image, 
-                         mob.x - shadow.footX * scale - 20*scale, 
-                         mob.y - shadow.footY * scale - mob.zOff + 20*scale, 
-                         0, 
-                         scale, scale)
-  end
+  local color = mob.color	  
+  love.graphics.setColor(color.r, color.g, color.b, color.a)
   
   -- then draw the item itself
   love.graphics.draw(tile.image, 

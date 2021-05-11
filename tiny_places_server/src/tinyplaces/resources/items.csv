@@ -4,8 +4,8 @@ plh_11,Placeholder 1x1,dummy,dummy,3,0,0.2,1,1,1 1 1 1,1,0,1,1,0,0,0,0,.
 plh_21,Placeholder 2x1,dummy,dummy,5,0,0.2,2,1,1 1 1 1,1,0,1,1,0,0,0,0,.
 plh_12,Placeholder 1x2,dummy,dummy,7,0,0.2,1,2,1 1 1 1,1,0,1,1,0,0,0,0,.
 plh_22,Placeholder 2x2,dummy,dummy,9,0,0.2,1,1,1 1 1 1,1,0,1,1,0,0,0,0,.
-repair_powerup_1,Repairs,powerup,dummy,15,29,0.2,1,1,1 1 1 1,0.125,1,1,0,0,0,0,0,Repair powerup
-recharge_powerup_1,Recharge,powerup,dummy,17,29,0.2,1,1,1 1 1 1,0.125,1,1,0,0,0,0,0,Recharge powerup
+repair_powerup_1,Repairs,powerup,dummy,15,29,0.15,1,1,1 1 1 1,0.125,1,1,0,0,0,0,0,Repair powerup
+recharge_powerup_1,Recharge,powerup,dummy,17,29,0.15,1,1,1 1 1 1,0.125,1,1,0,0,0,0,0,Recharge powerup
 small_blaster,Small Blaster,frame,weapon,11,29,0.2,1,2,1 1 1 1,0.33,1,1,100,5,9,0,0,.
 blaster,Blaster,frame,weapon,13,29,0.2,1,2,1 1 1 1,0.33,1,1,150,10,14,0,0,.
 firebolt_core,Firebolt Core,core,func,248,29,0.2,1,1,1 1 1 1,0.33,1,1,100,0,0,0,0,Insert this core into a weapon frame to make it fire firebolts.
