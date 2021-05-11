@@ -255,8 +255,8 @@ public class Room
                     int dy = mob.y - y;
                     int d = dx * dx + dy * dy;
                     
-                    // must be at least 15 units from each other
-                    ok = d < 225;
+                    // must be at least 20 units from each other
+                    ok = d > 20*20;
                 }
                 tries ++;
             } while(!ok && tries < 10);
