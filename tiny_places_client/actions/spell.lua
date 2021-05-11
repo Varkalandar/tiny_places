@@ -63,7 +63,7 @@ local function fire(spell)
   
   shooter:orient(nx, ny)
 
-  local projectile = map.addObject(id, layer, tile, sx, sy, 1, color, "projectile", speed, 8)
+  local projectile = map.addObject(id, layer, tile, sx, sy, 1, color, nil, nil, "projectile", speed, 8, 1)
   projectile.ptype = ptype
   
   local pattern = "glide"

@@ -121,13 +121,22 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color, ctype, speed, frames, phases)
+local function addObject(id, layer, tile, x, y, scale, color,
+                         shadow, shadowScale,
+                         ctype, speed, frames, phases)
   
   print("Adding object with id " .. id ..  ", tile " .. tile .. " and type '" .. ctype .. "' to layer " .. layer)
+  print("  frames=" .. frames .. " phases=" .. phases)
+  if shadow then
+    print("  shadow=" .. shadow ..  ", scale=" .. shadowScale)
+  else
+    print("  no shadow")
+  end
   
   -- tile should be constant, displayTile can change during animations
   local mob = {id = id, tile = tile, displayTile = tile,
-               x = x, y = y, scale = scale, 
+               x = x, y = y, scale = scale,
+               shadow = shadow, shadowScale = shadowScale,
                color = unmarshallColor(color), 
                type = ctype,
                speed = speed, zOff = 0, zSpeed = 0,
@@ -578,6 +587,18 @@ local function drawItem(mob, tile, scale)
     for k, v in pairs(item) do print("  " .. k, v) end
   end
   
+  -- draw the shadow if there is one
+  if mob.shadow and mob.shadow > 0 then
+    local shadow = patchSet[mob.shadow]
+    local scale = mob.shadowScale
+    love.graphics.draw(shadow.image, 
+                         mob.x - shadow.footX * scale - 20*scale, 
+                         mob.y - shadow.footY * scale - mob.zOff + 20*scale, 
+                         0, 
+                         scale, scale)
+  end
+  
+  -- then draw the item itself
   love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, 
                        mob.y - tile.footY * scale - mob.zOff, 

@@ -3,4 +3,4 @@ dust_devil,Dust Devil,9,8,1,1,3,0,0,0,0,0,dust_vortex,glide,20,1 0.9 0.6 1,0.5,n
 spiked_crawler,Spiked Crawler,17,8,2,1,3,0,0,0,0,0,dirt_shot,glide2,20,0.8 0.8 0.8 1,0.25,nil
 wooden_barrel,Wooden Barrel,1000,1,1,1,1,0,0,0,0,0,-,-,0,1 1 1 1,0.25,cash_1
 treasure_helix,Treasure Helix,33,1,8,1,1,0,0,0,0,0,-,-,0,1 1 1 1,0.5,cash_1
-spike_drone,Spike Drone,41,1,8,1,1,0,0,0,0,0,-,-,0,0.8 0.9 1.0 1,0.25,cash_1
+spike_drone,Spike Drone,41,1,8,1,1,0,0,0,0,0,-,-,0,0.8 0.9 1.0 1,0.25,cash_1 powerups_1

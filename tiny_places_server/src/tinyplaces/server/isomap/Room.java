@@ -245,13 +245,18 @@ public class Room
             // 10 tries will be made to find a clear spot
             do
             {
-                x = centerX + spacing * (int)(Math.random() * 10 - 5);
-                y = centerY + (spacing / 2) * (int)(Math.random() * 10 - 5);
+                x = centerX + (int)(spacing * (Math.random() * 10 - 5));
+                y = centerY + (int)((spacing / 2) * (Math.random() * 10 - 5));
 
                 ok = true;
                 for(Mob mob : result)
                 {
-                    ok = (x != mob.x) && (y != mob.y);
+                    int dx = mob.x - x;
+                    int dy = mob.y - y;
+                    int d = dx * dx + dy * dy;
+                    
+                    // must be at least 15 units from each other
+                    ok = d < 225;
                 }
                 tries ++;
             } while(!ok && tries < 10);

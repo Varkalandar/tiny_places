@@ -15,6 +15,8 @@ public class BaseItem
     public String iclass;
     public String itype;        
     public int tile;
+    public int shadow;         // shadow tile number
+    public float shadowScale;  // shadow scale factor
     public int width;
     public int height;
     public boolean canDrop;

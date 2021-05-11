@@ -253,16 +253,16 @@
       <Description>
         <version>4</version>
         <id>15</id>
-        <width>1</width>
-        <height>1</height>
+        <width>128</width>
+        <height>128</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>64</footX>
+        <footY>129</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red_powerup_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -270,8 +270,8 @@
       <Description>
         <version>4</version>
         <id>16</id>
-        <width>1</width>
-        <height>1</height>
+        <width>128</width>
+        <height>128</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -279,7 +279,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>red_powerup_i</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -287,16 +287,16 @@
       <Description>
         <version>4</version>
         <id>17</id>
-        <width>1</width>
-        <height>1</height>
+        <width>128</width>
+        <height>128</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>64</footX>
+        <footY>129</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>blue_powerup_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -304,8 +304,8 @@
       <Description>
         <version>4</version>
         <id>18</id>
-        <width>1</width>
-        <height>1</height>
+        <width>128</width>
+        <height>128</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -313,7 +313,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>blue_powerup_i</string>
         <string></string>
       </Metadata>
     </Tile>

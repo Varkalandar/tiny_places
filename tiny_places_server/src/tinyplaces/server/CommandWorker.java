@@ -723,6 +723,8 @@ public class CommandWorker implements ServerWorker
                     item.baseItem.tile + "," +
                     item.baseItem.color + "," +
                     item.baseItem.scale + "," +
+                    item.baseItem.shadow + "," +
+                    item.baseItem.shadowScale + "," +
                     item.where + "," +
                     item.position.x + "," +
                     item.position.y + "," +
@@ -767,6 +769,8 @@ public class CommandWorker implements ServerWorker
                 item.baseItem.tile + "," +
                 item.baseItem.color + "," +
                 item.baseItem.scale + "," +
+                item.baseItem.shadow + "," +
+                item.baseItem.shadowScale + "," +                
                 item.where + "," +
                 item.position.x + "," +
                 item.position.y + "," +

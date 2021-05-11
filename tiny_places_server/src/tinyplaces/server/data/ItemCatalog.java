@@ -52,6 +52,8 @@ public class ItemCatalog
             baseItem.iclass = parts[i++];
             baseItem.itype = parts[i++];
             baseItem.tile = Integer.parseInt(parts[i++]);
+            baseItem.shadow = Integer.parseInt(parts[i++]);
+            baseItem.shadowScale = Float.parseFloat(parts[i++]);
             baseItem.width = Integer.parseInt(parts[i++]);
             baseItem.height = Integer.parseInt(parts[i++]);
             baseItem.color = parts[i++];

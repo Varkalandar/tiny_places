@@ -68,7 +68,9 @@ local function setModePlace(x, y, pressed)
                                                    editorUi.activeLayer, editorUi.tile, 
                                                    0, 0, 0.5, 
                                                    "1.0 1.0 1.0 0.3",
+                                                   nil, nil,
                                                    "prop",
+                                                   0,
                                                    0,
                                                    1)
     end

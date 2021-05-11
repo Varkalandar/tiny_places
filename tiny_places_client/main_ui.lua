@@ -112,6 +112,8 @@ local function processCommands(commands)
           tile = tonumber(args()),
           color = args(),
           scale = tonumber(args()),
+          shadow = tonumber(args()),
+          shadowScale = tonumber(args()),
           where = tonumber(args()),
           x = tonumber(args()),
           y = tonumber(args()),
@@ -125,7 +127,8 @@ local function processCommands(commands)
         
         if mobId == nil then
           -- place item on map ground
-          map.addObject(item.id, 3, item.tile, item.x, item.y, item.scale, item.color, 
+          map.addObject(item.id, 3, item.tile, item.x, item.y, item.scale, item.color,
+                                   item.shadow, item.shadowScale,          
                                   "item", 0, 1, 1)
           
         else
@@ -134,8 +137,6 @@ local function processCommands(commands)
           
           table.insert(map.playerInventory, item)
         end
-        
-        -- map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, faces)
       
       elseif cmd == "ADDM" then
         local id = tonumber(args())
@@ -161,7 +162,7 @@ local function processCommands(commands)
           print(debug.traceback)
         end
         
-        map.addObject(id, layer, tile, x, y, scale, color, ctype, 120, frames, phases)
+        map.addObject(id, layer, tile, x, y, scale, color, nil, nil, ctype, 120, frames, phases)
       
       elseif cmd == "ANIM" then
         local id = tonumber(args())
@@ -213,7 +214,7 @@ local function processCommands(commands)
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color, "player", 120, frames, phases)
+        local mob = map.addObject(id, layer, tile, x, y, scale, color, nil, nil, "player", 120, frames, phases)
         mainUi.gameUi.playerMob = mob
 
       elseif cmd == "FIRE" then

@@ -1,5 +1,5 @@
 ID,Chance,Item Id
 nil,0,nil
 cash_1,50,coins
-cash_1,50,coins
-cash_1,50,coins
+powerups_1,50,repair_powerup_1
+powerups_1,50,recharge_powerup_1
