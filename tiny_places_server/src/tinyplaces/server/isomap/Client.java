@@ -3,7 +3,6 @@ package tinyplaces.server.isomap;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
@@ -160,7 +159,22 @@ public class Client
         
         reader.close();
     }
+
     
+    public void updateItem(int id, int where, int x, int y) 
+    {
+        for(Item item : equipment)
+        {
+            if(item.id == id)
+            {
+                item.where = where;
+                item.position.x = x;
+                item.position.y = y;
+            }
+        }
+    }
+
+
     /**
      * Life, Energy etc.
      */

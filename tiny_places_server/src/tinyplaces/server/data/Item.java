@@ -12,7 +12,7 @@ public class Item
 {
     public static int ON_MAP = -1;
     public static int IN_INVENTORY = -2;
-    public static int IN_FIRST_SLOT = 0;
+    public static int IN_FIRST_SLOT = 1;
 
     public final BaseItem baseItem;
     

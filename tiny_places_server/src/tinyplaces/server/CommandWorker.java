@@ -122,6 +122,10 @@ public class CommandWorker implements ServerWorker
         {
             startGame(dataEvent, command);
         }
+        else if(command.startsWith("UPDI"))
+        {
+            updateItem(dataEvent, command);
+        }
         else if(command.startsWith("UPDM"))
         {
             updateMob(dataEvent, command);
@@ -345,7 +349,7 @@ public class CommandWorker implements ServerWorker
         // so there is something for testing item related code
         
         Item item1 = ItemBuilder.create("small_blaster");
-        item1.where = Item.IN_FIRST_SLOT;
+        item1.where = Item.IN_FIRST_SLOT + 1;
         
         addItem(client, item1);
         
@@ -370,6 +374,23 @@ public class CommandWorker implements ServerWorker
             addItem(client, item4);
         }    
     }
+    
+    
+    private void updateItem(ServerDataEvent dataEvent, String command)
+    {
+        System.err.println(command);
+        
+        Client client = clients.get(dataEvent.socket);
+        String [] parts = command.trim().split(",");
+
+        int id = Integer.parseInt(parts[1]);
+        int where = Integer.parseInt(parts[2]);
+        int x = Integer.parseInt(parts[3]);
+        int y = Integer.parseInt(parts[4]);
+        
+        client.updateItem(id, where, x, y);
+    }
+    
     
     private void updateMob(ServerDataEvent dataEvent, String command)
     {

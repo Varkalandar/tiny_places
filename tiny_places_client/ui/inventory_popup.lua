@@ -7,6 +7,16 @@
 
 local inventoryPopup = {}
 
+-- display coordinates of the equipment slots
+local slots =
+{
+ {x=770, y=85, w=48, h=48},
+ {x=1024, y=85, w=48, h=48},
+ {x=743, y=252, w=48, h=48},
+ {x=1053, y=252, w=48, h=48},
+ {x=898, y=188, w=48, h=64}
+}
+
 
 local function init(mainUi, itemSet, playerInventory)
   print("Loading inventory popup")
@@ -26,19 +36,31 @@ local function update(dt)
 end
 
 
-local function drawItemCentered(xoff, yoff, itemNo, scale)
+local function drawItem(x, y, itemNo, scale)
 
-  local tile = inventoryPopup.itemSet[itemNo]
   love.graphics.setColor(1, 1, 1)
+  local tile = inventoryPopup.itemSet[itemNo]
   love.graphics.draw(tile.image, 
-                                xoff - tile.image:getWidth()/2 * scale, 
-                                yoff - tile.image:getHeight()/2 * scale,
-                                0, scale, scale) 
+                     x, 
+                     y,
+                     0, scale, scale) 
 
 end
 
 
-local function checkItemPopup()
+local function drawItemCentered(x, y, itemNo, scale)
+
+  love.graphics.setColor(1, 1, 1)
+  local tile = inventoryPopup.itemSet[itemNo]
+  love.graphics.draw(tile.image, 
+                     x - tile.image:getWidth()/2 * scale, 
+                     y - tile.image:getHeight()/2 * scale,
+                     0, scale, scale) 
+
+end
+
+
+local function getItemUnderMouse()
 
   local mx = inventoryPopup.mainUi.mx
   local my = inventoryPopup.mainUi.my
@@ -90,13 +112,16 @@ local function drawBackpack(xoff, yoff)
 					  			     item.scale)
 
     elseif item.where >= 0 then
-       -- slotted items
+      -- slotted items
        
-       -- tile is image for map, tile+1 is image for inventory view
-      drawItemCentered(770, 85, item.tile+1, item.scale)
+      local slotx = slots[item.where].x 
+      local sloty = slots[item.where].y 
+       
+      -- tile is image for map, tile+1 is image for inventory view
+      drawItemCentered(slotx, sloty, item.tile+1, item.scale)
       
-      item.displayX = 770 - item.displayW / 2 
-      item.displayY = 85 - item.displayH / 2
+      item.displayX = slotx - item.displayW / 2 
+      item.displayY = sloty - item.displayH / 2
        
     end    
   end
@@ -198,7 +223,7 @@ local function draw()
   drawBackpack(xoff, yoff)
   
   -- if mouse is over an item, draw a popup
-  local item = checkItemPopup()
+  local item = getItemUnderMouse()
   if item then
     local mainUi = inventoryPopup.mainUi
     
@@ -210,6 +235,82 @@ local function draw()
     
   end
   
+  if inventoryPopup.draggedItem then
+    drawItem(inventoryPopup.mainUi.mx, inventoryPopup.mainUi.my,
+             inventoryPopup.draggedItem.tile + 1,
+             inventoryPopup.draggedItem.scale)
+  end
+  
+  
+  -- debug, show slot recatangles
+  -- for i, slot in ipairs(slots) do
+  --   love.graphics.rectangle("line",
+  --                           slot.x - slot.w, slot.y - slot.h,
+  --                          slot.w*2, slot.h*2)
+  -- end
+  
+  
+end
+
+
+local function sendItemUpdate(item)
+
+  local map = inventoryPopup.mainUi.gameUi.map
+  
+  -- for k, v in pairs(item) do print(k .. "=" .. v) end
+  
+  map.clientSocket.send("UPDI," .. 
+                        item.itemId .. "," .. 
+                        item.where .. ","..
+                        item.x .. "," ..
+                        item.y)
+
+end
+
+
+local function dropItem(mx, my)
+
+  -- find out what the player clicked
+  -- first check the backpack area
+  
+  local xoff = 626
+  local yoff = 386
+
+  local i = math.floor((mx - xoff) / 32)
+  local j = math.floor((my - yoff) / 32)
+
+  -- inside backpack area?
+  if i >= 0 and j >= 0 and i <= 16 and j<= 8 then
+
+    local item = inventoryPopup.draggedItem
+    inventoryPopup.draggedItem = nil
+
+    item.x = i
+    item.y = j
+    item.where = -2   -- -2 is magic for "in inventory"
+    
+    table.insert(inventoryPopup.playerInventory, item)
+    sendItemUpdate(item)
+  else
+    -- test item slots
+    for i, slot in ipairs(slots) do
+      if slot.x - slot.w <= mx and slot.y - slot.h <= my and 
+         slot.x + slot.w >= mx and slot.y + slot.h >= my then
+
+        local item = inventoryPopup.draggedItem
+        inventoryPopup.draggedItem = nil
+         
+        item.x = 0
+        item.y = 0
+        item.where = i
+        
+        table.insert(inventoryPopup.playerInventory, item)
+        sendItemUpdate(item)
+      end
+    end
+  end
+  
+  
 end
 
 
@@ -218,6 +319,26 @@ end
 
 
 local function mouseReleased(button, mx, my)
+
+  local draggedItem = inventoryPopup.draggedItem
+  local item = getItemUnderMouse()
+
+  if draggedItem then
+    dropItem(mx, my)
+
+  else
+    inventoryPopup.draggedItem = item
+    local index = nil
+    for k, item in pairs(inventoryPopup.playerInventory) do 
+      if inventoryPopup.draggedItem == item then index = k end
+    end
+    
+    table.remove(inventoryPopup.playerInventory, index)
+  
+    -- for k, v in pairs(inventoryPopup.draggedItem) do print(k .. "=" .. v) end
+  
+  end
+
 end
 
 
