@@ -303,10 +303,11 @@ local function init()
   map.clientSocket = clientSocket
 
   -- host and port should come from a better place than this  
+  -- map.clientSocket.connect(settings.server_ip, 9194)
   map.clientSocket.connect("127.0.0.1", 9194)
 
   -- login should be here
-  map.clientSocket.send("HELO")
+  map.clientSocket.send("HELO," .. settings.client_id)
   
   -- load the starting map
   -- map.clientSocket.send("LOAD,green_and_pond")

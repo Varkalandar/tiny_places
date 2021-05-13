@@ -150,7 +150,7 @@ public class CommandWorker implements ServerWorker
         }
         else if(command.startsWith("LOAD"))
         {
-            loadMap(dataEvent, command);
+            loadMap(dataEvent.server, clients.get(dataEvent.socket), command);
         }
         else if(command.startsWith("CHAT"))
         {
@@ -170,8 +170,10 @@ public class CommandWorker implements ServerWorker
     private void loginClient(ServerDataEvent dataEvent, String command)
     {
         System.err.println("HELO from " + dataEvent.socket);
-        
-        clients.put(dataEvent.socket, new Client(dataEvent.socket));
+        String [] parts = command.trim().split(",");
+        Client client = new Client(parts[1], dataEvent.socket);
+        clients.put(dataEvent.socket, client);
+        sendFullPlayerStats(dataEvent.server, client);
     }
 
     
@@ -205,6 +207,59 @@ public class CommandWorker implements ServerWorker
                 "Remaining clients: {0}", clients.size());
     }
 
+    
+    public void sendPlayerStat(Server server, Client client, int statIndex)
+    {
+        Client.Stat stat = client.stats[statIndex];
+
+        if(stat != null)
+        {
+            StringBuilder message = new StringBuilder();
+
+            message.append("STAT,");
+            message.append(statIndex);
+            message.append(",");
+            message.append(stat.min);
+            message.append(",");
+            message.append(stat.max);
+            message.append(",");
+            message.append(stat.value);
+            message.append('\n');
+        
+            // System.err.println(message.toString());
+            singlecast(server, client.socket, message.toString());
+        }
+    }
+    
+    
+    private void sendFullPlayerStats(Server server, Client client)
+    {
+        StringBuilder message = new StringBuilder();
+
+        message.append("STAT,");
+        
+        for(int i=0; i<client.stats.length; i++)
+        {
+            Client.Stat stat = client.stats[i];
+            if(stat != null)
+            {
+                message.append(i);
+                message.append(",");
+                message.append(stat.min);
+                message.append(",");
+                message.append(stat.max);
+                message.append(",");
+                message.append(stat.value);
+                message.append(",");
+            }
+        }
+        message.deleteCharAt(message.length()-1);
+        message.append('\n');
+        
+        System.err.println(message.toString());
+        singlecast(server, client.socket, message.toString());
+    }
+    
     
     private void addMob(ServerDataEvent dataEvent, String command)
     {
@@ -374,11 +429,9 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    private void loadMap(ServerDataEvent dataEvent, String command) 
+    private void loadMap(Server server, Client client, String command) 
     {
-        System.err.println("LOAD from " + dataEvent.socket);
-
-        Client client = clients.get(dataEvent.socket);
+        System.err.println("LOAD from " + client.socket);
         
         String [] parts = command.split(",");
         String filename = parts[1].trim();
@@ -393,19 +446,19 @@ public class CommandWorker implements ServerWorker
             room = loadRoom(filename);
 
             room.setCommandWorker(this);
-            room.setServer(dataEvent.server);
+            room.setServer(server);
             
             client.setCurrentRoom(room);
-            roomcast(dataEvent.server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
+            roomcast(server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
             
-            serveRoom(room, dataEvent.socket);
+            serveRoom(room, client.socket);
         }
         else
         {
             // room is already loaded -> join it
-            singlecast(room.getServer(), dataEvent.socket, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
+            singlecast(room.getServer(), client.socket, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
             client.setCurrentRoom(room);
-            serveRoom(room, dataEvent.socket);
+            serveRoom(room, client.socket);
         }
     }
 
@@ -528,9 +581,10 @@ public class CommandWorker implements ServerWorker
     public void doMove(ServerDataEvent dataEvent,
                        Room room, int id, int layer, int dx, int dy, int speed, String pattern)
     {
+        Client client = clients.get(dataEvent.socket);
         Mob mob = room.getMob(layer, id);
 
-        Move move = new Move(dataEvent, mob, layer, dx, dy, speed);
+        Move move = new Move(client, mob, layer, dx, dy, speed);
         
         // check and cancel former move ...
         List <Action> actions = room.getActions();
@@ -567,16 +621,15 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    public void transit(ServerDataEvent dataEvent, Mob mob, Room from, String roomname, int newx, int newy) 
+    public void transit(Client client, Mob mob, Room from, String roomname, int newx, int newy) 
     {
         from.removeMob(3, mob.id);
         
         String command = "LOAD," + roomname + "\n";
-        loadMap(dataEvent, command);
+        loadMap(from.getServer(), client, command);
 
-        Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
-        room.populateRoom(dataEvent, roomname);
+        room.populateRoom(from.getServer(), roomname);
 
         // in a new room there are new mob ids. Give the player a matching new id
         mob.id = room.getNextObjectId();
@@ -599,21 +652,26 @@ public class CommandWorker implements ServerWorker
         
         singlecast(room.getServer(), client.socket, command);
     }    
+
+    
+    public void removeMob(int id, Room room, int layer)
+    {        
+        String command = 
+                "DELM," +
+                id + "," +
+                layer + "\n";
+        
+        room.removeMob(layer, id);
+
+        roomcast(room.getServer(), command, room);
+    }
     
     
     public void kill(Mob target, Room room) 
     {
         int layer = 3;   // are targets always layer 3?
         
-        String command = 
-                "DELM," +
-                target.id + "," +
-                layer + "\n";
-        
-        room.removeMob(layer, target.id);
-
-        roomcast(room.getServer(), command, room);
-
+        removeMob(target.id, room, layer);
         
         int atype = 1;  // standard explosion
         int zoff = 20;
@@ -624,7 +682,7 @@ public class CommandWorker implements ServerWorker
             zoff = 0;
         }
         
-        command = 
+        String command = 
                 "ANIM," +
                 atype + "," +
                 layer + "," +
@@ -750,7 +808,7 @@ public class CommandWorker implements ServerWorker
         
         return obstruction;
     }
-
+    
     
     public void dropItem(Room room, Item item)
     {      
@@ -848,13 +906,13 @@ public class CommandWorker implements ServerWorker
     }
     
     
-    public void addMobGroup(ServerDataEvent dataEvent, Room room, Collection <Mob> mobs, int layer) 
+    public void addMobGroup(Server server, Room room, Collection <Mob> mobs, int layer) 
     {
         for(Mob mob : mobs)
         {
             String command = makeAddMobCommand(mob, layer);
         
-            roomcast(dataEvent.server, command, room);
+            roomcast(server, command, room);
         }
     }
 }

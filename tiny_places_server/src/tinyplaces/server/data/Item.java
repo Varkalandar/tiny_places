@@ -41,7 +41,7 @@ public class Item
         physicalDamage = randomFromRange(baseItem.physicalDamageMin, baseItem.physicalDamageMax);
     }
 
-    private int randomFromRange(float min, float max) 
+    private int randomFromRange(int min, int max) 
     {
         return (int)(min + Math.random() * (max-min+1));
     }

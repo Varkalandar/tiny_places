@@ -8,6 +8,7 @@ package tinyplaces.server.data;
 public class BaseItem 
 {
     public static String CLASS_CORE = "core";
+    public static String CLASS_POWERUP = "powerup";
     public static String TYPE_FUNCTION = "func";
 
     public String id;
@@ -25,10 +26,10 @@ public class BaseItem
     public int[] resistance = new int [Damage.TYPE_COUNT];
     public String color;
     public float scale;
-    public float energyDamageMin;
-    public float energyDamageMax;
-    public float physicalDamageMin;
-    public float physicalDamageMax;
+    public int energyDamageMin;
+    public int energyDamageMax;
+    public int physicalDamageMin;
+    public int physicalDamageMax;
     
     public String description;
 }

@@ -61,10 +61,10 @@ public class ItemCatalog
             baseItem.canDrop = "1".equals(parts[i++]);
             baseItem.stackSize = Integer.parseInt(parts[i++]);
             baseItem.baseValue = Integer.parseInt(parts[i++]);
-            baseItem.energyDamageMin = Float.parseFloat(parts[i++]);
-            baseItem.energyDamageMax = Float.parseFloat(parts[i++]);
-            baseItem.physicalDamageMin = Float.parseFloat(parts[i++]);
-            baseItem.physicalDamageMax = Float.parseFloat(parts[i++]);
+            baseItem.energyDamageMin = Integer.parseInt(parts[i++]);
+            baseItem.energyDamageMax = Integer.parseInt(parts[i++]);
+            baseItem.physicalDamageMin = Integer.parseInt(parts[i++]);
+            baseItem.physicalDamageMax = Integer.parseInt(parts[i++]);
             baseItem.description = parts[i++];
 
             /*

@@ -1,6 +1,7 @@
 package tinyplaces.server.isomap.actions;
 
 import tinyplaces.server.ServerDataEvent;
+import tinyplaces.server.isomap.Client;
 import tinyplaces.server.isomap.Mob;
 import tinyplaces.server.isomap.Room;
 
@@ -11,7 +12,7 @@ import tinyplaces.server.isomap.Room;
  */
 public class Move implements Action
 {
-    public final ServerDataEvent dataEvent;
+    public final Client client;
     public final Mob mob;
     public final int layer;
     public final int x;
@@ -29,9 +30,9 @@ public class Move implements Action
     }
 
 
-    public Move(ServerDataEvent dataEvent, Mob mob, int layer, int x, int y, int speed)
+    public Move(Client client, Mob mob, int layer, int x, int y, int speed)
     {
-        this.dataEvent = dataEvent;
+        this.client = client;
         this.mob = mob;
         this.layer = layer;
         this.x = x;

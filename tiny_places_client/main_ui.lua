@@ -78,6 +78,25 @@ local function init()
 	mainUi.ui = editorUi
 end
 
+
+local function updatePlayerStats(args)
+  
+  local stat = 0
+  while stat ~= nil do
+    stat = args()
+	-- print("stat=" .. stat)
+	if stat ~= nil then
+	  stat = tonumber(stat)
+	  local min = tonumber(args())
+	  local max = tonumber(args())
+	  local value = tonumber(args())
+	
+	  player.stats[stat] = {min=min, max=max, value=value}
+    end
+  end
+end
+
+
 --
 -- process commands received from the server
 --
@@ -227,6 +246,9 @@ local function processCommands(commands)
         local dy = tonumber(args())
         local speed = tonumber(args())
         map.fireProjectile(source, id, layer, ptype, castTime, dx, dy, speed)
+
+	  elseif cmd == "STAT" then
+	    updatePlayerStats(args)
       end
     end
   end

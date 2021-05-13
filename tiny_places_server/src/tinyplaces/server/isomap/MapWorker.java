@@ -1,13 +1,17 @@
 package tinyplaces.server.isomap;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import tinyplaces.server.data.BaseItem;
+import tinyplaces.server.data.Item;
 import tinyplaces.server.data.Transition;
 import tinyplaces.server.data.TransitionCatalog;
-import tinyplaces.server.isomap.actions.Move;
 import tinyplaces.server.isomap.actions.Action;
+import tinyplaces.server.isomap.actions.Move;
 
 /**
  * Worker thread to process ongoing actions.
@@ -83,49 +87,73 @@ public class MapWorker implements Runnable
         Mob mob = action.getMob();
         
         if(action instanceof Move)
-        {
+        {            
             Move move = (Move)action;
-            
-            // Player moves can result in a map change
-            checkTransitions(room, mob, move);
             
             if(mob.type == Mob.TYPE_PROJECTILE)
             {
-                int radius = 20;
-                HashMap <Integer, Mob> map = room.findMobsNear(mob.x, mob.y, radius);
+                checkProjectileHit(room, mob);
+            }
+            else
+            {
+                // Players can pick up items
+                checkPlayerPickup(room, mob, move);
 
-                Set <Integer> distances = map.keySet();
-
-                int nearest = radius * radius;
-
-                for(Integer i : distances)
-                {
-                    if(i < nearest)
-                    {
-                        nearest = i;
-                    }
-                }
-
-                Mob target = map.get(nearest);
-
-                if(target != null)
-                {
-                    System.err.println("MapWorker: projectile hit mob id=" + target.id);
-
-                    // for now, don't kill the player ...
-                    if(target.type != Mob.TYPE_PLAYER)
-                    {
-                        room.handleHit(mob, target);
-                    }
-                }
-                else
-                {
-                    System.err.println("MapWorker: projectile hit nothing.");
-                }
+                // Player moves can result in a map change
+                checkTransitions(room, mob, move);
             }
         }
     }
 
+    private void checkProjectileHit(Room room, Mob mob)
+    {
+        int radius = 20;
+        SortedMap <Integer, Mob> map = room.findMobsNear(mob.x, mob.y, radius);
+        
+        if(map.size() > 0)
+        {
+            Integer nearest = map.firstKey();        
+            Mob target = map.get(nearest);
+
+            if(target != null)
+            {
+                System.err.println("MapWorker: projectile hit mob id=" + target.id);
+
+                // for now, don't kill the player ...
+                if(target.type != Mob.TYPE_PLAYER)
+                {
+                    room.handleHit(mob, target);
+                }
+            }
+        }
+        else
+        {
+            System.err.println("MapWorker: projectile hit nothing.");
+        }
+    }
+
+    
+    private void checkPlayerPickup(Room room, Mob mob, Move move) 
+    {        
+        SortedMap <Integer, Item> map = room.findItemsNear(mob.x, mob.y, 20);
+
+        if(map.size() > 0)
+        {       
+            Integer nearest = map.firstKey();
+            Item item = map.get(nearest);
+        
+            if(BaseItem.CLASS_POWERUP.equals(item.baseItem.iclass))
+            {
+                room.applyPowerup(move.client, item);
+            }
+            else
+            {
+                room.handlePickup(move.client, item);
+            }
+        }
+    }
+    
+    
     private Transition checkTransitions(Room room, Mob mob, Move move) 
     {        
         List<Transition> transitions = TransitionCatalog.get(room.name);
@@ -135,14 +163,14 @@ public class MapWorker implements Runnable
         {
             for(Transition t : transitions)
             {
-                int dx = move.x -t.fromX;
+                int dx = move.x - t.fromX;
                 int dy = move.y - t.fromY;
                 int d2 = dx * dx + dy * dy;
 
                 // monsters have no data event ... cannot transit to another room
-                if(d2 < 250 && move.dataEvent != null)
+                if(d2 < 250 && move.client != null)
                 {
-                    room.transit(move.dataEvent, mob, t.toMap, t.toX, t.toY);
+                    room.transit(move.client, mob, t.toMap, t.toX, t.toY);
                     return t;
                 }
             }

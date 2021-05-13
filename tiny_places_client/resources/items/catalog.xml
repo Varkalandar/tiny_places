@@ -15,12 +15,12 @@
       <Description>
         <version>4</version>
         <id>1</id>
-        <width>29</width>
-        <height>13</height>
+        <width>33</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>14</footX>
-        <footY>7</footY>
+        <footX>16</footX>
+        <footY>9</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -32,8 +32,8 @@
       <Description>
         <version>4</version>
         <id>2</id>
-        <width>31</width>
-        <height>25</height>
+        <width>42</width>
+        <height>19</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>

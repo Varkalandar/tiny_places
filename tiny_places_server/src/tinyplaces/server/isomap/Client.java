@@ -2,8 +2,14 @@ package tinyplaces.server.isomap;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import tinyplaces.server.data.Item;
 
 /**
@@ -19,12 +25,19 @@ public class Client
     public Mob mob;
     
     private ArrayList<Item> equipment = new ArrayList<Item>(64);
-
+    public final Stat [] stats = new Stat[6];
+    
     public final SocketChannel socket;
     
-    public Client(SocketChannel socket) 
+    public Client(String id, SocketChannel socket)
     {
+        Logger.getLogger(Client.class.getName()).log(Level.INFO, "Loading player <{0}>", id);
         this.socket = socket;
+        try {
+            loadPlayerData(id);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     
@@ -120,5 +133,41 @@ public class Client
             }
         }
         return null;
+    }
+
+    private void loadPlayerData(String id) throws IOException
+    {
+        FileReader fr = new FileReader("players/" + id.toLowerCase() + ".ini");
+        BufferedReader reader = new BufferedReader(fr);
+        
+        String line;
+        while((line = reader.readLine()) != null)
+        {
+            String [] parts = line.split(",");
+            int statIndex = Integer.parseInt(parts[0]);
+            int statMin = Integer.parseInt(parts[1]);
+            int statMax = Integer.parseInt(parts[2]);
+            int statValue = Integer.parseInt(parts[3]);
+            
+            if(statIndex < stats.length)
+            {
+                stats[statIndex] = new Stat();
+                stats[statIndex].min = statMin;
+                stats[statIndex].max = statMax;
+                stats[statIndex].value = statValue;
+            }
+        }
+        
+        reader.close();
+    }
+    
+    /**
+     * Life, Energy etc.
+     */
+    public static class Stat
+    {
+        public int min;
+        public int max;
+        public int value;
     }
 }

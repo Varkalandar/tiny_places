@@ -75,8 +75,8 @@ local function drawBackpack(xoff, yoff)
 
     local tile = item.tile+1
 	  local image = inventoryPopup.itemSet[tile].image
-    item.displayW = 32 * math.floor((image:getWidth()*item.scale+16) / 32)
-    item.displayH = 32 * math.floor((image:getHeight()*item.scale+16) / 32)
+    item.displayW = 32 * math.floor((image:getWidth()*item.scale+31) / 32)
+    item.displayH = 32 * math.floor((image:getHeight()*item.scale+31) / 32)
   
     if item.where == -2 then
       -- backpack items
@@ -127,9 +127,11 @@ local function drawItemPopup(item, pixfont, xoff, yoff)
   
   love.graphics.setColor(0.95, 0.9, 0.85)
   
-  pixfont.drawStringScaled("Energy damage: +" .. item.energyDamage .. "%", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
-  ybase = ybase + yspace
-
+  if item.energyDamage > 0 then
+    pixfont.drawStringScaled("Energy damage: +" .. item.energyDamage .. "%", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
+    ybase = ybase + yspace
+  end
+  
   pixfont.drawStringScaled("Value: " .. item.value .. " credits", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
   ybase = ybase + yspace
 end

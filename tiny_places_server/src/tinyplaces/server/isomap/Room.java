@@ -1,5 +1,6 @@
 package tinyplaces.server.isomap;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tinyplaces.server.CommandWorker;
@@ -45,6 +48,7 @@ public class Room
     private final ArrayList<Action> actionsToAdd = new ArrayList<Action>(256);
     private final ArrayList<CreatureGroup> groups = new ArrayList<CreatureGroup>(32);
 
+    private final ArrayList <Item> items = new ArrayList<Item>(256);
     private CommandWorker commandWorker;
     private Server server;
     
@@ -359,15 +363,17 @@ public class Room
         return server;
     }
 
+    
     /**
      * Transit player to a new room
      */ 
-    void transit(ServerDataEvent dataEvent, Mob mob, String roomname, int newx, int newy) 
+    void transit(Client client, Mob mob, String roomname, int newx, int newy) 
     {
-        commandWorker.transit(dataEvent, mob, this, roomname, newx, newy);
+        commandWorker.transit(client, mob, this, roomname, newx, newy);
     }
 
-    public void populateRoom(ServerDataEvent dataEvent, String roomname)
+    
+    public void populateRoom(Server server, String roomname)
     {
         List<Population> populations = PopulationsCatalog.get(roomname);
         if(populations != null)
@@ -378,7 +384,7 @@ public class Room
                         makeMobGroup(population.creatureId,
                                      population.minCount, population.maxCount,
                                      population.x, population.y, population.spacing);
-                commandWorker.addMobGroup(dataEvent, this, mobs, 3);    
+                commandWorker.addMobGroup(server, this, mobs, 3);    
             }
         }
     }
@@ -386,9 +392,9 @@ public class Room
     /**
      * Result is indexed by distance square 
      */
-    HashMap <Integer, Mob> findMobsNear(int x, int y, int limit) 
+    SortedMap <Integer, Mob> findMobsNear(int x, int y, int limit) 
     {
-        HashMap <Integer, Mob> result = new HashMap<Integer, Mob>(64);
+        TreeMap <Integer, Mob> result = new TreeMap<Integer, Mob>();
         int dmax = limit * limit;
         
         for(Mob mob : mobs.values())
@@ -407,6 +413,31 @@ public class Room
         return result;
     }
 
+    
+    /**
+     * Result is indexed by distance square 
+     */
+    SortedMap <Integer, Item> findItemsNear(int x, int y, int limit) 
+    {
+        TreeMap <Integer, Item> result = new TreeMap<Integer, Item>();
+        int dmax = limit * limit;
+        
+        for(Item item : items)
+        {
+            int dx = item.position.x - x;
+            int dy = item.position.y - y;
+            
+            int d = dx * dx + dy * dy; 
+            
+            if(d <= dmax)
+            {
+                result.put(d, item);
+            }
+        }
+        
+        return result;
+    }
+    
     synchronized void handleHit(Mob projectile, Mob target) 
     {
         Spell spell = projectile.spell;
@@ -447,10 +478,50 @@ public class Room
                     item.position.y = target.y + (int)(Math.random() * 20 - 10);
                     item.where = Item.ON_MAP;
 
+                    items.add(item);
                     commandWorker.dropItem(this, item);
                 }
             }
         }
     }
 
+    public void handlePickup(Client client, Item item)
+    {
+        Point pos = client.findSuitableLocation(item);
+        if(pos != null)
+        {
+            items.remove(item);
+
+            int layer = 3; // are items always layer 3?
+            commandWorker.removeMob(item.mobId, this, layer);
+
+            item.position.x = pos.x;
+            item.position.y = pos.y;
+            item.where = Item.IN_INVENTORY;
+            
+            commandWorker.addItem(client, item);
+        }
+    }
+
+    
+    public void applyPowerup(Client client, Item item) 
+    {
+        int amount = item.physicalDamage;
+        
+        int statIndex = 1;
+        if("repair".equals(item.baseItem.itype))
+        {
+            statIndex = 0;
+        }
+        
+        Client.Stat stat = client.stats[statIndex];
+        stat.value += amount;
+        items.remove(item);
+        
+        int layer = 3; // are items always layer 3?
+        commandWorker.removeMob(item.mobId, this, layer);
+        
+        commandWorker.sendPlayerStat(server, client, statIndex);        
+    }
+    
 }

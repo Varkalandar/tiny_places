@@ -5,12 +5,19 @@
 -- Date: 2020/03/08
 --
 
+-- global settings
+settings = require("settings")
+player = {stats = {}}
+-- globals end
+
+
 local mainUi = require("main_ui")
 
 
 -- all init code goes here
 function love.load()
   -- love.graphics.setDefaultFilter("linear", "linear", 8)
+  settings.init()
   mainUi.init()      
 
   local flags = {vsync = true}
