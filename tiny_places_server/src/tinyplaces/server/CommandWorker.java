@@ -692,6 +692,28 @@ public class CommandWorker implements ServerWorker
         roomcast(room.getServer(), command, room);
     }
     
+
+    /**
+     * Animation types are abstract, it's upon the client to interpret them
+     * @param room The room where the animation will be played
+     * @param atype Abstract animation type
+     * @param layer Map layer to play the animation
+     * @param x X position on map
+     * @param y Y position on map
+     */
+    public void playAnimation(Room room, int atype, int layer, int x, int y)
+    {
+        String command = 
+                "ANIM," +
+                atype + "," +
+                layer + "," +
+                x + "," +
+                y + "," +
+                "\n";
+
+        roomcast(room.getServer(), command, room);
+    }
+    
     
     public void kill(Mob target, Room room) 
     {
@@ -707,16 +729,8 @@ public class CommandWorker implements ServerWorker
             atype = 2; // black death swirl
             zoff = 0;
         }
-        
-        String command = 
-                "ANIM," +
-                atype + "," +
-                layer + "," +
-                target.x + "," +
-                (target.y - zoff) + "," +
-                "\n";
 
-        roomcast(room.getServer(), command, room);
+        playAnimation(room, atype, layer, target.x, (target.y - zoff));
     }
     
     /*

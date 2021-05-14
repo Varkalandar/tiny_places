@@ -26,6 +26,8 @@ local function init()
 
   local clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
   
+  local powerupChirpData = love.sound.newSoundData("resources/sfx/powerup_chirp_2.wav")
+  
   sounds.uiClick = love.audio.newSource(clickSoundData)
   sounds.uiClick:setVolume(0.2)
   
@@ -55,6 +57,9 @@ local function init()
   
   sounds.noisedChirp = love.audio.newSource(noisedChirpData)
   sounds.noisedChirp:setVolume(0.15)
+
+  sounds.powerupChirp = love.audio.newSource(powerupChirpData)
+  sounds.powerupChirp:setVolume(0.15)
 end
 
 

@@ -249,7 +249,7 @@ local function playAnimation(id, layer, x, y)
     -- animation sound
     tip.sounds.randplay(tip.sounds.vortexBang, 1, 0.1)
     
-  else
+  elseif id == 2 then
     local function scalef(t) local s = math.sin(t*math.pi) * 0.3 return s, s end
   
     -- x, y, tileset, scalex, scaley, start, end, time, r, g, b, a
@@ -265,8 +265,25 @@ local function playAnimation(id, layer, x, y)
     -- animation sound
     tip.sounds.randplay(tip.sounds.noisedChirp, 1, 0.2)
   
+  elseif id == 3 then
+    --
+    -- powerup for player
+    -- only sound at the moment
+    --
+    tip.sounds.randplay(tip.sounds.powerupChirp, 1, 0.1)
+    
+  elseif id == 4 then
+    --
+    -- player picked up an item
+    -- only sound at the moment
+    --
+    tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
+
+  else
+    print("Unsupported animation type: " .. id)
   end
 end
+
 
 local function init()  
   print("Initializing map")

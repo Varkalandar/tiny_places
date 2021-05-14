@@ -500,6 +500,9 @@ public class Room
             item.where = Item.IN_INVENTORY;
             
             commandWorker.addItem(client, item);
+
+            Mob mob = client.mob;
+            commandWorker.playAnimation(this, 4, layer, mob.x, mob.y);
         }
     }
 
@@ -521,7 +524,10 @@ public class Room
         int layer = 3; // are items always layer 3?
         commandWorker.removeMob(item.mobId, this, layer);
         
-        commandWorker.sendPlayerStat(server, client, statIndex);        
+        commandWorker.sendPlayerStat(server, client, statIndex);
+        
+        Mob mob = client.mob;
+        commandWorker.playAnimation(this, 3, layer, mob.x, mob.y);
     }
     
 }
