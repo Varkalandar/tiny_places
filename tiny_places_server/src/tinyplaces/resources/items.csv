@@ -6,7 +6,8 @@ plh_12,Placeholder 1x2,dummy,dummy,7,0,0.2,1,2,1 1 1 1,1,0,1,1,0,0,0,0,.
 plh_22,Placeholder 2x2,dummy,dummy,9,0,0.2,1,1,1 1 1 1,1,0,1,1,0,0,0,0,.
 repair_powerup_1,Repairs,powerup,repair,15,29,0.15,1,1,1 1 1 1,0.125,1,1,0,0,0,1,5,Repair powerup
 recharge_powerup_1,Recharge,powerup,recharge,17,29,0.15,1,1,1 1 1 1,0.125,1,1,0,0,0,1,5,Recharge powerup
-small_blaster,Small Blaster,frame,weapon,11,29,0.2,1,2,1 1 1 1,0.33,1,1,100,5,9,0,0,.
-blaster,Blaster,frame,weapon,13,29,0.2,1,2,1 1 1 1,0.33,1,1,150,10,14,0,0,.
+small_blaster,Small Blaster,frame,weapon,11,29,0.2,1,3,1 1 1 1,0.29,1,1,100,5,9,0,0,.
+blaster,Blaster,frame,weapon,13,29,0.2,1,3,1 1 1 1,0.29,1,1,150,10,14,0,0,.
+uberlaser,Uberlaser,frame,weapon,19,29,0.2,1,3,1 1 1 1,0.33,1,1,150,15,20,0,0,.
 firebolt_core,Firebolt Core,core,func,248,29,0.2,1,1,1 1 1 1,0.33,1,1,100,0,0,0,0,Insert this core into a weapon frame to make it fire firebolts.
 frostbolt_core,Frostbolt Core,core,func,250,29,0.2,1,1,1 1 1 1,0.33,1,1,100,0,0,0,0,Insert this core into a weapon frame to make it fire frostbolts.

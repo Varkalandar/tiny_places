@@ -219,12 +219,12 @@
       <Description>
         <version>4</version>
         <id>13</id>
-        <width>1</width>
-        <height>1</height>
+        <width>64</width>
+        <height>38</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>40</footX>
+        <footY>28</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -321,16 +321,16 @@
       <Description>
         <version>4</version>
         <id>19</id>
-        <width>1</width>
-        <height>1</height>
+        <width>70</width>
+        <height>53</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>38</footX>
+        <footY>38</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_m</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -338,8 +338,8 @@
       <Description>
         <version>4</version>
         <id>20</id>
-        <width>1</width>
-        <height>1</height>
+        <width>79</width>
+        <height>278</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -347,7 +347,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>uberlaser_i</string>
         <string></string>
       </Metadata>
     </Tile>

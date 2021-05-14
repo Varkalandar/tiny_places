@@ -3,3 +3,5 @@ nil,0,nil
 cash_1,50,coins
 powerups_1,50,repair_powerup_1
 powerups_1,50,recharge_powerup_1
+weapons_1,80,blaster
+weapons_1,80,uberlaser

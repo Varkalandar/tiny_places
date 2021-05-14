@@ -207,9 +207,9 @@ small_blaster_i
 Tile Description
 v.5
 13
-1 1
+64 38
 0 0
-0 0
+40 28
 End Of Header
 Item
 v.1
@@ -303,15 +303,15 @@ blue_powerup_i
 Tile Description
 v.5
 19
-1 1
+70 53
 0 0
-0 0
+38 38
 End Of Header
 Item
 v.1
 data
 2
-
+uberlaser_m
 
 1
 0
@@ -319,7 +319,7 @@ data
 Tile Description
 v.5
 20
-1 1
+79 278
 0 0
 0 0
 End Of Header
@@ -327,7 +327,7 @@ Item
 v.1
 data
 2
-
+uberlaser_i
 
 1
 0
