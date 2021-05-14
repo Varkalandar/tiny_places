@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import tinyplaces.server.CommandWorker;
 import tinyplaces.server.Server;
 import tinyplaces.server.ServerDataEvent;
+import tinyplaces.server.data.AnimationType;
 import tinyplaces.server.data.Creature;
 import tinyplaces.server.data.CreatureCatalog;
 import tinyplaces.server.data.Damage;
@@ -502,7 +503,7 @@ public class Room
             commandWorker.addItem(client, item);
 
             Mob mob = client.mob;
-            commandWorker.playAnimation(this, 4, layer, mob.x, mob.y);
+            commandWorker.playAnimation(this, AnimationType.ITEM_PICKUP, layer, mob.x, mob.y);
         }
     }
 
@@ -527,7 +528,7 @@ public class Room
         commandWorker.sendPlayerStat(server, client, statIndex);
         
         Mob mob = client.mob;
-        commandWorker.playAnimation(this, 3, layer, mob.x, mob.y);
+        commandWorker.playAnimation(this, AnimationType.POWERUP, layer, mob.x, mob.y);
     }
     
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tinyplaces.server.data.AnimationType;
 import tinyplaces.server.data.Item;
 import tinyplaces.server.data.ItemBuilder;
 import tinyplaces.server.data.Spell;
@@ -721,12 +722,12 @@ public class CommandWorker implements ServerWorker
         
         removeMob(target.id, room, layer);
         
-        int atype = 1;  // standard explosion
+        int atype = AnimationType.CREATURE_DEATH;  // standard explosion
         int zoff = 20;
         
         if(target.tile == 17)
         {
-            atype = 2; // black death swirl
+            atype = AnimationType.CREATURE_BLACK_DEATH; // black death swirl
             zoff = 0;
         }
 
