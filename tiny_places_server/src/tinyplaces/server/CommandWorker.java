@@ -602,9 +602,14 @@ public class CommandWorker implements ServerWorker
     public void doMove(ServerDataEvent dataEvent,
                        Room room, int id, int layer, int dx, int dy, int speed, String pattern)
     {
-        Client client = clients.get(dataEvent.socket);
+        // NPC mobs have no client data
+        Client client = null;
+        if(dataEvent != null)
+        {
+            client = clients.get(dataEvent.socket);
+        }
+        
         Mob mob = room.getMob(layer, id);
-
         Move move = new Move(client, mob, layer, dx, dy, speed);
         
         // check and cancel former move ...
