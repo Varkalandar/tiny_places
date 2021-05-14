@@ -10,22 +10,16 @@ local button = require("ui/button")
 local textinput = require("ui/textinput")
 local colorinput = require("ui/colorinput")
 
-local componentFactory = {}
-
-local clickSoundData = nil
-local clickSoundSource = nil
+local componentFactory = {initDone=false}
 
 
 local function init()
 
   -- only init if not done yet
-  if clickSoundData == nil then
+  if componentFactory.initDone == false then
     textinput.init()
     colorinput.init()
-  
-    clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
-    clickSoundSource = love.audio.newSource(clickSoundData)
-    clickSoundSource:setVolume(0.2)
+    componentFactory.initDone = true
   end
 end
 
@@ -115,9 +109,8 @@ local function containerMousePressed(container, mx, my)
     
     if mx > element.x and my > element.y and mx < element.x + element.width and my < element.y + element.height then
       
-      local success = clickSoundSource:play()
-      if not success then print("Playing click sound failed!") end 
-    
+      tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
+	  
       element.pressed = true
       element.focused = true
       

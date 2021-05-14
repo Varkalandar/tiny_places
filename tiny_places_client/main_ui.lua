@@ -91,7 +91,7 @@ local function updatePlayerStats(args)
 	  local max = tonumber(args())
 	  local value = tonumber(args())
 	
-	  player.stats[stat] = {min=min, max=max, value=value}
+	  tip.player.stats[stat] = {min=min, max=max, value=value}
     end
   end
 end

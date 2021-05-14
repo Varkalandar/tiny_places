@@ -101,7 +101,7 @@ local function fire(spell)
   
   -- projectile launching sound: todo - move player fireball sound here
   if ptype == "dirt_shot" then
-    map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
+    tip.sounds.randplay2(tip.sounds.debrisHit1, tip.sounds.debrisHit2, 0.5, 2.0, 1.0)
   end
   
   return projectile, move

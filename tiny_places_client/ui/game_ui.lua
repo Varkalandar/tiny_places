@@ -59,9 +59,9 @@ local function fireProjectile(mob, layer, x, y)
                        ..y..","
                        )
 
-  map.sounds.fireballLaunch:stop()
-  map.sounds.fireballLaunch:setPitch(0.8 + math.random() * 0.4)
-  map.sounds.fireballLaunch:play()
+  tip.sounds.fireballLaunch:stop()
+  tip.sounds.fireballLaunch:setPitch(0.8 + math.random() * 0.4)
+  tip.sounds.fireballLaunch:play()
 end
 
 
@@ -144,7 +144,7 @@ local function draw()
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
   
-  local stats = player.stats
+  local stats = tip.player.stats
 
   local shrink = 0.98 * (stats[0].value / stats[0].max) + beat * 0.02
   drawGauge(5, 360, gameUi.gaugeRed, shrink, 

@@ -24,6 +24,11 @@ local function init()
 
   local noisedChirpData = love.sound.newSoundData("resources/sfx/noised_chirp.wav")
 
+  local clickSoundData = love.sound.newSoundData("resources/sfx/hard_click.wav")
+  
+  sounds.uiClick = love.audio.newSource(clickSoundData)
+  sounds.uiClick:setVolume(0.2)
+  
   sounds.fireballLaunch = love.audio.newSource(fireballLaunchData)
   sounds.fireballLaunch:setVolume(0.15)
 

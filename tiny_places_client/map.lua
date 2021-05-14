@@ -12,7 +12,7 @@ local spells = require("actions/spell")
 
 local tileset = require("tileset")
 local clientSocket = require("net/client_socket")
-local sounds = require("sounds")
+
 
 local map = {}
 
@@ -247,7 +247,7 @@ local function playAnimation(id, layer, x, y)
     table.insert(map.actions, animation)
     
     -- animation sound
-    map.sounds.randplay(map.sounds.vortexBang, 1, 0.1)
+    tip.sounds.randplay(tip.sounds.vortexBang, 1, 0.1)
     
   else
     local function scalef(t) local s = math.sin(t*math.pi) * 0.3 return s, s end
@@ -263,7 +263,7 @@ local function playAnimation(id, layer, x, y)
 
     
     -- animation sound
-    map.sounds.randplay(map.sounds.noisedChirp, 1, 0.2)
+    tip.sounds.randplay(tip.sounds.noisedChirp, 1, 0.2)
   
   end
 end
@@ -297,17 +297,15 @@ local function init()
   
   map.actions = {}
   
-  sounds.init()
-  map.sounds = sounds
   
   map.clientSocket = clientSocket
 
   -- host and port should come from a better place than this  
-  -- map.clientSocket.connect(settings.server_ip, 9194)
-  map.clientSocket.connect("127.0.0.1", 9194)
+  map.clientSocket.connect(tip.settings.server_ip, 9194)
+  -- map.clientSocket.connect("127.0.0.1", 9194)
 
   -- login should be here
-  map.clientSocket.send("HELO," .. settings.client_id)
+  map.clientSocket.send("HELO," .. tip.settings.client_id)
   
   -- load the starting map
   -- map.clientSocket.send("LOAD,green_and_pond")
@@ -370,9 +368,9 @@ local function updateActions(dt)
       if mob and mob.type == "projectile" and (mob.ptype == "fireball" or mob.ptype == "dust_vortex") then
       
         if mob.ptype == "fireball" then
-          map.sounds.randplay2(map.sounds.fireballHit1, map.sounds.fireballHit2, 0.7, 1, 0.1)
+          tip.sounds.randplay2(tip.sounds.fireballHit1, tip.sounds.fireballHit2, 0.7, 1, 0.1)
         else
-          map.sounds.randplay2(map.sounds.vortexBang1, map.sounds.vortexBang2, 0.5, 1.0, 0.2)
+          tip.sounds.randplay2(tip.sounds.vortexBang1, tip.sounds.vortexBang2, 0.5, 1.0, 0.2)
         end
         
         -- make flash appear a bit in front of target
@@ -391,7 +389,7 @@ local function updateActions(dt)
       
       if mob and mob.type == "projectile" and (mob.ptype == "debris" or mob.ptype == "dirt_shot") then
         if math.random() < 0.2 or mob.ptype == "dirt_shot" then
-          map.sounds.randplay2(map.sounds.debrisHit1, map.sounds.debrisHit2, 0.5, 2.0, 1.0)
+          tip.sounds.randplay2(tip.sounds.debrisHit1, tip.sounds.debrisHit2, 0.5, 2.0, 1.0)
         end
       end
 

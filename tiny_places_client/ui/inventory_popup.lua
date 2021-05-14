@@ -282,6 +282,7 @@ local function dropItem(mx, my)
   -- inside backpack area?
   if i >= 0 and j >= 0 and i <= 16 and j<= 8 then
 
+	tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
     local item = inventoryPopup.draggedItem
     inventoryPopup.draggedItem = nil
 
@@ -297,6 +298,7 @@ local function dropItem(mx, my)
       if slot.x - slot.w <= mx and slot.y - slot.h <= my and 
          slot.x + slot.w >= mx and slot.y + slot.h >= my then
 
+		tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
         local item = inventoryPopup.draggedItem
         inventoryPopup.draggedItem = nil
          
@@ -326,7 +328,10 @@ local function mouseReleased(button, mx, my)
   if draggedItem then
     dropItem(mx, my)
 
-  else
+  elseif item then
+  
+	tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
+  
     inventoryPopup.draggedItem = item
     local index = nil
     for k, item in pairs(inventoryPopup.playerInventory) do 

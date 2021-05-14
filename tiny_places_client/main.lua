@@ -5,9 +5,14 @@
 -- Date: 2020/03/08
 --
 
--- global settings
-settings = require("settings")
-player = {stats = {}}
+
+-- global values all go into the "tip" table
+tip = 
+{
+  settings = require("settings"),
+  sounds = require("sounds"),
+  player = {stats = {}}  
+}
 -- globals end
 
 
@@ -17,7 +22,9 @@ local mainUi = require("main_ui")
 -- all init code goes here
 function love.load()
   -- love.graphics.setDefaultFilter("linear", "linear", 8)
-  settings.init()
+  tip.settings.init()
+  tip.sounds.init()
+  
   mainUi.init()      
 
   local flags = {vsync = true}
