@@ -1,8 +1,8 @@
-ID,Name,From Map,From X,From Y,To Map,To X,To Y
-lobby_to_wasteland,Wasteland,Lobby,837,168,wasteland_and_pond,360,480
-lobby_to_desert,Desert,Lobby,392,144,desert,891,461
-lobby_to_technoland,Technoland,Lobby,863,476,dark_technoland,367,147
-wasteland_to_lobby,Lobby,Wasteland,326,465,lobby,837,168
-desert_to_lobby,Lobby,Desert,891,461,lobby,392,144
-technoland_to_bubbles,Bubbles,Technoland,863,476,bubbles,367,147
-technoland_to_golden_technoland,Golden Technoland,Technoland,837,168,golden_technoland,360,480
+ID,Name,From Map,From X,From Y,To Map (Filename),To X,To Y,Facing
+lobby_to_wasteland,Wasteland,Lobby,837,168,wasteland_and_pond,360,480,0
+lobby_to_desert,Desert,Lobby,392,144,desert,891,461,0
+lobby_to_technoland,Technoland,Lobby,863,476,dark_technoland,367,147,0
+wasteland_to_lobby,Lobby,Wasteland,326,465,lobby,837,168,0
+desert_to_lobby,Lobby,Desert,891,461,lobby,392,144,0
+technoland_to_crystal_shards,Crystal Shards,Technoland,863,476,crystal_shards,367,147,0
+technoland_to_golden_technoland,Golden Technoland,Technoland,837,168,golden_technoland,360,480,0
