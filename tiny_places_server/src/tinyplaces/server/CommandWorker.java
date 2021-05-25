@@ -550,6 +550,7 @@ public class CommandWorker implements ServerWorker
             roomcast(server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
             
             serveRoom(room, client.socket);
+            rooms.put(filename, room);
         }
         else
         {
