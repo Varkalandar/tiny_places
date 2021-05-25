@@ -557,11 +557,16 @@ public class CommandWorker implements ServerWorker
     
     private void sendChat(ServerDataEvent dataEvent, String command)
     {
+        Client client = clients.get(dataEvent.socket);
         System.err.println("CHAT from " + dataEvent.socket);
 
-        Client client = clients.get(dataEvent.socket);
+        StringBuilder buf = new StringBuilder("CHAT,");
+        buf.append(client.displayName);
+        buf.append(',');
+        buf.append(command.substring(5));
+        
         Room room = client.getCurrentRoom();
-        roomcast(dataEvent.server, command, room);
+        roomcast(dataEvent.server, buf.toString(), room);
     }
 
 

@@ -27,9 +27,10 @@ public class Client
     public final Stat [] stats = new Stat[6];
     
     public final SocketChannel socket;
+    public String displayName;
     
     public Client(String id, SocketChannel socket)
-    {
+    {        
         Logger.getLogger(Client.class.getName()).log(Level.INFO, "Loading player <{0}>", id);
         this.socket = socket;
         try {
@@ -140,6 +141,8 @@ public class Client
         BufferedReader reader = new BufferedReader(fr);
         
         String line;
+        displayName = reader.readLine();
+                
         while((line = reader.readLine()) != null)
         {
             String [] parts = line.split(",");

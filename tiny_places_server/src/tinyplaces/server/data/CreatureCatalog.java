@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,9 +22,9 @@ public class CreatureCatalog
         return allCreatures.get(id);
     }
     
-    public static void init() throws IOException
+    public static void init(URL resource) throws IOException
     {
-        InputStream is = Class.class.getClass().getResourceAsStream("/tinyplaces/resources/creatures.csv");
+        InputStream is = resource.openStream();
         InputStreamReader sr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(sr);
 

@@ -55,12 +55,12 @@ public class Server implements Runnable
         this.selector = initSelector();
         this.worker = worker;
         
-        ItemCatalog.init();
-        SpellCatalog.init();
-        CreatureCatalog.init();
-        TreasureClassCatalog.init();
-        TransitionCatalog.init();
-        PopulationsCatalog.init();
+        ItemCatalog.init(getClass().getResource("/tinyplaces/resources/items.csv"));
+        SpellCatalog.init(getClass().getResource("/tinyplaces/resources/spells.csv"));
+        CreatureCatalog.init(getClass().getResource("/tinyplaces/resources/creatures.csv"));
+        TreasureClassCatalog.init(getClass().getResource("/tinyplaces/resources/treasure_classes.csv"));
+        TransitionCatalog.init(getClass().getResource("/tinyplaces/resources/transitions.csv"));
+        PopulationsCatalog.init(getClass().getResource("/tinyplaces/resources/populations.csv"));
     }
 
     

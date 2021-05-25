@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +24,11 @@ public class PopulationsCatalog
         return allPopulations.get(map);
     }
     
-    public static void init() throws IOException
+    public static void init(URL resource) throws IOException
     {
-        InputStream is = Class.class.getClass().getResourceAsStream("/tinyplaces/resources/populations.csv");
+        InputStream is = resource.openStream();
         InputStreamReader sr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(sr);
-        
         
         String line;
         
