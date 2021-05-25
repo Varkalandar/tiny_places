@@ -121,7 +121,7 @@ local function findMob(id, layer)
 end
 
 
-local function addObject(id, layer, tile, x, y, scale, color,
+local function addObject(id, name, layer, tile, x, y, scale, color,
                          shadow, shadowScale,
                          ctype, speed, frames, phases)
   
@@ -134,7 +134,8 @@ local function addObject(id, layer, tile, x, y, scale, color,
   end
   
   -- tile should be constant, displayTile can change during animations
-  local mob = {id = id, tile = tile, displayTile = tile,
+  local mob = {id = id, name = name,
+               tile = tile, displayTile = tile,
                x = x, y = y, scale = scale,
                shadow = shadow, shadowScale = shadowScale,
                color = unmarshallColor(color), 
@@ -285,7 +286,7 @@ local function playAnimation(id, layer, x, y)
 end
 
 
-local function init()  
+local function init(mainUi)  
   print("Initializing map")
   
   map.playerInventory = { }
@@ -313,7 +314,7 @@ local function init()
   map.itemSet = itemSet
   
   map.actions = {}
-  
+  map.mainUi = mainUi
   
   map.clientSocket = clientSocket
 
@@ -465,6 +466,10 @@ local function drawPlayer(mob, tile, scale)
                        0, scale * 3, scale * 1.5)
 
     love.graphics.setColor(1, 1, 1, 1)
+    local w = map.mainUi.pixfont:calcStringWidth(mob.name) * 0.2
+    map.mainUi.pixfont:drawStringScaled(mob.name, mob.x - w/2, mob.y - 40, 0.2, 0.2)
+    
+    love.graphics.setColor(mob.color.r, mob.color.g, mob.color.b, mob.color.a)
                        love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, 
                        mob.y - tile.footY * scale - mob.zOff, 

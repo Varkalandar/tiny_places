@@ -30,9 +30,6 @@ end
 
 
 local function update(dt)
-  if love.keyboard.isDown("escape") then
-    inventoryPopup.mainUi.popup = nil
-  end
 end
 
 
@@ -352,6 +349,10 @@ end
 
 
 local function keyReleased(key, scancode, isrepeat)
+  
+  if key == "escape" then
+    inventoryPopup.mainUi.popup = nil
+  end
 end
 
 

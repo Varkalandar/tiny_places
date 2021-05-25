@@ -86,14 +86,6 @@ end
 
 local function update(dt)
 
-  if love.keyboard.isDown("i") then
-    gameUi.mainUi.popup = inventoryPopup
-  end
-  
-  if love.keyboard.isDown("escape") then
-    gameUi.mainUi.popup = nil
-    switchToEditorUi()
-  end
 end
 
 
@@ -188,12 +180,21 @@ end
 
 
 local function mouseDragged(button, mx, my)
+
   if isMapArea(mx, my) then  
   end
 end
 
 
-local function keyPressed(key, scancode, isrepeat)
+local function keyReleased(key, scancode, isrepeat)
+
+  if key == "i" then
+    gameUi.mainUi.popup = inventoryPopup
+  end
+  
+  if key == "escape" then
+    switchToEditorUi()
+  end
 end
 
 
@@ -203,7 +204,7 @@ gameUi.draw = draw
 gameUi.mousePressed = mousePressed
 gameUi.mouseReleased = mouseReleased
 gameUi.mouseDragged = mouseDragged
-gameUi.keyPressed = keyPressed
+gameUi.keyReleased = keyReleased
 
 
 return gameUi

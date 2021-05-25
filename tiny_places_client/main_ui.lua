@@ -82,7 +82,7 @@ local function init()
 
   print("Initializing main ui")
 
-  map.init()      
+  map.init(mainUi)      
   
   -- pixfont.init("resources/font/humanistic_128b")  
   mainUi.pixfont = pixfont.init("resources/font/humanistic_128bbl")
@@ -182,7 +182,7 @@ local function processCommands(commands)
         
         if mobId == nil then
           -- place item on map ground
-          map.addObject(item.id, 3, item.tile, item.x, item.y, item.scale, item.color,
+          map.addObject(item.id, item.displayName, 3, item.tile, item.x, item.y, item.scale, item.color,
                                    item.shadow, item.shadowScale,          
                                   "item", 0, 1, 1)
           
@@ -195,6 +195,7 @@ local function processCommands(commands)
       
       elseif cmd == "ADDM" then
         local id = tonumber(args())
+        local name = args()
         local layer = tonumber(args())
         local tile = tonumber(args())
         local frames = tonumber(args())
@@ -217,7 +218,7 @@ local function processCommands(commands)
           print(debug.traceback)
         end
         
-        map.addObject(id, layer, tile, x, y, scale, color, nil, nil, ctype, 120, frames, phases)
+        map.addObject(id, name, layer, tile, x, y, scale, color, nil, nil, ctype, 120, frames, phases)
       
       elseif cmd == "ANIM" then
         local id = tonumber(args())
@@ -265,6 +266,7 @@ local function processCommands(commands)
     
       elseif cmd == "ADDP" then
         local id = tonumber(args())
+        local name = args()
         local layer = tonumber(args())
         local tile = tonumber(args())
         local frames = tonumber(args())
@@ -274,7 +276,7 @@ local function processCommands(commands)
         local scale = tonumber(args())
         local color = args()
         
-        local mob = map.addObject(id, layer, tile, x, y, scale, color, nil, nil, "player", 120, frames, phases)
+        local mob = map.addObject(id, name, layer, tile, x, y, scale, color, nil, nil, "player", 120, frames, phases)
         mainUi.gameUi.playerMob = mob
 
       elseif cmd == "FIRE" then

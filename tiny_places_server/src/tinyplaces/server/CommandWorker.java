@@ -40,6 +40,8 @@ public class CommandWorker implements ServerWorker
     // client map
     private final Map <SocketChannel, Client> clients = new HashMap();
     
+    private final ChatCommandWorker chatCommandWorker = new ChatCommandWorker();
+    
     /**
      * Process data sent by a client
      * @param server The server that received the data
@@ -160,7 +162,7 @@ public class CommandWorker implements ServerWorker
         }
         else if(command.startsWith("CHAT"))
         {
-            sendChat(dataEvent, command);
+            handleChat(dataEvent, command);
         }
         else if(command.startsWith("MOVE"))
         {
@@ -329,7 +331,7 @@ public class CommandWorker implements ServerWorker
 
         int layer = Integer.parseInt(parts[1]);
         Mob mob = room.makeMob(parts);
-        String cmd = makeAddMobCommand(mob, layer);
+        String cmd = makeAddMobCommand(mob, layer, "n");
         
         roomcast(dataEvent.server, cmd, room);
     }
@@ -342,19 +344,6 @@ public class CommandWorker implements ServerWorker
         Client client = clients.get(dataEvent.socket);
         Room room = client.getCurrentRoom();
         
-        /*
-                               .."39,"      -- tile id (1 = globo, 20 = spectre)
-                               .."600,"    -- x pos
-                               .."400,"    -- y pos
-                               .."0.5,"   -- scale factor (globos = 1.0, spectre 0.5)
-                               .."1.0 1.0 1.0 1.0"
-        */
-        
-        
-        // String [] parts = command.trim().split(",");
-        // Mob mob = room.makeMob(parts);
-        // mob.type = Mob.TYPE_PLAYER;
-        
         Mob mob = room.makeMob(3, 39, 16, 1, 600, 400, 0.5f, "1.0 1.0 1.0 1.0", Mob.TYPE_PLAYER);
         
         // set new player avatar
@@ -362,7 +351,7 @@ public class CommandWorker implements ServerWorker
         
         // reply with ADDP to sender only
 
-        String message = "ADDP," + mob.id + "," + 
+        String message = "ADDP," + mob.id + "," + client.displayName + "," +
                          "3" + "," + mob.tile + "," + mob.frames + "," + mob.phases + "," +
                          mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
         byte [] data = message.getBytes();
@@ -373,7 +362,7 @@ public class CommandWorker implements ServerWorker
 
         // for everyone else in the room it is an ADDM
 
-        message = makeAddMobCommand(mob, 3);
+        message = makeAddMobCommand(mob, 3, client.displayName);
         data = message.getBytes();
 
         Set <SocketChannel> keys = clients.keySet();
@@ -474,8 +463,42 @@ public class CommandWorker implements ServerWorker
             Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, "Could not find mob for id={0}", id);
         }
     }
-	
 
+    
+    public void updateMob(Client client, int id, int tile, int x, int y, float scale, String color)
+    {
+        Room room = client.getCurrentRoom();
+        
+        int layer = 3;
+		
+        Mob mob = room.getMob(layer, id);
+
+        if(mob != null)
+        {
+            mob.tile = tile;
+            mob.x = x;
+            mob.y = y;
+            mob.scale = scale;
+            mob.color = color;
+            
+            String command = 
+                    "UPDM," + id + "," +
+                    layer + "," +
+                    tile + "," +
+                    x + "," +
+                    y + "," +
+                    scale + "," +
+                    color + "\n";
+            
+            roomcast(room.getServer(), command, room);
+        }
+        else
+        {
+            Logger.getLogger(CommandWorker.class.getName()).log(Level.SEVERE, "Could not find mob for id={0}", id);
+        }
+    }
+
+    
     public void deleteMob(ServerDataEvent dataEvent, String command)
     {
         System.err.println("DELM from " + dataEvent.socket);
@@ -547,7 +570,7 @@ public class CommandWorker implements ServerWorker
             
             for(Mob mob : mobs)
             {
-                String command = makeAddMobCommand(mob, layer);
+                String command = makeAddMobCommand(mob, layer, "n");
 
                 singlecast(room.getServer(), socket, command);
             }
@@ -608,20 +631,27 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    private void sendChat(ServerDataEvent dataEvent, String command)
+    private void handleChat(ServerDataEvent dataEvent, String command)
     {
         Client client = clients.get(dataEvent.socket);
         System.err.println("CHAT from " + dataEvent.socket);
-
-        StringBuilder buf = new StringBuilder("CHAT,");
-        buf.append(client.displayName);
-        buf.append(',');
-        buf.append(command.substring(5));
+        String chat = command.substring(5);
         
-        Room room = client.getCurrentRoom();
-        roomcast(dataEvent.server, buf.toString(), room);
-    }
+        if(chat.startsWith("/"))
+        {
+            chatCommandWorker.processChatCommand(this, client, chat);
+        }
+        else
+        {
+            StringBuilder buf = new StringBuilder("CHAT,");
+            buf.append(client.displayName);
+            buf.append(',');
+            buf.append(chat);
 
+            Room room = client.getCurrentRoom();
+            roomcast(dataEvent.server, buf.toString(), room);
+        }
+    }
     
     private void registerAccount(ServerDataEvent dataEvent, String command) 
     {
@@ -769,6 +799,7 @@ public class CommandWorker implements ServerWorker
         command =
             "ADDP," + 
             mob.id + "," +
+            client.displayName + "," +
             "3," + // layer
 	    mob.tile + "," + // tile id
             mob.frames + "," +
@@ -1030,11 +1061,12 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    private String makeAddMobCommand(Mob mob, int layer)
+    private String makeAddMobCommand(Mob mob, int layer, String name)
     {
         String command =
                 "ADDM," +
                 mob.id + "," +
+                name + "," +
                 layer + "," +
                 mob.tile + "," +
                 mob.frames + "," +
@@ -1054,7 +1086,7 @@ public class CommandWorker implements ServerWorker
     {
         for(Mob mob : mobs)
         {
-            String command = makeAddMobCommand(mob, layer);
+            String command = makeAddMobCommand(mob, layer, "n");
         
             roomcast(server, command, room);
         }

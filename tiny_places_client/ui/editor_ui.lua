@@ -64,7 +64,7 @@ local function setModePlace(x, y, pressed)
     
     -- add preview object (id = -1)
     if editorUi.previewMob == nil then
-      editorUi.previewMob = editorUi.map.addObject(-1, 
+      editorUi.previewMob = editorUi.map.addObject(-1, "n",
                                                    editorUi.activeLayer, editorUi.tile, 
                                                    0, 0, 0.5, 
                                                    "1.0 1.0 1.0 0.3",
