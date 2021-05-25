@@ -10,23 +10,16 @@ local utf8 = require("utf8")
 local textinput = {}
 
 
-function love.textinput(t)
-  if textinput.focusedInput then
-    local input = textinput.focusedInput
-    input.text = input.text .. t
-  end
-end
+function keyReleased(input, key, scancode, isrepeat)
 
-
-function love.keypressed(key, scancode, isrepeat)
-
-  if textinput.focusedInput then
-    local input = textinput.focusedInput
+  if input.focused then
   
+    -- copy text from global buffer and clear the buffer
+    input.text = input.text .. tip.inputtext
+    tip.inputtext = ""
+      
     if key == "return" then
-      -- finish input, make field lose focus
-      textinput.focusedInput.focused = false
-      textinput.focusedInput = nil
+      -- callback ?
       
     elseif key == "backspace" then
       -- get the byte offset to the last UTF-8 character in the string.
@@ -43,26 +36,36 @@ end
 
 
 local function init()
-  textinput.focusedInput = nil
+  textinput.focused = false
 end
 
 
-local function drawInput(input)
-  love.graphics.setColor(1, 1, 1)
-  love.graphics.rectangle("line", input.x, input.y, input.width, input.height)
+local function draw(input, xoff, yoff)
+
+  local x = xoff+input.x
+  local y = yoff+input.y
   
   if input.focused then
-    love.graphics.print(input.text .. "|", input.x+10, input.y+6, 0, 1.25, 1)    
-  else
-    love.graphics.print(input.text, input.x+10, input.y+6, 0, 1.25, 1)  
+    love.graphics.setColor(0.2, 0.15, 0.1)
+  else  
+    love.graphics.setColor(0.1, 0.1, 0.1)
   end
+      
+  love.graphics.rectangle("fill", x, y, input.width, input.height)
+  
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.rectangle("line", x, y, input.width, input.height)
 
   if input.focused then
-    textinput.focusedInput = input
-  end  
+    input.pixfont:drawStringScaled(input.text .. "|", x+4, y+2, 0.25, 0.25)    
+  else
+    input.pixfont:drawStringScaled(input.text, x+4, y+2, 0.25, 0.25)  
+  end
 end
 
+
 textinput.init = init
-textinput.draw = drawInput
+textinput.draw = draw
+textinput.keyReleased = keyReleased
 
 return textinput

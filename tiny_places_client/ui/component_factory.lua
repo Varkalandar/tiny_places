@@ -24,53 +24,44 @@ local function init()
 end
 
 
-local function drawButton(bt)
-  button.draw(bt)
-end
-
-
-local function drawInput(input)
-  textinput.draw(input)
-end
-
-
 local function drawColor(input)
   colorinput.draw(input)
 end
 
 
 local function makeButton(text, pixfont, x, y, toff, scale, callback)
-  local button = {}
+  local bt = {}
 
-  button.text = text
-  button.pixfont = pixfont
-  button.x = x
-  button.y = y
-  button.width = 562*scale
-  button.height = 86*scale
-  button.toff = toff
-  button.scale = scale
-  button.pressed = false
-  button.focused = false
-  button.callback = callback
-  button.draw = drawButton
+  bt.text = text
+  bt.pixfont = pixfont
+  bt.x = x
+  bt.y = y
+  bt.width = 562*scale
+  bt.height = 86*scale
+  bt.toff = toff
+  bt.scale = scale
+  bt.pressed = false
+  bt.focused = false
+  bt.callback = callback
+  bt.draw = button.draw
   
-  return button
+  return bt
 end
 
 
-local function makeInput(text, x, y, width, height, callback)
+local function makeInput(text, pixfont, x, y, width, height, callback)
   local input = {}
 
   input.text = text
+  input.pixfont = pixfont
   input.x = x
   input.y = y
   input.width = width
   input.height = height
-  input.pressed = false
-  input.focused = false
+  input.hasFocus = false
   input.callback = callback
-  input.draw = drawInput
+  input.draw = textinput.draw
+  input.keyReleased = textinput.keyReleased
   return input
 end
 
@@ -91,9 +82,13 @@ local function makeColor(x, y, callback)
 end
 
 
-local function drawContainer(container)
+local function drawContainer(container, x, y)
+  
+  container.x = x
+  container.y = y
+  
   for i, element in pairs(container.store) do
-    element:draw()
+    element:draw(x, y)
   end
 end
 
@@ -104,12 +99,21 @@ end
 
 
 local function containerMousePressed(container, mx, my)
+  
+  local x = mx - container.x
+  local y = my - container.y
+
   for i, element in pairs(container.store) do
     element.focused = false
     
-    if mx > element.x and my > element.y and mx < element.x + element.width and my < element.y + element.height then
+    if x > element.x and y > element.y and x < element.x + element.width and y < element.y + element.height then
       
       tip.sounds.randplay(tip.sounds.uiClick, 1, 0.1)
+
+      if element.focused == false then
+        -- clear global text buffer, a new element was selected
+        tip.textinput = ""
+      end
 	  
       element.pressed = true
       element.focused = true
@@ -123,8 +127,12 @@ end
 
 
 local function containerMouseReleased(container, mx, my)
+  
+  local x = mx - container.x
+  local y = my - container.y
+
   for i, element in pairs(container.store) do
-    if mx > element.x and my > element.y and mx < element.x + element.width and my < element.y + element.height then
+    if x > element.x and y > element.y and x < element.x + element.width and y < element.y + element.height then
       element.pressed = false
       if element.callback then
         element.callback(mx, my, element.pressed)
@@ -134,12 +142,24 @@ local function containerMouseReleased(container, mx, my)
 end
 
 
+local function containerKeyReleased(container, key, scancode, isrepeat)
+  for i, element in pairs(container.store) do
+    if element.focused and element.keyReleased then
+      element:keyReleased(key, scancode, isrepeat)
+    end
+  end
+end
+
+
 local function makeContainer()
   local container = {}
+  container.x = 0
+  container.y = 0
   container.draw = drawContainer
   container.add = containerAdd
   container.mousePressed = containerMousePressed
   container.mouseReleased = containerMouseReleased
+  container.keyReleased = containerKeyReleased
   container.store = {}
   return container
 end

@@ -248,28 +248,28 @@ local function init(mainUi, map)
   
   tileChooserPopup.init(mainUi, editorUi.map.mobSet)	
 
-  btPlace = cf.makeButton("Place Item", mainUi.pixfont, 16, 430, 0, 0.35, setModePlace)
+  btPlace = cf.makeButton("Place Item", mainUi.uifont, 16, 430, 0, 0.35, setModePlace)
   btPlace.pressed = true
   container:add(btPlace)
   
-  btMove = cf.makeButton("Edit Item", mainUi.pixfont, 16+68, 464, 0, 0.35, setModeMove)
+  btMove = cf.makeButton("Edit Item", mainUi.uifont, 16+68, 464, 0, 0.35, setModeMove)
   container:add(btMove)
 
-  btDelete = cf.makeButton("Remove Item", mainUi.pixfont, 16+136, 498, 0, 0.35, setModeDelete)
+  btDelete = cf.makeButton("Remove Item", mainUi.uifont, 16+136, 498, 0, 0.35, setModeDelete)
   container:add(btDelete)
 
-  btSelect = cf.makeButton("Select Item", mainUi.pixfont, 4, 680, 0, 0.35, openPopup)
+  btSelect = cf.makeButton("Select Item", mainUi.uifont, 4, 680, 0, 0.35, openPopup)
   container:add(btSelect)
 
 
-  btPatchlayer = cf.makeButton("Ground Layer", mainUi.pixfont, 210, 680, 0, 0.35, selectPatchLayer)
+  btPatchlayer = cf.makeButton("Ground Layer", mainUi.uifont, 210, 680, 0, 0.35, selectPatchLayer)
   container:add(btPatchlayer)
   
-  btMoblayer = cf.makeButton("Item Layer", mainUi.pixfont, 210, 646, 0, 0.35, selectMobLayer)
+  btMoblayer = cf.makeButton("Item Layer", mainUi.uifont, 210, 646, 0, 0.35, selectMobLayer)
   btMoblayer.pressed = true
   container:add(btMoblayer)
   
-  btCloudlayer = cf.makeButton("Cloud Layer", mainUi.pixfont, 210, 612, 0, 0.35, selectCloudLayer)
+  btCloudlayer = cf.makeButton("Cloud Layer", mainUi.uifont, 210, 612, 0, 0.35, selectCloudLayer)
   container:add(btCloudlayer)
 
 
@@ -336,9 +336,9 @@ local function draw()
   local pixfont = editorUi.mainUi.pixfont
   
 	love.graphics.setColor(0, 0, 0)
-	pixfont.drawStringScaled("Edit Mode", 16-10, 30+24, 0.5, 0.25, 0.2, 0)
+	pixfont:drawStringScaled("Edit Mode", 16-10, 30+24, 0.5, 0.25, 0.2, 0)
   love.graphics.setColor(1.0, 1.0, 1.0)
-	pixfont.drawStringScaled("Edit Mode", 16, 30, 0.5, 0.5)
+	pixfont:drawStringScaled("Edit Mode", 16, 30, 0.5, 0.5)
 
   -- tile preview area
   love.graphics.draw(editorUi.areaImage, 16, 600, 0, 0.5, 0.5)
@@ -353,10 +353,10 @@ local function draw()
     love.graphics.setColor(1.0, 1.0, 1.0)
     love.graphics.draw(tile.image, 90 - tile.footX*scale, 650 - tile.footY*scale, 0, scale, scale)
     -- love.graphics.print(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 16, 0, 1.0, 1.0)
-    pixfont.drawStringScaled(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 26, 0.18, 0.18)
+    pixfont:drawStringScaled(tile.name, 32, 650 - math.floor(tile.footY*scale*0.9) - 26, 0.18, 0.18)
   end
   
-  container:draw()
+  container:draw(0, 0)
 end
 
 
@@ -415,12 +415,17 @@ local function mouseDragged(button, mx, my)
 end
 
 
-editorUi.init = init;
-editorUi.update = update;
-editorUi.draw = draw;
-editorUi.mousePressed = mousePressed;
-editorUi.mouseReleased = mouseReleased;
-editorUi.mouseDragged = mouseDragged;
+local function keyReleased(key, scancode, isrepeat)
+end
+
+
+editorUi.init = init
+editorUi.update = update
+editorUi.draw = draw
+editorUi.mousePressed = mousePressed
+editorUi.mouseReleased = mouseReleased
+editorUi.mouseDragged = mouseDragged
+editorUi.keyReleased = keyReleased
 
 
 return editorUi

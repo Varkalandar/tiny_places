@@ -8,8 +8,7 @@
 local pixfont = {}
 
 
-local function readKerningInfo(path, pixfont)
-
+local function readKerningInfo(pixfont, path)
 
   local file, size = love.filesystem.read(path..".kern")
   local lines = {}
@@ -98,31 +97,8 @@ local function scanDimensions(pixfont)
   end
 end
 
-
-local function init(path)
-
-  print("Loading pixfont '" .. path .. "'")
-
-  pixfont.imageData = love.image.newImageData(path .. ".png")
-  pixfont.image = love.graphics.newImage(pixfont.imageData)
-  pixfont.image:setFilter("linear", "linear")
-  -- pixfont.image:setFilter("nearest", "nearest")
   
-  pixfont.letterWidths = {}
-  pixfont.letterHeights = {}
-  pixfont.quads = {}
-  pixfont.slips = {}
-  
-  pixfont.rasterX = pixfont.image:getWidth() / 8
-  pixfont.rasterY = pixfont.image:getHeight() / 32
-        
-  scanDimensions(pixfont)
-  readKerningInfo(path, pixfont)
-    
-end
-
-    
-local function calcStringWidth(text)
+local function calcStringWidth(pixfont, text)
 
   local letterWidths = pixfont.letterWidths
   local letters = text:len()
@@ -137,14 +113,14 @@ local function calcStringWidth(text)
 end
 
 
-local function drawCharacterScaled(x, y, character, scx, scy, slx, sly)
+local function drawCharacterScaled(pixfont, x, y, character, scx, scy, slx, sly)
 
   local quad = pixfont.quads[character]
   love.graphics.draw(pixfont.image, quad, x, y, 0, scx, scy, 0, 0, slx, sly)
 end
 
 
-local function drawStringScaled(text, x, y, scx, scy, slx, sly)
+local function drawStringScaled(pixfont, text, x, y, scx, scy, slx, sly)
 
   local letters = text:len()
         
@@ -156,7 +132,7 @@ local function drawStringScaled(text, x, y, scx, scy, slx, sly)
     local c = string.byte(text, p)
     -- print("c=" .. string.char(c))
     
-    drawCharacterScaled(x+runx*scx, y, c, scx, scy, slx, sly)
+    drawCharacterScaled(pixfont, x+runx*scx, y, c, scx, scy, slx, sly)
 
     runx = runx + pixfont.letterWidths[c]
             
@@ -173,33 +149,70 @@ local function drawStringScaled(text, x, y, scx, scy, slx, sly)
 end
 
 
-local function drawBoxStringScaled(text, x, y, w, h, linespace, scx, scy, slx, sly)
+local function drawBoxStringScaled(pixfont, text, x, y, w, h, linespace, scx, scy, slx, sly)
 
   local runx = 0
   local lines = 0
-  local space = calcStringWidth(" ") * scx
-  local words = text:gmatch("[^ ]+")
+  local space = calcStringWidth(pixfont, " ") * scx
+  local words = text:gmatch("(%w*)([^%w]*)")
   
-  for word in words do  
-    -- print(word)
-    local l = calcStringWidth(word) * scx
+  for word, wspace in words do
+    
+    -- print("'" .. word  .. "'<" .. wspace .. ">")
+    
+    word = word .. wspace
+    local l = calcStringWidth(pixfont, word) * scx
     if runx + l > w then
-      lines = lines + 1
       runx = 0
+      lines = lines + 1
     end
     
-    drawStringScaled(word, runx + x, y + lines * linespace, scx, scy, slx, sly)
+    drawStringScaled(pixfont, word, runx + x, y + lines * linespace, scx, scy, slx, sly)
     
     runx = runx + l + space
+	
+  	-- test for in-string newlines?
+	  for newline in wspace:gmatch("\n") do
+	    runx = 0
+	    lines = lines + 1
+	  end
+
   end
   
   return lines + 1
 end
 
 
+local function init(path)
+
+  print("Loading pixfont '" .. path .. "'")
+  local pixfont = {}
+  
+  pixfont.imageData = love.image.newImageData(path .. ".png")
+  pixfont.image = love.graphics.newImage(pixfont.imageData)
+  
+  -- pixfont.image:setFilter("linear", "linear", 8)
+  -- pixfont.image:setFilter("nearest", "nearest")
+  
+  pixfont.letterWidths = {}
+  pixfont.letterHeights = {}
+  pixfont.quads = {}
+  pixfont.slips = {}
+  
+  pixfont.rasterX = pixfont.image:getWidth() / 8
+  pixfont.rasterY = pixfont.image:getHeight() / 32
+        
+  pixfont.drawStringScaled = drawStringScaled
+  pixfont.drawBoxStringScaled = drawBoxStringScaled
+  pixfont.calcStringWidth = calcStringWidth
+  
+  scanDimensions(pixfont)
+  readKerningInfo(pixfont, path)
+  pixfont.imageData = nil
+  
+  return pixfont
+end
+
 pixfont.init = init
-pixfont.drawStringScaled = drawStringScaled
-pixfont.drawBoxStringScaled = drawBoxStringScaled
-pixfont.calcStringWidth = calcStringWidth
 
 return pixfont

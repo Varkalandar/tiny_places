@@ -108,8 +108,8 @@ local function drawGauge(x, y, filler, shrink, title, min, max, value)
   local numbers = value .. "/" .. max
   
     -- love.graphics.print(numbers, x + 5, y+20, 0, 1, 0.5)
-  local nw = pixfont.calcStringWidth(numbers) * 0.25
-  pixfont.drawStringScaled(numbers, x + (w - nw)/2, y+4, 0.25, 0.25)
+  local nw = pixfont:calcStringWidth(numbers) * 0.25
+  pixfont:drawStringScaled(numbers, x + (w - nw)/2, y+4, 0.25, 0.25)
 
   love.graphics.draw(gameUi.gaugeBg, x, y+30, 0, scale, scale)
   love.graphics.draw(filler, x + (w - w*shrink)*0.5, 
@@ -122,8 +122,8 @@ local function drawGauge(x, y, filler, shrink, title, min, max, value)
   
   love.graphics.setColor(1.0*0.9, 0.8*0.9, 0.4*0.9)
   -- love.graphics.print(title, x + 5, y, 0, 2, 1)
-  local tw = pixfont.calcStringWidth(title) * 0.25
-  pixfont.drawStringScaled(title, x + (w - tw)/2 , y+94, 0.25, 0.25)
+  local tw = pixfont:calcStringWidth(title) * 0.25
+  pixfont:drawStringScaled(title, x + (w - tw)/2 , y+94, 0.25, 0.25)
 end
 
 
@@ -131,15 +131,15 @@ local function draw()
   local pixfont = gameUi.mainUi.pixfont
 
   love.graphics.setColor(0, 0, 0)
-  pixfont.drawStringScaled("Game Mode", 16-10, 30+24, 0.5, 0.25, 0.2, 0)
+  pixfont:drawStringScaled("Game Mode", 16-10, 30+24, 0.5, 0.25, 0.2, 0)
   love.graphics.setColor(1.0, 1.0, 1.0)
-  pixfont.drawStringScaled("Game Mode", 16, 30, 0.5, 0.5)
+  pixfont:drawStringScaled("Game Mode", 16, 30, 0.5, 0.5)
 
-  local pos = 1200 - 16 - pixfont.calcStringWidth(gameUi.map.name) * 0.5
+  local pos = 1200 - 16 - pixfont:calcStringWidth(gameUi.map.name) * 0.5
   love.graphics.setColor(0, 0, 0)
-  pixfont.drawStringScaled(gameUi.map.name, pos-10, 30+24, 0.5, 0.25, 0.2, 0)
+  pixfont:drawStringScaled(gameUi.map.name, pos-10, 30+24, 0.5, 0.25, 0.2, 0)
   love.graphics.setColor(1.0, 1.0, 1.0)
-  pixfont.drawStringScaled(gameUi.map.name, pos, 30, 0.5, 0.5)
+  pixfont:drawStringScaled(gameUi.map.name, pos, 30, 0.5, 0.5)
 
   local beat = math.sin(love.timer.getTime()  * 1.5)
   local beat = math.abs(beat)
@@ -156,7 +156,7 @@ local function draw()
         "Energy",
         stats[1].min, stats[1].max, stats[1].value) 
 
-  container:draw()
+  container:draw(0, 0)
 end
 
 
@@ -193,12 +193,17 @@ local function mouseDragged(button, mx, my)
 end
 
 
-gameUi.init = init;
-gameUi.update = update;
-gameUi.draw = draw;
-gameUi.mousePressed = mousePressed;
-gameUi.mouseReleased = mouseReleased;
-gameUi.mouseDragged = mouseDragged;
+local function keyPressed(key, scancode, isrepeat)
+end
+
+
+gameUi.init = init
+gameUi.update = update
+gameUi.draw = draw
+gameUi.mousePressed = mousePressed
+gameUi.mouseReleased = mouseReleased
+gameUi.mouseDragged = mouseDragged
+gameUi.keyPressed = keyPressed
 
 
 return gameUi

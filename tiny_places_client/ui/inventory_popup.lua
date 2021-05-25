@@ -144,8 +144,8 @@ local function drawItemPopup(item, pixfont, xoff, yoff)
   love.graphics.rectangle("line", xoff, yoff, w, h)
 
   love.graphics.setColor(1, 0.7, 0.2)
-  local sw = pixfont.calcStringWidth(item.displayName) * 0.25
-  pixfont.drawStringScaled(item.displayName, xoff + 2 + (w - sw)/2, yoff+6, 0.25, 0.25)
+  local sw = pixfont:calcStringWidth(item.displayName) * 0.25
+  pixfont:drawStringScaled(item.displayName, xoff + 2 + (w - sw)/2, yoff+6, 0.25, 0.25)
   
   local ybase = yoff+48
   local yspace = 24
@@ -153,11 +153,11 @@ local function drawItemPopup(item, pixfont, xoff, yoff)
   love.graphics.setColor(0.95, 0.9, 0.85)
   
   if item.energyDamage > 0 then
-    pixfont.drawStringScaled("Energy damage: +" .. item.energyDamage .. "%", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
+    pixfont:drawStringScaled("Energy damage: +" .. item.energyDamage .. "%", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
     ybase = ybase + yspace
   end
   
-  pixfont.drawStringScaled("Value: " .. item.value .. " credits", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
+  pixfont:drawStringScaled("Value: " .. item.value .. " credits", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
   ybase = ybase + yspace
 end
 
@@ -193,20 +193,20 @@ local function drawCorePopup(item, pixfont, xoff, yoff)
   love.graphics.rectangle("line", xoff, yoff, w, h)
 
   love.graphics.setColor(1, 0.7, 0.2)
-  local sw = pixfont.calcStringWidth(item.displayName) * 0.25
-  pixfont.drawStringScaled(item.displayName, xoff + 2 + (w - sw)/2, yoff+6, 0.25, 0.25)
+  local sw = pixfont:calcStringWidth(item.displayName) * 0.25
+  pixfont:drawStringScaled(item.displayName, xoff + 2 + (w - sw)/2, yoff+6, 0.25, 0.25)
   
   local ybase = yoff+48
   local yspace = 24
   
   love.graphics.setColor(0.85, 0.9, 0.95)
   
-  local lines = pixfont.drawBoxStringScaled(item.description, xoff + 8, ybase + yspace * 0, w-8, h, yspace, 0.22, 0.22)
+  local lines = pixfont:drawBoxStringScaled(item.description, xoff + 8, ybase + yspace * 0, w-8, h, yspace, 0.22, 0.22)
   ybase = ybase + yspace * lines + 6
 
   love.graphics.setColor(0.95, 0.9, 0.85)
 
-  pixfont.drawStringScaled("Value: " .. item.value .. " credits", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
+  pixfont:drawStringScaled("Value: " .. item.value .. " credits", xoff + 8, ybase + yspace * 0, 0.22, 0.22)
   ybase = ybase + yspace
 end
 
@@ -351,12 +351,16 @@ local function mouseDragged(button, mx, my)
 end
 
 
+local function keyReleased(key, scancode, isrepeat)
+end
+
+
 inventoryPopup.init = init
 inventoryPopup.update = update
 inventoryPopup.draw = draw
 inventoryPopup.mousePressed = mousePressed
 inventoryPopup.mouseReleased = mouseReleased
 inventoryPopup.mouseDragged = mouseDragged
-
+inventoryPopup.keyReleased = keyReleased
 
 return inventoryPopup

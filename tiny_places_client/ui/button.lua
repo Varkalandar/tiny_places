@@ -2,12 +2,15 @@ local button = {}
 
 button.image = love.graphics.newImage("resources/ui/silver/button.png")
 
-local function draw(bt)
+local function draw(bt, xoff, yoff)
 
+  local x = bt.x + xoff
+  local y = bt.y + yoff
+  
   -- text, pixfont, x, y, toff, scale, pressed
   
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(button.image, bt.x, bt.y, 0, bt.scale, bt.scale)
+  love.graphics.draw(button.image, x, y, 0, bt.scale, bt.scale)
 
   if pressed then 
     -- love.graphics.setColor(1, 0.8, 0.4)
@@ -19,13 +22,13 @@ local function draw(bt)
   end
 
   -- love.graphics.print(text, x+10+toff, y+6, 0, 1.25, 1)
-  local f = 0.66
-  local w = bt.pixfont.calcStringWidth(bt.text) * f * 1.5
-  bt.pixfont.drawStringScaled(bt.text, 
-                                             bt.x + (button.image:getWidth() - w) * bt.scale / 2,
-                                             bt.y+5, 
-                                             bt.scale * f * 1.5, 
-                                             bt.scale * f * 0.75)
+
+  local w = bt.pixfont:calcStringWidth(bt.text) * 0.75
+  bt.pixfont:drawStringScaled(bt.text, 
+                              x + (button.image:getWidth() - w) * bt.scale / 2,
+                              y+5, 
+                              bt.scale * 0.75, 
+                              bt.scale * 0.5)
 end
 
 button.draw = draw
