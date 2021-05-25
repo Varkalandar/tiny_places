@@ -1,5 +1,5 @@
 -- 
--- Dialog to register a new account
+-- Login dialog
 --
 -- Author: Hj. Malthaner
 -- Date: 2021/05/25
@@ -10,56 +10,67 @@ local cf = require("ui/component_factory")
 -- UI element container for this UI
 local container = cf.makeContainer()
 
-local newAccountPopup = {}
+local loginPopup = {}
 
 
-local function chatCatcher(name, message)
+local function loginChatCatcher(name, message)
 
   if message == "successful" then
-    newAccountPopup.mainUi.popup = nil
-    newAccountPopup.clientSocket.send("LOAD,lobby")
+    loginPopup.mainUi.popup = nil
+    loginPopup.clientSocket.send("LOAD,lobby")
   else  
-    newAccountPopup.errorMessage = message
+    loginPopup.errorMessage = message
+  end
+end
+
+
+local function loginCallback(x, y, pressed)
+
+  loginPopup.mainUi.chatCatcher = loginChatCatcher
+
+  if not pressed then 
+    print("Login pressed!")
+    
+    local name = loginPopup.accountNameInput.text
+    local hash = love.data.hash("sha256", 
+                                loginPopup.accountPassInput.text)
+    
+    local pass = love.data.encode("string", "hex", hash)
+    
+    print("name=" .. name .. " pass=" .. pass)
+    
+    loginPopup.clientSocket.send("HELO," .. name .. "," .. pass)
   end
 end
 
 
 local function createCallback(x, y, pressed)
-
-  newAccountPopup.mainUi.chatCatcher = chatCatcher
-
   if not pressed then 
-    print("Create account pressed!")
-    
-    local name = newAccountPopup.accountNameInput.text
-    local hash = love.data.hash("sha256", 
-                                newAccountPopup.accountPassInput.text)
-
-    local pass = love.data.encode("string", "hex", hash)
-    
-    print("name=" .. name .. " pass=" .. pass)
-    
-    newAccountPopup.clientSocket.send("REGI," .. name .. "," .. pass)
-    newAccountPopup.clientSocket.send("HELO," .. name .. "," .. pass)    
+    print("Create pressed!")
+    local mainUi = loginPopup.mainUi
+    mainUi.popup = mainUi.newAccountPopup
   end
 end
 
 
 local function init(mainUi, clientSocket)
 
-  print("Loading new account popup")
-  newAccountPopup.mainUi = mainUi
-  newAccountPopup.clientSocket = clientSocket
+  print("Loading login popup")
+  loginPopup.mainUi = mainUi
+  loginPopup.clientSocket = clientSocket
   
   local accountNameInput = cf.makeInput("Test", mainUi.uifont, 220, 110, 360, 32, nil)
   container:add(accountNameInput)
-  newAccountPopup.accountNameInput = accountNameInput
+  loginPopup.accountNameInput = accountNameInput
 
   local accountPassInput = cf.makeInput("Test", mainUi.uifont, 220, 150, 360, 32, nil)
   container:add(accountPassInput)
-  newAccountPopup.accountPassInput = accountPassInput
+  loginPopup.accountPassInput = accountPassInput
   
-  local createButton = cf.makeButton("Create", mainUi.uifont, 190, 250, 0, 0.5, createCallback)
+  local createButton = cf.makeButton("Login", mainUi.uifont, 190, 240, 0, 0.5, loginCallback)
+  container:add(createButton)
+  
+  local createButton = cf.makeButton("Create Account", mainUi.uifont, 300, 345, 0, 0.4, createCallback)
   container:add(createButton)  
 end
 
@@ -74,11 +85,11 @@ end
 local function draw()
   
   local w = 640
-  local h = 400
+  local h = 410
   local xoff = (1200-w)/2
   local yoff = (720-h)/2
   local yspace = 28
-  local font = newAccountPopup.mainUi.uifont
+  local font = loginPopup.mainUi.uifont
   
   love.graphics.setColor(0.05, 0.1, 0.2, 0.5)
   love.graphics.rectangle("fill", xoff, yoff, w, h)
@@ -86,14 +97,16 @@ local function draw()
   love.graphics.rectangle("line", xoff, yoff, w, h)
 
   love.graphics.setColor(1, 1, 1)
-  font:drawStringScaled("Create a New Account", xoff + 60, yoff + 20, 0.5, 0.5)
+  font:drawStringScaled("Log In To Tiny Places!", xoff + 20, yoff + 20, 0.5, 0.5)
 
   font:drawStringScaled("Account Name:", xoff + 20, yoff + 110, 0.25, 0.25)
   font:drawStringScaled("Password:", xoff + 20, yoff + 150, 0.25, 0.25)
 
-  if newAccountPopup.errorMessage then
+  font:drawStringScaled("No account yet?", xoff + 100, yoff + 350, 0.25, 0.25)
+  
+  if loginPopup.errorMessage then
     love.graphics.setColor(1, 0.5, 0)
-    font:drawStringScaled(newAccountPopup.errorMessage, xoff + 20, yoff + 200, 0.25, 0.25)    
+    font:drawStringScaled(loginPopup.errorMessage, xoff + 20, yoff + 200, 0.25, 0.25)    
   end
 
   container:draw(xoff, yoff)
@@ -119,13 +132,13 @@ local function keyReleased(key, scancode, isrepeat)
 end
 
 
-newAccountPopup.init = init
-newAccountPopup.update = update
-newAccountPopup.draw = draw
-newAccountPopup.mousePressed = mousePressed
-newAccountPopup.mouseReleased = mouseReleased
-newAccountPopup.mouseDragged = mouseDragged
-newAccountPopup.keyReleased = keyReleased
+loginPopup.init = init
+loginPopup.update = update
+loginPopup.draw = draw
+loginPopup.mousePressed = mousePressed
+loginPopup.mouseReleased = mouseReleased
+loginPopup.mouseDragged = mouseDragged
+loginPopup.keyReleased = keyReleased
 
 
-return newAccountPopup
+return loginPopup

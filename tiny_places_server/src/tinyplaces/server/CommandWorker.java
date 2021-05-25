@@ -3,6 +3,7 @@ package tinyplaces.server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -165,6 +166,10 @@ public class CommandWorker implements ServerWorker
         {
             doMove(dataEvent, command);
         }
+        else if(command.startsWith("REGI"))
+        {
+            registerAccount(dataEvent, command);
+        }
         else
         {
             Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, "Received unknown command: '{0}'", command);
@@ -176,9 +181,54 @@ public class CommandWorker implements ServerWorker
     {
         System.err.println("HELO from " + dataEvent.socket);
         String [] parts = command.trim().split(",");
-        Client client = new Client(parts[1], dataEvent.socket);
-        clients.put(dataEvent.socket, client);
-        sendFullPlayerStats(dataEvent.server, client);
+        
+        String name = parts[1];
+        
+        File folder = new File("players", name.toLowerCase());
+        boolean success = false;
+        String message = "";
+        if(folder.exists()) 
+        {
+            try
+            {
+                File character = new File(folder, name.toLowerCase() + ".ini");
+                FileReader fr = new FileReader(character);
+                BufferedReader reader = new BufferedReader(fr);
+                
+                String line;
+                
+                line = reader.readLine(); // version
+                line = reader.readLine(); // name
+                line = reader.readLine(); // password
+                
+                if(line.equals(parts[2]))
+                {
+                    success = true;                    
+                }
+                else
+                {
+                    message = "Login failed. Please try again.";
+                }
+                reader.close();
+            } 
+            catch(IOException ex)
+            {
+                message = "Account creation failed:\n" + ex.getMessage();
+            }
+        }
+        if(success)
+        {
+            message = "CHAT,System,successful\n";
+            singlecast(dataEvent.server, dataEvent.socket, message);
+            Client client = new Client(parts[1], dataEvent.socket);
+            clients.put(dataEvent.socket, client);
+            sendFullPlayerStats(dataEvent.server, client);
+        }
+        else
+        {
+            message = "CHAT,System," + message+"\n";
+            singlecast(dataEvent.server, dataEvent.socket, message);
+        }
     }
 
     
@@ -187,21 +237,24 @@ public class CommandWorker implements ServerWorker
         System.err.println("GBYE from " + dataEvent.socket);
         
         Client client = clients.get(dataEvent.socket);
-        Room room = client.getCurrentRoom();
-        Object test;
-        
-        // if the client didn't start a game, there is no mob assigned
-        if(client.mob != null)
+        if(client != null)
         {
-            test = room.removeMob(3, client.mob.id);
-            if(test == null)
+            Room room = client.getCurrentRoom();
+            Object test;
+
+            // if the client didn't start a game, there is no mob assigned
+            if(client.mob != null)
             {
-                Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
-                        "Logout problem: client avatar was not in room.");
+                test = room.removeMob(3, client.mob.id);
+                if(test == null)
+                {
+                    Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
+                            "Logout problem: client avatar was not in room.");
+                }
             }
         }
         
-        test = clients.remove(dataEvent.socket);
+        Client test = clients.remove(dataEvent.socket);
         if(test == null)
         {
             Logger.getLogger(CommandWorker.class.getName()).log(Level.WARNING, 
@@ -569,7 +622,52 @@ public class CommandWorker implements ServerWorker
         roomcast(dataEvent.server, buf.toString(), room);
     }
 
+    
+    private void registerAccount(ServerDataEvent dataEvent, String command) 
+    {
+        String [] parts = command.split(",");
+        String name = parts[1];
+        
+        File folder = new File("players", name.toLowerCase());
+        boolean success = false;
+        String message = "";
+        if(folder.exists()) 
+        {
+            message = "Account name is taken already.";
+        }
+        else
+        {
+            try
+            {
+                folder.mkdirs();
+                File character = new File(folder, name.toLowerCase() + ".ini");
+                FileWriter fw = new FileWriter(character);
+                fw.write("v10\n");
+                fw.write(name + "\n");
+                fw.write(parts[2] + "\n");
+                fw.write("0,0,40,40\n");
+                fw.write("1,0,40,40\n");
+                fw.close();
+                success = true;
+            } 
+            catch(IOException ex)
+            {
+                message = "Account creation failed: " + ex.getMessage();
+            }
+        }
+        if(success)
+        {
+            message = "CHAT,System,successful\n";
+            singlecast(dataEvent.server, dataEvent.socket, message);
+        }
+        else
+        {
+            message = "CHAT,System," + message + "\n";
+            singlecast(dataEvent.server, dataEvent.socket, message);
+        }
+    }
 
+    
     private void doMove(ServerDataEvent dataEvent, String command) 
     {
         System.err.println("MOVE from " + dataEvent.socket + "\n  " + command);
@@ -961,4 +1059,5 @@ public class CommandWorker implements ServerWorker
             roomcast(server, command, room);
         }
     }
+
 }

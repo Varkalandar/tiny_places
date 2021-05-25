@@ -8,6 +8,7 @@
 local gameUi = require("ui/game_ui")
 local editorUi = require("ui/editor_ui")
 local chatInputPopup = require("ui/chat_input_popup")
+local loginPopup = require("ui/dialogs/login_popup")
 local newAccountPopup = require("ui/dialogs/register_new_popup")
 
 local map = require("map")
@@ -73,6 +74,10 @@ end
 -- end of event handling code
 
 
+local function dummyChatCatcher(name, message)
+end
+
+
 local function init()
 
   print("Initializing main ui")
@@ -90,19 +95,23 @@ local function init()
   mainUi.popup = nil
   mainUi.wheelDelta = 0
 
+  mainUi.chatCatcher = dummyChatCatcher
+  
   gameUi.init(mainUi, map)
   editorUi.init(mainUi, map)
   chatInputPopup.init(mainUi)
-  newAccountPopup.init(mainUi)
+  loginPopup.init(mainUi, map.clientSocket)
+  newAccountPopup.init(mainUi, map.clientSocket)
 
   mainUi.gameUi = gameUi
   mainUi.editorUi = editorUi
-
+  mainUi.newAccountPopup = newAccountPopup
+  
   -- select active ui at start	
   mainUi.ui = editorUi
   
   -- testing
-  -- mainUi.popup = newAccountPopup
+  mainUi.popup = loginPopup
 end
 
 
@@ -221,7 +230,7 @@ local function processCommands(commands)
       elseif cmd == "CHAT" then
         local displayName = args()
         local message = args()
-
+        mainUi.chatCatcher(displayName, message)
         
       elseif cmd == "UPDM" then
         local id = tonumber(args())

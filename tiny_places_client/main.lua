@@ -40,11 +40,12 @@ function love.load()
   love.window.setTitle("Tiny Places v0.05")
 end
 
--- the work that has to be done before each frame can be drawn
+
 -- dt is a float, measuring in seconds
 function love.update(dt)
   mainUi.update(dt)
 end
+
 
 -- draw the frame
 function love.draw()

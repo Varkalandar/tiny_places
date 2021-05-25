@@ -299,8 +299,8 @@ local function init()
   animationSet = tileset.readSet("resources/animations/", "animations.tica")
   local itemSet = tileset.readSet("resources/items/", "items.tica")
   
-  load("Wasteland", "map_wasteland", "")
-  -- load("Wasteland", "map_organic_bubbles", "")
+  -- load("Wasteland", "map_wasteland", "")
+  load("Login Room", "map_soft_grass", "")
 
   map.bumpmap = love.graphics.newImage("resources/map/map_bumps.png")
   map.mobs = {}
@@ -322,13 +322,13 @@ local function init()
   -- map.clientSocket.connect("127.0.0.1", 9194)
 
   -- login should be here
-  map.clientSocket.send("HELO," .. tip.settings.client_id)
+  -- map.clientSocket.send("HELO," .. tip.settings.client_id)
   
   -- load the starting map
   -- map.clientSocket.send("LOAD,green_and_pond")
   -- map.clientSocket.send("LOAD,wasteland_and_pond")
   -- map.clientSocket.send("LOAD,desert")
-  map.clientSocket.send("LOAD,lobby")
+  -- map.clientSocket.send("LOAD,lobby")
   -- map.clientSocket.send("LOAD,dark_technoland")
 end
 
