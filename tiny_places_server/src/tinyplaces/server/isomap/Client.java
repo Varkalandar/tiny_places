@@ -3,6 +3,7 @@ package tinyplaces.server.isomap;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
@@ -137,12 +138,18 @@ public class Client
 
     private void loadPlayerData(String id) throws IOException
     {
-        FileReader fr = new FileReader("players/" + id.toLowerCase() + ".ini");
+        String name = id.toLowerCase();
+        File folder = new File("players", name);
+        File playerData = new File(folder, name + ".ini");
+        
+        FileReader fr = new FileReader(playerData);
         BufferedReader reader = new BufferedReader(fr);
         
         String line;
+        String version = reader.readLine();
         displayName = reader.readLine();
-                
+        reader.readLine(); // password .. checked in login.
+        
         while((line = reader.readLine()) != null)
         {
             String [] parts = line.split(",");

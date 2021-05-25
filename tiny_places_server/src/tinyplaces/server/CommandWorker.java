@@ -625,7 +625,7 @@ public class CommandWorker implements ServerWorker
     
     private void registerAccount(ServerDataEvent dataEvent, String command) 
     {
-        String [] parts = command.split(",");
+        String [] parts = command.trim().split(",");
         String name = parts[1];
         
         File folder = new File("players", name.toLowerCase());
