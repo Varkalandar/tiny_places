@@ -24,8 +24,10 @@ local mainUi = require("main_ui")
 
 -- all init code goes here
 function love.load()
+
   -- love.graphics.setDefaultFilter("linear", "linear", 8)
   -- love.graphics.setDefaultFilter("nearest", "nearest", 8)
+  
   tip.settings.init()
   tip.sounds.init()
   

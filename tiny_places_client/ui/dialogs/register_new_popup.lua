@@ -47,7 +47,7 @@ end
 
 local function init(mainUi, clientSocket)
 
-  print("Loading new account popup")
+  print("Initializing new account popup")
   newAccountPopup.mainUi = mainUi
   newAccountPopup.clientSocket = clientSocket
   

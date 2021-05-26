@@ -6,7 +6,7 @@
 --
 
 local cf = require("ui/component_factory")
-local inventoryPopup = require("ui/inventory_popup")
+local inventoryPopup = require("ui/dialogs/inventory_popup")
 
 local gameUi = {}
 

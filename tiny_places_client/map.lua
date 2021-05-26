@@ -11,7 +11,6 @@ local animations = require("actions/animation")
 local spells = require("actions/spell")
 
 local tileset = require("tileset")
-local clientSocket = require("net/client_socket")
 
 
 local map = {}
@@ -286,7 +285,7 @@ local function playAnimation(id, layer, x, y)
 end
 
 
-local function init(mainUi)  
+local function init(mainUi, clientSocket)  
   print("Initializing map")
   
   map.playerInventory = { }
@@ -318,19 +317,6 @@ local function init(mainUi)
   
   map.clientSocket = clientSocket
 
-  -- host and port should come from a better place than this  
-  map.clientSocket.connect(tip.settings.server_ip, 9194)
-  -- map.clientSocket.connect("127.0.0.1", 9194)
-
-  -- login should be here
-  -- map.clientSocket.send("HELO," .. tip.settings.client_id)
-  
-  -- load the starting map
-  -- map.clientSocket.send("LOAD,green_and_pond")
-  -- map.clientSocket.send("LOAD,wasteland_and_pond")
-  -- map.clientSocket.send("LOAD,desert")
-  -- map.clientSocket.send("LOAD,lobby")
-  -- map.clientSocket.send("LOAD,dark_technoland")
 end
 
 

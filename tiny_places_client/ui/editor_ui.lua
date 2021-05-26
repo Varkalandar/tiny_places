@@ -6,7 +6,7 @@
 --
 
 local cf = require("ui/component_factory")
-local tileChooserPopup = require("ui/tile_chooser_popup")
+local tileChooserPopup = require("ui/dialogs/tile_chooser_popup")
 
 local editorUi = {}
 local mode = "place"

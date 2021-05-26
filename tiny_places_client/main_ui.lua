@@ -7,16 +7,17 @@
 
 local gameUi = require("ui/game_ui")
 local editorUi = require("ui/editor_ui")
-local chatInputPopup = require("ui/chat_input_popup")
+local serverIpPopup = require("ui/dialogs/server_ip_popup")
+local chatInputPopup = require("ui/dialogs/chat_input_popup")
 local loginPopup = require("ui/dialogs/login_popup")
 local newAccountPopup = require("ui/dialogs/register_new_popup")
-
+local pixfont = require("ui/pixfont")
+local clientSocket = require("net/client_socket")
 local map = require("map")
 
-local pixfont = require("ui/pixfont")
--- local tilefont = require("ui/tilefont")
 
 local mainUi = {};
+
 
 -- event handling code
 
@@ -82,7 +83,7 @@ local function init()
 
   print("Initializing main ui")
 
-  map.init(mainUi)      
+  map.init(mainUi, clientSocket)      
   
   -- pixfont.init("resources/font/humanistic_128b")  
   mainUi.pixfont = pixfont.init("resources/font/humanistic_128bbl")
@@ -99,9 +100,10 @@ local function init()
   
   gameUi.init(mainUi, map)
   editorUi.init(mainUi, map)
+  serverIpPopup.init(mainUi)
   chatInputPopup.init(mainUi)
-  loginPopup.init(mainUi, map.clientSocket)
-  newAccountPopup.init(mainUi, map.clientSocket)
+  loginPopup.init(mainUi, clientSocket)
+  newAccountPopup.init(mainUi, clientSocket)
 
   mainUi.gameUi = gameUi
   mainUi.editorUi = editorUi
@@ -109,9 +111,6 @@ local function init()
   
   -- select active ui at start	
   mainUi.ui = editorUi
-  
-  -- testing
-  mainUi.popup = loginPopup
 end
 
 
@@ -346,7 +345,7 @@ function love.textinput(text)
 end
 
 
-local function update(dt)
+local function updateEvents(dt)
 
   -- check position changes
   local mx, my = love.mouse.getPosition()
@@ -393,7 +392,13 @@ local function update(dt)
   if mainUi.popup then
     mainUi.popup.update(dt)
   end
-  
+
+  -- clear delta to collect updates till next frame
+  mainUi.wheelDelta = 0
+end
+
+
+local function updateCommands(dt)
   
   local commands
   repeat
@@ -402,10 +407,41 @@ local function update(dt)
     -- print("Received: " .. commands)
   until commands:len() <= 0
   
-  -- clear delta to collect updates till next frame
-  mainUi.wheelDelta = 0
-  
   map.update(dt)
+end
+
+
+local function updateEventsAndCommands(dt)
+
+  updateEvents(dt)
+  updateCommands(dt)
+end
+
+
+-- during startup, there will be some stages
+-- we switch here from stage to stage
+local function updateConnectStage(dt)
+
+  -- the server IP popup will supply this value if it's
+  -- not given in the config
+  if tip.settings.server_ip then
+    clientSocket.connect(tip.settings.server_ip, 9194)
+    
+    if clientSocket.connected then    
+      mainUi.popup = loginPopup
+      mainUi.update = updateEventsAndCommands
+      
+      -- remember the server IP for next start
+      tip.settings.save()
+    else
+      serverIpPopup.errorMessage = "Connection failed. Please try again."
+    end
+  else    
+    mainUi.popup = serverIpPopup
+  end
+  
+  -- now do the event handling so the popup can do its work
+  updateEvents()
 end
 
 
@@ -430,7 +466,7 @@ end
 
 
 mainUi.init = init;
-mainUi.update = update;
+mainUi.update = updateConnectStage;
 mainUi.draw = draw;
 
 

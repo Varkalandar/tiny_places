@@ -17,7 +17,10 @@ local function connect(host, port)
 
   local ok, err = tcp:connect(host, port)
   
-  if(not ok) then
+  if ok then
+    clientSocket.connected = true
+  else
+    clientSocket.connected = false
     print("Connection problem: " .. err)
   end
   
@@ -28,12 +31,12 @@ end
 local function send(message)
   
   --note the newline below
-  -- tcp:send("HELO\n");
   clientSocket.tcp:send(message .. "\n");
 end
 
 
 local function receive()
+
   clientSocket.tcp:settimeout(0)
 
   -- nonblocking
@@ -46,6 +49,7 @@ local function receive()
   -- print(message)
 
   if status == "closed" then 
+    clientSocket.connected = false
     print("Server connection lost")
   end
   
@@ -57,10 +61,12 @@ local function close()
   tcp:close()
 end
 
+
 clientSocket.connect = connect
 clientSocket.send = send
 clientSocket.receive = receive
 clientSocket.close = close
+
 
 return clientSocket
 

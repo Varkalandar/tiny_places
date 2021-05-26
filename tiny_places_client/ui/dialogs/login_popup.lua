@@ -55,7 +55,7 @@ end
 
 local function init(mainUi, clientSocket)
 
-  print("Loading login popup")
+  print("Initializing login popup")
   loginPopup.mainUi = mainUi
   loginPopup.clientSocket = clientSocket
   
