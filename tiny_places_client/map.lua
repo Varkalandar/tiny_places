@@ -427,6 +427,19 @@ local function update(dt)
 end
 
 
+local function drawPlayerName(mob)
+
+  love.graphics.setColor(1, 1, 1, 1)
+  local info = mob.name
+  
+  -- debug
+  -- info = info .. ", " .. mob.id .. " t=" .. mob.type
+  
+  local w = map.mainUi.pixfont:calcStringWidth(info) * 0.2
+  map.mainUi.pixfont:drawStringScaled(info, mob.x - w/2, mob.y - 40, 0.2, 0.2)
+end
+
+
 local function drawPlayer(mob, tile, scale)
 
   if mob.tile == 20 then
@@ -465,12 +478,9 @@ local function drawPlayer(mob, tile, scale)
                        mob.y - 30 - tile.footY * scale, 
                        0, scale * 3, scale * 1.5)
 
-    love.graphics.setColor(1, 1, 1, 1)
-    local w = map.mainUi.pixfont:calcStringWidth(mob.name) * 0.2
-    map.mainUi.pixfont:drawStringScaled(mob.name, mob.x - w/2, mob.y - 40, 0.2, 0.2)
-    
+    drawPlayerName(mob)
     love.graphics.setColor(mob.color.r, mob.color.g, mob.color.b, mob.color.a)
-                       love.graphics.draw(tile.image, 
+    love.graphics.draw(tile.image, 
                        mob.x - tile.footX * scale, 
                        mob.y - tile.footY * scale - mob.zOff, 
                        0, 

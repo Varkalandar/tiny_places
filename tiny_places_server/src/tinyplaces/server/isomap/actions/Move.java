@@ -22,6 +22,8 @@ public class Move implements Action
     private double xp;
     private double yp;
     
+    // debug only
+    private int elapsedTime;
 
     @Override
     public Mob getMob()
@@ -54,6 +56,8 @@ public class Move implements Action
     @Override
     public void process(Room room, int dt)
     {
+        elapsedTime += dt;
+        
         double dx = x - xp;
         double dy = y - yp;
 
@@ -87,7 +91,7 @@ public class Move implements Action
             mob.y = y;
             done = true;
     
-            System.err.println("Move done! id=" + mob.id);
+            // System.err.println("Move done! id=" + mob.id + " time=" + elapsedTime/1000.0);
     
             if(mob.type == Mob.TYPE_PROJECTILE)
             {

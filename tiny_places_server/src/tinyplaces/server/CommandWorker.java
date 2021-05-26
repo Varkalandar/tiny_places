@@ -348,36 +348,8 @@ public class CommandWorker implements ServerWorker
         
         // set new player avatar
         client.mob = mob;
-        
-        // reply with ADDP to sender only
 
-        String message = "ADDP," + mob.id + "," + client.displayName + "," +
-                         "3" + "," + mob.tile + "," + mob.frames + "," + mob.phases + "," +
-                         mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
-        byte [] data = message.getBytes();
-        
-        SocketChannel senderSocket = dataEvent.socket;
-        Server server = dataEvent.server;
-        server.send(senderSocket, data);
-
-        // for everyone else in the room it is an ADDM
-
-        message = makeAddMobCommand(mob, 3, client.displayName);
-        data = message.getBytes();
-
-        Set <SocketChannel> keys = clients.keySet();
-        
-        for(SocketChannel socket : keys)
-        {
-            if(socket != senderSocket)
-            {
-                Client c = clients.get(socket);
-                if(c.getCurrentRoom() == room)
-                {
-                    server.send(socket, data);
-                }
-            }
-        }
+        addPlayerToRoom(client, mob, room);
         
         // give the player their items.
         equipPlayer(client);
@@ -527,7 +499,16 @@ public class CommandWorker implements ServerWorker
     }
 
     
-    private void loadMap(Server server, Client client, String command) 
+    /**
+     * Create a new room from map data. Rooms are cached, so it will only load
+     * on first creation of a room, and from then use the cached room instance
+     * 
+     * @param server The server to use for sending a reply.
+     * @param client The client which sent the command
+     * @param command The load command that was sent by the client.
+     * @return True if a new room instance was created, false if an old instance was used
+     */
+    private boolean loadMap(Server server, Client client, String command) 
     {
         System.err.println("LOAD from " + client.socket);
         
@@ -537,28 +518,33 @@ public class CommandWorker implements ServerWorker
         // check if the room is already loaded
         HashMap<String, Room> rooms = Room.getRooms();
         Room room = rooms.get(filename);
-
+        boolean newInstance;
+        
         if(room == null)
         {
+            System.err.println("Player " + client.displayName + " creates a new room instance.");
+            
             // room not loaded yet -> load it
+            newInstance = true;
             room = loadRoom(filename);
 
             room.setCommandWorker(this);
             room.setServer(server);
-            
-            client.setCurrentRoom(room);
-            roomcast(server, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n", room);
-            
-            serveRoom(room, client.socket);
             rooms.put(filename, room);
         }
         else
         {
+            System.err.println("Player " + client.displayName + " joins existing room.");
+            
             // room is already loaded -> join it
-            singlecast(room.getServer(), client.socket, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
-            client.setCurrentRoom(room);
-            serveRoom(room, client.socket);
+            newInstance = false;
         }
+        
+        singlecast(room.getServer(), client.socket, "LOAD," + room.name + "," + room.backdrop + "," + filename + "\n");
+        
+        client.setCurrentRoom(room);
+        serveRoom(room, client.socket);
+        return newInstance;
     }
 
     
@@ -784,35 +770,29 @@ public class CommandWorker implements ServerWorker
     
     public void transit(Client client, Mob mob, Room from, String roomname, int newx, int newy) 
     {
-        from.removeMob(3, mob.id);
+        // leave the old room first
+        removeMob(mob.id, from, 3);
         
         String command = "LOAD," + roomname + "\n";
-        loadMap(from.getServer(), client, command);
+        boolean newRoom = loadMap(from.getServer(), client, command);
 
         Room room = client.getCurrentRoom();
-        room.populateRoom(from.getServer(), roomname);
+        
+        if(newRoom)
+        {
+            room.populateRoom(from.getServer(), roomname);
+        }
 
         // in a new room there are new mob ids. Give the player a matching new id
         mob.id = room.getNextObjectId();
         mob.x = newx;
         mob.y = newy;
 
-        command =
-            "ADDP," + 
-            mob.id + "," +
-            client.displayName + "," +
-            "3," + // layer
-	    mob.tile + "," + // tile id
-            mob.frames + "," +
-            mob.phases + "," +
-	    newx + "," + // x pos
-	    newy + "," + // y pos
-	    mob.scale + "," + // scale factor
-            mob.color + "\n"; // color string
+        addPlayerToRoom(client, mob, room);
         
         room.addMob(3, mob);
         
-        singlecast(room.getServer(), client.socket, command);
+        // singlecast(room.getServer(), client.socket, command);
     }    
 
     
@@ -1019,6 +999,7 @@ public class CommandWorker implements ServerWorker
     
     public void singlecast(Server server, SocketChannel socket, String message)
     {
+        System.err.println("Singlecast " + "m=" + message);
         byte [] data = message.getBytes();
         server.send(socket, data);
     }
@@ -1031,6 +1012,8 @@ public class CommandWorker implements ServerWorker
      */
     public void roomcast(Server server, String message, Room room)
     {
+        System.err.println("Roomcast " + room.name + " m=" + message);
+        
         byte [] data = message.getBytes();
         Set <SocketChannel> keys = clients.keySet();
         
@@ -1093,4 +1076,37 @@ public class CommandWorker implements ServerWorker
         }
     }
 
+    public void addPlayerToRoom(Client client, Mob mob, Room room)
+    {
+        // reply with ADDP to sender only
+
+        String message = "ADDP," + mob.id + "," + client.displayName + "," +
+                         "3" + "," + mob.tile + "," + mob.frames + "," + mob.phases + "," +
+                         mob.x + "," + mob.y + "," + mob.scale + "," + mob.color + "\n";
+        byte [] data = message.getBytes();
+        
+        SocketChannel senderSocket = client.socket;
+        Server server = room.getServer();
+        server.send(senderSocket, data);
+
+        // for everyone else in the room it is an ADDM
+
+        message = makeAddMobCommand(mob, 3, client.displayName);
+        data = message.getBytes();
+
+        Set <SocketChannel> keys = clients.keySet();
+        
+        for(SocketChannel socket : keys)
+        {
+            if(socket != senderSocket)
+            {
+                Client c = clients.get(socket);
+                if(c.getCurrentRoom() == room)
+                {
+                    server.send(socket, data);
+                }
+            }
+        }        
+    }
+            
 }

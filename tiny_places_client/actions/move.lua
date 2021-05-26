@@ -14,6 +14,8 @@ local moves = {}
 
 local function update(move, dt)
 
+  move.elapsedTime = move.elapsedTime + dt
+
 	-- advance, move by dt*speed
 
   local mob = move.mob
@@ -78,7 +80,7 @@ local function update(move, dt)
   end    
 
   if move.done then
-    -- print("Move done! id=" .. mob.id)
+    -- print("Move done! id=" .. mob.id .. " time=" .. move.elapsedTime)
     
     if mob.type == "projectile" then
       -- print("Removing expired projectile with id=" .. mob.id)
@@ -106,6 +108,8 @@ local function new(map, mob, x, y, pattern, speed)
   move.speed = speed
 
   move.done = false
+  -- debug
+  move.elapsedTime = 0
   
   return move
 end
