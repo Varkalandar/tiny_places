@@ -102,7 +102,7 @@ local function unmarshallColor(color)
     return {r=r, b=b, g=g, a=a}
   else
     -- backwards compatibility - old objects had no color data
-    return {r=1, g=1, b=0, a=1}
+    return {r=1, g=1, b=1, a=1}
   end
 end
 

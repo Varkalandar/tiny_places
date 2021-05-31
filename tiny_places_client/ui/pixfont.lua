@@ -5,6 +5,10 @@
 -- Date: 2021/04/24
 --
 
+
+local utf8 = require("utf8")
+
+
 local pixfont = {}
 
 
@@ -101,11 +105,9 @@ end
 local function calcStringWidth(pixfont, text)
 
   local letterWidths = pixfont.letterWidths
-  local letters = text:len()
   local w = 0;
         
-  for p=1, letters do
-    local c = text:byte(p, p)
+  for p, c in utf8.codes(text) do
     w = w + letterWidths[c]
   end     
   
@@ -122,27 +124,21 @@ end
 
 local function drawStringScaled(pixfont, text, x, y, scx, scy, slx, sly)
 
-  local letters = text:len()
-        
-  local runx = 0;
-        
-  for p=1, letters do
-  -- for p=1, 1 do
-
-    local c = string.byte(text, p)
-    -- print("c=" .. string.char(c))
+  local runx = 0
+  local lastc = 0
+  
+  for p, c in utf8.codes(text) do
     
+    if p > 0 and pixfont.slips[lastc] then
+      if pixfont.slips[lastc]:find(utf8.char(c)) then
+        runx = runx - pixfont.rasterX / 16
+      end
+    end
+
     drawCharacterScaled(pixfont, x+runx*scx, y, c, scx, scy, slx, sly)
 
     runx = runx + pixfont.letterWidths[c]
-            
-    if p < letters-1 and pixfont.slips[c] ~= nil then
-
-      local next = string.byte(text, p+1)
-      if pixfont.slips[c]:find(string.char(next)) then
-        runx = runx - 1
-      end
-    end
+    lastc = c
   end
   
   return runx * scx
@@ -154,10 +150,10 @@ local function drawBoxStringScaled(pixfont, text, x, y, w, h, linespace, scx, sc
   local runx = 0
   local lines = 0
   local space = calcStringWidth(pixfont, " ") * scx
-  local words = text:gmatch("(%w*)([^%w]*)")
+  text = text .. "\n"
+  local words = text:gmatch("(.-)([ %.%,%!%?%;\n]+)")
   
   for word, wspace in words do
-    
     -- print("'" .. word  .. "'<" .. wspace .. ">")
     
     word = word .. wspace
@@ -169,7 +165,7 @@ local function drawBoxStringScaled(pixfont, text, x, y, w, h, linespace, scx, sc
     
     drawStringScaled(pixfont, word, runx + x, y + lines * linespace, scx, scy, slx, sly)
     
-    runx = runx + l + space
+    runx = runx + l -- + space
 	
   	-- test for in-string newlines?
 	  for newline in wspace:gmatch("\n") do
@@ -213,6 +209,8 @@ local function init(path)
   return pixfont
 end
 
+
 pixfont.init = init
+
 
 return pixfont

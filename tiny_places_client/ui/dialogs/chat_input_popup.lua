@@ -5,6 +5,10 @@
 -- Date: 2021/05/24
 --
 
+
+local utf8 = require("utf8")
+
+
 local chatInputPopup = {}
 
 
@@ -55,8 +59,8 @@ local function draw()
   -- local font = chatInputPopup.mainUi.uifont
   local font = chatInputPopup.mainUi.pixfont
   font:drawBoxStringScaled(chatInputPopup.text, 
-                                        xoff + 24, yoff + 24, 
-                                        w-48, h-48, yspace, 0.25, 0.25)
+                           xoff + 24, yoff + 24, 
+                           w-48, h-48, yspace, 0.25, 0.25)
 
 end
 
@@ -79,9 +83,20 @@ local function keyReleased(key, scancode, isrepeat)
   tip.inputtext = ""
   
   if key == "backspace" then
-    local len = chatInputPopup.text:len()
-    chatInputPopup.text = string.sub(chatInputPopup.text, 1, len - 1)
+    -- get the byte offset to the last UTF-8 character in the string.
+    local byteoffset = utf8.offset(chatInputPopup.text, -1)
+
+    if byteoffset then
+      -- remove the last UTF-8 character.
+      -- string.sub operates on bytes rather than UTF-8 characters, so we couldn't do string.sub(text, 1, -2).
+      chatInputPopup.text = string.sub(chatInputPopup.text, 1, byteoffset - 1)
+    end    
   end
+  
+  if key == "insert" and chatInputPopup.oldText then
+    chatInputPopup.text = chatInputPopup.oldText
+  end
+  
 end
 
 

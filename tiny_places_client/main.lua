@@ -27,6 +27,7 @@ function love.load()
 
   -- love.graphics.setDefaultFilter("linear", "linear", 8)
   -- love.graphics.setDefaultFilter("nearest", "nearest", 8)
+  love.keyboard.setKeyRepeat(true)
   
   tip.settings.init()
   tip.sounds.init()

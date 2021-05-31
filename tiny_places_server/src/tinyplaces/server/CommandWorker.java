@@ -215,12 +215,12 @@ public class CommandWorker implements ServerWorker
             } 
             catch(IOException ex)
             {
-                message = "Account creation failed:\n" + ex.getMessage();
+                message = "Login failed.\n" + ex.getMessage();
             }
         }
         if(success)
         {
-            message = "CHAT,System,successful\n";
+            message = "CHAT,System,1 1 1 1,successful\n";
             singlecast(dataEvent.server, dataEvent.socket, message);
             Client client = new Client(parts[1], dataEvent.socket);
             clients.put(dataEvent.socket, client);
@@ -228,7 +228,7 @@ public class CommandWorker implements ServerWorker
         }
         else
         {
-            message = "CHAT,System," + message+"\n";
+            message = "CHAT,System,1 1 1 1," + message+"\n";
             singlecast(dataEvent.server, dataEvent.socket, message);
         }
     }
@@ -630,8 +630,16 @@ public class CommandWorker implements ServerWorker
         }
         else
         {
+            String color = "1 1 1 1";
+            if(client.mob != null)
+            {
+                color = client.mob.color;
+            }
+            
             StringBuilder buf = new StringBuilder("CHAT,");
             buf.append(client.displayName);
+            buf.append(',');
+            buf.append(color);
             buf.append(',');
             buf.append(chat);
 
@@ -639,6 +647,7 @@ public class CommandWorker implements ServerWorker
             roomcast(dataEvent.server, buf.toString(), room);
         }
     }
+    
     
     private void registerAccount(ServerDataEvent dataEvent, String command) 
     {
@@ -674,12 +683,12 @@ public class CommandWorker implements ServerWorker
         }
         if(success)
         {
-            message = "CHAT,System,successful\n";
+            message = "CHAT,System,1 1 1 1,successful\n";
             singlecast(dataEvent.server, dataEvent.socket, message);
         }
         else
         {
-            message = "CHAT,System," + message + "\n";
+            message = "CHAT,System,1 1 1 1," + message + "\n";
             singlecast(dataEvent.server, dataEvent.socket, message);
         }
     }

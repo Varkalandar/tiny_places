@@ -11,6 +11,7 @@ local serverIpPopup = require("ui/dialogs/server_ip_popup")
 local chatInputPopup = require("ui/dialogs/chat_input_popup")
 local loginPopup = require("ui/dialogs/login_popup")
 local newAccountPopup = require("ui/dialogs/register_new_popup")
+local chatDisplay = require("ui/chat_display")
 local pixfont = require("ui/pixfont")
 local clientSocket = require("net/client_socket")
 local map = require("map")
@@ -75,7 +76,9 @@ end
 -- end of event handling code
 
 
-local function dummyChatCatcher(name, message)
+local function defaultChatCatcher(name, color, message)
+  
+  chatDisplay.addChatMessage(name, color, message)
 end
 
 
@@ -104,7 +107,8 @@ local function init()
   chatInputPopup.init(mainUi)
   loginPopup.init(mainUi, clientSocket)
   newAccountPopup.init(mainUi, clientSocket)
-
+  chatDisplay.init(mainUi.pixfont)
+  
   mainUi.gameUi = gameUi
   mainUi.editorUi = editorUi
   mainUi.newAccountPopup = newAccountPopup
@@ -229,8 +233,13 @@ local function processCommands(commands)
         
       elseif cmd == "CHAT" then
         local displayName = args()
-        local message = args()
-        mainUi.chatCatcher(displayName, message)
+        local color = args()
+        
+        -- message can contain commas by itself, but the format
+        -- of the leading part of the command it known.
+        -- local message = command:gmatch("w*,w*,.*,(.*)")
+        local message = command:gmatch(".*[0123456789] [0123456789\\.]+,(.*)")
+        mainUi.chatCatcher(displayName, color, message())
         
       elseif cmd == "UPDM" then
         local id = tonumber(args())
@@ -312,16 +321,16 @@ function love.keypressed(key, scancode, isrepeat)
     if love.keyboard.isDown("lshift") or
        love.keyboard.isDown("rshift") then
        tip.inputtext = tip.inputtext .. "\n"
-       print("Beep!")
     else
     
       if mainUi.popup == chatInputPopup then
         mainUi.popup = nil
         tip.inputtext = ""
         map.clientSocket.send("CHAT," .. chatInputPopup.text:gsub("\n", "\\n"))
-
+        chatInputPopup.oldText = chatInputPopup.text
+        chatInputPopup.text = ""
       else
-        if mainUi.popup == nil then
+        if mainUi.popup == nil then          
           mainUi.popup = chatInputPopup
         end
       end
@@ -445,6 +454,11 @@ local function updateConnectStage(dt)
 end
 
 
+local function enableChat()
+
+  mainUi.chatCatcher = defaultChatCatcher
+end
+
 local function draw()
   love.graphics.setColor(1.0, 1.0, 1.0)
   map.drawFloor()
@@ -462,12 +476,14 @@ local function draw()
   if mainUi.popup then
     mainUi.popup.draw()
   end
+  
+  chatDisplay.draw(640, 500)
 end
 
 
-mainUi.init = init;
-mainUi.update = updateConnectStage;
-mainUi.draw = draw;
-
+mainUi.init = init
+mainUi.update = updateConnectStage
+mainUi.draw = draw
+mainUi.enableChat = enableChat
 
 return mainUi;
