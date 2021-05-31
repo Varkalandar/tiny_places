@@ -5,7 +5,9 @@
 -- Date: 2020/03/14
 --
 
+
 local utf8 = require("utf8")
+
 
 local textinput = {}
 
@@ -56,10 +58,16 @@ local function draw(input, xoff, yoff)
   love.graphics.setColor(1, 1, 1)
   love.graphics.rectangle("line", x, y, input.width, input.height)
 
+  local text = input.text
+  
+  if input.password then
+    text = string.rep("*", text:len())
+  end
+
   if input.focused then
-    input.pixfont:drawStringScaled(input.text .. "|", x+4, y+2, 0.25, 0.25)    
+    input.pixfont:drawStringScaled(text .. "|", x+4, y+2, 0.25, 0.25)    
   else
-    input.pixfont:drawStringScaled(input.text, x+4, y+2, 0.25, 0.25)  
+    input.pixfont:drawStringScaled(text, x+4, y+2, 0.25, 0.25)  
   end
 end
 

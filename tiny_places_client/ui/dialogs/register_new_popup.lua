@@ -13,7 +13,7 @@ local container = cf.makeContainer()
 local newAccountPopup = {}
 
 
-local function chatCatcher(name, message)
+local function chatCatcher(name, color, message)
 
   if message == "successful" then
     newAccountPopup.mainUi.popup = nil
@@ -51,11 +51,12 @@ local function init(mainUi, clientSocket)
   newAccountPopup.mainUi = mainUi
   newAccountPopup.clientSocket = clientSocket
   
-  local accountNameInput = cf.makeInput("Test", mainUi.uifont, 220, 110, 360, 32, nil)
+  local accountNameInput = cf.makeInput("", mainUi.uifont, 220, 110, 360, 32, nil)
   container:add(accountNameInput)
   newAccountPopup.accountNameInput = accountNameInput
 
-  local accountPassInput = cf.makeInput("Test", mainUi.uifont, 220, 150, 360, 32, nil)
+  local accountPassInput = cf.makeInput("", mainUi.uifont, 220, 150, 360, 32, nil)
+  accountPassInput.password = true
   container:add(accountPassInput)
   newAccountPopup.accountPassInput = accountPassInput
   

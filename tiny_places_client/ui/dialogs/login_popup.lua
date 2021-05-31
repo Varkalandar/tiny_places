@@ -13,10 +13,11 @@ local container = cf.makeContainer()
 local loginPopup = {}
 
 
-local function loginChatCatcher(name, message)
+local function loginChatCatcher(name, color, message)
 
   if message == "successful" then
     loginPopup.mainUi.popup = nil
+    loginPopup.mainUi.enableChat()
     loginPopup.clientSocket.send("LOAD,lobby")
   else  
     loginPopup.errorMessage = message
@@ -64,6 +65,7 @@ local function init(mainUi, clientSocket)
   loginPopup.accountNameInput = accountNameInput
 
   local accountPassInput = cf.makeInput("Test", mainUi.uifont, 220, 150, 360, 32, nil)
+  accountPassInput.password = true
   container:add(accountPassInput)
   loginPopup.accountPassInput = accountPassInput
   
