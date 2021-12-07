@@ -522,7 +522,8 @@ public class CommandWorker implements ServerWorker
         
         if(room == null)
         {
-            System.err.println("Player " + client.displayName + " creates a new room instance.");
+            System.err.println("Player " + client.displayName + 
+                               " creates a new instance for " + filename);
             
             // room not loaded yet -> load it
             newInstance = true;

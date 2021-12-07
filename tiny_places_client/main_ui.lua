@@ -459,12 +459,13 @@ local function enableChat()
   mainUi.chatCatcher = defaultChatCatcher
 end
 
+
 local function draw()
   love.graphics.setColor(1.0, 1.0, 1.0)
   map.drawFloor()
 
   love.graphics.setColor(1.0, 1.0, 1.0)
-  love.graphics.draw(mainUi.image)
+  -- love.graphics.draw(mainUi.image)
 
   if mainUi.ui then
     mainUi.ui.draw()
