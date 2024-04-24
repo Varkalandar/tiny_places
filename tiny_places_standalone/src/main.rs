@@ -7,7 +7,6 @@ use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
-use piston::Position;
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, 
                     UpdateArgs, UpdateEvent, 
@@ -17,7 +16,6 @@ use piston::window::WindowSettings;
 
 use graphics::{Image, clear};
 use graphics::draw_state::DrawState;
-use graphics::rectangle::square;
 use std::path::Path;
 
 mod item;
