@@ -5,6 +5,7 @@ extern crate piston;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
+use piston::MouseButton;
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
 use piston::event_loop::{EventSettings, Events};
@@ -14,7 +15,7 @@ use piston::input::{RenderArgs, RenderEvent,
                     MouseCursorEvent};
 use piston::window::WindowSettings;
 
-use graphics::{Image, clear};
+use graphics::{Image, Context};
 use graphics::draw_state::DrawState;
 use std::path::Path;
 
@@ -23,7 +24,7 @@ mod map;
 mod mob;
 
 use item::Item;
-use map::Map;
+use map::{Map, MapObject};
 use mob::Mob;
 
 
@@ -105,17 +106,25 @@ impl App {
                     .rect([0.0, 0.0, self.player_texture.get_width() as f64, self.player_texture.get_height() as f64])
                     .color([1.0, 0.8, 0.6, 1.0]);
             p_image.draw(&self.player_texture, &DrawState::new_alpha(), p_tf, gl);
-/*
-            let transform = c
-                .transform
-                .trans(x, y)
-                .rot_rad(rotation)
-                .trans(-25.0, -25.0);
 
-            // Draw a box rotating around the middle of the screen.
-            rectangle(RED, square, transform, gl);
-*/            
-            
+    
+            for deco in &self.map.decorations {
+                let tile = self.map.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
+                let image   = 
+                    Image::new()
+                        .rect([0.0, 0.0, tile.size[0], tile.size[1]])
+                        .color([1.0, 0.8, 0.6, 1.0]);
+                        
+                let rel_pos = vec2_sub(deco.position, self.player.position);        
+                let tf = 
+                    c.transform
+                        .trans(w05, h05)
+                        .trans(rel_pos[0], rel_pos[1] * 0.5)
+                        .scale(0.5, 0.5);
+                image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
+            }
+
+            // self.draw_map(c, gl, w05, h05);
         });
     }
 
@@ -131,6 +140,24 @@ impl App {
     fn button(&mut self, args: &ButtonArgs) {
         println!("Button event {:?}", args);
         
+        if args.button == piston::Button::Mouse(MouseButton::Left) {
+            self.move_player(args);            
+        } else {
+            let deco = self.make_deco();
+            self.map.decorations.push(deco);
+        }
+        
+    }
+
+    
+    fn mouse_cursor(&mut self, args: &[f64; 2]) {
+        // println!("Mouse cursor event {:?}", args);
+        
+        self.mouse_state.position = *args;
+    }
+    
+    
+    fn move_player(&mut self, args: &ButtonArgs) {
         let window_center: Vector2<f64> = [500.0, 375.0]; 
         
         let screen_direction = vec2_sub(self.mouse_state.position, window_center);
@@ -148,14 +175,43 @@ impl App {
         let dest = vec2_add(self.player.position, direction);
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);
+        
+    }
+
+
+    fn make_deco(&mut self) -> MapObject {
+        
+        let rel_mouse = vec2_sub(self.mouse_state.position, [500.0, 375.0]);
+
+        // transform to world coordinates
+        let mut world_pos = [rel_mouse[0], rel_mouse[1] * 2.0];
+        
+        // it is relatrive to player position
+        world_pos = vec2_add(world_pos, self.player.position);
+
+        println!("  creating deco at {:?}, player at {:?}", world_pos, self.player.position);
+
+        let id = 1;
+        MapObject::new(id, world_pos, 1.0)
     }
 
     
-    fn mouse_cursor(&mut self, args: &[f64; 2]) {
-        // println!("Mouse cursor event {:?}", args);
+    /*
+    fn draw_map(self, c: Context, gl: &mut GlGraphics, w05: f64, h05: f64) {
         
-        self.mouse_state.position = *args;
+        // let tf = c.transform.trans(w05, h05).scale(0.5, 0.5);
+        let tf = c.transform.trans(0.0, 0.0);
+
+        for deco in self.map.decorations {
+            let tile = self.map.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
+            let image   = 
+                Image::new()
+                    .rect([0.0, 0.0, tile.size[0], tile.size[1]])
+                    .color([1.0, 0.8, 0.6, 1.0]);
+            image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
+        }
     }
+    */
 }
 
 
