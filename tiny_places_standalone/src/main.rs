@@ -17,14 +17,17 @@ use piston::window::WindowSettings;
 
 use graphics::draw_state::DrawState;
 use std::path::Path;
+use std::rc::Rc;
 
 mod item;
 mod map;
 mod mob;
+mod ui;
 
 use item::Item;
 use map::{Map, MapObject, Tile};
 use mob::Mob;
+use ui::UI;
 
 
 struct MouseState {
@@ -42,19 +45,21 @@ impl MouseState {
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     mouse_state: MouseState,
-    rotation: f64,  // Rotation for the square.
     
     map_texture: Texture,
     player_texture: Texture,
     
     map: Map,
     player: Mob,
+
+    ui: UI,
 }
 
 
 impl App {
     
     fn new(opengl: OpenGL) -> App {
+
         
         let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
@@ -62,22 +67,26 @@ impl App {
         let player = Mob::new(1000.0, 1000.0);
         
         App {        
+
             gl: GlGraphics::new(opengl),
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
-            rotation: 0.0,
             map_texture: texture,
             player_texture: player_texture,
 
             player: player,
             map: Map::new(),
+            
+            ui: UI::new(),
         }
     }
 
     
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
+        
+        let viewport = &args.viewport();
 
-        self.gl.draw(args.viewport(), |c, gl| {
+        self.gl.draw(*viewport, |c, gl| {
 
             fn build_transform(c: Context, thing: &MapObject, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
                 let rel_pos_x = thing.position[0] - player_position[0];        
@@ -139,14 +148,14 @@ impl App {
 
             // draw clouds
             // TODO
+            
         });
+
+        self.ui.draw(viewport, &mut self.gl);
     }
 
 
     fn update(&mut self, args: &UpdateArgs) {
-        // Rotate 2 radians per second.
-        self.rotation += 2.0 * args.dt;
-        
         self.player.move_by_time(args.dt);
     }
 
@@ -161,9 +170,15 @@ impl App {
         if args.state == ButtonState::Release {
             if args.button == piston::Button::Mouse(MouseButton::Left) {
                 self.move_player();            
-            } else {
+            }
+            
+            if args.button == piston::Button::Mouse(MouseButton::Right) {
                 let deco = self.make_deco();
                 self.map.decorations.push(deco);
+            }
+            
+            if args.button == piston::Button::Keyboard(piston::Key::Space) {
+                self.show_test_dialog();       
             }        
         }
     }
@@ -230,6 +245,15 @@ impl App {
         }
     }
     */
+    
+    fn show_test_dialog(&mut self) {
+        let mut cont = self.ui.make_container(100, 100, 600, 400);
+        let button = self.ui.make_button(100, 100, 300, 200);
+        
+        cont.children.push(Rc::new(button));
+        
+        self.ui.root = Some(cont);
+    }
 }
 
 
