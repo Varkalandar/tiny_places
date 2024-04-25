@@ -5,7 +5,7 @@ extern crate piston;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
-use piston::MouseButton;
+use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
 use piston::event_loop::{EventSettings, Events};
@@ -15,7 +15,6 @@ use piston::input::{RenderArgs, RenderEvent,
                     MouseCursorEvent};
 use piston::window::WindowSettings;
 
-use graphics::{Image, Context};
 use graphics::draw_state::DrawState;
 use std::path::Path;
 
@@ -24,14 +23,21 @@ mod map;
 mod mob;
 
 use item::Item;
-use map::{Map, MapObject};
+use map::{Map, MapObject, Tile};
 use mob::Mob;
 
 
 struct MouseState {
-    position: Vector2<f64>,    
+    position: Vector2<f64>,
+    drag_start: Vector2<f64>,    
 }
 
+impl MouseState {
+    fn record_drag_start(&mut self) -> Vector2<f64> {
+        self.drag_start = self.position;
+        self.drag_start
+    }
+}
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
@@ -57,7 +63,7 @@ impl App {
         
         App {        
             gl: GlGraphics::new(opengl),
-            mouse_state: MouseState{position: [0.0, 0.0],},
+            mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
             rotation: 0.0,
             map_texture: texture,
             player_texture: player_texture,
@@ -71,60 +77,68 @@ impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        // const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
-
-        // let square = rectangle::square(0.0, 0.0, 50.0);
-        // let rotation = self.rotation;
-        // let (x, y) = (args.window_size[0] / 2.0, args.window_size[1] / 2.0);
-
         self.gl.draw(args.viewport(), |c, gl| {
+
+            fn build_transform(c: Context, thing: &MapObject, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
+                let rel_pos_x = thing.position[0] - player_position[0];        
+                let rel_pos_y = thing.position[1] - player_position[1];        
+                c.transform
+                    .trans(window_center[0], window_center[1])
+                    .trans(rel_pos_x, rel_pos_y * 0.5)
+                    .scale(0.5, 0.5)
+            }
+
+            fn build_image(tile: &Tile) -> Image {
+                Image::new()
+                    .rect([0.0, 0.0, tile.size[0], tile.size[1]])
+                    .color([1.0, 0.8, 0.6, 1.0])        
+            }
+
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);
 
-            let w05 = args.window_size[0] * 0.5;
-            let h05 = args.window_size[1] * 0.5;
+            let player_position = &self.player.position;
+            let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
-            let offset_x = w05 * 0.5 - self.player.position[0];
-            let offset_y = h05 - self.player.position[1] * 0.5;
+            let offset_x = window_center[0] * 0.5 - player_position[0];
+            let offset_y = window_center[1] - player_position[1] * 0.5;
 
-            // The map is display 2 times as big as source image to conserve memory
+            // The map is displayed 2 times as big as source image to conserve memory
             // for the map background a high detail level is not needed, that is
             // provided by decorations will are drawn in full resolution
             let map_tf = c.transform.trans(offset_x, offset_y).scale(2.0, 2.0);
-//            image(&self.map_texture, map_tf, gl);
             let m_image   = 
                 Image::new()
                     .rect([0.0, 0.0, self.map_texture.get_width() as f64, self.map_texture.get_height() as f64])
                     .color([0.8, 0.8, 0.8, 1.0]);
             m_image.draw(&self.map_texture, &DrawState::new_alpha(), map_tf, gl);
 
-
-            let p_tf = c.transform.trans(w05, h05).scale(0.5, 0.5);
-//            image(&self.player_texture, p_tf, gl);
+            let p_tf = c.transform.trans(window_center[0], window_center[1]).scale(0.5, 0.5);
             let p_image   = 
                 Image::new()
                     .rect([0.0, 0.0, self.player_texture.get_width() as f64, self.player_texture.get_height() as f64])
                     .color([1.0, 0.8, 0.6, 1.0]);
             p_image.draw(&self.player_texture, &DrawState::new_alpha(), p_tf, gl);
 
-    
+            // draw ground decorations (flat)
+            // TODO
+
+            // draw shadows (flat)
+            // TODO
+            
+            // draw decorations (upright things)
             for deco in &self.map.decorations {
                 let tile = self.map.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
-                let image   = 
-                    Image::new()
-                        .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-                        .color([1.0, 0.8, 0.6, 1.0]);
-                        
-                let rel_pos = vec2_sub(deco.position, self.player.position);        
-                let tf = 
-                    c.transform
-                        .trans(w05, h05)
-                        .trans(rel_pos[0], rel_pos[1] * 0.5)
-                        .scale(0.5, 0.5);
+                let image   = build_image(tile);
+                let tf = build_transform(c, deco, player_position, &window_center);        
                 image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
             }
 
-            // self.draw_map(c, gl, w05, h05);
+            // draw lights
+            // TODO
+
+            // draw clouds
+            // TODO
         });
     }
 
@@ -140,15 +154,20 @@ impl App {
     fn button(&mut self, args: &ButtonArgs) {
         println!("Button event {:?}", args);
         
-        if args.button == piston::Button::Mouse(MouseButton::Left) {
-            self.move_player(args);            
-        } else {
-            let deco = self.make_deco();
-            self.map.decorations.push(deco);
+        if args.state == ButtonState::Press {
+            self.mouse_state.record_drag_start();
         }
         
+        if args.state == ButtonState::Release {
+            if args.button == piston::Button::Mouse(MouseButton::Left) {
+                self.move_player();            
+            } else {
+                let deco = self.make_deco();
+                self.map.decorations.push(deco);
+            }        
+        }
     }
-
+    
     
     fn mouse_cursor(&mut self, args: &[f64; 2]) {
         // println!("Mouse cursor event {:?}", args);
@@ -157,7 +176,7 @@ impl App {
     }
     
     
-    fn move_player(&mut self, args: &ButtonArgs) {
+    fn move_player(&mut self) {
         let window_center: Vector2<f64> = [500.0, 375.0]; 
         
         let screen_direction = vec2_sub(self.mouse_state.position, window_center);
@@ -177,7 +196,6 @@ impl App {
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);
         
     }
-
 
     fn make_deco(&mut self) -> MapObject {
         

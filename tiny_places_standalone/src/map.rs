@@ -1,13 +1,11 @@
-use std::collections::HashMap;
-
 use vecmath::Vector2;
 
 #[path = "tileset.rs"]
 mod tileset;
 
-use tileset::TileSet;
+pub use tileset::{TileSet, Tile};
 
-use self::tileset::Tile;
+
 
 pub struct Map {
     pub decoration_tiles: TileSet,
@@ -21,11 +19,6 @@ impl Map {
             decoration_tiles: TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica"),
             decorations: Vec::new(),
         }
-    }
-    
-    pub fn add_decoration(&mut self, id: usize, position: Vector2<f64>, scale: f64) {
-        let deco = MapObject::new(id, position, scale);        
-        self.decorations.push(deco);    
     }
 }
 

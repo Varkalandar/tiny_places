@@ -1,6 +1,6 @@
 use vecmath::Vector2;
-use std::{collections::HashMap, fs::read_to_string, path::{Path, PathBuf}, str::Lines};
-use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
+use std::{collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
+use opengl_graphics::{Texture, TextureSettings};
 
 pub struct Tile {
     pub id: usize,
