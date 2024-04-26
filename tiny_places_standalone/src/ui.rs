@@ -1,10 +1,15 @@
 #[path = "ui/components.rs"]
 mod components;
+
+#[path = "ui/font.rs"]
+mod font;
+
 use std::rc::Rc;
 
 use components::{UiHead, UiButton};
-use graphics::Viewport;
+use font::UiFont;
 use opengl_graphics::GlGraphics;
+use graphics::Viewport;
 
 
 pub struct UiArea {
@@ -20,11 +25,13 @@ pub struct UiComponent {
     pub head: Box<dyn UiHead>,    
 }
 
+
 pub struct UiContainer {
     pub area: UiArea, 
     
     pub children: Vec<Rc<UiComponent>>,
 }
+
 
 impl UiContainer {
     pub fn draw(&self, viewport: &Viewport, gl: &mut GlGraphics) {
@@ -37,24 +44,19 @@ impl UiContainer {
 }
 
 
-/*
-impl UiComponent {
-    fn is_inside(&self, x: i32, y:i32) -> bool {
-        x >= self.x && y >= self.y && x <= self.x + self.w && y <= self.y + self.h  
-    }
-}
-*/
-
 pub struct UI
 {
     pub root: Option<UiContainer>,
+    font: UiFont,
 }
 
 
 impl UI {
     pub fn new() -> UI {
+        
         UI { 
             root: None,
+            font: UiFont::new(),
         }
     }
 
@@ -71,6 +73,7 @@ impl UI {
             children: Vec::new(),
         }        
     }
+    
 
     pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
         UiComponent {
@@ -84,6 +87,7 @@ impl UI {
             head: Box::new(UiButton {} ),
         }        
     }
+    
     
     pub fn draw(&self, viewport: &Viewport, gl: &mut GlGraphics) {
         match &self.root {
