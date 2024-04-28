@@ -85,9 +85,9 @@ impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
         
-        let viewport = &args.viewport();
+        let viewport = args.viewport();
 
-        self.gl.draw(*viewport, |c, gl| {
+        self.gl.draw(viewport, |c, gl| {
 
             fn build_transform(c: Context, thing: &MapObject, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
                 let rel_pos_x = thing.position[0] - player_position[0];        

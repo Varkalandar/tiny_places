@@ -1,13 +1,9 @@
 #[path = "ui/components.rs"]
 mod components;
 
-#[path = "ui/font.rs"]
-mod font;
-
 use std::rc::Rc;
 
-use components::{UiHead, UiButton};
-use font::UiFont;
+use components::{UiHead, UiButton, UiFont};
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
@@ -34,7 +30,7 @@ pub struct UiContainer {
 
 
 impl UiContainer {
-    pub fn draw(&self, viewport: &Viewport, gl: &mut GlGraphics) {
+    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics) {
         for i in 0..self.children.len() {
             let child = &self.children[i];    
             let a = &child.area;
@@ -47,7 +43,7 @@ impl UiContainer {
 pub struct UI
 {
     pub root: Option<UiContainer>,
-    font: UiFont,
+    font: Rc<UiFont>,
 }
 
 
@@ -55,8 +51,9 @@ impl UI {
     pub fn new() -> UI {
         
         UI { 
+
             root: None,
-            font: UiFont::new(14),
+            font: Rc::new(UiFont::new(14)),
         }
     }
 
@@ -76,6 +73,10 @@ impl UI {
     
 
     pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
+        let button = UiButton {
+            font: self.font.clone(),    
+        };
+        
         UiComponent {
             area: UiArea {
                 x, 
@@ -84,12 +85,12 @@ impl UI {
                 h,                
             }, 
         
-            head: Box::new(UiButton {} ),
+            head: Box::new(button),
         }        
     }
     
     
-    pub fn draw(&self, viewport: &Viewport, gl: &mut GlGraphics) {
+    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics) {
         match &self.root {
             None => { }
             Some(cont) => {
