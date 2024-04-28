@@ -56,7 +56,7 @@ impl UI {
         
         UI { 
             root: None,
-            font: UiFont::new(),
+            font: UiFont::new(14),
         }
     }
 
