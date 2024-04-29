@@ -22,12 +22,16 @@ use std::rc::Rc;
 mod item;
 mod map;
 mod mob;
+mod editor;
 mod ui;
+mod tileset;
 
-use item::Item;
-use map::{Map, MapObject, Tile};
-use mob::Mob;
-use ui::UI;
+use crate::item::Item;
+use crate::map::{Map, MapObject};
+use crate::mob::Mob;
+use crate::ui::UI;
+use crate::editor::MapEditor;
+use crate::tileset::{TileSet, Tile};
 
 struct MouseState {
     position: Vector2<f64>,
@@ -52,19 +56,22 @@ pub struct App {
     player: Mob,
 
     ui: UI,
+
+    editor: MapEditor,
+    decoration_tiles: TileSet,
 }
 
 
 impl App {
     
-    fn new(opengl: OpenGL) -> App {
-
+    fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
         
         let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
 
         let player = Mob::new(1000.0, 1000.0);
-        
+        let ui = UI::new(window_size);
+
         App {        
 
             gl: GlGraphics::new(opengl),
@@ -75,7 +82,9 @@ impl App {
             player: player,
             map: Map::new(),
             
-            ui: UI::new(),
+            ui,
+            editor: MapEditor::new(),
+            decoration_tiles: TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica"),
         }
     }
 
@@ -136,7 +145,7 @@ impl App {
             
             // draw decorations (upright things)
             for deco in &self.map.decorations {
-                let tile = self.map.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
+                let tile = self.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
                 let image   = build_image(tile);
                 let tf = build_transform(c, deco, player_position, &window_center);        
                 image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
@@ -159,7 +168,7 @@ impl App {
     }
 
 
-    fn button<'a>(&mut self, args: &ButtonArgs) {
+    fn button(&mut self, args: &ButtonArgs) {
         println!("Button event {:?}", args);
         
         if args.state == ButtonState::Press {
@@ -190,10 +199,11 @@ impl App {
                 }
                 
                 if args.button == piston::Button::Keyboard(piston::Key::Space) {
-                    self.show_test_dialog();       
+                    // self.show_test_dialog();
+                    let cont = self.editor.make_tile_selector(&self.ui, &self.decoration_tiles);
+                    self.ui.root = Some(cont);
                 }        
             }
-    
         }
     }
     
@@ -274,22 +284,20 @@ impl App {
 
 fn main() {
     
-    let mut item = Item::new();
-    item.name = "First Item".to_string();
-    item.print_debug();
-    
+    let window_size = [1000, 750];
+
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
 
     // Create a Glutin window.
-    let mut window: Window = WindowSettings::new("Rusty Tiny Places", [1000, 750])
+    let mut window: Window = WindowSettings::new("Rusty Tiny Places", window_size)
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
     // Create a new game and run it.
-    let mut app = App::new(opengl);
+    let mut app = App::new(opengl, window_size);
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {

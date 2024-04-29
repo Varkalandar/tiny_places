@@ -61,7 +61,7 @@ impl UiFont {
     }
 
 
-    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, text: &str)
+    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, text: &str, color: &[f32; 4])
     {
         gl.draw(viewport, |c, gl| {
 
@@ -90,7 +90,7 @@ impl UiFont {
 
                 let image = 
                     Image
-                    ::new_color([1.0, 1.0, 1.0, 1.0])
+                    ::new_color(*color)
                     .src_rect([glyph.tex_x as f64, glyph.tex_y as f64, glyph.bm_w, glyph.bm_h]);
                                     
                 image.draw(

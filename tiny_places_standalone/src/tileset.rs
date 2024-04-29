@@ -1,5 +1,5 @@
 use vecmath::Vector2;
-use std::{collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
+use std::{rc::Rc, collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
 use opengl_graphics::{Texture, TextureSettings};
 
 pub struct Tile {
@@ -7,11 +7,12 @@ pub struct Tile {
     pub size: Vector2<f64>,
     pub foot: Vector2<f64>,
     pub tex: Texture,
+    pub name: String,
 }
 
 
 pub struct TileSet {
-     pub tiles_by_id: HashMap<usize, Tile>,
+     pub tiles_by_id: HashMap<usize, Rc<Tile>>,
      pub tiles_order_to_id: HashMap<usize, usize>,    
 }
 
@@ -49,7 +50,8 @@ impl TileSet {
                 if tile_opt.is_some() {
                     let tile = tile_opt.unwrap();
                     let id = tile.id;
-                    tileset.tiles_by_id.insert(id, tile);
+
+                    tileset.tiles_by_id.insert(id, Rc::new(tile));
                     tileset.tiles_order_to_id.insert(ordinal, id);
                 }
                 
@@ -95,7 +97,8 @@ fn load_tile(path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
             id,
             size: [width, height],
             foot: [foot_x, foot_y],
-            tex,            
+            tex,
+            name: name.to_string(),            
         });      
     }
 

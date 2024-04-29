@@ -1,12 +1,16 @@
 use std::rc::Rc;
 
-use graphics::{draw_state::DrawState, Rectangle, Viewport};
+use graphics::{draw_state::DrawState, Rectangle, Viewport, Image};
 use opengl_graphics::GlGraphics;
 use piston::ButtonArgs;
 
-mod font;
-pub use font::UiFont;
 
+#[path = "../tileset.rs"]
+mod tileset;
+mod font;
+
+pub use font::UiFont;
+use crate::tileset::Tile;
 
 pub struct ButtonEvent<'a> {
     pub args: &'a ButtonArgs,
@@ -46,6 +50,47 @@ impl UiHead for UiButton {
         let label_x = x + (w - label_width) / 2;
         let label_y = y + (h - self.font.lineheight) / 2;
 
-        self.font.draw(viewport, gl, label_x, label_y, &self.label);
+        self.font.draw(viewport, gl, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
+    } 
+}
+
+
+
+pub struct UiIcon {
+    pub font: Rc<UiFont>,
+    pub label: String,
+    pub tile: Rc<Tile>,
+}
+
+
+impl UiHead for UiIcon {
+    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, w: i32, h: i32) {
+
+        gl.draw(viewport, |c, gl| {
+
+            let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
+            rect.draw([x as f64, y as f64, w as f64, h as f64], &DrawState::new_alpha(), c.transform, gl);
+        
+
+            let tw = self.tile.size[0] * 0.25;
+            let th = self.tile.size[1] * 0.25;
+
+            let y_base = y + h - 26; // space for a label below the icon image
+
+            let image_x = x + (w - tw as i32) / 2;
+            let image_y = y_base - th as i32;
+
+            let image   = 
+                Image::new()
+                    .rect([image_x as f64, image_y as f64, tw, th])
+                    .color([1.0, 1.0, 1.0, 1.0]);
+            image.draw(&self.tile.tex, &DrawState::new_alpha(), c.transform, gl);
+        });
+
+        let label_width = self.font.calc_string_width(&self.label) as i32;
+        let label_x = x + (w - label_width) / 2;
+        let label_y = y + h - self.font.lineheight;
+
+        self.font.draw(viewport, gl, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
 }

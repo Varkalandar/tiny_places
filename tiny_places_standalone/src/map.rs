@@ -1,14 +1,7 @@
 use vecmath::Vector2;
 
-#[path = "tileset.rs"]
-mod tileset;
-
-pub use tileset::{TileSet, Tile};
-
-
 
 pub struct Map {
-    pub decoration_tiles: TileSet,
     pub decorations: Vec<MapObject>,
 }
 
@@ -16,7 +9,6 @@ pub struct Map {
 impl Map {
     pub fn new() -> Map {        
         Map {
-            decoration_tiles: TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica"),
             decorations: Vec::new(),
         }
     }

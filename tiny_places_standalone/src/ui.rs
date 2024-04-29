@@ -1,13 +1,17 @@
 #[path = "ui/components.rs"]
 mod components;
 
+#[path = "tileset.rs"]
+mod tileset;
+
 use std::rc::Rc;
 
-use components::{UiHead, UiButton, UiFont};
-pub use components::ButtonEvent;
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
+pub use components::ButtonEvent;
+use components::{UiHead, UiButton, UiIcon, UiFont};
+use crate::tileset::Tile;
 
 pub struct UiArea {
     pub x: i32, 
@@ -41,7 +45,8 @@ impl UiContainer {
         for i in 0..self.children.len() {
             let child = &self.children[i];    
             let a = &child.area;
-            child.head.draw(viewport, gl, a.x, a.y, a.w, a.h);
+
+            child.head.draw(viewport, gl, self.area.x + a.x, self.area.y + a.y, a.w, a.h);
         }
     }
 
@@ -62,17 +67,21 @@ impl UiContainer {
 pub struct UI
 {
     pub root: Option<UiContainer>,
-    font: Rc<UiFont>,
+    font_10: Rc<UiFont>,
+    font_14: Rc<UiFont>,
+    
+    pub window_size: [u32; 2]
 }
 
 
 impl UI {
-    pub fn new() -> UI {
+    pub fn new(window_size: [u32; 2]) -> UI {
         
         UI { 
-
+            window_size,
             root: None,
-            font: Rc::new(UiFont::new(14)),
+            font_10: Rc::new(UiFont::new(10)),
+            font_14: Rc::new(UiFont::new(14)),
         }
     }
 
@@ -93,7 +102,7 @@ impl UI {
 
     pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
         let button = UiButton {
-            font: self.font.clone(),
+            font: self.font_14.clone(),
             label: "Hello World!".to_string(),    
         };
         
@@ -109,6 +118,26 @@ impl UI {
         }        
     }
     
+
+    pub fn make_icon(&self, x: i32, y: i32, w: i32, h: i32, tile: &Rc<Tile>, label: &str) -> UiComponent {
+        let icon = UiIcon {
+            font: self.font_10.clone(),
+            label: label.to_string(),
+            tile: tile.clone(),    
+        };
+        
+        UiComponent {
+            area: UiArea {
+                x, 
+                y,
+                w,
+                h,                
+            }, 
+        
+            head: Box::new(icon),
+        }        
+    }
+
     
     pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics) {
         match &self.root {
@@ -131,4 +160,3 @@ impl UI {
         false
     }
 }
-
