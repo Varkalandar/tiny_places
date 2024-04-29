@@ -1,4 +1,3 @@
-use core::cmp::max;
 use std::collections::HashMap;
 
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
@@ -10,16 +9,16 @@ struct UiGlyph {
     pub metrics: freetype::GlyphMetrics,
     tex_x: u32,
     tex_y: u32,
-    advance: i32,
-    top: i32, // pixels above the baseline
-    left: i32, // left-right shift
-    bm_w: i32,
-    bm_h: i32,
+    advance: f64,
+    top: f64, // pixels above the baseline
+    left: f64, // left-right shift
+    bm_w: f64,
+    bm_h: f64,
 }
 
 pub struct UiFont {
     face: freetype::Face,
-    lineheight: u32,
+    pub lineheight: i32,
     
     glyphs: HashMap<usize, UiGlyph>,
     texture: Texture,
@@ -29,13 +28,15 @@ impl UiFont {
     pub fn new(size: u32) -> UiFont {
         let ft = freetype::Library::init().unwrap();
         let font = "resources/font/FiraSans-Regular.ttf";
-        let mut face = ft.new_face(font, 0).unwrap();
+        let face = ft.new_face(font, 0).unwrap();
         face.set_pixel_sizes(0, size).unwrap();
 
-        let lineheight = ((face.ascender() + face.descender()) / 32) as u32; // TODO: line gap?
+        let lineheight = ((face.ascender() - face.descender()) / 64) as i32 + 5; // TODO: line gap?
+
+        println!("Ascend {} descend {}", face.ascender(), face.descender());
 
         let mut glyphs = HashMap::new();
-        let texture = create_glyphs(&face, &mut glyphs, lineheight);
+        let texture = create_glyphs(&face, &mut glyphs, lineheight as u32);
 
         UiFont {
             face,
@@ -43,6 +44,20 @@ impl UiFont {
             glyphs,
             texture,
         }        
+    }
+
+
+    pub fn calc_string_width(&self, text: &str) -> f64
+    {
+        let mut w = 0.0;
+        
+        for ch in text.chars() {
+            let idx = ch as usize;
+            let glyph = self.glyphs.get(&idx).unwrap();
+            w += glyph.advance;                
+        }
+
+        w
     }
 
 
@@ -76,17 +91,16 @@ impl UiFont {
                 let image = 
                     Image
                     ::new_color([1.0, 1.0, 1.0, 1.0])
-                    .src_rect([glyph.tex_x as f64, glyph.tex_y as f64, glyph.bm_w as f64, glyph.bm_h as f64]);
+                    .src_rect([glyph.tex_x as f64, glyph.tex_y as f64, glyph.bm_w, glyph.bm_h]);
                                     
                 image.draw(
                     &self.texture,
                     &c.draw_state,
-                    c.transform.trans(xp + glyph.left as f64, yp - glyph.top as f64),
+                    c.transform.trans(xp + glyph.left, yp - glyph.top),
                     gl
                 );
                 
-                xp += glyph.advance as f64;                
-    
+                xp += glyph.advance;                
             }
         });
     }
@@ -132,15 +146,15 @@ fn create_glyphs(face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, li
                 metrics: m,
                 tex_x: cursor.0,
                 tex_y: cursor.1,
-                advance: (m.horiAdvance / 64) as i32,
-                top: gs.bitmap_top(),
-                left: gs.bitmap_left(),
-                bm_w: bitmap.width(),
-                bm_h: bitmap.rows(),
+                advance: m.horiAdvance as f64 / 64.0,
+                top: gs.bitmap_top() as f64,
+                left: gs.bitmap_left() as f64,
+                bm_w: bitmap.width() as f64,
+                bm_h: bitmap.rows() as f64,
             };
 
             let left = gs.bitmap_left();
-            println!("glyph {} has advance={}, ascend={}, left={}", idx, ug.advance / 64, ascend, left);
+            println!("glyph {} has advance={}, ascend={}, left={}", idx, ug.advance / 64.0, ascend, left);
             
             cursor = convert_bitmap(&mut buffer, &bitmap, cursor, lineheight);
 
@@ -167,11 +181,12 @@ fn convert_bitmap(buffer: &mut Vec<u8>, bitmap: &freetype::Bitmap,cursor: (u32, 
     for y in 0..bh {
         for x in 0..bw {
             let idx = (y * bp + x) as usize;
-            buffer_setpix(buffer, xp + x, yp + y, bb[idx])                
+            let alpha = (bb[idx] as f64 / 255.0).powf(0.75) * 255.0;
+            buffer_setpix(buffer, xp + x, yp + y, alpha as u8)                
         }
     }
 
-    // debug
+    // debug, print glyph on stdout
     /*
     for y in 0..bh {
         for x in 0..bw {

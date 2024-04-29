@@ -16,7 +16,6 @@ use piston::input::{RenderArgs, RenderEvent,
                     MouseCursorEvent};
 use piston::window::WindowSettings;
 
-use graphics::draw_state::DrawState;
 use std::path::Path;
 use std::rc::Rc;
 
@@ -29,7 +28,6 @@ use item::Item;
 use map::{Map, MapObject, Tile};
 use mob::Mob;
 use ui::UI;
-
 
 struct MouseState {
     position: Vector2<f64>,
@@ -161,26 +159,41 @@ impl App {
     }
 
 
-    fn button(&mut self, args: &ButtonArgs) {
+    fn button<'a>(&mut self, args: &ButtonArgs) {
         println!("Button event {:?}", args);
         
         if args.state == ButtonState::Press {
             self.mouse_state.record_drag_start();
         }
-        
-        if args.state == ButtonState::Release {
-            if args.button == piston::Button::Mouse(MouseButton::Left) {
-                self.move_player();            
+
+        // first pass the even to the UI. if there is a component
+        // trigered it will consume the event. Events which are not
+        // consumed by the UI will be handed to the game core
+
+        let event = ui::ButtonEvent {
+            args,
+            mx: self.mouse_state.position[0] as i32,
+            my: self.mouse_state.position[1] as i32,
+        };
+
+        let consumed = self.ui.handle_button_event(&event);
+
+        if !consumed {
+            if args.state == ButtonState::Release {
+                if args.button == piston::Button::Mouse(MouseButton::Left) {
+                    self.move_player();            
+                }
+                
+                if args.button == piston::Button::Mouse(MouseButton::Right) {
+                    let deco = self.make_deco();
+                    self.map.decorations.push(deco);
+                }
+                
+                if args.button == piston::Button::Keyboard(piston::Key::Space) {
+                    self.show_test_dialog();       
+                }        
             }
-            
-            if args.button == piston::Button::Mouse(MouseButton::Right) {
-                let deco = self.make_deco();
-                self.map.decorations.push(deco);
-            }
-            
-            if args.button == piston::Button::Keyboard(piston::Key::Space) {
-                self.show_test_dialog();       
-            }        
+    
         }
     }
     

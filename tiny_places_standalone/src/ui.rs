@@ -4,6 +4,7 @@ mod components;
 use std::rc::Rc;
 
 use components::{UiHead, UiButton, UiFont};
+pub use components::ButtonEvent;
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
@@ -13,6 +14,12 @@ pub struct UiArea {
     pub y: i32,
     pub w: i32,
     pub h: i32,
+}
+
+impl UiArea {
+    fn contains(&self, x: i32, y:i32) -> bool {
+        x >= self.x && y >= self.y && x <= self.x + self.w && y <= self.y + self.h  
+    }
 }
 
 
@@ -37,6 +44,18 @@ impl UiContainer {
             child.head.draw(viewport, gl, a.x, a.y, a.w, a.h);
         }
     }
+
+    pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
+        for child in &self.children {
+            if child.area.contains(event.mx, event.my) {
+
+            }
+        }
+        
+
+        false
+    }
+
 }
 
 
@@ -74,7 +93,8 @@ impl UI {
 
     pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
         let button = UiButton {
-            font: self.font.clone(),    
+            font: self.font.clone(),
+            label: "Hello World!".to_string(),    
         };
         
         UiComponent {
@@ -97,6 +117,18 @@ impl UI {
                 cont.draw(viewport, gl);
             }
         }
+    }
+
+    pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
+
+        match &self.root {
+            None => { }
+            Some(cont) => {
+                cont.handle_button_event(event);
+            }
+        }
+
+        false
     }
 }
 
