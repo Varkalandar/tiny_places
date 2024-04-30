@@ -13,12 +13,14 @@ pub use components::ButtonEvent;
 use components::{UiHead, UiButton, UiIcon, UiFont};
 use crate::tileset::Tile;
 
+
 pub struct UiArea {
     pub x: i32, 
     pub y: i32,
     pub w: i32,
     pub h: i32,
 }
+
 
 impl UiArea {
     fn contains(&self, x: i32, y:i32) -> bool {
@@ -28,8 +30,9 @@ impl UiArea {
 
 
 pub struct UiComponent {
-    pub area: UiArea, 
-    pub head: Box<dyn UiHead>,    
+    pub area: UiArea,
+    pub userdata: usize, 
+    pub head: Rc<dyn UiHead>,    
 }
 
 
@@ -50,22 +53,23 @@ impl UiContainer {
         }
     }
 
-    pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
+    pub fn handle_button_event(&self, event: &ButtonEvent) -> Option<&UiComponent> {
 
         // println!("Container handles button event");
 
         for child in &self.children {
-            // println!("click at {}, {} area {}, {}, {}, {}",
-            //    event.mx, event.my, child.area.x, child.area.y, child.area.w, child.area.h);
-            if child.area.contains(event.mx - self.area.x, event.my - self.area.y) {
-               // println!("Found a child to handle event");
-                if child.head.handle_button_event(event) {
-                    return true;
-                }        
+            let rel_x = event.mx - self.area.x;
+            let rel_y = event.my - self.area.y;
+
+            println!("click at relpos {}, {} area {}, {}, {}, {}",
+                rel_x, rel_y, child.area.x, child.area.y, child.area.w, child.area.h);
+            if child.area.contains(rel_x, rel_y) {
+                println!("Found a child to handle event");
+                return Some(&child);
             }
         }
 
-        false
+        None
     }
 }
 
@@ -106,10 +110,10 @@ impl UI {
     }
     
 
-    pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
+    pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32, label: &str, userdata: usize) -> UiComponent {
         let button = UiButton {
             font: self.font_14.clone(),
-            label: "Hello World!".to_string(),    
+            label: label.to_string(),    
         };
         
         UiComponent {
@@ -119,33 +123,31 @@ impl UI {
                 w,
                 h,                
             }, 
-        
-            head: Box::new(button),
+            userdata,
+            head: Rc::new(button),
         }        
     }
-    
 
-    pub fn make_icon<F>(&self, x: i32, y: i32, w: i32, h: i32, 
-                     tile: &Rc<Tile>, label: &str,
-                     callback: F, userdata: usize) -> UiComponent where F: Fn(usize) -> usize + 'static {
+
+    pub fn make_icon(&self, x: i32, y: i32, w: i32, h: i32, 
+                     tile: &Rc<Tile>, label: &str, userdata: usize) -> Rc<UiComponent> {
         let icon = UiIcon {
             font: self.font_10.clone(),
             label: label.to_string(),
             tile: tile.clone(),
-            callback,
             userdata,
         };
         
-        UiComponent {
+        Rc::new(UiComponent {
             area: UiArea {
                 x, 
                 y,
                 w,
                 h,                
             }, 
-        
-            head: Box::new(icon),
-        }        
+            userdata,
+            head: Rc::new(icon),
+        })        
     }
 
     
@@ -158,16 +160,16 @@ impl UI {
         }
     }
 
-    pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
+    pub fn handle_button_event(&self, event: &ButtonEvent) -> Option<&UiComponent> {
 
         match &self.root {
             None => { 
             }
             Some(cont) => {
-                cont.handle_button_event(event);
+                return cont.handle_button_event(event);
             }
         }
 
-        false
+        None
     }
 }

@@ -17,7 +17,6 @@ use piston::input::{RenderArgs, RenderEvent,
 use piston::window::WindowSettings;
 
 use std::path::Path;
-use std::rc::Rc;
 
 mod item;
 mod map;
@@ -26,7 +25,6 @@ mod editor;
 mod ui;
 mod tileset;
 
-use crate::item::Item;
 use crate::map::{Map, MapObject};
 use crate::mob::Mob;
 use crate::ui::UI;
@@ -108,7 +106,7 @@ impl App {
             fn build_image(tile: &Tile) -> Image {
                 Image::new()
                     .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-                    .color([1.0, 0.8, 0.6, 1.0])        
+                    .color([1.0, 1.0, 1.0, 1.0])        
             }
 
             // Clear the screen.
@@ -185,27 +183,40 @@ impl App {
             my: self.mouse_state.position[1] as i32,
         };
 
-        let consumed = self.ui.handle_button_event(&event);
+        if args.state == ButtonState::Release {
+            let comp = self.ui.handle_button_event(&event);
 
-        if !consumed {
-            if args.state == ButtonState::Release {
-                if args.button == piston::Button::Mouse(MouseButton::Left) {
-                    self.move_player();            
+            match comp {
+                None => {
+                    if args.button == piston::Button::Mouse(MouseButton::Left) {
+                        self.move_player();            
+                    }
+                    
+                    if args.button == piston::Button::Mouse(MouseButton::Right) {
+                        let pos = self.screen_to_world_pos(&self.mouse_state.position);
+                        let id = self.editor.selected_tile_id;
+    
+                        println!("creating deco {} at {:?}", id, pos);
+                        let deco = MapObject::new(id, pos, 1.0);
+                        self.map.decorations.push(deco);
+                    }
+                    
+                    if args.button == piston::Button::Keyboard(piston::Key::Space) {
+                        // self.show_test_dialog();
+                        let cont = self.editor.make_tile_selector(&self.ui, &self.decoration_tiles);
+                        self.ui.root = Some(cont);
+                    }        
+                },
+                Some(comp) => {
+                    let id = comp.userdata;
+
+                    println!("Selected tile id={}", id);
+                    self.editor.selected_tile_id = id;
+                    self.ui.root = None;
                 }
-                
-                if args.button == piston::Button::Mouse(MouseButton::Right) {
-                    let deco = self.make_deco();
-                    self.map.decorations.push(deco);
-                }
-                
-                if args.button == piston::Button::Keyboard(piston::Key::Space) {
-                    // self.show_test_dialog();
-                    let cont = self.editor.make_tile_selector(&self.ui, &self.decoration_tiles);
-                    self.ui.root = Some(cont);
-                }        
             }
         }
-    }
+    }    
     
     
     fn mouse_cursor(&mut self, args: &[f64; 2]) {
@@ -236,40 +247,20 @@ impl App {
         
     }
 
-    fn make_deco(&mut self) -> MapObject {
-        
-        let rel_mouse = vec2_sub(self.mouse_state.position, [500.0, 375.0]);
+
+    fn screen_to_world_pos(&self, screen_pos: &Vector2<f64>) -> Vector2<f64>
+    {
+        let rel_mouse_x = screen_pos[0] - (self.ui.window_size[0]/2) as f64;
+        let rel_mouse_y = (screen_pos[1] - (self.ui.window_size[1]/2) as f64) * 2.0;
 
         // transform to world coordinates
-        let mut world_pos = [rel_mouse[0], rel_mouse[1] * 2.0];
-        
         // it is relatrive to player position
-        world_pos = vec2_add(world_pos, self.player.position);
-
-        println!("  creating deco at {:?}, player at {:?}", world_pos, self.player.position);
-
-        let id = 1;
-        MapObject::new(id, world_pos, 1.0)
+        let world_pos = vec2_add([rel_mouse_x, rel_mouse_y], self.player.position);
+    
+        world_pos
     }
 
-    
-    /*
-    fn draw_map(self, c: Context, gl: &mut GlGraphics, w05: f64, h05: f64) {
-        
-        // let tf = c.transform.trans(w05, h05).scale(0.5, 0.5);
-        let tf = c.transform.trans(0.0, 0.0);
-
-        for deco in self.map.decorations {
-            let tile = self.map.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
-            let image   = 
-                Image::new()
-                    .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-                    .color([1.0, 0.8, 0.6, 1.0]);
-            image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
-        }
-    }
-    */
-    
+/*    
     fn show_test_dialog(&mut self) {
         let mut cont = self.ui.make_container(100, 100, 600, 400);
         let button = self.ui.make_button(100, 100, 300, 200);
@@ -278,6 +269,7 @@ impl App {
         
         self.ui.root = Some(cont);
     }
+*/
 }
 
 

@@ -4,13 +4,13 @@ mod tileset;
 #[path = "ui.rs"]
 mod ui;
 
-use std::rc::Rc;
 
-use crate::tileset::{TileSet, Tile};
+use crate::tileset::TileSet;
 use crate::ui::{UI, UiContainer};
 
 
 pub struct MapEditor {
+    pub selected_tile_id: usize,    
 }
 
 
@@ -18,13 +18,14 @@ impl MapEditor {
 
     pub fn new() -> MapEditor {
         MapEditor {
+            selected_tile_id: 0,
         }
     }
 
 
     pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiContainer {
-        let count = tileset.tiles_by_id.len();
-        let rows = count / 8;
+        // let count = tileset.tiles_by_id.len();
+        // let rows = count / 8;
         let size = &ui.window_size;
         
         let ww = size[0] as i32;
@@ -48,15 +49,10 @@ impl MapEditor {
                 },
                 Some(id) => {
                     let tile = tileset.tiles_by_id.get(id).unwrap();
-                    let callback = |x| {
-                        println!("Icon {} clicked", x);
-                        x
-                    };
-
                     let icon = ui.make_icon(x+10, y+10, x_space-20, y_space-20, 
-                                            tile, &tile.name, callback, *id);
+                                            tile, &tile.name, *id);
                         
-                    cont.children.push(Rc::new(icon));
+                    cont.children.push(icon);
         
                     x += x_space;
         
@@ -70,5 +66,4 @@ impl MapEditor {
 
         cont
     }
-
 }

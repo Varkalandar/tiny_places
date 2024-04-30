@@ -20,10 +20,6 @@ pub struct ButtonEvent<'a> {
 
 
 pub trait UiHead {
-    
-    fn handle_button_event(&self, event: &ButtonEvent) -> bool {
-        false
-    }
 
     fn draw(&self, _viewport: Viewport, _gl: &mut GlGraphics, _x: i32, _y: i32, _w: i32, _h: i32) {
     } 
@@ -56,19 +52,16 @@ impl UiHead for UiButton {
 
 
 
-pub struct UiIcon<F>
-    where F: Fn(usize) -> usize,
+pub struct UiIcon
 {
     pub font: Rc<UiFont>,
     pub label: String,
     pub tile: Rc<Tile>,
-    pub callback: F,
     pub userdata: usize,
 }
 
 
-impl <F> UiHead for UiIcon <F>
-    where F: Fn(usize) -> usize,
+impl UiHead for UiIcon
 {
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, w: i32, h: i32) {
 
@@ -98,10 +91,4 @@ impl <F> UiHead for UiIcon <F>
 
         self.font.draw(viewport, gl, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
-
-    fn handle_button_event(&self, event: &ButtonEvent) -> bool {
-        (self.callback)(self.userdata);
-        true
-    }
-
 }
