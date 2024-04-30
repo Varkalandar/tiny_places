@@ -1,13 +1,4 @@
-#[path = "tileset.rs"]
-mod tileset;
-
-#[path = "ui.rs"]
-mod ui;
-
-
-use crate::tileset::TileSet;
-use crate::ui::{UI, UiContainer};
-
+use crate::ui::{UI, UiContainer, TileSet};
 
 pub struct MapEditor {
     pub selected_tile_id: usize,    

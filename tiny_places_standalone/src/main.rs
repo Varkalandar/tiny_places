@@ -13,7 +13,7 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, 
                     UpdateArgs, UpdateEvent, 
                     ButtonArgs, ButtonEvent,
-                    MouseCursorEvent};
+                    MouseCursorEvent, MouseScrollEvent};
 use piston::window::WindowSettings;
 
 use std::path::Path;
@@ -23,13 +23,11 @@ mod map;
 mod mob;
 mod editor;
 mod ui;
-mod tileset;
 
-use crate::map::{Map, MapObject};
-use crate::mob::Mob;
-use crate::ui::UI;
-use crate::editor::MapEditor;
-use crate::tileset::{TileSet, Tile};
+use map::{Map, MapObject, MAP_DECO_LAYER};
+use mob::Mob;
+use ui::{UI, TileSet, Tile};
+use editor::MapEditor;
 
 struct MouseState {
     position: Vector2<f64>,
@@ -94,13 +92,16 @@ impl App {
 
         self.gl.draw(viewport, |c, gl| {
 
-            fn build_transform(c: Context, thing: &MapObject, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
+            fn build_transform(c: Context, thing: &MapObject, tile: &Tile, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
                 let rel_pos_x = thing.position[0] - player_position[0];        
-                let rel_pos_y = thing.position[1] - player_position[1];        
+                let rel_pos_y = thing.position[1] - player_position[1];  
+                let scale = thing.scale;
+
                 c.transform
                     .trans(window_center[0], window_center[1])
                     .trans(rel_pos_x, rel_pos_y * 0.5)
-                    .scale(0.5, 0.5)
+                    .scale(scale, scale)
+                    .trans(-tile.foot[0], - tile.foot[1])
             }
 
             fn build_image(tile: &Tile) -> Image {
@@ -142,10 +143,10 @@ impl App {
             // TODO
             
             // draw decorations (upright things)
-            for deco in &self.map.decorations {
+            for deco in &self.map.layers[MAP_DECO_LAYER] {
                 let tile = self.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
                 let image   = build_image(tile);
-                let tf = build_transform(c, deco, player_position, &window_center);        
+                let tf = build_transform(c, deco, tile, player_position, &window_center);        
                 image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
             }
 
@@ -198,7 +199,7 @@ impl App {
     
                         println!("creating deco {} at {:?}", id, pos);
                         let deco = MapObject::new(id, pos, 1.0);
-                        self.map.decorations.push(deco);
+                        self.map.layers[MAP_DECO_LAYER].push(deco);
                     }
                     
                     if args.button == piston::Button::Keyboard(piston::Key::Space) {
@@ -225,7 +226,27 @@ impl App {
         self.mouse_state.position = *args;
     }
     
-    
+
+    fn mouse_scroll(&mut self, args: &[f64; 2]) {
+        println!("Mouse scroll event {:?}", args);
+
+        let pos = self.screen_to_world_pos(&self.mouse_state.position);
+
+        let option = self.map.find_nearest_object(MAP_DECO_LAYER, &pos);
+
+
+        match option {
+            None => {
+                println!("Found no object at {}, {}", pos[0], pos[1]);
+            },
+            Some(object) => {
+                println!("Found object {} at scale {}", object.id, object.scale);
+                object.scale += 0.05 * args[1];
+            }
+        }
+    }
+
+
     fn move_player(&mut self) {
         let window_center: Vector2<f64> = [500.0, 375.0]; 
         
@@ -307,6 +328,10 @@ fn main() {
 
         if let Some(args) = e.mouse_cursor_args() {
             app.mouse_cursor(&args);
+        }
+
+        if let Some(args) = e.mouse_scroll_args() {
+            app.mouse_scroll(&args);
         }
     }
     
