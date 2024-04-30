@@ -40,6 +40,7 @@ impl MapEditor {
         let mut y = 0;
 
         for i in 0..10000 {
+
             let id = tileset.tiles_order_to_id.get(&i);
             match id {
                 None => {
@@ -47,7 +48,14 @@ impl MapEditor {
                 },
                 Some(id) => {
                     let tile = tileset.tiles_by_id.get(id).unwrap();
-                    let icon = ui.make_icon(x+10, y+10, x_space-20, y_space-20, tile, &tile.name);
+                    let callback = |x| {
+                        println!("Icon {} clicked", x);
+                        x
+                    };
+
+                    let icon = ui.make_icon(x+10, y+10, x_space-20, y_space-20, 
+                                            tile, &tile.name, callback, *id);
+                        
                     cont.children.push(Rc::new(icon));
         
                     x += x_space;

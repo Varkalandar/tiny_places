@@ -51,16 +51,22 @@ impl UiContainer {
     }
 
     pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
-        for child in &self.children {
-            if child.area.contains(event.mx, event.my) {
 
+        // println!("Container handles button event");
+
+        for child in &self.children {
+            // println!("click at {}, {} area {}, {}, {}, {}",
+            //    event.mx, event.my, child.area.x, child.area.y, child.area.w, child.area.h);
+            if child.area.contains(event.mx - self.area.x, event.my - self.area.y) {
+               // println!("Found a child to handle event");
+                if child.head.handle_button_event(event) {
+                    return true;
+                }        
             }
         }
-        
 
         false
     }
-
 }
 
 
@@ -119,11 +125,15 @@ impl UI {
     }
     
 
-    pub fn make_icon(&self, x: i32, y: i32, w: i32, h: i32, tile: &Rc<Tile>, label: &str) -> UiComponent {
+    pub fn make_icon<F>(&self, x: i32, y: i32, w: i32, h: i32, 
+                     tile: &Rc<Tile>, label: &str,
+                     callback: F, userdata: usize) -> UiComponent where F: Fn(usize) -> usize + 'static {
         let icon = UiIcon {
             font: self.font_10.clone(),
             label: label.to_string(),
-            tile: tile.clone(),    
+            tile: tile.clone(),
+            callback,
+            userdata,
         };
         
         UiComponent {
@@ -151,7 +161,8 @@ impl UI {
     pub fn handle_button_event(&self, event: &ButtonEvent) -> bool {
 
         match &self.root {
-            None => { }
+            None => { 
+            }
             Some(cont) => {
                 cont.handle_button_event(event);
             }

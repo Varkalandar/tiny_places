@@ -56,21 +56,26 @@ impl UiHead for UiButton {
 
 
 
-pub struct UiIcon {
+pub struct UiIcon<F>
+    where F: Fn(usize) -> usize,
+{
     pub font: Rc<UiFont>,
     pub label: String,
     pub tile: Rc<Tile>,
+    pub callback: F,
+    pub userdata: usize,
 }
 
 
-impl UiHead for UiIcon {
+impl <F> UiHead for UiIcon <F>
+    where F: Fn(usize) -> usize,
+{
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, w: i32, h: i32) {
 
         gl.draw(viewport, |c, gl| {
 
             let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
             rect.draw([x as f64, y as f64, w as f64, h as f64], &DrawState::new_alpha(), c.transform, gl);
-        
 
             let tw = self.tile.size[0] * 0.25;
             let th = self.tile.size[1] * 0.25;
@@ -93,4 +98,10 @@ impl UiHead for UiIcon {
 
         self.font.draw(viewport, gl, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
+
+    fn handle_button_event(&self, event: &ButtonEvent) -> bool {
+        (self.callback)(self.userdata);
+        true
+    }
+
 }
