@@ -137,7 +137,7 @@ impl UI {
         match &self.root {
             None => { }
             Some(comp) => {
-                let draw_state = DrawState::new_alpha();
+                let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
                 comp.head.draw(viewport, gl, &draw_state, 0, 0);
             }
         }
@@ -264,11 +264,20 @@ impl UiHead for UiContainer {
 
 
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+        // draw only children which are inside visible area
+        let scissor = draw_state.scissor.unwrap();
+
         for i in 0..self.children.len() {
             let child = &self.children[i];    
             let a = child.head.area();
+            let cx = x + self.area.x + a.x;
+            let cy = y + self.area.y + a.y;
 
-            child.head.draw(viewport, gl, draw_state, x + self.area.x + a.x, y + self.area.y + a.y);
+            if cx + a.w >= scissor[0] as i32 && cy + a.h >= scissor[1] as i32 &&
+               cx <= (scissor[0] + scissor[2]) as i32 && cy <= (scissor[1] + scissor[3]) as i32 {
+
+                child.head.draw(viewport, gl, draw_state, cx, cy);
+            }
         }
     }
 
@@ -341,10 +350,9 @@ impl UiHead for UiButton {
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + (area.h - self.font.lineheight) / 2;
 
-        self.font.draw(viewport, gl, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
+        self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
     } 
 }
-
 
 
 pub struct UiIcon
@@ -393,7 +401,7 @@ impl UiHead for UiIcon
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + area.h - self.font.lineheight;
 
-        self.font.draw(viewport, gl, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
+        self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
 
 
@@ -454,6 +462,18 @@ impl UiHead for UiScrollpane
     }
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
+
+        // paging keys
+        if event.args.button == piston::Button::Keyboard(piston::Key::PageDown) {
+            self.offset_y -= self.area.h;
+            return Some(self);
+        }
+
+        if event.args.button == piston::Button::Keyboard(piston::Key::PageUp) {
+            self.offset_y += self.area.h;
+            return Some(self);
+        }
+
         self.child.head.handle_button_event(&event.translate(-self.area.x-self.offset_x, -self.area.y-self.offset_y))
     }
 

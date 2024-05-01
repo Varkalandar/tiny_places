@@ -212,8 +212,11 @@ impl App {
                     let id = comp.get_userdata();
 
                     println!("Selected tile id={}", id);
-                    self.editor.selected_tile_id = id;
-                    self.ui.root = None;
+
+                    if id > 0 {
+                        self.editor.selected_tile_id = id;
+                        self.ui.root = None;
+                    }
                 }
             }
         }
