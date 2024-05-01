@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use graphics::{Image, Transformed, Viewport};
+use graphics::{Image, Transformed, Viewport, DrawState};
 
 const PITCH: u32 = 1024;
+
 
 struct UiGlyph {
     pub metrics: freetype::GlyphMetrics,
@@ -16,6 +17,7 @@ struct UiGlyph {
     bm_h: f64,
 }
 
+
 pub struct UiFont {
     face: freetype::Face,
     pub lineheight: i32,
@@ -24,7 +26,9 @@ pub struct UiFont {
     texture: Texture,
 }
 
+
 impl UiFont {
+
     pub fn new(size: u32) -> UiFont {
         let ft = freetype::Library::init().unwrap();
         let font = "resources/font/FiraSans-Regular.ttf";
@@ -61,7 +65,7 @@ impl UiFont {
     }
 
 
-    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, x: i32, y: i32, text: &str, color: &[f32; 4])
+    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, x: i32, y: i32, text: &str, color: &[f32; 4])
     {
         gl.draw(viewport, |c, gl| {
 
@@ -95,7 +99,7 @@ impl UiFont {
                                     
                 image.draw(
                     &self.texture,
-                    &c.draw_state,
+                    ds,
                     c.transform.trans(xp + glyph.left, yp - glyph.top),
                     gl
                 );
@@ -104,6 +108,7 @@ impl UiFont {
             }
         });
     }
+
 }
 
 
