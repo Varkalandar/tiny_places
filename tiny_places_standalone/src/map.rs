@@ -1,6 +1,10 @@
 use vecmath::Vector2;
+use crate::item::Item;
 
+pub const MAP_GROUND_LAYER:usize = 0;
 pub const MAP_DECO_LAYER:usize = 1;
+pub const MAP_CLOUD_LAYER:usize = 2;
+
 
 pub struct Map {
     pub layers: [Vec<MapObject>; 7],
@@ -45,15 +49,14 @@ impl Map {
 
         result
     }
-
-
 }
 
 
 pub struct MapObject {
     pub id: usize,
     pub position: Vector2<f64>,
-    pub scale: f64,    
+    pub scale: f64,
+    pub item: Option<Item>    
 }
 
 
@@ -63,7 +66,8 @@ impl MapObject {
         MapObject { 
             id, 
             position, 
-            scale
+            scale,
+            item: None,
         }
     }
 

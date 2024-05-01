@@ -1,4 +1,4 @@
-use crate::ui::{UI, UiContainer, TileSet};
+use crate::ui::{UI, UiComponent, TileSet};
 
 pub struct MapEditor {
     pub selected_tile_id: usize,    
@@ -14,7 +14,7 @@ impl MapEditor {
     }
 
 
-    pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiContainer {
+    pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiComponent {
         // let count = tileset.tiles_by_id.len();
         // let rows = count / 8;
         let size = &ui.window_size;
@@ -26,8 +26,8 @@ impl MapEditor {
         let x_space = 134;
         let y_space = 150;
 
+        let mut cont = ui.make_container(0, 0, w, h);
 
-        let mut cont = ui.make_container((ww - w)/2, (wh - h)/2, w, h);
         let mut x = 0;
         let mut y = 0;
 
@@ -43,7 +43,7 @@ impl MapEditor {
                     let icon = ui.make_icon(x+10, y+10, x_space-20, y_space-20, 
                                             tile, &tile.name, *id);
                         
-                    cont.children.push(icon);
+                    cont.head.add_child(icon);
         
                     x += x_space;
         
@@ -55,6 +55,7 @@ impl MapEditor {
             }
         }
 
-        cont
+        let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
+        scrolly
     }
 }

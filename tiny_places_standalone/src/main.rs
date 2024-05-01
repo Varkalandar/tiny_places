@@ -26,7 +26,7 @@ mod ui;
 
 use map::{Map, MapObject, MAP_DECO_LAYER};
 use mob::Mob;
-use ui::{UI, TileSet, Tile};
+use ui::{UI, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
 
 struct MouseState {
@@ -209,7 +209,7 @@ impl App {
                     }        
                 },
                 Some(comp) => {
-                    let id = comp.userdata;
+                    let id = comp.get_userdata();
 
                     println!("Selected tile id={}", id);
                     self.editor.selected_tile_id = id;
@@ -230,18 +230,32 @@ impl App {
     fn mouse_scroll(&mut self, args: &[f64; 2]) {
         println!("Mouse scroll event {:?}", args);
 
-        let pos = self.screen_to_world_pos(&self.mouse_state.position);
+        let event = ScrollEvent {
+            dx: args[0] as i32,
+            dy: args[1] as i32,
+            mx: self.mouse_state.position[0] as i32,
+            my: self.mouse_state.position[1] as i32,
+        };
 
-        let option = self.map.find_nearest_object(MAP_DECO_LAYER, &pos);
+        let comp = self.ui.handle_scroll_event(&event);
 
-
-        match option {
+        match comp {
             None => {
-                println!("Found no object at {}, {}", pos[0], pos[1]);
+                let pos = self.screen_to_world_pos(&self.mouse_state.position);
+                let option = self.map.find_nearest_object(MAP_DECO_LAYER, &pos);
+        
+                match option {
+                    None => {
+                        println!("Found no object at {}, {}", pos[0], pos[1]);
+                    },
+                    Some(object) => {
+                        println!("Found object {} at scale {}", object.id, object.scale);
+                        object.scale += 0.05 * args[1];
+                    }
+                }
             },
-            Some(object) => {
-                println!("Found object {} at scale {}", object.id, object.scale);
-                object.scale += 0.05 * args[1];
+            Some(comp) => {
+                println!("Scroll consumer");
             }
         }
     }
