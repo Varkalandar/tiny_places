@@ -32,11 +32,12 @@ impl MouseState {
 
 
 pub trait UiController {
+    type Appdata;
 
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
-    fn handle_button_event(&mut self, _ui: &mut UI, _event: &ButtonEvent) -> bool {
+    fn handle_button_event(&mut self, _ui: &mut UI,_event: &ButtonEvent, _appdata: &mut Self::Appdata) -> bool {
         false
     }
 
@@ -44,7 +45,7 @@ pub trait UiController {
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
-     fn handle_scroll_event(&mut self, _ui: &mut UI, _event: &ScrollEvent) -> bool {
+    fn handle_scroll_event(&mut self, _ui: &mut UI, _event: &ScrollEvent, _appdata: &mut Self::Appdata) -> bool {
         false
     }
 }
