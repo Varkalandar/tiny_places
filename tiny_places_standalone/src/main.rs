@@ -16,6 +16,8 @@ use piston::input::{RenderArgs, RenderEvent,
                     MouseCursorEvent, MouseScrollEvent};
 use piston::window::WindowSettings;
 
+use std::cell::{RefCell, RefMut};
+use std::rc::Rc;
 use std::path::Path;
 
 mod item;
@@ -25,36 +27,22 @@ mod editor;
 mod ui;
 
 use map::{Map, MapObject, MAP_DECO_LAYER};
-use mob::Mob;
-use ui::{UI, TileSet, Tile, ScrollEvent};
+use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
 
-struct MouseState {
-    position: Vector2<f64>,
-    drag_start: Vector2<f64>,    
-}
-
-impl MouseState {
-    fn record_drag_start(&mut self) -> Vector2<f64> {
-        self.drag_start = self.position;
-        self.drag_start
-    }
-}
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
-    mouse_state: MouseState,
     
     map_texture: Texture,
     player_texture: Texture,
     
-    map: Map,
-    player: Mob,
+    map: Rc<RefCell<Map>>,
 
     ui: UI,
 
     editor: MapEditor,
-    decoration_tiles: TileSet,
+    decoration_tiles: Rc<TileSet>,
 }
 
 
@@ -65,22 +53,23 @@ impl App {
         let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
 
-        let player = Mob::new(1000.0, 1000.0);
+        let decoration_tiles = Rc::new(TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica"));
+
         let ui = UI::new(window_size);
+        let map = Rc::new(RefCell::new(Map::new())); 
+        let editor = MapEditor::new(map.clone(), decoration_tiles.clone());
 
         App {        
 
             gl: GlGraphics::new(opengl),
-            mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
             map_texture: texture,
             player_texture: player_texture,
 
-            player: player,
-            map: Map::new(),
+            map,
             
             ui,
-            editor: MapEditor::new(),
-            decoration_tiles: TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica"),
+            editor,
+            decoration_tiles,
         }
     }
 
@@ -113,7 +102,7 @@ impl App {
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);
 
-            let player_position = &self.player.position;
+            let player_position = &self.map.borrow().player.position;
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
             let offset_x = window_center[0] * 0.5 - player_position[0];
@@ -143,7 +132,7 @@ impl App {
             // TODO
             
             // draw decorations (upright things)
-            for deco in &self.map.layers[MAP_DECO_LAYER] {
+            for deco in &self.map.borrow().layers[MAP_DECO_LAYER] {
                 let tile = self.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
                 let image   = build_image(tile);
                 let tf = build_transform(c, deco, tile, player_position, &window_center);        
@@ -163,7 +152,8 @@ impl App {
 
 
     fn update(&mut self, args: &UpdateArgs) {
-        self.player.move_by_time(args.dt);
+        let mut map = self.map.borrow_mut();
+        map.update(args.dt);
     }
 
 
@@ -171,53 +161,20 @@ impl App {
         println!("Button event {:?}", args);
         
         if args.state == ButtonState::Press {
-            self.mouse_state.record_drag_start();
+            self.ui.mouse_state.record_drag_start();
         }
-
-        // first pass the even to the UI. if there is a component
-        // trigered it will consume the event. Events which are not
-        // consumed by the UI will be handed to the game core
 
         let event = ui::ButtonEvent {
             args,
-            mx: self.mouse_state.position[0] as i32,
-            my: self.mouse_state.position[1] as i32,
+            mx: self.ui.mouse_state.position[0] as i32,
+            my: self.ui.mouse_state.position[1] as i32,
         };
 
-        if args.state == ButtonState::Release {
-            let comp = self.ui.handle_button_event(&event);
+        let consumed = self.editor.handle_button_event(&mut self.ui, &event);
 
-            match comp {
-                None => {
-                    if args.button == piston::Button::Mouse(MouseButton::Left) {
-                        self.move_player();            
-                    }
-                    
-                    if args.button == piston::Button::Mouse(MouseButton::Right) {
-                        let pos = self.screen_to_world_pos(&self.mouse_state.position);
-                        let id = self.editor.selected_tile_id;
-    
-                        println!("creating deco {} at {:?}", id, pos);
-                        let deco = MapObject::new(id, pos, 1.0);
-                        self.map.layers[MAP_DECO_LAYER].push(deco);
-                    }
-                    
-                    if args.button == piston::Button::Keyboard(piston::Key::Space) {
-                        // self.show_test_dialog();
-                        let cont = self.editor.make_tile_selector(&self.ui, &self.decoration_tiles);
-                        self.ui.root = Some(cont);
-                    }        
-                },
-                Some(comp) => {
-                    let id = comp.get_userdata();
-
-                    println!("Selected tile id={}", id);
-
-                    if id > 0 {
-                        self.editor.selected_tile_id = id;
-                        self.ui.root = None;
-                    }
-                }
+        if event.args.state == ButtonState::Release && !consumed {
+            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                self.move_player();            
             }
         }
     }    
@@ -226,7 +183,7 @@ impl App {
     fn mouse_cursor(&mut self, args: &[f64; 2]) {
         // println!("Mouse cursor event {:?}", args);
         
-        self.mouse_state.position = *args;
+        self.ui.mouse_state.position = *args;
     }
     
 
@@ -236,16 +193,18 @@ impl App {
         let event = ScrollEvent {
             dx: args[0] as i32,
             dy: args[1] as i32,
-            mx: self.mouse_state.position[0] as i32,
-            my: self.mouse_state.position[1] as i32,
+            mx: self.ui.mouse_state.position[0] as i32,
+            my: self.ui.mouse_state.position[1] as i32,
         };
 
         let comp = self.ui.handle_scroll_event(&event);
 
         match comp {
             None => {
-                let pos = self.screen_to_world_pos(&self.mouse_state.position);
-                let option = self.map.find_nearest_object(MAP_DECO_LAYER, &pos);
+                let pos = screen_to_world_pos(&self.ui, &self.map.borrow().player.position, &self.ui.mouse_state.position);
+
+                let mut map = self.map.borrow_mut();
+                let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
         
                 match option {
                     None => {
@@ -257,8 +216,8 @@ impl App {
                     }
                 }
             },
-            Some(comp) => {
-                println!("Scroll consumer");
+            Some(_comp) => {
+                println!("Scroll event consumed");
             }
         }
     }
@@ -267,49 +226,39 @@ impl App {
     fn move_player(&mut self) {
         let window_center: Vector2<f64> = [500.0, 375.0]; 
         
-        let screen_direction = vec2_sub(self.mouse_state.position, window_center);
+        let screen_direction = vec2_sub(self.ui.mouse_state.position, window_center);
         
         // world coordinates have y components double as large
         // as screen coordinates
         let direction = [screen_direction[0], screen_direction[1] * 2.0];
         
         let distance = vec2_len(direction);
-        let time = distance / self.player.base_speed; // pixel per second
-        
-        self.player.move_over_time = time;
-        self.player.speed = vec2_scale(direction, 1.0/time);
+        let time = distance / self.map.borrow().player.base_speed; // pixel per second
 
-        let dest = vec2_add(self.player.position, direction);
+        let mut map = self.map.borrow_mut();
+        let mut player = &mut map.player;
+        player.move_over_time = time;
+        player.speed = vec2_scale(direction, 1.0/time);
+
+        let dest = vec2_add(player.position, direction);
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);
         
     }
-
-
-    fn screen_to_world_pos(&self, screen_pos: &Vector2<f64>) -> Vector2<f64>
-    {
-        let rel_mouse_x = screen_pos[0] - (self.ui.window_size[0]/2) as f64;
-        let rel_mouse_y = (screen_pos[1] - (self.ui.window_size[1]/2) as f64) * 2.0;
-
-        // transform to world coordinates
-        // it is relatrive to player position
-        let world_pos = vec2_add([rel_mouse_x, rel_mouse_y], self.player.position);
-    
-        world_pos
-    }
-
-/*    
-    fn show_test_dialog(&mut self) {
-        let mut cont = self.ui.make_container(100, 100, 600, 400);
-        let button = self.ui.make_button(100, 100, 300, 200);
-        
-        cont.children.push(Rc::new(button));
-        
-        self.ui.root = Some(cont);
-    }
-*/
 }
 
+
+pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vector2<f64>) -> Vector2<f64>
+{
+    let rel_mouse_x = screen_pos[0] - (ui.window_size[0]/2) as f64;
+    let rel_mouse_y = (screen_pos[1] - (ui.window_size[1]/2) as f64) * 2.0;
+
+    // transform to world coordinates
+    // it is relatrive to player position
+    let world_pos = [rel_mouse_x + player_pos[0], rel_mouse_y + player_pos[1]];
+
+    world_pos
+}
 
 
 fn main() {

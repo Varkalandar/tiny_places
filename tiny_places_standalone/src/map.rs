@@ -1,5 +1,6 @@
 use vecmath::Vector2;
 use crate::item::Item;
+use crate::mob::Mob;
 
 pub const MAP_GROUND_LAYER:usize = 0;
 pub const MAP_DECO_LAYER:usize = 1;
@@ -8,6 +9,8 @@ pub const MAP_CLOUD_LAYER:usize = 2;
 
 pub struct Map {
     pub layers: [Vec<MapObject>; 7],
+
+    pub player: Mob,
 }
 
 
@@ -16,6 +19,7 @@ impl Map {
         let layers = [Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),];        
         Map {
             layers,
+            player: Mob::new(1000.0, 1000.0),
         }
     }
 
@@ -48,6 +52,11 @@ impl Map {
         }
 
         result
+    }
+
+
+    pub fn update(&mut self, dt: f64) {
+        self.player.move_by_time(dt);
     }
 }
 

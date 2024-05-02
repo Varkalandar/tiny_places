@@ -1,3 +1,5 @@
+use vecmath::Vector2;
+
 #[path = "ui/tileset.rs"]
 mod tileset;
 
@@ -12,6 +14,40 @@ use piston::ButtonArgs;
 
 pub use tileset::*;
 pub use font::UiFont;
+
+
+pub struct MouseState {
+    pub position: Vector2<f64>,
+    drag_start: Vector2<f64>,    
+}
+
+
+impl MouseState {
+    pub fn record_drag_start(&mut self) -> Vector2<f64> {
+        self.drag_start = self.position;
+        self.drag_start
+    }
+}
+
+
+
+pub trait UiController {
+
+    /**
+     * @return true if this controller could handle the event, false to pass the event to other controllers
+     */
+    fn handle_button_event(&mut self, _ui: &mut UI, _event: &ButtonEvent) -> bool {
+        false
+    }
+
+
+    /**
+     * @return true if this controller could handle the event, false to pass the event to other controllers
+     */
+     fn handle_scroll_event(&mut self, _ui: &mut UI, _event: &ScrollEvent) -> bool {
+        false
+    }
+}
 
 
 pub struct UiArea {
@@ -41,6 +77,8 @@ pub struct UI
     font_14: Rc<UiFont>,
     
     pub window_size: [u32; 2],
+
+    pub mouse_state: MouseState,
 }
 
 
@@ -53,6 +91,8 @@ impl UI {
             root: None,
             font_10: Rc::new(UiFont::new(10)),
             font_14: Rc::new(UiFont::new(14)),
+
+            mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
         }
     }
 
@@ -218,7 +258,7 @@ pub trait UiHead {
         None
     }
 
-    fn add_child(&mut self, child: Rc<UiComponent>) {
+    fn add_child(&mut self, _child: Rc<UiComponent>) {
         println!("This component cannot store children.");
     }
 
