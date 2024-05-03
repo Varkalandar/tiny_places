@@ -42,6 +42,14 @@ impl UiController for MapEditor {
                         let cont = self.make_tile_selector(&ui, &world.decoration_tiles);
                         ui.root = Some(cont);
                     }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::L) {
+                        world.map.load("test.map");
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::S) {
+                        world.map.save("test.map").unwrap();
+                    }        
                 },
                 Some(comp) => {
                     let id = comp.get_userdata();

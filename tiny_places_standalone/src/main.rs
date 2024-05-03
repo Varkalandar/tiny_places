@@ -141,7 +141,7 @@ impl App {
             
             // draw decorations (upright things)
             for deco in &self.world.map.layers[MAP_DECO_LAYER] {
-                let tile = self.world.decoration_tiles.tiles_by_id.get(&deco.id).unwrap();
+                let tile = self.world.decoration_tiles.tiles_by_id.get(&deco.tile_id).unwrap();
                 let image   = build_image(tile);
                 let tf = build_transform(c, deco, tile, player_position, &window_center);        
                 image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
@@ -222,7 +222,7 @@ impl App {
                         println!("Found no object at {}, {}", pos[0], pos[1]);
                     },
                     Some(object) => {
-                        println!("Found object {} at scale {}", object.id, object.scale);
+                        println!("Found object {} at scale {}", object.tile_id, object.scale);
                         object.scale += 0.05 * args[1];
                     }
                 }

@@ -1,4 +1,10 @@
 use vecmath::Vector2;
+
+use std::io::prelude::*;
+use std::io::{Result, BufWriter};
+use std::fs::File;
+use std::path::PathBuf;
+
 use crate::item::Item;
 use crate::mob::Mob;
 
@@ -35,7 +41,7 @@ impl Map {
             let dy = object.position[1] - position[1];
             let d2 = dx * dx + dy * dy;
 
-            println!("object {} has distance {}", object.id, d2);
+            println!("object {} has distance {}", object.tile_id, d2);
 
             if d2 < distance {
                 distance = d2;
@@ -58,11 +64,96 @@ impl Map {
     pub fn update(&mut self, dt: f64) {
         self.player.move_by_time(dt);
     }
+
+
+    pub fn load(&mut self, filename: &str) {
+
+        for layer in &mut self.layers {
+            layer.clear();
+        }
+
+        let mut path = PathBuf::new();
+        path.push("maps");
+        path.push(filename);
+
+        let content = std::fs::read_to_string(path.as_path()).unwrap();
+        let mut lines = content.lines();
+
+        lines.next(); // version
+        lines.next(); // map name
+
+        for line in lines {
+            println!("{}", line);
+
+            let parts: Vec<&str> = line.split(",").collect();
+
+            let layer = parts[0].parse::<usize>().unwrap();
+            let tile_id = parts[1].parse::<usize>().unwrap();
+
+            let x = parts[2].parse::<f64>().unwrap();
+            let y = parts[3].parse::<f64>().unwrap();
+            let scale = parts[4].parse::<f64>().unwrap();
+            // parts[5] is an RGBA tuple
+
+            println!("{}, {}, {}, {}, {}", layer, tile_id, x, y, scale);
+
+            let m = MapObject {
+                tile_id,
+                position: [x, y],
+                scale,
+                item: None,
+            };
+
+            self.layers[layer].push(m);
+        }
+        
+    }
+
+
+    pub fn save(&self, filename: &str) -> Result<()> {
+        let mut path = PathBuf::new();
+        path.push("maps");
+        path.push(filename);
+
+        let f = File::create(path.as_path())?;
+        {        
+            let mut writer = BufWriter::new(f);
+
+            // write a byte to the buffer
+            writer.write("v10\n".as_bytes())?;
+            writer.write("Testmap\n".as_bytes())?;
+            
+            self.saveLayer(&mut writer, MAP_GROUND_LAYER);
+            self.saveLayer(&mut writer, MAP_DECO_LAYER);
+            self.saveLayer(&mut writer, MAP_CLOUD_LAYER);
+        }
+
+        Ok(())
+    }
+    
+    
+    fn saveLayer(&self, writer: &mut BufWriter<File>, layer: usize) -> Result<()> {
+        let objects = &self.layers[layer];
+
+        for object in objects {
+            let line = 
+            layer.to_string() + "," +
+            &object.tile_id.to_string() + "," +
+            &object.position[0].to_string() + "," +
+            &object.position[1].to_string() + "," +
+            &object.scale.to_string() + "," +
+            "1.0 1.0 1.0 1.0\n";
+            
+            writer.write(line.as_bytes())?;
+        }
+
+        Ok(())
+    }    
 }
 
 
 pub struct MapObject {
-    pub id: usize,
+    pub tile_id: usize,
     pub position: Vector2<f64>,
     pub scale: f64,
     pub item: Option<Item>    
@@ -71,9 +162,9 @@ pub struct MapObject {
 
 impl MapObject {
     
-    pub fn new(id: usize, position: Vector2<f64>, scale: f64) -> MapObject {
+    pub fn new(tile_id: usize, position: Vector2<f64>, scale: f64) -> MapObject {
         MapObject { 
-            id, 
+            tile_id, 
             position, 
             scale,
             item: None,
