@@ -123,16 +123,16 @@ impl Map {
             writer.write("v10\n".as_bytes())?;
             writer.write("Testmap\n".as_bytes())?;
             
-            self.saveLayer(&mut writer, MAP_GROUND_LAYER);
-            self.saveLayer(&mut writer, MAP_DECO_LAYER);
-            self.saveLayer(&mut writer, MAP_CLOUD_LAYER);
+            self.save_layer(&mut writer, MAP_GROUND_LAYER);
+            self.save_layer(&mut writer, MAP_DECO_LAYER);
+            self.save_layer(&mut writer, MAP_CLOUD_LAYER);
         }
 
         Ok(())
     }
     
     
-    fn saveLayer(&self, writer: &mut BufWriter<File>, layer: usize) -> Result<()> {
+    fn save_layer(&self, writer: &mut BufWriter<File>, layer: usize) -> Result<()> {
         let objects = &self.layers[layer];
 
         for object in objects {

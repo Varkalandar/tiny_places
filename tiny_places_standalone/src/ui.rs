@@ -7,10 +7,13 @@ mod tileset;
 mod font;
 
 use std::rc::Rc;
+use std::cmp::{min, max};
 
-use graphics::{draw_state::DrawState, Rectangle, Viewport, Image};
-use opengl_graphics::GlGraphics;
+use graphics::{draw_state::DrawState, Rectangle, Viewport, Image,};
+use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 use piston::ButtonArgs;
+use image::{RgbaImage, Rgba};
+
 
 pub use tileset::*;
 pub use font::UiFont;
@@ -73,7 +76,7 @@ pub struct UiComponent {
 
 pub struct UI
 {
-    pub root: Option<UiComponent>,
+    pub root: UiComponent,
     font_10: Rc<UiFont>,
     font_14: Rc<UiFont>,
     
@@ -89,7 +92,7 @@ impl UI {
         
         UI { 
             window_size,
-            root: None,
+            root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
             font_10: Rc::new(UiFont::new(10)),
             font_14: Rc::new(UiFont::new(14)),
 
@@ -97,7 +100,13 @@ impl UI {
         }
     }
 
+
     pub fn make_container(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
+        UI::make_container_intern(x, y, w, h)
+    }
+
+
+    fn make_container_intern(x: i32, y: i32, w: i32, h: i32) -> UiComponent {
         let container = UiContainer {
             area: UiArea {
                 x, 
@@ -174,42 +183,30 @@ impl UI {
     }
 
 
+    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, userdata: usize) -> Rc<UiComponent> {
+        let colorchoice = UiColorchoice::new(x, y, w, h, userdata); 
+
+        Rc::new(UiComponent {
+            head: Box::new(colorchoice),
+        })        
+    }
+
+
     pub fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics) {
-        match &self.root {
-            None => { }
-            Some(comp) => {
-                let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
-                comp.head.draw(viewport, gl, &draw_state, 0, 0);
-            }
-        }
+        let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
+        self.root.head.draw(viewport, gl, &draw_state, 0, 0);
     }
 
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
-        match &mut self.root {
-            None => { 
-            }
-            Some(comp) => {
-                return comp.head.handle_button_event(event);
-            }
-        }
-
-        None
+        self.root.head.handle_button_event(event)
     }
 
 
     pub fn handle_scroll_event(&mut self, event: &ScrollEvent) -> Option<&dyn UiHead> {
 
-        match &mut self.root {
-            None => { 
-            }
-            Some(comp) => {
-                return comp.head.handle_scroll_event(event);
-            }
-        }
-
-        None
+        self.root.head.handle_scroll_event(event)
     }
 }
 
@@ -242,9 +239,7 @@ pub struct ScrollEvent {
 pub trait UiHead {
 
     fn area(&self) -> &UiArea {
-        &UiArea {
-            x: 0, y: 0, w: 0, h:0,
-        }
+        &UiArea { x: 0, y: 0, w: 0, h: 0}
     }
 
     fn draw(&self, _viewport: Viewport, _gl: &mut GlGraphics, _draw_state: &DrawState, _x: i32, _y: i32) {
@@ -261,6 +256,9 @@ pub trait UiHead {
 
     fn add_child(&mut self, _child: Rc<UiComponent>) {
         println!("This component cannot store children.");
+    }
+
+    fn clear(&mut self) {
     }
 
     fn get_userdata(&self) -> usize {
@@ -359,6 +357,11 @@ impl UiHead for UiContainer {
 
     fn add_child(&mut self, child: Rc<UiComponent>) {
         self.children.push(child);
+    }
+
+
+    fn clear(&mut self) {
+        self.children.clear();
     }
 }
 
@@ -519,3 +522,107 @@ impl UiHead for UiScrollpane
     }
 
 }
+
+
+
+pub struct UiColorchoice {
+    pub area: UiArea,
+    pub userdata: usize,
+    pub tex: Texture,
+}
+
+
+impl UiColorchoice {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, userdata: usize) -> UiColorchoice {
+
+        println!("make cc at {} {} {} {}", x, y, w, h);
+
+        UiColorchoice {
+            area: UiArea {
+                x, 
+                y,
+                w,
+                h,                
+            }, 
+            userdata,
+            tex: UiColorchoice::make_color_tex(256, 256),
+        }
+    }
+
+
+    fn make_color_tex(w: u32, h: u32) -> Texture {
+        
+        let mut img = RgbaImage::new(w, h);
+
+        // color field
+        for j in 0..w {
+            for i in 0..h {
+                // normalize input
+                let y = 64;
+                let u = (i * 255) / h;
+                let v = (j * 255) / w;
+
+                let (r, g, b) = Self::yuv_to_rgb(y, u as i32, v as i32);
+
+                img.put_pixel(i, j, Rgba([r, g, b, 255]));
+            }
+        }
+
+        // let ibuf = img.to_rgba8();
+        let ibuf = img;
+        let tex = Texture::from_image(&ibuf, &TextureSettings::new());
+        
+
+        tex
+    }
+
+    
+    fn yuv_to_rgb(y: i32, u: i32, v: i32) -> (u8, u8, u8) {
+        // R = (y + 1.4075 * (v - 128));
+        // G = (y - 0.3455 * (u - 128) - (0.7169 * (v - 128)));
+        // B = (y + 1.7790 * (u - 128));
+      
+        let r = y + (v - 128);
+        let g = y - (u - 128)/2 - (v - 128)/2;
+        let b = y + (u - 128);
+      
+        // println!("RGB {} {} {}", r, g, b);
+
+        (max(min(r, 255), 0) as u8, max(min(g, 255), 0) as u8, max(min(b, 255), 0) as u8)
+    }
+}
+
+
+
+impl UiHead for UiColorchoice
+{
+    fn area(&self) -> &UiArea {
+        &self.area
+    }
+
+
+    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+        let area = &self.area;
+        let xp = x + area.x;
+        let yp = y + area.y;
+
+        // println!("Drawing at {} {} {} {}", xp, yp, area.w, area.h);
+
+        gl.draw(viewport, |c, gl| {
+            
+            
+            let rect = Rectangle::new([1.0, 1.0, 1.0, 1.0]); 
+            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
+            
+
+            let image   = 
+                Image::new()
+                    .rect([xp as f64, yp as f64, area.w as f64, area.h as f64])
+                    .color([1.0, 1.0, 1.0, 1.0]);
+            image.draw(&self.tex, draw_state, c.transform, gl);
+        });
+    } 
+}
+
+
+
