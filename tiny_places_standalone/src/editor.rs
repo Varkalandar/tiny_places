@@ -5,6 +5,8 @@ use crate::map::{MapObject, MAP_DECO_LAYER};
 use crate::screen_to_world_pos;
 use crate::GameWorld;
 
+use std::rc::Rc;
+
 
 pub struct MapEditor {
     pub selected_tile_id: usize,
@@ -40,7 +42,12 @@ impl UiController for MapEditor {
                     
                     if event.args.button == piston::Button::Keyboard(piston::Key::Space) {
                         let cont = self.make_tile_selector(&ui, &world.decoration_tiles);
-                        ui.root = Some(cont);
+                        ui.root.head.add_child(Rc::new(cont));
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {
+                        let cont = ui.make_color_choice(100, 100, 256, 256, 1000);
+                        ui.root.head.add_child(cont);
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
@@ -58,7 +65,7 @@ impl UiController for MapEditor {
 
                     if id > 0 {
                         self.selected_tile_id = id;
-                        ui.root = None;
+                        ui.root.head.clear();
 
                         return true;
                     }
@@ -129,7 +136,8 @@ impl MapEditor {
             }
         }
 
-        let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
+        // let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
+        let scrolly = ui.make_scrollpane(0, 0, w, h, cont);
         scrolly
     }
 }
