@@ -58,15 +58,34 @@ impl UiController for MapEditor {
                     }        
                 },
                 Some(comp) => {
-                    let data = comp.get_userdata();
-                    let id = data[0];
+                    let id = comp.get_id();
+                    // let id = data[0];
 
                     if id == 1000 {
                         // this was the color choice box
-                        let color = data[1];
-                        println!("selected color is {:x}", color);
+                        let result = comp.get_numeric_result();
+                        let r = result[0];
+                        let g = result[1];
+                        let b = result[2];
+                        let a = result[3];
+                        println!("selected color is {:02x}{:02x}{:02x}{:02x}", r, g, b, a);
 
-                        ui.root.head.clear();
+                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                        let map = &mut world.map;
+                        let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
+        
+                        match option {
+                            None => {
+                                println!("Found no object at {}, {}", pos[0], pos[1]);
+                            },
+                            Some(object) => {
+                                println!("Found object {} at scale {}", object.tile_id, object.scale);
+                                object.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
+                            }
+                        }
+        
+
+                        // ui.root.head.clear();
                         return true;
                     }
                     else {

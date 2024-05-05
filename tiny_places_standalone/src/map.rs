@@ -97,12 +97,7 @@ impl Map {
 
             println!("{}, {}, {}, {}, {}", layer, tile_id, x, y, scale);
 
-            let m = MapObject {
-                tile_id,
-                position: [x, y],
-                scale,
-                item: None,
-            };
+            let m = MapObject::new(tile_id, [x, y], scale);
 
             self.layers[layer].push(m);
         }
@@ -156,7 +151,8 @@ pub struct MapObject {
     pub tile_id: usize,
     pub position: Vector2<f64>,
     pub scale: f64,
-    pub item: Option<Item>    
+    pub item: Option<Item>,
+    pub color: [f32; 4],    
 }
 
 
@@ -167,6 +163,7 @@ impl MapObject {
             tile_id, 
             position, 
             scale,
+            color: [1.0, 1.0, 1.0, 1.0],
             item: None,
         }
     }

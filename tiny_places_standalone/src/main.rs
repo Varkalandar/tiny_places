@@ -102,10 +102,10 @@ impl App {
                     .trans(-tile.foot[0], - tile.foot[1])
             }
 
-            fn build_image(tile: &Tile) -> Image {
+            fn build_image(tile: &Tile, color: &[f32; 4]) -> Image {
                 Image::new()
                     .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-                    .color([1.0, 1.0, 1.0, 1.0])        
+                    .color(*color)        
             }
 
             // Clear the screen.
@@ -143,7 +143,7 @@ impl App {
             // draw decorations (upright things)
             for deco in &self.world.map.layers[MAP_DECO_LAYER] {
                 let tile = self.world.decoration_tiles.tiles_by_id.get(&deco.tile_id).unwrap();
-                let image   = build_image(tile);
+                let image = build_image(tile, &deco.color);
                 let tf = build_transform(c, deco, tile, player_position, &window_center);        
                 image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
             }

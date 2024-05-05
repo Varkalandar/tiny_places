@@ -122,7 +122,7 @@ impl UI {
     }
     
 
-    pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32, label: &str, _userdata: usize) -> UiComponent {
+    pub fn make_button(&self, x: i32, y: i32, w: i32, h: i32, label: &str, _id: usize) -> UiComponent {
         let button = UiButton {
             area: UiArea {
                 x, 
@@ -141,7 +141,7 @@ impl UI {
 
 
     pub fn make_icon(&self, x: i32, y: i32, w: i32, h: i32, 
-                     tile: &Rc<Tile>, label: &str, userdata: usize) -> Rc<UiComponent> {
+                     tile: &Rc<Tile>, label: &str, id: usize) -> Rc<UiComponent> {
         let icon = UiIcon {
             area: UiArea {
                 x, 
@@ -152,7 +152,7 @@ impl UI {
             font: self.font_10.clone(),
             label: label.to_string(),
             tile: tile.clone(),
-            userdata,
+            id,
         };
         
         Rc::new(UiComponent {
@@ -182,8 +182,8 @@ impl UI {
     }
 
 
-    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, userdata: usize) -> UiComponent {
-        let colorchoice = UiColorchoice::new(x, y, w, h, userdata); 
+    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, id: usize) -> UiComponent {
+        let colorchoice = UiColorchoice::new(x, y, w, h, id); 
 
         UiComponent {
             head: Box::new(colorchoice),
@@ -263,7 +263,11 @@ pub trait UiHead {
     fn clear(&mut self) {
     }
 
-    fn get_userdata(&self) -> Vec<usize> {
+    fn get_id(&self) -> usize {
+        0
+    }
+
+    fn get_numeric_result(&self) -> Vec<u32> {
         vec![0]
     }
 }
@@ -407,7 +411,7 @@ pub struct UiIcon
     pub font: Rc<UiFont>,
     pub label: String,
     pub tile: Rc<Tile>,
-    pub userdata: usize,
+    pub id: usize,
 }
 
 
@@ -458,8 +462,8 @@ impl UiHead for UiIcon
     }
 
 
-    fn get_userdata(&self) -> Vec<usize> {
-        vec![self.userdata]
+    fn get_id(&self) -> usize {
+        self.id
     }
 }
 
@@ -532,16 +536,20 @@ impl UiHead for UiScrollpane
 pub struct UiColorchoice {
     pub area: UiArea,
     bandwidth: i32,
-    pub userdata: usize,
+    pub id: usize,
     tex: Texture,
     light: Texture,
     trans: Texture,
-    color: usize,   // rgba, 32 bit
+    r: u32,
+    g: u32,
+    b: u32,
+    a: u32,
+    lightness: u32,
 }
 
 
 impl UiColorchoice {
-    pub fn new(x: i32, y: i32, w: i32, h: i32, userdata: usize) -> UiColorchoice {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, id: usize) -> UiColorchoice {
 
         println!("make UiColorchoice at {} {} {} {}", x, y, w, h);
 
@@ -555,8 +563,12 @@ impl UiColorchoice {
                 h,                
             }, 
             bandwidth: tw,
-            userdata,
-            color: 0,
+            id,
+            r: 0,
+            g: 0,
+            b: 0,
+            a: 255,
+            lightness: 255,
             tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
             light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
             trans: UiColorchoice::make_trans_tex((tw - 4) as u32, (h - tw) as u32),
@@ -695,28 +707,64 @@ impl UiHead for UiColorchoice
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
-        let i = event.mx - self.area.x;
-        let j = event.my - self.area.y;
+        if event.my < self.area.y + self.bandwidth {
+            // light choice or reset area
+            if event.mx < self.area.x + self.area.w - self.bandwidth {
+                // light
+                let lightness = (event.mx-self.area.x) * 255 / (self.area.w-self.bandwidth);
+                self.lightness = lightness as u32;
+                println!("New lightness {}", self.lightness);
+            }
+            else {
+                // reset
+                self.r = 255;
+                self.g = 255;
+                self.b = 255;
+                self.a = 255;
+                self.lightness = 255;
+                println!("Reset to white");
+            }
+        }
+        else {
+            // color choice or transparency
+            if event.mx < self.area.x + self.area.w - self.bandwidth {
+                // color
+                let i = event.mx - self.area.x;
+                let j = event.my - self.area.y;
+        
+                let y = 64;
+                let u = (i * 255) / self.area.h;
+                let v = (j * 255) / self.area.w;
+        
+                let (ur, ug, ub) = Self::yuv_to_rgb(y, u as i32, v as i32);
+        
+                self.r = (ur as u32) * self.lightness / 255;
+                self.g = (ug as u32) * self.lightness / 255;
+                self.b = (ub as u32) * self.lightness / 255;        
+            }
+            else {
+                // transp
+                let alpha = (event.my-self.area.y-self.bandwidth) * 255 / (self.area.h-self.bandwidth);
+                self.a = alpha as u32;
+                println!("New alpha {}", self.a);
+            }
+        }
 
-        let y = 64;
-        let u = (i * 255) / self.area.h;
-        let v = (j * 255) / self.area.w;
-
-        let (ur, ug, ub) = Self::yuv_to_rgb(y, u as i32, v as i32);
-
-        let r = ur as u32;
-        let g = ug as u32;
-        let b = ub as u32;
 
 
-        self.color = ((r << 24) | (g << 16) | (b << 8) | 255) as usize;
+
 
         Some(self)
     }
 
-    fn get_userdata(&self) -> Vec<usize> {
-        vec![self.userdata, self.color]
+    fn get_id(&self) -> usize {
+        self.id
     }
+
+    fn get_numeric_result(&self) -> Vec<u32> {
+        vec![self.r, self.g, self.b, self.a]
+    }
+
 }
 
 
