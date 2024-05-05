@@ -531,9 +531,11 @@ impl UiHead for UiScrollpane
 
 pub struct UiColorchoice {
     pub area: UiArea,
+    bandwidth: i32,
     pub userdata: usize,
     tex: Texture,
-
+    light: Texture,
+    trans: Texture,
     color: usize,   // rgba, 32 bit
 }
 
@@ -541,7 +543,9 @@ pub struct UiColorchoice {
 impl UiColorchoice {
     pub fn new(x: i32, y: i32, w: i32, h: i32, userdata: usize) -> UiColorchoice {
 
-        println!("make cc at {} {} {} {}", x, y, w, h);
+        println!("make UiColorchoice at {} {} {} {}", x, y, w, h);
+
+        let tw = 28;
 
         UiColorchoice {
             area: UiArea {
@@ -550,9 +554,12 @@ impl UiColorchoice {
                 w,
                 h,                
             }, 
+            bandwidth: tw,
             userdata,
             color: 0,
-            tex: UiColorchoice::make_color_tex(256, 256),
+            tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
+            light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
+            trans: UiColorchoice::make_trans_tex((tw - 4) as u32, (h - tw) as u32),
         }
     }
 
@@ -562,8 +569,8 @@ impl UiColorchoice {
         let mut img = RgbaImage::new(w, h);
 
         // color field
-        for j in 0..w {
-            for i in 0..h {
+        for j in 0..h {
+            for i in 0..w {
                 // normalize input
                 let y = 64;
                 let u = (i * 255) / h;
@@ -597,6 +604,42 @@ impl UiColorchoice {
 
         (max(min(r, 255), 0) as u8, max(min(g, 255), 0) as u8, max(min(b, 255), 0) as u8)
     }
+
+
+    fn make_light_tex(w: u32, h: u32) -> Texture {
+        
+        let mut img = RgbaImage::new(w, h);
+
+        // color field
+        for j in 0..h {
+            for i in 0..w {
+                let y = (i * 255 / w) as u8;
+                img.put_pixel(i, j, Rgba([y, y, y, 255]));
+            }
+        }
+
+        let tex = Texture::from_image(&img, &TextureSettings::new());
+
+        tex
+    }
+
+
+    fn make_trans_tex(w: u32, h: u32) -> Texture {
+        
+        let mut img = RgbaImage::new(w, h);
+
+        // color field
+        for j in 0..h {
+            for i in 0..w {
+                let y = (j * 255 / h) as u8;
+                img.put_pixel(i, j, Rgba([255, 255, 255, 255 - y]));
+            }
+        }
+
+        let tex = Texture::from_image(&img, &TextureSettings::new());
+
+        tex
+    }
 }
 
 
@@ -617,18 +660,34 @@ impl UiHead for UiColorchoice
         let xp = x + area.x;
         let yp = y + area.y;
 
+        let bw = self.bandwidth;
+
         // println!("Drawing at {} {} {} {}", xp, yp, area.w, area.h);
 
         gl.draw(viewport, |c, gl| {
             
-            
+            // white "reset" area
             let rect = Rectangle::new([1.0, 1.0, 1.0, 1.0]); 
-            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
+            rect.draw([(xp + area.w - bw + 4) as f64, yp as f64, (bw - 4) as f64, (bw - 4) as f64], draw_state, c.transform, gl);
             
+
+            let image_l = 
+                Image::new()
+                    .rect([xp as f64, yp as f64, (area.w - bw) as f64, (bw - 4) as f64])
+                    .color([1.0, 1.0, 1.0, 1.0]);
+            image_l.draw(&self.light, draw_state, c.transform, gl);
+
+
+            let image_t = 
+                Image::new()
+                    .rect([(xp + area.w - bw + 4) as f64, (yp + bw) as f64, (bw - 4) as f64, (area.h - bw) as f64])
+                    .color([1.0, 1.0, 1.0, 1.0]);
+            image_t.draw(&self.trans, draw_state, c.transform, gl);
+
 
             let image   = 
                 Image::new()
-                    .rect([xp as f64, yp as f64, area.w as f64, area.h as f64])
+                    .rect([xp as f64, (yp + bw) as f64, (area.w - bw) as f64, (area.h - bw) as f64])
                     .color([1.0, 1.0, 1.0, 1.0]);
             image.draw(&self.tex, draw_state, c.transform, gl);
         });
