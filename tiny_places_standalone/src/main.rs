@@ -61,9 +61,9 @@ impl App {
 
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
 
-        let ui = UI::new(window_size);
+        let mut ui = UI::new(window_size);
         let map = Map::new(); 
-        let editor = MapEditor::new();
+        let editor = MapEditor::new(&mut ui);
 
         App {        
 

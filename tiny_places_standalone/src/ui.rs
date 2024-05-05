@@ -14,7 +14,6 @@ use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 use piston::ButtonArgs;
 use image::{RgbaImage, Rgba};
 
-
 pub use tileset::*;
 pub use font::UiFont;
 
@@ -183,12 +182,12 @@ impl UI {
     }
 
 
-    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, userdata: usize) -> Rc<UiComponent> {
+    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, userdata: usize) -> UiComponent {
         let colorchoice = UiColorchoice::new(x, y, w, h, userdata); 
 
-        Rc::new(UiComponent {
+        UiComponent {
             head: Box::new(colorchoice),
-        })        
+        }        
     }
 
 
@@ -242,6 +241,9 @@ pub trait UiHead {
         &UiArea { x: 0, y: 0, w: 0, h: 0}
     }
 
+    fn set_position(&mut self, _x: i32, _y: i32) {
+    }
+
     fn draw(&self, _viewport: Viewport, _gl: &mut GlGraphics, _draw_state: &DrawState, _x: i32, _y: i32) {
     } 
 
@@ -261,8 +263,8 @@ pub trait UiHead {
     fn clear(&mut self) {
     }
 
-    fn get_userdata(&self) -> usize {
-        0
+    fn get_userdata(&self) -> Vec<usize> {
+        vec![0]
     }
 }
 
@@ -315,7 +317,7 @@ impl UiHead for UiContainer {
             if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
                xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.h <= (scissor[1] + scissor[3]) as i32 {
 
-                child.head.draw(viewport, gl, draw_state, cx, cy);
+                child.head.draw(viewport, gl, draw_state, xp, yp);
             }
         }
     }
@@ -419,19 +421,21 @@ impl UiHead for UiIcon
 
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
         let area = self.area();
+        let xp = x + area.x;
+        let yp = y + area.y;
 
         gl.draw(viewport, |c, gl| {
 
             
             let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
-            rect.draw([x as f64, y as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
+            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
 
             let tw = self.tile.size[0] * 0.25;
             let th = self.tile.size[1] * 0.25;
 
-            let y_base = y + area.h - 26; // space for a label below the icon image
+            let y_base = yp + area.h - 26; // space for a label below the icon image
 
-            let image_x = x + (area.w - tw as i32) / 2;
+            let image_x = xp + (area.w - tw as i32) / 2;
             let image_y = y_base - th as i32;
 
             let image   = 
@@ -442,8 +446,8 @@ impl UiHead for UiIcon
         });
 
         let label_width = self.font.calc_string_width(&self.label) as i32;
-        let label_x = x + (area.w - label_width) / 2;
-        let label_y = y + area.h - self.font.lineheight;
+        let label_x = xp + (area.w - label_width) / 2;
+        let label_y = yp + area.h - self.font.lineheight;
 
         self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
@@ -454,8 +458,8 @@ impl UiHead for UiIcon
     }
 
 
-    fn get_userdata(&self) -> usize {
-        self.userdata
+    fn get_userdata(&self) -> Vec<usize> {
+        vec![self.userdata]
     }
 }
 
@@ -528,7 +532,9 @@ impl UiHead for UiScrollpane
 pub struct UiColorchoice {
     pub area: UiArea,
     pub userdata: usize,
-    pub tex: Texture,
+    tex: Texture,
+
+    color: usize,   // rgba, 32 bit
 }
 
 
@@ -545,6 +551,7 @@ impl UiColorchoice {
                 h,                
             }, 
             userdata,
+            color: 0,
             tex: UiColorchoice::make_color_tex(256, 256),
         }
     }
@@ -600,6 +607,10 @@ impl UiHead for UiColorchoice
         &self.area
     }
 
+    fn set_position(&mut self, x: i32, y:i32) {
+        self.area.x = x;
+        self.area.y = y;
+    }
 
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
         let area = &self.area;
@@ -622,6 +633,31 @@ impl UiHead for UiColorchoice
             image.draw(&self.tex, draw_state, c.transform, gl);
         });
     } 
+
+    fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
+
+        let i = event.mx - self.area.x;
+        let j = event.my - self.area.y;
+
+        let y = 64;
+        let u = (i * 255) / self.area.h;
+        let v = (j * 255) / self.area.w;
+
+        let (ur, ug, ub) = Self::yuv_to_rgb(y, u as i32, v as i32);
+
+        let r = ur as u32;
+        let g = ug as u32;
+        let b = ub as u32;
+
+
+        self.color = ((r << 24) | (g << 16) | (b << 8) | 255) as usize;
+
+        Some(self)
+    }
+
+    fn get_userdata(&self) -> Vec<usize> {
+        vec![self.userdata, self.color]
+    }
 }
 
 

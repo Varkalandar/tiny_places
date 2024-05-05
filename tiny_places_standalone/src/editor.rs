@@ -1,12 +1,11 @@
 use piston::{ButtonState, MouseButton};
 
-use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent};
+use crate::ui::{UI, UiController, UiComponent, UiColorchoice, TileSet, ButtonEvent, ScrollEvent};
 use crate::map::{MapObject, MAP_DECO_LAYER};
 use crate::screen_to_world_pos;
 use crate::GameWorld;
 
 use std::rc::Rc;
-
 
 pub struct MapEditor {
     pub selected_tile_id: usize,
@@ -45,9 +44,9 @@ impl UiController for MapEditor {
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {
-                        let cont = ui.make_color_choice(100, 100, 256, 256, 1000);
-                        ui.root.head.add_child(cont);
+                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {                        
+                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000);
+                        ui.root.head.add_child(Rc::new(color_choice));
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
@@ -59,15 +58,27 @@ impl UiController for MapEditor {
                     }        
                 },
                 Some(comp) => {
-                    let id = comp.get_userdata();
+                    let data = comp.get_userdata();
+                    let id = data[0];
 
-                    println!("Selected tile id={}", id);
+                    if id == 1000 {
+                        // this was the color choice box
+                        let color = data[1];
+                        println!("selected color is {:x}", color);
 
-                    if id > 0 {
-                        self.selected_tile_id = id;
                         ui.root.head.clear();
-
                         return true;
+                    }
+                    else {
+                        // must have been the tile selector
+                        println!("Selected tile id={}", id);
+
+                        if id > 0 {
+                            self.selected_tile_id = id;
+                            ui.root.head.clear();
+    
+                            return true;
+                        }
                     }
                 }
             }
@@ -88,7 +99,7 @@ impl UiController for MapEditor {
 
 impl MapEditor {
 
-    pub fn new() -> MapEditor {
+    pub fn new(_ui: &mut UI) -> MapEditor {
         MapEditor {
             selected_tile_id: 0,
         }
@@ -136,8 +147,7 @@ impl MapEditor {
             }
         }
 
-        // let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
-        let scrolly = ui.make_scrollpane(0, 0, w, h, cont);
+        let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
         scrolly
     }
 }
