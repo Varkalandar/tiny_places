@@ -18,6 +18,17 @@ pub struct TileSet {
 
 
 impl TileSet {
+
+    /**
+     * creates an empty tile set
+     */
+    pub fn new() -> TileSet {
+        TileSet {
+            tiles_by_id: HashMap::new(),
+            tiles_order_to_id: HashMap::new(),
+        }
+    }
+
     pub fn load(path_str: &str, file_str: &str) -> TileSet {
         
         let mut fullpath = PathBuf::new();

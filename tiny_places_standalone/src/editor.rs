@@ -1,7 +1,10 @@
 use piston::{ButtonState, MouseButton};
 
-use crate::ui::{UI, UiController, UiComponent, UiColorchoice, TileSet, ButtonEvent, ScrollEvent};
-use crate::map::{MapObject, MAP_DECO_LAYER};
+use graphics::{draw_state::DrawState, Viewport,};
+use opengl_graphics::GlGraphics;
+
+use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent};
+use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use crate::screen_to_world_pos;
 use crate::GameWorld;
 
@@ -35,7 +38,7 @@ impl UiController for MapEditor {
 
                         let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
                         let map = &mut world.map;
-                        let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
+                        let option = map.find_nearest_object(map.selected_layer, &pos);
 
                         match option {
                             None => {
@@ -44,7 +47,6 @@ impl UiController for MapEditor {
                             },
                             Some(idx) => {
                                 map.has_selection = true;
-                                map.selected_layer = MAP_DECO_LAYER;
                                 map.selected_item = idx;
                                 return true;
                             }
@@ -57,11 +59,27 @@ impl UiController for MapEditor {
     
                         println!("creating deco {} at {:?}", id, pos);
                         let deco = MapObject::new(id, pos, 1.0);
-                        world.map.layers[MAP_DECO_LAYER].push(deco);
+                        world.map.layers[world.map.selected_layer].push(deco);
                     }
                     
+                    if event.args.button == piston::Button::Keyboard(piston::Key::D1) {                        
+                        world.map.selected_layer = MAP_GROUND_LAYER;
+                        self.selected_tile_id = 0;
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::D2) {                        
+                        world.map.selected_layer = MAP_DECO_LAYER;
+                        self.selected_tile_id = 0;
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::D3) {                        
+                        world.map.selected_layer = MAP_CLOUD_LAYER;
+                        self.selected_tile_id = 0;
+                    }        
+
                     if event.args.button == piston::Button::Keyboard(piston::Key::Space) {
-                        let cont = self.make_tile_selector(&ui, &world.decoration_tiles);
+                        let set = &world.layer_tileset[world.map.selected_layer];
+                        let cont = self.make_tile_selector(&ui, set);
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
@@ -96,7 +114,7 @@ impl UiController for MapEditor {
 
                             let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
                             let map = &mut world.map;
-                            let object = &mut map.layers[MAP_DECO_LAYER][map.selected_item];
+                            let object = &mut map.layers[map.selected_layer][map.selected_item];
                             object.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
         
                         }
@@ -125,9 +143,47 @@ impl UiController for MapEditor {
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
-     fn handle_scroll_event(&mut self, _ui: &mut UI, _event: &ScrollEvent, _world: &mut Self::Appdata) -> bool {
-        false
+    fn handle_scroll_event(&mut self, ui: &mut UI, event: &ScrollEvent, world: &mut Self::Appdata) -> bool {
+
+        let comp = ui.handle_scroll_event(&event);
+
+        match comp {
+            None => {
+                let pos = screen_to_world_pos(ui, &world.map.player.position, &ui.mouse_state.position);
+
+                let map = &mut world.map;
+                let option = map.find_nearest_object(map.selected_layer, &pos);
+        
+                match option {
+                    None => {
+                        println!("Found no object at {}, {}", pos[0], pos[1]);
+                    },
+                    Some(idx) => {
+                        let object = map.layers[map.selected_layer].get_mut(idx).unwrap();
+                        println!("Found object {} at scale {}", object.tile_id, object.scale);
+                        object.scale += 0.05 * event.dy;
+                    }
+                }
+            },
+            Some(_comp) => {
+                println!("Scroll event consumed");
+            }
+        }
+
+        true
     }
+
+
+    fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+        ui.font_14.draw(viewport, gl, ds, 10, 20, "Use keys 1 .. 3 to select map layers", &[1.0, 1.0, 1.0, 1.0]);
+
+        let layer_msg = 
+            "Selected layer: ".to_string() + &world.map.selected_layer.to_string() + 
+            "  Selected tile: " + &self.selected_tile_id.to_string();
+
+        ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+    }
+
 }
 
 

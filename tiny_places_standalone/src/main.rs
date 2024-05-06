@@ -7,7 +7,7 @@ extern crate image;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
-use graphics::Ellipse;
+use graphics::{Context, DrawState, Ellipse, Image, ImageSize, Transformed, clear};
 use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
@@ -26,14 +26,14 @@ mod mob;
 mod editor;
 mod ui;
 
-use map::{Map, MapObject, MAP_DECO_LAYER};
+use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
 
 
 pub struct GameWorld {
     map: Map,
-    decoration_tiles: TileSet,
+    layer_tileset: [TileSet; 7],
 }
 
 pub struct GameControllers {
@@ -60,7 +60,20 @@ impl App {
         let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
 
+        let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
+        let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
+
+        let mut layer_tileset = [
+            ground_tiles,
+            decoration_tiles,
+            cloud_tiles,
+            TileSet::new(),
+            TileSet::new(),
+            TileSet::new(),
+            TileSet::new(),
+            ];        
+
 
         let mut ui = UI::new(window_size);
         let map = Map::new(); 
@@ -75,7 +88,7 @@ impl App {
             ui,
             world: GameWorld {
                 map,
-                decoration_tiles,
+                layer_tileset,
             },
             controllers: GameControllers {
                 editor,
@@ -85,9 +98,8 @@ impl App {
 
     
     fn render(&mut self, args: &RenderArgs) {
-        use graphics::*;
-        
         let viewport = args.viewport();
+        let ds = DrawState::new_alpha();
 
         self.gl.draw(viewport, |c, gl| {
 
@@ -109,10 +121,34 @@ impl App {
                     .color(*color)        
             }
 
+            fn draw_layer(gl: &mut GlGraphics, c: Context, ds: DrawState, window_center: &Vector2<f64>, world: &GameWorld, layer_id: usize) {
+                let player_position = &world.map.player.position;
+                let set = &world.layer_tileset[layer_id];
+
+                for idx in 0..world.map.layers[layer_id].len() {
+                    let deco = &world.map.layers[layer_id][idx];
+                    let tile = set.tiles_by_id.get(&deco.tile_id).unwrap();
+                    let tf = build_transform(c, deco, tile, player_position, window_center);        
+    
+                    // mark selected item with an ellipse
+                    if world.map.has_selection && 
+                       layer_id == world.map.selected_layer &&
+                       idx == world.map.selected_item {
+                        let ellp = Ellipse::new([1.0, 0.9, 0.3, 0.3]); 
+                        ellp.draw([-40 as f64, -20 as f64, 80 as f64, 40 as f64], &ds, 
+                                  tf.trans(tile.foot[0], tile.foot[1]), gl);
+                    }
+    
+                    let image = build_image(tile, &deco.color);
+                    image.draw(&tile.tex, &ds, tf, gl);
+                }    
+            }
+
+
+
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);
 
-            let ds = DrawState::new_alpha();
             let player_position = &self.world.map.player.position;
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
@@ -137,36 +173,30 @@ impl App {
             p_image.draw(&self.player_texture, &ds, p_tf, gl);
 
             // draw ground decorations (flat)
-            // TODO
+            draw_layer(gl, c, ds, &window_center, &self.world, MAP_GROUND_LAYER);
 
             // draw shadows (flat)
             // TODO
             
             // draw decorations (upright things)
-            for idx in 0..self.world.map.layers[MAP_DECO_LAYER].len() {
-                let deco = &self.world.map.layers[MAP_DECO_LAYER][idx];
-                let tile = self.world.decoration_tiles.tiles_by_id.get(&deco.tile_id).unwrap();
-                let tf = build_transform(c, deco, tile, player_position, &window_center);        
-
-                if self.world.map.has_selection && idx == self.world.map.selected_item {
-                    let ellp = Ellipse::new([1.0, 0.9, 0.3, 0.3]); 
-                    ellp.draw([-40 as f64, -20 as f64, 80 as f64, 40 as f64], &ds, 
-                              tf.trans(tile.foot[0], tile.foot[1]), gl);
-                }
-
-                let image = build_image(tile, &deco.color);
-                image.draw(&tile.tex, &ds, tf, gl);
-            }
+            draw_layer(gl, c, ds, &window_center, &self.world, MAP_DECO_LAYER);
 
             // draw lights
             // TODO
 
             // draw clouds
-            // TODO
+            draw_layer(gl, c, ds, &window_center, &self.world, MAP_CLOUD_LAYER);
             
         });
 
         self.ui.draw(viewport, &mut self.gl);
+
+        {
+            let editor = &mut self.controllers.editor;
+            let world = &mut self.world;
+            let ui = &mut self.ui;
+            self.controllers.editor.draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
+        }
     }
 
 
@@ -213,36 +243,17 @@ impl App {
         println!("Mouse scroll event {:?}", args);
 
         let event = ScrollEvent {
-            dx: args[0] as i32,
-            dy: args[1] as i32,
+            dx: args[0],
+            dy: args[1],
             mx: self.ui.mouse_state.position[0] as i32,
             my: self.ui.mouse_state.position[1] as i32,
         };
 
-        let comp = self.ui.handle_scroll_event(&event);
+        let editor = &mut self.controllers.editor;
+        let world = &mut self.world;
+        let ui = &mut self.ui;
 
-        match comp {
-            None => {
-                let pos = screen_to_world_pos(&self.ui, &self.world.map.player.position, &self.ui.mouse_state.position);
-
-                let map = &mut self.world.map;
-                let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
-        
-                match option {
-                    None => {
-                        println!("Found no object at {}, {}", pos[0], pos[1]);
-                    },
-                    Some(idx) => {
-                        let object = map.layers[MAP_DECO_LAYER].get_mut(idx).unwrap();
-                        println!("Found object {} at scale {}", object.tile_id, object.scale);
-                        object.scale += 0.05 * args[1];
-                    }
-                }
-            },
-            Some(_comp) => {
-                println!("Scroll event consumed");
-            }
-        }
+        editor.handle_scroll_event(ui, &event, world);
     }
 
 

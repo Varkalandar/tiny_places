@@ -11,7 +11,7 @@ use std::cmp::{min, max};
 
 use graphics::{draw_state::DrawState, Rectangle, Viewport, Image,};
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use piston::ButtonArgs;
+use piston::{ButtonState, ButtonArgs};
 use image::{RgbaImage, Rgba};
 
 pub use tileset::*;
@@ -32,6 +32,11 @@ impl MouseState {
 }
 
 
+pub struct KeyboardState {
+    pub shift_pressed: bool,
+    pub ctrl_pressed: bool,
+}
+
 
 pub trait UiController {
     type Appdata;
@@ -49,6 +54,11 @@ pub trait UiController {
      */
     fn handle_scroll_event(&mut self, _ui: &mut UI, _event: &ScrollEvent, _appdata: &mut Self::Appdata) -> bool {
         false
+    }
+
+    
+    fn draw_overlay(&mut self, _viewport: Viewport, _gl: &mut GlGraphics, _ds: &DrawState, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+
     }
 }
 
@@ -76,12 +86,13 @@ pub struct UiComponent {
 pub struct UI
 {
     pub root: UiComponent,
-    font_10: Rc<UiFont>,
-    font_14: Rc<UiFont>,
+    pub font_10: Rc<UiFont>,
+    pub font_14: Rc<UiFont>,
     
     pub window_size: [u32; 2],
 
     pub mouse_state: MouseState,
+    pub keyboard_state: KeyboardState,
 }
 
 
@@ -96,6 +107,7 @@ impl UI {
             font_14: Rc::new(UiFont::new(14)),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
+            keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
         }
     }
 
@@ -172,8 +184,8 @@ impl UI {
             child,
             offset_x: 0,
             offset_y: 0,
-            scroll_step_x: 8,
-            scroll_step_y: 8,
+            scroll_step_x: 8.0,
+            scroll_step_y: 8.0,
         };
         
         UiComponent {
@@ -198,6 +210,17 @@ impl UI {
 
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
+        if event.args.state == ButtonState::Press {
+            self.keyboard_state.shift_pressed =        
+                event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
+                event.args.button == piston::Button::Keyboard(piston::Key::RShift);
+        }
+
+        if event.args.state == ButtonState::Release {
+            self.keyboard_state.shift_pressed =        
+                !(event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
+                  event.args.button == piston::Button::Keyboard(piston::Key::RShift));
+        }
 
         self.root.head.handle_button_event(event)
     }
@@ -228,8 +251,8 @@ impl ButtonEvent <'_> {
 
 
 pub struct ScrollEvent {
-    pub dx: i32,
-    pub dy: i32,
+    pub dx: f64,
+    pub dy: f64,
     pub mx: i32,
     pub my: i32,
 }
@@ -474,8 +497,8 @@ pub struct UiScrollpane
     child: UiComponent,
     offset_x: i32,
     offset_y: i32,
-    scroll_step_x: i32,
-    scroll_step_y: i32
+    scroll_step_x: f64,
+    scroll_step_y: f64
 }
 
 
@@ -505,8 +528,8 @@ impl UiHead for UiScrollpane
 
 
     fn handle_scroll_event(&mut self, event: &ScrollEvent) -> Option<&dyn UiHead> {
-        self.offset_x += event.dx * self.scroll_step_x;
-        self.offset_y += event.dy * self.scroll_step_y;
+        self.offset_x += (event.dx * self.scroll_step_x) as i32;
+        self.offset_y += (event.dy * self.scroll_step_y) as i32;
 
         println!("Scrollpane, new scroll offset is {}, {}", self.offset_x, self.offset_y);
 
