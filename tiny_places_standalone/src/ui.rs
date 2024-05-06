@@ -211,15 +211,19 @@ impl UI {
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
         if event.args.state == ButtonState::Press {
-            self.keyboard_state.shift_pressed =        
-                event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
-                event.args.button == piston::Button::Keyboard(piston::Key::RShift);
+            if event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
+               event.args.button == piston::Button::Keyboard(piston::Key::RShift) {
+                println!("Shift pressed");
+                self.keyboard_state.shift_pressed = true;
+            }    
         }
 
         if event.args.state == ButtonState::Release {
-            self.keyboard_state.shift_pressed =        
-                !(event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
-                  event.args.button == piston::Button::Keyboard(piston::Key::RShift));
+            if event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
+               event.args.button == piston::Button::Keyboard(piston::Key::RShift) {
+                println!("Shift released");
+                self.keyboard_state.shift_pressed = false;
+            }    
         }
 
         self.root.head.handle_button_event(event)

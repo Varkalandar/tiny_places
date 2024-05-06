@@ -26,9 +26,9 @@ impl UiController for MapEditor {
         // trigered it will consume the event. Events which are not
         // consumed by the UI will be handed to the game core
 
+        let comp = ui.handle_button_event(&event);
 
         if event.args.state == ButtonState::Release {
-            let comp = ui.handle_button_event(&event);
 
             match comp {
                 None => {
@@ -76,6 +76,25 @@ impl UiController for MapEditor {
                         world.map.selected_layer = MAP_CLOUD_LAYER;
                         self.selected_tile_id = 0;
                     }        
+
+                    let step = if ui.keyboard_state.shift_pressed {8.0} else {1.0};
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::Right) {                        
+                        world.map.move_selected_object(step, 0.0);
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::Left) {                        
+                        world.map.move_selected_object(-step, 0.0);
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::Up) {  
+                        world.map.move_selected_object(0.0, -step);
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::Down) {                        
+                        world.map.move_selected_object(0.0, step);
+                    }        
+
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::Space) {
                         let set = &world.layer_tileset[world.map.selected_layer];
@@ -194,6 +213,7 @@ impl MapEditor {
             selected_tile_id: 0,
         }
     }
+
 
 
     pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiComponent {

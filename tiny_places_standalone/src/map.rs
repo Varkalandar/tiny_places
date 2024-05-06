@@ -149,7 +149,17 @@ impl Map {
         }
 
         Ok(())
-    }    
+    }
+    
+    
+    pub fn move_selected_object(&mut self, dx: f64, dy: f64) {        
+        if self.has_selection {
+            let object = &mut self.layers[self.selected_layer][self.selected_item];
+            object.position[0] += dx;
+            object.position[1] += dy;
+        }
+    }
+
 }
 
 
