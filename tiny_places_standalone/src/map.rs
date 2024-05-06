@@ -17,6 +17,10 @@ pub struct Map {
     pub layers: [Vec<MapObject>; 7],
 
     pub player: Mob,
+
+    pub has_selection: bool,
+    pub selected_item: usize,
+    pub selected_layer: usize,
 }
 
 
@@ -26,11 +30,14 @@ impl Map {
         Map {
             layers,
             player: Mob::new(1000.0, 1000.0),
+            has_selection: false,
+            selected_item: 0,
+            selected_layer: 0,
         }
     }
 
 
-    pub fn find_nearest_object(&mut self, layer: usize, position: &Vector2<f64>) -> Option<&mut MapObject> {
+    pub fn find_nearest_object(&mut self, layer: usize, position: &Vector2<f64>) -> Option<usize> {
         let objects = &self.layers[layer];
         let mut distance = 999999.0;
         let mut best_idx = 0;
@@ -49,11 +56,10 @@ impl Map {
             }
         }
 
-        let mut result:Option<&mut MapObject> = None;
+        let mut result:Option<usize> = None;
 
         if distance < 10000.0 {
-            result = self.layers[layer].get_mut(best_idx);
-
+            result = Some(best_idx);
             println!("  best object is {}", best_idx);
         }
 

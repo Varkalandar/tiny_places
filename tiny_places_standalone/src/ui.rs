@@ -584,7 +584,7 @@ impl UiColorchoice {
         for j in 0..h {
             for i in 0..w {
                 // normalize input
-                let y = 64;
+                let y = 128;
                 let u = (i * 255) / h;
                 let v = (j * 255) / w;
 
@@ -711,8 +711,14 @@ impl UiHead for UiColorchoice
             // light choice or reset area
             if event.mx < self.area.x + self.area.w - self.bandwidth {
                 // light
-                let lightness = (event.mx-self.area.x) * 255 / (self.area.w-self.bandwidth);
-                self.lightness = lightness as u32;
+                let lightness = ((event.mx-self.area.x) * 255 / (self.area.w-self.bandwidth)) as u32;
+
+                self.r = min(255, self.r * lightness / self.lightness);
+                self.g = min(255, self.g * lightness / self.lightness);
+                self.b = min(255, self.b * lightness / self.lightness);        
+
+                self.lightness = lightness;
+
                 println!("New lightness {}", self.lightness);
             }
             else {
@@ -738,21 +744,17 @@ impl UiHead for UiColorchoice
         
                 let (ur, ug, ub) = Self::yuv_to_rgb(y, u as i32, v as i32);
         
-                self.r = (ur as u32) * self.lightness / 255;
-                self.g = (ug as u32) * self.lightness / 255;
-                self.b = (ub as u32) * self.lightness / 255;        
+                self.r = min(255, (ur as u32) * self.lightness * 8 / 255);
+                self.g = min(255, (ug as u32) * self.lightness * 8 / 255);
+                self.b = min(255, (ub as u32) * self.lightness * 8 / 255);        
             }
             else {
                 // transp
-                let alpha = (event.my-self.area.y-self.bandwidth) * 255 / (self.area.h-self.bandwidth);
+                let alpha = 255 - (event.my-self.area.y-self.bandwidth) * 255 / (self.area.h-self.bandwidth);
                 self.a = alpha as u32;
                 println!("New alpha {}", self.a);
             }
         }
-
-
-
-
 
         Some(self)
     }

@@ -7,6 +7,7 @@ extern crate image;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
+use graphics::Ellipse;
 use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
@@ -111,6 +112,7 @@ impl App {
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);
 
+            let ds = DrawState::new_alpha();
             let player_position = &self.world.map.player.position;
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
@@ -125,14 +127,14 @@ impl App {
                 Image::new()
                     .rect([0.0, 0.0, self.map_texture.get_width() as f64, self.map_texture.get_height() as f64])
                     .color([0.8, 0.8, 0.8, 1.0]);
-            m_image.draw(&self.map_texture, &DrawState::new_alpha(), map_tf, gl);
+            m_image.draw(&self.map_texture, &ds, map_tf, gl);
 
             let p_tf = c.transform.trans(window_center[0], window_center[1]).scale(0.5, 0.5);
             let p_image   = 
                 Image::new()
                     .rect([0.0, 0.0, self.player_texture.get_width() as f64, self.player_texture.get_height() as f64])
                     .color([1.0, 0.8, 0.6, 1.0]);
-            p_image.draw(&self.player_texture, &DrawState::new_alpha(), p_tf, gl);
+            p_image.draw(&self.player_texture, &ds, p_tf, gl);
 
             // draw ground decorations (flat)
             // TODO
@@ -141,11 +143,19 @@ impl App {
             // TODO
             
             // draw decorations (upright things)
-            for deco in &self.world.map.layers[MAP_DECO_LAYER] {
+            for idx in 0..self.world.map.layers[MAP_DECO_LAYER].len() {
+                let deco = &self.world.map.layers[MAP_DECO_LAYER][idx];
                 let tile = self.world.decoration_tiles.tiles_by_id.get(&deco.tile_id).unwrap();
-                let image = build_image(tile, &deco.color);
                 let tf = build_transform(c, deco, tile, player_position, &window_center);        
-                image.draw(&tile.tex, &DrawState::new_alpha(), tf, gl);
+
+                if self.world.map.has_selection && idx == self.world.map.selected_item {
+                    let ellp = Ellipse::new([1.0, 0.9, 0.3, 0.3]); 
+                    ellp.draw([-40 as f64, -20 as f64, 80 as f64, 40 as f64], &ds, 
+                              tf.trans(tile.foot[0], tile.foot[1]), gl);
+                }
+
+                let image = build_image(tile, &deco.color);
+                image.draw(&tile.tex, &ds, tf, gl);
             }
 
             // draw lights
@@ -222,7 +232,8 @@ impl App {
                     None => {
                         println!("Found no object at {}, {}", pos[0], pos[1]);
                     },
-                    Some(object) => {
+                    Some(idx) => {
+                        let object = map.layers[MAP_DECO_LAYER].get_mut(idx).unwrap();
                         println!("Found object {} at scale {}", object.tile_id, object.scale);
                         object.scale += 0.05 * args[1];
                     }

@@ -30,6 +30,27 @@ impl UiController for MapEditor {
             match comp {
                 None => {
                     
+                    if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                        ui.root.head.clear();
+
+                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                        let map = &mut world.map;
+                        let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
+
+                        match option {
+                            None => {
+                                // nothing clicked -> move player
+                                map.has_selection = false;
+                            },
+                            Some(idx) => {
+                                map.has_selection = true;
+                                map.selected_layer = MAP_DECO_LAYER;
+                                map.selected_item = idx;
+                                return true;
+                            }
+                        }
+                    }
+
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
                         let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
                         let id = self.selected_tile_id;
@@ -63,29 +84,23 @@ impl UiController for MapEditor {
 
                     if id == 1000 {
                         // this was the color choice box
-                        let result = comp.get_numeric_result();
-                        let r = result[0];
-                        let g = result[1];
-                        let b = result[2];
-                        let a = result[3];
-                        println!("selected color is {:02x}{:02x}{:02x}{:02x}", r, g, b, a);
+                        
+                        if world.map.has_selection {
+                        
+                            let result = comp.get_numeric_result();
+                            let r = result[0];
+                            let g = result[1];
+                            let b = result[2];
+                            let a = result[3];
+                            println!("selected color is {:02x}{:02x}{:02x}{:02x}", r, g, b, a);
 
-                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
-                        let map = &mut world.map;
-                        let option = map.find_nearest_object(MAP_DECO_LAYER, &pos);
+                            let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                            let map = &mut world.map;
+                            let object = &mut map.layers[MAP_DECO_LAYER][map.selected_item];
+                            object.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
         
-                        match option {
-                            None => {
-                                println!("Found no object at {}, {}", pos[0], pos[1]);
-                            },
-                            Some(object) => {
-                                println!("Found object {} at scale {}", object.tile_id, object.scale);
-                                object.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
-                            }
                         }
-        
 
-                        // ui.root.head.clear();
                         return true;
                     }
                     else {
