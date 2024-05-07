@@ -7,6 +7,8 @@ use std::path::PathBuf;
 
 use crate::item::Item;
 use crate::mob::Mob;
+use crate::inventory::Inventory;
+
 
 pub const MAP_GROUND_LAYER:usize = 0;
 pub const MAP_DECO_LAYER:usize = 1;
@@ -17,6 +19,9 @@ pub struct Map {
     pub layers: [Vec<MapObject>; 7],
 
     pub player: Mob,
+
+    // all items on this map
+    pub items: Inventory,
 
     pub has_selection: bool,
     pub selected_item: usize,
@@ -30,6 +35,7 @@ impl Map {
         Map {
             layers,
             player: Mob::new(1000.0, 1000.0),
+            items: Inventory::new(),
             has_selection: false,
             selected_item: 0,
             selected_layer: 0,

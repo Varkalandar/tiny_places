@@ -1,9 +1,15 @@
+use std::rc::Rc;
+
+use piston::{ButtonState, MouseButton};
 use graphics::DrawState;
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
 use crate::ui::{UI, UiController, ButtonEvent, ScrollEvent};
 use crate::GameWorld;
+use crate::screen_to_world_pos;
+use crate::player_inventory_view::PlayerInventoryView;
+
 
 pub struct Game {
 }
@@ -22,6 +28,40 @@ impl UiController for Game {
 
         let comp = ui.handle_button_event(&event);
 
+        if event.args.state == ButtonState::Release {
+
+            match comp {
+                None => {
+                    
+                    if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                        ui.root.head.clear();
+
+                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                        let map = &mut world.map;
+                        let option = map.find_nearest_object(map.selected_layer, &pos);
+
+                        match option {
+                            None => {
+                                // nothing clicked -> move player
+                                map.has_selection = false;
+                            },
+                            Some(idx) => {
+                                // pick up the item?
+                                return true;
+                            }
+                        }
+                    }
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::I) {
+                        let piv = PlayerInventoryView::new((ui.window_size[0] / 2) as i32, 0);
+                        ui.root.head.add_child(Rc::new(piv));
+                    }        
+                },
+                Some(comp) => {
+                }
+            }
+        }
+
         false
     }
 
@@ -38,15 +78,7 @@ impl UiController for Game {
 
 
     fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
-/*
-        ui.font_14.draw(viewport, gl, ds, 10, 20, "Use keys 1 .. 3 to select map layers", &[1.0, 1.0, 1.0, 1.0]);
-
-        let layer_msg = 
-            "Selected layer: ".to_string() + &world.map.selected_layer.to_string() + 
-            "  Selected tile: " + &self.selected_tile_id.to_string();
-
-        ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
-*/
+        ui.font_14.draw(viewport, gl, ds, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 }

@@ -21,21 +21,28 @@ use piston::window::WindowSettings;
 use std::path::Path;
 
 mod item;
+mod inventory;
 mod map;
 mod mob;
 mod editor;
 mod game;
 mod ui;
 
+#[path = "ui/player_inventory_view.rs"]
+mod player_inventory_view;
+
 use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
+use inventory::Inventory;
 
 
 pub struct GameWorld {
     map: Map,
     layer_tileset: [TileSet; 7],
+
+    player_inventory: Inventory,
 }
 
 pub struct GameControllers {
@@ -91,7 +98,7 @@ impl App {
             ];        
 
 
-        let mut ui = UI::new(window_size);
+        let ui = UI::new(window_size);
         let map = Map::new(); 
         let editor = MapEditor::new();
         let game = Game::new();
@@ -106,6 +113,7 @@ impl App {
             world: GameWorld {
                 map,
                 layer_tileset,
+                player_inventory: Inventory::new(),
             },
             controllers: GameControllers {
                 editor,
@@ -211,10 +219,9 @@ impl App {
         self.ui.draw(viewport, &mut self.gl);
 
         {
-            let editor = &mut self.controllers.editor;
             let world = &mut self.world;
             let ui = &mut self.ui;
-            self.controllers.editor.draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
+            self.controllers.current().draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
         }
     }
 
@@ -237,6 +244,22 @@ impl App {
             mx: self.ui.mouse_state.position[0] as i32,
             my: self.ui.mouse_state.position[1] as i32,
         };
+
+        // editor/game swtich must be handled here, the button pres is not handed down ATM
+
+        if event.args.state == ButtonState::Release {
+            if event.args.button == piston::Button::Keyboard(piston::Key::E) {    
+                self.controllers.edit = true;
+                println!("Switching to editor mode.");
+            }
+            if event.args.button == piston::Button::Keyboard(piston::Key::G) {                        
+                self.controllers.edit = false;
+                println!("Switching to game mode.");
+            }        
+        }
+
+        // now the ordinary events
+
         let controller = &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
