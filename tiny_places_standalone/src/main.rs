@@ -24,11 +24,13 @@ mod item;
 mod map;
 mod mob;
 mod editor;
+mod game;
 mod ui;
 
 use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
+use game::Game;
 
 
 pub struct GameWorld {
@@ -38,7 +40,21 @@ pub struct GameWorld {
 
 pub struct GameControllers {
     editor: MapEditor,
+    game: Game,
+    edit: bool,    
 }
+
+impl GameControllers {
+    fn current(&mut self) -> &mut dyn UiController<Appdata = GameWorld> {
+        if self.edit {
+            &mut self.editor
+        }
+        else {
+            &mut self.game
+        }
+    }
+}
+
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
@@ -77,7 +93,8 @@ impl App {
 
         let mut ui = UI::new(window_size);
         let map = Map::new(); 
-        let editor = MapEditor::new(&mut ui);
+        let editor = MapEditor::new();
+        let game = Game::new();
 
         App {        
 
@@ -92,6 +109,8 @@ impl App {
             },
             controllers: GameControllers {
                 editor,
+                game,
+                edit: true,
             }
         }
     }
@@ -218,11 +237,11 @@ impl App {
             mx: self.ui.mouse_state.position[0] as i32,
             my: self.ui.mouse_state.position[1] as i32,
         };
-        let editor = &mut self.controllers.editor;
+        let controller = &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
 
-        let consumed = editor.handle_button_event(ui, &event, world);
+        let consumed = controller.handle_button_event(ui, &event, world);
 
         if event.args.state == ButtonState::Release && !consumed {
             if event.args.button == piston::Button::Mouse(MouseButton::Left) {

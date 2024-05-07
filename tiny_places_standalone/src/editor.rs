@@ -208,7 +208,7 @@ impl UiController for MapEditor {
 
 impl MapEditor {
 
-    pub fn new(_ui: &mut UI) -> MapEditor {
+    pub fn new() -> MapEditor {
         MapEditor {
             selected_tile_id: 0,
         }
