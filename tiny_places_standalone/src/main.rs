@@ -80,7 +80,8 @@ impl App {
     
     fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
         
-        let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
+        // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
+        let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
         let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
