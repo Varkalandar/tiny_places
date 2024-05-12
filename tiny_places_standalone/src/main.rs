@@ -19,6 +19,8 @@ use piston::input::{RenderArgs, RenderEvent,
 use piston::window::WindowSettings;
 
 use std::path::Path;
+use std::cell::OnceCell;
+use std::rc::Rc;
 
 mod item;
 mod inventory;
@@ -35,6 +37,7 @@ use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
+use item::{Item, ItemFactory};
 use inventory::Inventory;
 
 
@@ -42,7 +45,7 @@ pub struct GameWorld {
     map: Map,
     layer_tileset: [TileSet; 7],
 
-    player_inventory: Inventory,
+    player_inventory: Rc<OnceCell<Inventory>>,
 }
 
 pub struct GameControllers {
@@ -88,7 +91,7 @@ impl App {
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
         let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
 
-        let mut layer_tileset = [
+        let layer_tileset = [
             ground_tiles,
             decoration_tiles,
             cloud_tiles,
@@ -104,6 +107,15 @@ impl App {
         let editor = MapEditor::new();
         let game = Game::new();
 
+        let mut inv = Inventory::new();
+
+        let mut factory = ItemFactory::new();
+        let demo_item = factory.make_item();
+        inv.put_item(demo_item);
+
+        let inv_cell = OnceCell::new();
+        inv_cell.set(inv);
+
         App {        
 
             gl: GlGraphics::new(opengl),
@@ -114,7 +126,7 @@ impl App {
             world: GameWorld {
                 map,
                 layer_tileset,
-                player_inventory: Inventory::new(),
+                player_inventory: Rc::new(inv_cell),
             },
             controllers: GameControllers {
                 editor,
@@ -340,7 +352,7 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
 
 fn main() {
     
-    let window_size = [1000, 750];
+    let window_size = [1200, 770];
 
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;

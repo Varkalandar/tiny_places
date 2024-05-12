@@ -1,10 +1,17 @@
+#[derive(Debug)]
 pub struct Item {
     
     // the ID must be unique in a game
-    id: usize,
+    pub id: usize,
 
     pub name: String,
-    pub mods: Vec<Mod>,    
+    pub mods: Vec<Mod>,
+    
+    pub inventory_tile_id: usize,
+    pub inventory_w: i32,
+    pub inventory_h: i32,
+
+    pub map_tile_id: usize,
 }
 
 
@@ -28,7 +35,7 @@ impl Item {
 }
 
 
-struct ItemFactory
+pub struct ItemFactory
 {
     next_id: usize,
 }
@@ -49,6 +56,12 @@ impl ItemFactory {
             id, 
             name: "".to_string(),
             mods: Vec::new(),
+
+            inventory_tile_id: 1,
+            inventory_w: 2,
+            inventory_h: 3,
+        
+            map_tile_id: 1,
         }
     }
 }
@@ -56,7 +69,7 @@ impl ItemFactory {
 
 
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Attribute {
 
     Structure = 1,
@@ -67,7 +80,7 @@ pub enum Attribute {
     Energy = 5,
 }
 
-
+#[derive(Debug)]
 pub struct Mod {
     attribute: Attribute,
     power: i32,
