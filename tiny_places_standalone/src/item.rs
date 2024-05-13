@@ -1,3 +1,6 @@
+use std::fs::read_to_string;
+use std::path::Path;
+
 #[derive(Debug)]
 pub struct Item {
     
@@ -38,30 +41,62 @@ impl Item {
 pub struct ItemFactory
 {
     next_id: usize,
+
+    proto_items: Vec<Item>,
 }
 
 
 impl ItemFactory {
     pub fn new() -> ItemFactory {
+
+        let path = Path::new("resources/items/items.csv");    
+        let rs = read_to_string(path).unwrap();
+        let mut lines = Vec::new();
+        
+        for line in rs.lines() {
+            lines.push(line);
+        }
+
+        let mut proto_items: Vec<Item> = Vec::new();
+
+        for i in 1..lines.len() {
+            let mut parts = lines[i].split(",");
+
+            proto_items.push(Item {
+                id: 0,
+                name: parts.next().unwrap().to_string(),
+                inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+                map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+                inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
+                inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
+                mods: Vec::new(),
+            });
+        }
+
+
         ItemFactory {
-            next_id: 0
+            next_id: 0,
+            proto_items,
         }
     }
+
 
     pub fn make_item(&mut self) -> Item {
         let id = self.next_id;
         self.next_id += 1;
         
+        let proto = &self.proto_items[0];
+
         Item {
             id, 
-            name: "".to_string(),
+            name: proto.name.to_string(),
             mods: Vec::new(),
 
-            inventory_tile_id: 14,
-            inventory_w: 1,
-            inventory_h: 3,
+            inventory_tile_id: proto.inventory_tile_id,
+            inventory_w: proto.inventory_w,
+            inventory_h: proto.inventory_h,
         
-            map_tile_id: 1,
+            map_tile_id: proto.map_tile_id,
         }
     }
 }
