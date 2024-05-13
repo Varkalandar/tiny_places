@@ -9,25 +9,27 @@ use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 use crate::ui::{UiHead, UiComponent, UiArea};
 use crate::Inventory;
 use crate::inventory::Slot;
+use crate::TileSet;
 
 
 pub struct PlayerInventoryView {
     area: UiArea,
     texture: Texture,
     inventory: Rc<OnceCell<Inventory>>,
+    item_tiles: TileSet,
 
-    offsets: HashMap<Slot, [i32; 2]>,
+    slot_offsets: HashMap<Slot, [i32; 2]>,
 }
 
 
 impl PlayerInventoryView {
 
-    pub fn new(x: i32, y: i32, inventory: Rc<OnceCell<Inventory>>) -> UiComponent {
+    pub fn new(x: i32, y: i32, inventory: Rc<OnceCell<Inventory>>, tiles: &TileSet) -> UiComponent {
 
         let texture = Texture::from_path(Path::new("resources/ui/inventory_bg.png"), &TextureSettings::new()).unwrap();
 
-        let mut offsets = HashMap::new();
-        offsets.insert(Slot::BAG, [10, 452]);
+        let mut slot_offsets = HashMap::new();
+        slot_offsets.insert(Slot::BAG, [10, 452]);
 
         let inv = PlayerInventoryView {
             area: UiArea {
@@ -39,7 +41,9 @@ impl PlayerInventoryView {
             
             texture,
             inventory,
-            offsets,
+            item_tiles: tiles.shallow_copy(),
+
+            slot_offsets,
         };
 
         UiComponent {
@@ -65,7 +69,7 @@ impl UiHead for PlayerInventoryView {
             */
 
             let tf = c.transform;
-            let m_image   = 
+            let m_image = 
                 Image::new()
                     .rect([xp as f64, yp as f64, self.texture.get_width() as f64, self.texture.get_height() as f64])
                     .color([1.0, 1.0, 1.0, 0.95]);
@@ -77,16 +81,38 @@ impl UiHead for PlayerInventoryView {
             for entry in &inventory.entries {
 
                 if entry.slot == Slot::BAG {
-                    let offsets = self.offsets.get(&Slot::BAG).unwrap();
-                    let entry_x = xp + offsets[0] + entry.location_x * 32;
-                    let entry_y = yp + offsets[1] + entry.location_y * 32;
+                    let offsets = self.slot_offsets.get(&Slot::BAG).unwrap();
+                    let entry_x = (xp + offsets[0] + entry.location_x * 32) as f64;
+                    let entry_y = (yp + offsets[1] + entry.location_y * 32) as f64;
                     
                     let item = inventory.bag.get(&entry.item_id).unwrap();
-                    let w = item.inventory_w * 32;
-                    let h = item.inventory_h * 32;
+                    let w = (item.inventory_w * 32) as f64;
+                    let h = (item.inventory_h * 32) as f64;
 
-                    let rect = Rectangle::new([0.2, 0.7, 0.0, 1.0]); 
-                    rect.draw([entry_x as f64, entry_y as f64, w as f64, h as f64], draw_state, c.transform, gl);
+                    let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
+                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+
+                    let tile = self.item_tiles.tiles_by_id.get(&item.inventory_tile_id).unwrap();
+
+                    let mut tw = tile.tex.get_width() as f64;
+                    let mut th = tile.tex.get_height() as f64;
+
+                    let s1 = w / tw;
+                    let s2 = h / th;
+
+                    let scale = if s1 < s2 { s1 } else { s2 };
+
+                    tw = tw * scale * 0.95;
+                    th = th * scale * 0.95;
+
+                    let ox = (w - tw) / 2.0;
+                    let oy = (h - th) / 2.0;
+
+                    let image = 
+                        Image::new()
+                            .rect([entry_x + ox, entry_y + oy, tw, th])
+                            .color([1.0, 1.0, 1.0, 1.0]);
+                    image.draw(&tile.tex, draw_state, tf, gl);
                 }
             }
         

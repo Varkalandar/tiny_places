@@ -71,8 +71,27 @@ impl TileSet {
         }
 
         tileset        
-    } 
+    }
+    
+    
+    pub fn shallow_copy(&self) -> TileSet {
+        let mut result = TileSet {
+            tiles_by_id: HashMap::new(),
+            tiles_order_to_id: HashMap::new(),
+        };
+
+        for key in &self.tiles_order_to_id {
+            let id = *key.1;
+            result.tiles_order_to_id.insert(*key.0, id);
+
+            let tile = self.tiles_by_id.get(&id).unwrap();
+            result.tiles_by_id.insert(id, tile.clone());
+        }
+        
+        result
+    }
 }
+
 
 fn load_tile(path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
 

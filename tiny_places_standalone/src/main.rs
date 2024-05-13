@@ -89,6 +89,7 @@ impl App {
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
+        let item_tiles = TileSet::load("../tiny_places_client/resources/items", "items.tica");
         let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
 
         let layer_tileset = [
@@ -98,7 +99,7 @@ impl App {
             TileSet::new(),
             TileSet::new(),
             TileSet::new(),
-            TileSet::new(),
+            item_tiles,
             ];        
 
 
@@ -183,8 +184,6 @@ impl App {
                     image.draw(&tile.tex, &ds, tf, gl);
                 }    
             }
-
-
 
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);

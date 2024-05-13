@@ -57,8 +57,8 @@ impl ItemFactory {
             name: "".to_string(),
             mods: Vec::new(),
 
-            inventory_tile_id: 1,
-            inventory_w: 2,
+            inventory_tile_id: 14,
+            inventory_w: 1,
             inventory_h: 3,
         
             map_tile_id: 1,

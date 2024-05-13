@@ -53,7 +53,9 @@ impl UiController for Game {
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
-                        let piv = PlayerInventoryView::new(((ui.window_size[0] - 500) / 2) as i32, 10, world.player_inventory.clone());
+                        let piv = PlayerInventoryView::new(((ui.window_size[0] - 500) / 2) as i32, 10, 
+                                                           world.player_inventory.clone(),
+                                                           &world.layer_tileset[6].shallow_copy());
                         ui.root.head.add_child(Rc::new(piv));
                     }        
                 },

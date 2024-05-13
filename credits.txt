@@ -1,6 +1,15 @@
+Graphics
+--------
+
 The inventory ui corner decorations and borders were created using these two public domain SVGs:
 https://freesvg.org/rose-corner-decor
 https://freesvg.org/border
+
+The standalone version inventory background was created using a photo of the SR-71 (Public Domain, CC0):
+https://www.rawpixel.com/image/441507/free-photo-image-nasa-military-aerospike
+
+The standalone version inventory engine slot line art was created using a photo of the Whittle Engine (Public Domain)
+https://en.wikipedia.org/wiki/Jet_engine#/media/File:Whittle_Jet_Engine_W2-700.JPG
 
 
 Fonts
@@ -8,3 +17,7 @@ Fonts
 
 Humanistic by George Williams (SIL Open Font License)
 https://www.1001fonts.com/humanistic-font.html
+
+Fira Sans by Mozilla Foundation (SIL Open Font License)
+https://mozilla.org/
+
