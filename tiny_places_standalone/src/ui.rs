@@ -49,6 +49,11 @@ pub trait UiController {
     }
 
 
+    fn handle_mouse_move_event(&mut self, _ui: &mut UI, _event: &MouseMoveEvent, _appdata: &mut Self::Appdata) -> bool {
+        false
+    }
+
+
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
@@ -230,8 +235,12 @@ impl UI {
     }
 
 
-    pub fn handle_scroll_event(&mut self, event: &ScrollEvent) -> Option<&dyn UiHead> {
+    pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+        self.root.head.handle_mouse_move_event(event)
+    }
 
+
+    pub fn handle_scroll_event(&mut self, event: &ScrollEvent) -> Option<&dyn UiHead> {
         self.root.head.handle_scroll_event(event)
     }
 }
@@ -251,6 +260,12 @@ impl ButtonEvent <'_> {
             my: self.my + y,
         }
     }
+}
+
+
+pub struct MouseMoveEvent {
+    pub mx: i32,
+    pub my: i32,
 }
 
 
@@ -276,6 +291,10 @@ pub trait UiHead {
 
     fn handle_button_event(&mut self, _event: &ButtonEvent) -> Option<&dyn UiHead> {
         println!("This component cannot handle button events.");
+        None
+    }
+
+    fn handle_mouse_move_event(&mut self, _event: &MouseMoveEvent) -> Option<&dyn UiHead> {
         None
     }
 
@@ -313,11 +332,15 @@ impl UiContainer {
         let rel_x = x - self.area.x;
         let rel_y = y - self.area.y;
 
+        // println!("Checking relative to container origin {}, {}", rel_x, rel_y);
+
         for child in &mut self.children {
             let area = &child.head.area();
 
+            // println!("Area {}, {}, {}, {}", area.x, area.y, area.w, area.h);
+
             if area.contains(rel_x, rel_y) {
-                println!("Found a child at {}, {}", x, y);
+                // println!("Found a child at {}, {}", x, y);
 
                 return Rc::<UiComponent>::get_mut(child);
             }
@@ -360,10 +383,25 @@ impl UiHead for UiContainer {
                 
         match option {
             None => {
-                println!("  error: component is not mutable");
             },
             Some(child) => {
                 return child.head.handle_button_event(event);
+            }
+        }
+
+        None
+    }
+
+
+    fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+        let option = self.find_child_at(event.mx, event.my);
+                
+        match option {
+            None => {
+            },
+            Some(child) => {
+                // println!("Mouse moved to {}, {}", event.mx, event.my);
+                return child.head.handle_mouse_move_event(event);
             }
         }
 
@@ -377,7 +415,6 @@ impl UiHead for UiContainer {
                 
         match option {
             None => {
-                println!("  error: component is not mutable");
             },
             Some(child) => {
                 return child.head.handle_scroll_event(event);

@@ -34,7 +34,7 @@ mod ui;
 mod player_inventory_view;
 
 use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
-use ui::{UI, UiController, TileSet, Tile, ScrollEvent};
+use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
 use item::{Item, ItemFactory};
@@ -287,9 +287,19 @@ impl App {
     
     
     fn mouse_cursor(&mut self, args: &[f64; 2]) {
-        // println!("Mouse cursor event {:?}", args);
         
         self.ui.mouse_state.position = *args;
+
+        let event = MouseMoveEvent {
+            mx: self.ui.mouse_state.position[0] as i32,
+            my: self.ui.mouse_state.position[1] as i32,
+        };
+
+        let controller = &mut self.controllers.current();
+        let world = &mut self.world;
+        let ui = &mut self.ui;
+
+        controller.handle_mouse_move_event(ui, &event, world);
     }
     
 
@@ -303,11 +313,11 @@ impl App {
             my: self.ui.mouse_state.position[1] as i32,
         };
 
-        let editor = &mut self.controllers.editor;
+        let controller = &mut &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
 
-        editor.handle_scroll_event(ui, &event, world);
+        controller.handle_scroll_event(ui, &event, world);
     }
 
 

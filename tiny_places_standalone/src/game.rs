@@ -5,7 +5,7 @@ use graphics::DrawState;
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
-use crate::ui::{UI, UiController, ButtonEvent, ScrollEvent};
+use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
@@ -53,7 +53,8 @@ impl UiController for Game {
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
-                        let piv = PlayerInventoryView::new(((ui.window_size[0] - 500) / 2) as i32, 10, 
+                        let piv = PlayerInventoryView::new(((ui.window_size[0] - 500) / 2) as i32, 10,
+                                                           &ui.font_14,  
                                                            world.player_inventory.clone(),
                                                            &world.layer_tileset[6].shallow_copy());
                         ui.root.head.add_child(Rc::new(piv));
@@ -68,12 +69,19 @@ impl UiController for Game {
     }
 
 
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, _appdata: &mut Self::Appdata) -> bool {
+        let comp = ui.handle_mouse_move_event(event);
+
+        false
+    }
+
+
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
     fn handle_scroll_event(&mut self, ui: &mut UI, event: &ScrollEvent, world: &mut Self::Appdata) -> bool {
 
-        let comp = ui.handle_scroll_event(&event);
+        let comp = ui.handle_scroll_event(event);
 
         false
     }

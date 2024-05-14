@@ -6,10 +6,11 @@ use std::collections::HashMap;
 use graphics::{draw_state::DrawState, Rectangle, Viewport, ImageSize, Image,};
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 
-use crate::ui::{UiHead, UiComponent, UiArea};
+use crate::ui::{UiHead, UiComponent, UiArea, UiFont, MouseMoveEvent};
 use crate::Inventory;
 use crate::inventory::Slot;
 use crate::TileSet;
+use crate::item::Item;
 
 
 pub struct PlayerInventoryView {
@@ -19,12 +20,16 @@ pub struct PlayerInventoryView {
     item_tiles: TileSet,
 
     slot_offsets: HashMap<Slot, [i32; 2]>,
+
+    hover_item: Option<usize>,
+    font: Rc<UiFont>,
 }
 
 
 impl PlayerInventoryView {
 
-    pub fn new(x: i32, y: i32, inventory: Rc<OnceCell<Inventory>>, tiles: &TileSet) -> UiComponent {
+    pub fn new(x: i32, y: i32, font: &Rc<UiFont>, 
+               inventory: Rc<OnceCell<Inventory>>, tiles: &TileSet) -> UiComponent {
 
         let texture = Texture::from_path(Path::new("resources/ui/inventory_bg.png"), &TextureSettings::new()).unwrap();
 
@@ -35,8 +40,8 @@ impl PlayerInventoryView {
             area: UiArea {
                 x, 
                 y,
-                w: 400,
-                h: 600,                
+                w: texture.get_width() as i32,
+                h: texture.get_height() as i32,                
             },
             
             texture,
@@ -44,6 +49,8 @@ impl PlayerInventoryView {
             item_tiles: tiles.shallow_copy(),
 
             slot_offsets,
+            hover_item: None,
+            font: font.clone(),
         };
 
         UiComponent {
@@ -54,6 +61,11 @@ impl PlayerInventoryView {
 
 
 impl UiHead for PlayerInventoryView {
+
+    fn area(&self) -> &UiArea {
+        &self.area
+    }
+
 
     fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
         let area = &self.area;
@@ -80,8 +92,8 @@ impl UiHead for PlayerInventoryView {
             // show all items which are in the inventory space
             for entry in &inventory.entries {
 
-                if entry.slot == Slot::BAG {
-                    let offsets = self.slot_offsets.get(&Slot::BAG).unwrap();
+                if entry.slot != Slot::STASH {
+                    let offsets = self.slot_offsets.get(&entry.slot).unwrap();
                     let entry_x = (xp + offsets[0] + entry.location_x * 32) as f64;
                     let entry_y = (yp + offsets[1] + entry.location_y * 32) as f64;
                     
@@ -116,6 +128,57 @@ impl UiHead for PlayerInventoryView {
                 }
             }
         
+            match self.hover_item {
+                None => {
+
+                },
+                Some(id) => {
+                    for entry in &inventory.entries {
+                        if entry.item_id == id {
+                            let offsets = self.slot_offsets.get(&entry.slot).unwrap();
+                            let item = inventory.bag.get(&id).unwrap();
+
+                            let entry_x = (xp + offsets[0] + entry.location_x * 32);
+                            let entry_y = (yp + offsets[1] + entry.location_y * 32);
+        
+                            self.font.draw(viewport, gl, draw_state, entry_x, entry_y, 
+                                           &item.name, &[0.8, 1.0, 0.0, 1.0]);
+                        }
+                    }
+                }
+            }
         });
     }
+
+
+    fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+
+        self.hover_item = None;
+        
+        // println!("Mouse moved to {}, {}", event.mx, event.my);
+
+        let area = &self.area;
+        let inventory = self.inventory.get().unwrap();
+
+        for entry in &inventory.entries {
+            if entry.slot != Slot::STASH {
+                let offsets = self.slot_offsets.get(&entry.slot).unwrap();
+                let entry_x = (area.x + offsets[0] + entry.location_x * 32);
+                let entry_y = (area.y + offsets[1] + entry.location_y * 32);
+                
+                let item = inventory.bag.get(&entry.item_id).unwrap();
+                let w = (item.inventory_w * 32);
+                let h = (item.inventory_h * 32);
+
+                if event.mx >= entry_x && event.my >= entry_y &&
+                   event.mx < entry_x + w && event.my < entry_y + h {
+                    println!("Hovering {}", &item.name);
+                    self.hover_item = Some(item.id);
+                }
+            }
+        }
+
+        None
+    }
+
 }
