@@ -1,6 +1,8 @@
 use std::fs::read_to_string;
 use std::path::Path;
 
+use crate::inventory::Slot;
+
 #[derive(Debug)]
 pub struct Item {
     
@@ -13,7 +15,8 @@ pub struct Item {
     pub inventory_tile_id: usize,
     pub inventory_w: i32,
     pub inventory_h: i32,
-
+    pub inventory_scale: f64,
+    pub slot: Slot,
     pub map_tile_id: usize,
 }
 
@@ -69,6 +72,8 @@ impl ItemFactory {
                 map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
                 inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
                 inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
+                inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
+                slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),                
                 mods: Vec::new(),
             });
         }
@@ -81,11 +86,11 @@ impl ItemFactory {
     }
 
 
-    pub fn make_item(&mut self) -> Item {
+    pub fn make_item(&mut self, key: usize) -> Item {
         let id = self.next_id;
         self.next_id += 1;
         
-        let proto = &self.proto_items[0];
+        let proto = &self.proto_items[key];
 
         Item {
             id, 
@@ -95,12 +100,26 @@ impl ItemFactory {
             inventory_tile_id: proto.inventory_tile_id,
             inventory_w: proto.inventory_w,
             inventory_h: proto.inventory_h,
+            inventory_scale: proto.inventory_scale,
+            slot: proto.slot,
         
             map_tile_id: proto.map_tile_id,
         }
     }
 }
 
+fn calc_slot(v: i32) -> Slot {
+    match v {
+        0 => Slot::BAG,
+        1 => Slot::STASH,
+        2 => Slot::NOSE,
+        3 => Slot::BODY,
+        4 => Slot::LWING,
+        5 => Slot::RWING,
+        6 => Slot::ENGINE,
+        _ => Slot::BAG,
+    }
+}
 
 
 

@@ -38,7 +38,7 @@ use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
 use item::{Item, ItemFactory};
-use inventory::Inventory;
+use inventory::{Inventory, Slot};
 
 
 pub struct GameWorld {
@@ -111,8 +111,14 @@ impl App {
         let mut inv = Inventory::new();
 
         let mut factory = ItemFactory::new();
-        let demo_item = factory.make_item();
-        inv.put_item(demo_item);
+        let demo_item = factory.make_item(0);
+        inv.put_item(demo_item, Slot::BAG);
+
+        let laser = factory.make_item(1);
+        inv.put_item(laser, Slot::RWING);
+
+        let engine = factory.make_item(2);
+        inv.put_item(engine, Slot::BAG);
 
         let inv_cell = OnceCell::new();
         inv_cell.set(inv);

@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use crate::item::Item;
+use crate::ui::UiArea;
 
-#[derive(PartialEq, Eq, Debug, Hash)]
+#[derive(PartialEq, Eq, Debug, Hash, Clone, Copy)]
 pub enum Slot {
     BAG = 0,
     STASH = 1,
@@ -39,17 +40,61 @@ impl Inventory {
         }
     }
 
-    pub fn put_item(&mut self, item: Item) {
+    pub fn put_item(&mut self, item: Item, slot: Slot) {
+
+        let spot = 
+            if slot == Slot::BAG 
+                {self.find_free_location(&item)}
+            else
+                {[0, 0]};
 
         let entry = Entry {
             item_id: item.id,
-            slot: Slot::BAG,
-            location_x: 3,
-            location_y: 0,
+            slot,
+            location_x: spot[0],
+            location_y: spot[1],
         };
 
         self.bag.insert(item.id, item);
         self.entries.push(entry);
 
+    }
+
+    fn find_free_location(&self, item: &Item) -> [i32; 2] {
+
+        // look for free space
+        for grid_y in 0..8 
+        {
+            for grid_x in 0..32 
+            {
+                let mut free = true;
+
+                for entry in &self.entries {
+                    let item = self.bag.get(&entry.item_id).unwrap();
+
+                    let mut area = UiArea {
+                        x: entry.location_x,                        
+                        y: entry.location_y,
+                        w: item.inventory_w,
+                        h: item.inventory_h,
+                    };
+
+                    for x in 0..item.inventory_w {
+                        for y in 0..item.inventory_h {
+                            if area.contains(grid_x + x, grid_y + y) {
+                                free = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if free {
+                    return [grid_x, grid_y];
+                }
+            }
+        }
+
+        return [-1, -1];
     }
 }

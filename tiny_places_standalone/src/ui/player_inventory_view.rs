@@ -20,6 +20,7 @@ pub struct PlayerInventoryView {
     item_tiles: TileSet,
 
     slot_offsets: HashMap<Slot, [i32; 2]>,
+    slot_sizes: HashMap<Slot, (i32, i32)>,
 
     hover_item: Option<usize>,
     font: Rc<UiFont>,
@@ -35,6 +36,11 @@ impl PlayerInventoryView {
 
         let mut slot_offsets = HashMap::new();
         slot_offsets.insert(Slot::BAG, [10, 452]);
+        slot_offsets.insert(Slot::RWING, [20, 205]);
+
+        let mut slot_sizes = HashMap::new();
+        slot_sizes.insert(Slot::LWING, (2*32, 3*32));
+        slot_sizes.insert(Slot::RWING, (2*32, 3*32));
 
         let inv = PlayerInventoryView {
             area: UiArea {
@@ -49,12 +55,23 @@ impl PlayerInventoryView {
             item_tiles: tiles.shallow_copy(),
 
             slot_offsets,
+            slot_sizes,
             hover_item: None,
             font: font.clone(),
         };
 
         UiComponent {
             head: Box::new(inv),
+        }
+    }
+
+    fn find_slot_size(&self, item: &Item, slot: Slot) -> (i32, i32) {
+
+        if slot == Slot::BAG {
+            (item.inventory_w * 32, item.inventory_h * 32)
+        }
+        else {
+            *self.slot_sizes.get(&slot).unwrap()
         }
     }
 }
@@ -98,11 +115,18 @@ impl UiHead for PlayerInventoryView {
                     let entry_y = (yp + offsets[1] + entry.location_y * 32) as f64;
                     
                     let item = inventory.bag.get(&entry.item_id).unwrap();
-                    let w = (item.inventory_w * 32) as f64;
-                    let h = (item.inventory_h * 32) as f64;
+                    let size = self.find_slot_size(item, entry.slot);
+                    let w = size.0 as f64;
+                    let h = size.1 as f64;
 
-                    let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
-                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                    if self.hover_item == Some(item.id) {
+                        let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
+                        rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                    }
+                    else {
+                        let rect = Rectangle::new([0.0, 0.02, 0.1, 0.7]); 
+                        rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                    }
 
                     let tile = self.item_tiles.tiles_by_id.get(&item.inventory_tile_id).unwrap();
 
@@ -114,8 +138,8 @@ impl UiHead for PlayerInventoryView {
 
                     let scale = if s1 < s2 { s1 } else { s2 };
 
-                    tw = tw * scale * 0.95;
-                    th = th * scale * 0.95;
+                    tw = tw * scale * 0.95 * item.inventory_scale;
+                    th = th * scale * 0.95 * item.inventory_scale;
 
                     let ox = (w - tw) / 2.0;
                     let oy = (h - th) / 2.0;
@@ -167,8 +191,7 @@ impl UiHead for PlayerInventoryView {
                 let entry_y = (area.y + offsets[1] + entry.location_y * 32);
                 
                 let item = inventory.bag.get(&entry.item_id).unwrap();
-                let w = (item.inventory_w * 32);
-                let h = (item.inventory_h * 32);
+                let (w, h) = self.find_slot_size(item, entry.slot);
 
                 if event.mx >= entry_x && event.my >= entry_y &&
                    event.mx < entry_x + w && event.my < entry_y + h {
@@ -180,5 +203,4 @@ impl UiHead for PlayerInventoryView {
 
         None
     }
-
 }
