@@ -6,9 +6,8 @@ use std::fs::File;
 use std::path::PathBuf;
 
 use crate::item::Item;
-use crate::mob::Mob;
+use crate::mob::{Mob, Visual};
 use crate::inventory::Inventory;
-
 
 pub const MAP_GROUND_LAYER:usize = 0;
 pub const MAP_DECO_LAYER:usize = 1;
@@ -32,9 +31,19 @@ pub struct Map {
 impl Map {
     pub fn new() -> Map {
         let layers = [Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),];        
+        
+        let player_visual = Visual {
+            base_image_id: 39,
+            current_image_id: 39,
+            frames: 16,        
+        };
+
+        let mut player = Mob::new(1000.0, 1000.0);
+        player.visual = player_visual;
+
         Map {
             layers,
-            player: Mob::new(1000.0, 1000.0),
+            player,
             items: Inventory::new(),
             has_selection: false,
             selected_item: 0,

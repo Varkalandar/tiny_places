@@ -70,7 +70,6 @@ pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     
     map_texture: Texture,
-    player_texture: Texture,
 
     ui: UI,
 
@@ -85,19 +84,20 @@ impl App {
         
         // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
-        let player_texture = Texture::from_path(Path::new("../tiny_places_client/resources/creatures/9-vortex.png"), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
         let item_tiles = TileSet::load("../tiny_places_client/resources/items", "items.tica");
         let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
+        let creature_tiles = TileSet::load("../tiny_places_client/resources/creatures", "creatures.tica");
+        let player_tiles = TileSet::load("../tiny_places_client/resources/players", "players.tica");
 
         let layer_tileset = [
             ground_tiles,
             decoration_tiles,
             cloud_tiles,
-            TileSet::new(),
-            TileSet::new(),
+            creature_tiles,
+            player_tiles,
             TileSet::new(),
             item_tiles,
             ];        
@@ -123,11 +123,11 @@ impl App {
         let inv_cell = OnceCell::new();
         inv_cell.set(inv);
 
+
         App {        
 
             gl: GlGraphics::new(opengl),
             map_texture: texture,
-            player_texture: player_texture,
             
             ui,
             world: GameWorld {
@@ -210,12 +210,13 @@ impl App {
                     .color([0.8, 0.8, 0.8, 1.0]);
             m_image.draw(&self.map_texture, &ds, map_tf, gl);
 
+            let player_set = &self.world.layer_tileset[4];
+            let player_tile_id = self.world.map.player.visual.current_image_id;
+            let p_tile = player_set.tiles_by_id.get(&player_tile_id).unwrap();
             let p_tf = c.transform.trans(window_center[0], window_center[1]).scale(0.5, 0.5);
-            let p_image   = 
-                Image::new()
-                    .rect([0.0, 0.0, self.player_texture.get_width() as f64, self.player_texture.get_height() as f64])
-                    .color([1.0, 0.8, 0.6, 1.0]);
-            p_image.draw(&self.player_texture, &ds, p_tf, gl);
+
+            let p_image = build_image(p_tile, &[1.0, 0.8, 0.6, 1.0]); 
+            p_image.draw(&p_tile.tex, &ds, p_tf, gl);
 
             // draw ground decorations (flat)
             draw_layer(gl, c, ds, &window_center, &self.world, MAP_GROUND_LAYER);
@@ -278,6 +279,7 @@ impl App {
 
         // now the ordinary events
 
+        let window_center: Vector2<f64> = [(self.ui.window_size[0] / 2) as f64, (self.ui.window_size[1] / 2) as f64]; 
         let controller = &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
@@ -286,7 +288,7 @@ impl App {
 
         if event.args.state == ButtonState::Release && !consumed {
             if event.args.button == piston::Button::Mouse(MouseButton::Left) {
-                self.move_player();            
+                self.move_player(window_center);            
             }
         }
     }    
@@ -327,8 +329,7 @@ impl App {
     }
 
 
-    fn move_player(&mut self) {
-        let window_center: Vector2<f64> = [500.0, 375.0]; 
+    fn move_player(&mut self, window_center: Vector2<f64>) {
         
         let screen_direction = vec2_sub(self.ui.mouse_state.position, window_center);
         
@@ -345,6 +346,9 @@ impl App {
         player.speed = vec2_scale(direction, 1.0/time);
 
         let dest = vec2_add(player.position, direction);
+
+        let d = player.visual.orient(direction[0], direction[1]);
+        player.visual.current_image_id = player.visual.base_image_id + d;
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);
         

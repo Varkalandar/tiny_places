@@ -162,8 +162,8 @@ impl UiHead for PlayerInventoryView {
                             let offsets = self.slot_offsets.get(&entry.slot).unwrap();
                             let item = inventory.bag.get(&id).unwrap();
 
-                            let entry_x = (xp + offsets[0] + entry.location_x * 32);
-                            let entry_y = (yp + offsets[1] + entry.location_y * 32);
+                            let entry_x = xp + offsets[0] + entry.location_x * 32;
+                            let entry_y = yp + offsets[1] + entry.location_y * 32;
         
                             self.font.draw(viewport, gl, draw_state, entry_x, entry_y, 
                                            &item.name, &[0.8, 1.0, 0.0, 1.0]);
@@ -187,8 +187,8 @@ impl UiHead for PlayerInventoryView {
         for entry in &inventory.entries {
             if entry.slot != Slot::STASH {
                 let offsets = self.slot_offsets.get(&entry.slot).unwrap();
-                let entry_x = (area.x + offsets[0] + entry.location_x * 32);
-                let entry_y = (area.y + offsets[1] + entry.location_y * 32);
+                let entry_x = area.x + offsets[0] + entry.location_x * 32;
+                let entry_y = area.y + offsets[1] + entry.location_y * 32;
                 
                 let item = inventory.bag.get(&entry.item_id).unwrap();
                 let (w, h) = self.find_slot_size(item, entry.slot);
