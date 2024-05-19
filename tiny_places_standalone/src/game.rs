@@ -45,7 +45,7 @@ impl UiController for Game {
                                 // nothing clicked -> move player
                                 map.has_selection = false;
                             },
-                            Some(idx) => {
+                            Some(_idx) => {
                                 // pick up the item?
                                 return true;
                             }
@@ -60,7 +60,7 @@ impl UiController for Game {
                         ui.root.head.add_child(Rc::new(piv));
                     }        
                 },
-                Some(comp) => {
+                Some(_comp) => {
                 }
             }
         }
@@ -69,8 +69,8 @@ impl UiController for Game {
     }
 
 
-    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, _appdata: &mut Self::Appdata) -> bool {
-        let comp = ui.handle_mouse_move_event(event);
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, _world: &mut Self::Appdata) -> bool {
+        let _comp = ui.handle_mouse_move_event(event);
 
         false
     }
@@ -79,15 +79,15 @@ impl UiController for Game {
     /**
      * @return true if this controller could handle the event, false to pass the event to other controllers
      */
-    fn handle_scroll_event(&mut self, ui: &mut UI, event: &ScrollEvent, world: &mut Self::Appdata) -> bool {
+    fn handle_scroll_event(&mut self, ui: &mut UI, event: &ScrollEvent, _world: &mut Self::Appdata) -> bool {
 
-        let comp = ui.handle_scroll_event(event);
+        let _comp = ui.handle_scroll_event(event);
 
         false
     }
 
 
-    fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+    fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, _world: &mut Self::Appdata) {
         ui.font_14.draw(viewport, gl, ds, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 

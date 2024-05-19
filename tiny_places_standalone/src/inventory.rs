@@ -70,13 +70,13 @@ impl Inventory {
                 let mut free = true;
 
                 for entry in &self.entries {
-                    let item = self.bag.get(&entry.item_id).unwrap();
+                    let bag_item = self.bag.get(&entry.item_id).unwrap();
 
-                    let mut area = UiArea {
+                    let area = UiArea {
                         x: entry.location_x,                        
                         y: entry.location_y,
-                        w: item.inventory_w,
-                        h: item.inventory_h,
+                        w: bag_item.inventory_w,
+                        h: bag_item.inventory_h,
                     };
 
                     for x in 0..item.inventory_w {

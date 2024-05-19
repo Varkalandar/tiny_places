@@ -139,9 +139,9 @@ impl Map {
             writer.write("v10\n".as_bytes())?;
             writer.write("Testmap\n".as_bytes())?;
             
-            self.save_layer(&mut writer, MAP_GROUND_LAYER);
-            self.save_layer(&mut writer, MAP_DECO_LAYER);
-            self.save_layer(&mut writer, MAP_CLOUD_LAYER);
+            self.save_layer(&mut writer, MAP_GROUND_LAYER)?;
+            self.save_layer(&mut writer, MAP_DECO_LAYER)?;
+            self.save_layer(&mut writer, MAP_CLOUD_LAYER)?;
         }
 
         Ok(())

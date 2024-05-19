@@ -121,7 +121,7 @@ impl App {
         inv.put_item(engine, Slot::BAG);
 
         let inv_cell = OnceCell::new();
-        inv_cell.set(inv);
+        let _ = inv_cell.set(inv);
 
 
         App {        
