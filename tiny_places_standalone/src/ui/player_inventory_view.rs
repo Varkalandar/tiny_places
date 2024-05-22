@@ -74,6 +74,25 @@ impl PlayerInventoryView {
             *self.slot_sizes.get(&slot).unwrap()
         }
     }
+
+
+    fn show_item_popup(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState,
+                       x: i32, y: i32, item: &Item) {
+
+        let linespace = 20;
+        let lines = item.mods.len() as i32 + 1;
+        let mut line = y - lines * linespace;
+
+        self.font.draw(viewport, gl, draw_state, x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
+        line += linespace;
+
+        for modifier in &item.mods {
+
+            let text = modifier.attribute.to_string() + ": " + &modifier.value.to_string();
+            self.font.draw(viewport, gl, draw_state, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+            line += linespace;
+        }
+    }
 }
 
 
@@ -165,8 +184,7 @@ impl UiHead for PlayerInventoryView {
                             let entry_x = xp + offsets[0] + entry.location_x * 32;
                             let entry_y = yp + offsets[1] + entry.location_y * 32;
         
-                            self.font.draw(viewport, gl, draw_state, entry_x, entry_y, 
-                                           &item.name, &[0.8, 1.0, 0.0, 1.0]);
+                            self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
                         }
                     }
                 }

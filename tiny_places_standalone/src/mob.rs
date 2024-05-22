@@ -8,6 +8,11 @@ pub struct Visual {
 }
 
 
+pub struct MobAttributes {
+    pub speed: i32,
+}
+
+
 impl Visual {
     pub fn orient(&self, dx: f64, dy: f64) -> usize {
         let frames = self.frames;
@@ -41,6 +46,7 @@ impl Visual {
     }
 }
 
+
 pub struct Mob {
     // world coordinates of this mob. Note that screen coordinates are different
     pub position: Vector2<f64>,
@@ -50,7 +56,8 @@ pub struct Mob {
     // measured in pixel per second
     pub base_speed: f64,
 
-    pub visual: Visual
+    pub visual: Visual,
+    pub attributes: MobAttributes,
 }
 
 
@@ -62,6 +69,10 @@ impl Mob {
             frames: 8,
         };
 
+        let attributes = MobAttributes {
+            speed: 0,
+        };
+
         Mob {
             position: [x, y],
             speed: [0.0, 0.0],
@@ -69,6 +80,7 @@ impl Mob {
             base_speed: 150.0,
 
             visual,
+            attributes,
         }        
     }
     

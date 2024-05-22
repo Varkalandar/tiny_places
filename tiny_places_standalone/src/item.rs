@@ -1,5 +1,7 @@
 use std::fs::read_to_string;
 use std::path::Path;
+use std::fmt::Formatter;
+use core::str::Split;
 
 use crate::inventory::Slot;
 
@@ -28,7 +30,7 @@ impl Item {
 
         for m in self.mods {
             if m.attribute == attribute {
-                sum = sum + m.power as f32;
+                sum = sum + m.value as f32;
             }            
         }
         
@@ -74,7 +76,7 @@ impl ItemFactory {
                 inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
                 inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
                 slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),                
-                mods: Vec::new(),
+                mods: parse_mods(&mut parts),
             });
         }
 
@@ -95,7 +97,7 @@ impl ItemFactory {
         Item {
             id, 
             name: proto.name.to_string(),
-            mods: Vec::new(),
+            mods: proto.mods.clone(),
 
             inventory_tile_id: proto.inventory_tile_id,
             inventory_w: proto.inventory_w,
@@ -122,20 +124,57 @@ fn calc_slot(v: i32) -> Slot {
 }
 
 
+fn parse_mods(parts: &mut Split<&str>) -> Vec<Mod> {
+    let mut result = Vec::new();
 
-#[derive(PartialEq, Eq, Debug)]
+    let structure = parts.next().unwrap().parse::<i32>().unwrap();
+    result.push(Mod { attribute: Attribute::Structure, value: structure });
+
+    let agility = parts.next().unwrap().parse::<i32>().unwrap();
+    result.push(Mod { attribute: Attribute::Agility, value: agility });
+
+    let computation = parts.next().unwrap().parse::<i32>().unwrap();
+    result.push(Mod { attribute: Attribute::Computation, value: computation });
+
+    let speed = parts.next().unwrap().parse::<i32>().unwrap();
+    result.push(Mod { attribute: Attribute::Speed, value: speed });
+
+    result
+}
+
+
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Attribute {
 
     Structure = 1,
     Agility = 2,
     Computation = 3,
+    Speed = 4,
 
-    Integrity = 4,
-    Energy = 5,
+    Integrity = 5,
+    Energy = 6,
 }
 
-#[derive(Debug)]
+impl std::fmt::Display for Attribute {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+
+        let name = match self {
+            Attribute::Structure => "Structure",
+            Attribute::Agility => "Agility",
+            Attribute::Computation => "Computation",
+            Attribute::Speed => "Speed",
+        
+            Attribute::Integrity => "Integrity",
+            Attribute::Energy => "Energy",        
+        };
+
+        write!(f, "{}", name)
+    }
+}
+
+
+#[derive(Debug, Clone)]
 pub struct Mod {
-    attribute: Attribute,
-    power: i32,
+    pub attribute: Attribute,
+    pub value: i32,
 }
