@@ -11,7 +11,7 @@ use std::cmp::{min, max};
 
 use graphics::{draw_state::DrawState, Rectangle, Viewport, Image,};
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use piston::{ButtonState, ButtonArgs};
+use piston::{MouseButton, ButtonState, ButtonArgs};
 use image::{RgbaImage, Rgba};
 
 pub use tileset::*;
@@ -178,7 +178,8 @@ impl UI {
     }
 
     
-    pub fn make_scrollpane(&self, x: i32, y: i32, w: i32, h: i32, child: UiComponent) -> UiComponent {
+    pub fn make_scrollpane(&self, x: i32, y: i32, w: i32, h: i32, 
+                           child: UiComponent, scroll_step_x: i32, scroll_step_y: i32) -> UiComponent {
         let scrollpane = UiScrollpane {
             area: UiArea {
                 x, 
@@ -189,8 +190,8 @@ impl UI {
             child,
             offset_x: 0,
             offset_y: 0,
-            scroll_step_x: 8.0,
-            scroll_step_y: 8.0,
+            scroll_step_x: scroll_step_x as f64,
+            scroll_step_y: scroll_step_y as f64,
         };
         
         UiComponent {
@@ -369,7 +370,7 @@ impl UiHead for UiContainer {
             let a = child.head.area();
 
             if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
-               xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.h <= (scissor[1] + scissor[3]) as i32 {
+               xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.y <= (scissor[1] + scissor[3]) as i32 {
 
                 child.head.draw(viewport, gl, draw_state, xp, yp);
             }
@@ -521,8 +522,14 @@ impl UiHead for UiIcon
     } 
 
 
-    fn handle_button_event(&mut self, _event: &ButtonEvent) -> Option<&dyn UiHead> {
-        Some(self)
+    fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
+
+        // which buttons should trigger this icon?
+        if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+            return Some(self);
+        }
+
+        None
     }
 
 
@@ -579,15 +586,17 @@ impl UiHead for UiScrollpane
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
-        // paging keys
-        if event.args.button == piston::Button::Keyboard(piston::Key::PageDown) {
-            self.offset_y -= self.area.h;
-            return Some(self);
-        }
+        if event.args.state == ButtonState::Press {
+            // paging keys
+            if event.args.button == piston::Button::Keyboard(piston::Key::PageDown) {
+                self.offset_y -= self.area.h;
+                return Some(self);
+            }
 
-        if event.args.button == piston::Button::Keyboard(piston::Key::PageUp) {
-            self.offset_y += self.area.h;
-            return Some(self);
+            if event.args.button == piston::Button::Keyboard(piston::Key::PageUp) {
+                self.offset_y += self.area.h;
+                return Some(self);
+            }
         }
 
         self.child.head.handle_button_event(&event.translate(-self.area.x-self.offset_x, -self.area.y-self.offset_y))

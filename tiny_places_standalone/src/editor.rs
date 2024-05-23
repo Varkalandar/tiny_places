@@ -257,7 +257,7 @@ impl MapEditor {
             }
         }
 
-        let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont);
+        let scrolly = ui.make_scrollpane((ww - w)/2, (wh - h)/2, w, h, cont, 64, 64);
         scrolly
     }
 }
