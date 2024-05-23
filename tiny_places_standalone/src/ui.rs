@@ -116,6 +116,11 @@ impl UI {
         }
     }
 
+    
+    pub fn window_center(&self) -> Vector2<f64> {
+        [(self.window_size[0] / 2) as f64, (self.window_size[1] / 2) as f64]
+    }
+
 
     pub fn make_container(&self, x: i32, y: i32, w: i32, h: i32) -> UiComponent {
         UI::make_container_intern(x, y, w, h)

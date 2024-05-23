@@ -52,7 +52,7 @@ impl Map {
     }
 
 
-    pub fn find_nearest_object(&mut self, layer: usize, position: &Vector2<f64>) -> Option<usize> {
+    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>) -> Option<usize> {
         let objects = &self.layers[layer];
         let mut distance = 999999.0;
         let mut best_idx = 0;
@@ -79,6 +79,21 @@ impl Map {
         }
 
         result
+    }
+
+
+    pub fn find_idx_from_id(&self, layer: usize, id: usize) -> Option<usize> {
+    
+        let objects = &self.layers[layer];
+
+        for idx in 0..objects.len() {
+            let object = &objects[idx];
+            if object.tile_id == id {
+                return Some(idx);
+            }
+        }
+
+        None
     }
 
 

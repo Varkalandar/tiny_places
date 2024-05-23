@@ -8,6 +8,7 @@ extern crate image;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
 use graphics::{Context, DrawState, Ellipse, Image, ImageSize, Transformed, clear};
+use graphics::math::Matrix2d;
 use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 
@@ -150,24 +151,6 @@ impl App {
 
         self.gl.draw(viewport, |c, gl| {
 
-            fn build_transform(c: Context, thing: &MapObject, tile: &Tile, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
-                let rel_pos_x = thing.position[0] - player_position[0];        
-                let rel_pos_y = thing.position[1] - player_position[1];  
-                let scale = thing.scale;
-
-                c.transform
-                    .trans(window_center[0], window_center[1])
-                    .trans(rel_pos_x, rel_pos_y * 0.5)
-                    .scale(scale, scale)
-                    .trans(-tile.foot[0], - tile.foot[1])
-            }
-
-            fn build_image(tile: &Tile, color: &[f32; 4]) -> Image {
-                Image::new()
-                    .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-                    .color(*color)        
-            }
-
             fn draw_layer(gl: &mut GlGraphics, c: Context, ds: DrawState, window_center: &Vector2<f64>, world: &GameWorld, layer_id: usize) {
                 let player_position = &world.map.player.position;
                 let set = &world.layer_tileset[layer_id];
@@ -175,7 +158,7 @@ impl App {
                 for idx in 0..world.map.layers[layer_id].len() {
                     let deco = &world.map.layers[layer_id][idx];
                     let tile = set.tiles_by_id.get(&deco.tile_id).unwrap();
-                    let tf = build_transform(c, deco, tile, player_position, window_center);        
+                    let tf = build_transform(c.transform, deco, tile.foot, player_position, window_center);        
     
                     // mark selected item with an ellipse
                     if world.map.has_selection && 
@@ -279,7 +262,7 @@ impl App {
 
         // now the ordinary events
 
-        let window_center: Vector2<f64> = [(self.ui.window_size[0] / 2) as f64, (self.ui.window_size[1] / 2) as f64]; 
+        let window_center: Vector2<f64> = self.ui.window_center(); 
         let controller = &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
@@ -366,6 +349,26 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
     let world_pos = [rel_mouse_x + player_pos[0], rel_mouse_y + player_pos[1]];
 
     world_pos
+}
+
+
+pub fn build_transform(transform: Matrix2d<f64>, thing: &MapObject, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
+    let rel_pos_x = thing.position[0] - player_position[0];        
+    let rel_pos_y = thing.position[1] - player_position[1];  
+    let scale = thing.scale;
+
+    transform
+        .trans(window_center[0], window_center[1])
+        .trans(rel_pos_x, rel_pos_y * 0.5)
+        .scale(scale, scale)
+        .trans(-foot[0], -foot[1])
+}
+
+
+pub fn build_image(tile: &Tile, color: &[f32; 4]) -> Image {
+    Image::new()
+        .rect([0.0, 0.0, tile.size[0], tile.size[1]])
+        .color(*color)        
 }
 
 

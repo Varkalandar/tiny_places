@@ -4,10 +4,11 @@ use piston::{ButtonState, MouseButton};
 
 use graphics::{draw_state::DrawState, Viewport,};
 use opengl_graphics::GlGraphics;
+use vecmath::Vector2;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent};
 use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
-use crate::screen_to_world_pos;
+use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
 
 
@@ -35,32 +36,33 @@ impl UiController for MapEditor {
                 None => {
                     
                     if event.args.button == piston::Button::Mouse(MouseButton::Left) {
-                        ui.root.head.clear();
+                        let id = self.selected_tile_id;
 
-                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
-                        let map = &mut world.map;
-                        let option = map.find_nearest_object(map.selected_layer, &pos);
-
-                        match option {
-                            None => {
-                                // nothing clicked -> move player
-                                map.has_selection = false;
-                            },
-                            Some(idx) => {
-                                map.has_selection = true;
-                                map.selected_item = idx;
-                                return true;
-                            }
+                        if id == 0 {
+                            let ok = self.select_nearest_item(ui, world);
+                            return ok;
+                        }
+                        else {
+                            let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                            println!("creating map object {} at {:?}", id, pos);
+                            let object = MapObject::new(id, pos, 1.0);
+                            world.map.layers[world.map.selected_layer].push(object);
+                            return true;
                         }
                     }
 
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
-                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
-                        let id = self.selected_tile_id;
-    
-                        println!("creating deco {} at {:?}", id, pos);
-                        let deco = MapObject::new(id, pos, 1.0);
-                        world.map.layers[world.map.selected_layer].push(deco);
+
+                        // close dialogs
+                        ui.root.head.clear();
+
+                        if self.selected_tile_id == 0 {
+                            // nothing on cursor, center map?
+                        }
+                        else {
+                            // remove pointer item
+                            self.selected_tile_id = 0;
+                        }
                     }
                     
                     if event.args.button == piston::Button::Keyboard(piston::Key::D1) {                        
@@ -194,10 +196,32 @@ impl UiController for MapEditor {
 
 
     fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+        let layer_id = world.map.selected_layer;
+        let id = self.selected_tile_id;
+        let set = &world.layer_tileset[layer_id];
+        let tile_opt = set.tiles_by_id.get(&id);
+
+        if tile_opt.is_some() {
+            let tile = tile_opt.unwrap();
+            let player_position = &world.map.player.position;
+
+            let mp = &ui.mouse_state.position;
+            let window_center: Vector2<f64> = ui.window_center(); 
+
+            let pos = screen_to_world_pos(&ui, player_position, mp);
+            let deco = MapObject::new(id, pos, 1.0);
+
+            gl.draw(viewport, |c, gl| {
+                let tf = build_transform(c.transform, &deco, tile.foot, player_position, &window_center);        
+
+                let image = build_image(tile, &deco.color);
+                image.draw(&tile.tex, &ds, tf, gl);
+            });
+        }
         ui.font_14.draw(viewport, gl, ds, 10, 20, "Use keys 1 .. 3 to select map layers", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
-            "Selected layer: ".to_string() + &world.map.selected_layer.to_string() + 
+            "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
         ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
@@ -214,6 +238,36 @@ impl MapEditor {
         }
     }
 
+
+    fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
+        let pos = screen_to_world_pos(ui, &world.map.player.position, &ui.mouse_state.position);
+        let map = &mut world.map;
+        let option = map.find_nearest_object(map.selected_layer, &pos);
+
+        match option {
+            None => {
+                map.has_selection = false;
+                map.selected_item = 0;
+            },
+            Some(idx) => {
+
+                // toggle
+                if map.has_selection && map.selected_item == idx {
+                    // was already seelected, unselect
+                    map.has_selection = false;
+                    map.selected_item = 0;
+                }
+                else {
+                    map.has_selection = true;
+                    map.selected_item = idx;
+                }
+
+                return true;
+            }
+        }
+
+        false
+    }
 
 
     pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiComponent {
