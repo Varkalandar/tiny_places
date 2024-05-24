@@ -105,8 +105,10 @@ impl UiController for MapEditor {
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {                        
-                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000);
+                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {
+                        let map = &mut world.map;
+                        let object = &mut map.layers[map.selected_layer][map.selected_item];
+                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, object.color);
                         ui.root.head.add_child(Rc::new(color_choice));
                     }        
 

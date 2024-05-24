@@ -205,8 +205,8 @@ impl UI {
     }
 
 
-    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, id: usize) -> UiComponent {
-        let colorchoice = UiColorchoice::new(x, y, w, h, id); 
+    pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, id: usize, color: [f32;4]) -> UiComponent {
+        let colorchoice = UiColorchoice::new(x, y, w, h, id, color); 
 
         UiComponent {
             head: Box::new(colorchoice),
@@ -627,7 +627,7 @@ pub struct UiColorchoice {
 
 
 impl UiColorchoice {
-    pub fn new(x: i32, y: i32, w: i32, h: i32, id: usize) -> UiColorchoice {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, id: usize, color: [f32;4]) -> UiColorchoice {
 
         println!("make UiColorchoice at {} {} {} {}", x, y, w, h);
 
@@ -642,10 +642,10 @@ impl UiColorchoice {
             }, 
             bandwidth: tw,
             id,
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 255,
+            r: (color[0] * 255.0) as u32,
+            g: (color[1] * 255.0) as u32,
+            b: (color[2] * 255.0) as u32,
+            a: (color[3] * 255.0) as u32,
             lightness: 255,
             tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
             light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
