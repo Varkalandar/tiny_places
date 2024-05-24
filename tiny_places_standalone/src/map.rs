@@ -129,12 +129,19 @@ impl Map {
             let x = parts[2].parse::<f64>().unwrap();
             let y = parts[3].parse::<f64>().unwrap();
             let scale = parts[4].parse::<f64>().unwrap();
+
             // parts[5] is an RGBA tuple
+            let mut color_in = parts[5].split(" ");
 
-            println!("{}, {}, {}, {}, {}", layer, tile_id, x, y, scale);
+            let mut color: [f32; 4] = [0.0; 4];
+            for i in 0..4 {
+                color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
+            }
 
-            let m = MapObject::new(tile_id, [x, y], scale);
+            println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
 
+            let mut m = MapObject::new(tile_id, [x, y], scale);
+            m.color = color;
             self.layers[layer].push(m);
         }
         
@@ -167,13 +174,19 @@ impl Map {
         let objects = &self.layers[layer];
 
         for object in objects {
+            let color = object.color; 
+
             let line = 
             layer.to_string() + "," +
             &object.tile_id.to_string() + "," +
             &object.position[0].to_string() + "," +
             &object.position[1].to_string() + "," +
             &object.scale.to_string() + "," +
-            "1.0 1.0 1.0 1.0\n";
+            &color[0].to_string() + " " +
+            &color[1].to_string() + " " +
+            &color[2].to_string() + " " +
+            &color[3].to_string() + " " +            
+            "\n";
             
             writer.write(line.as_bytes())?;
         }
