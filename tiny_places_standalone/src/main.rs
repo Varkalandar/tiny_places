@@ -20,8 +20,6 @@ use piston::input::{RenderArgs, RenderEvent,
 use piston::window::WindowSettings;
 
 use std::path::Path;
-use std::cell::OnceCell;
-use std::rc::Rc;
 
 mod item;
 mod inventory;
@@ -38,7 +36,7 @@ use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
-use item::{Item, ItemFactory};
+use item::ItemFactory;
 use inventory::{Inventory, Slot};
 
 
@@ -46,7 +44,7 @@ pub struct GameWorld {
     map: Map,
     layer_tileset: [TileSet; 7],
 
-    player_inventory: Rc<OnceCell<Inventory>>,
+    player_inventory: Inventory,
 }
 
 pub struct GameControllers {
@@ -84,7 +82,8 @@ impl App {
     fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
         
         // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
-        let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
+        // let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
+        let texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
@@ -107,7 +106,7 @@ impl App {
         let ui = UI::new(window_size);
         let map = Map::new(); 
         let editor = MapEditor::new();
-        let game = Game::new();
+        let game = Game::new(&ui, &layer_tileset[6]);
 
         let mut inv = Inventory::new();
 
@@ -121,9 +120,6 @@ impl App {
         let engine = factory.make_item(2);
         inv.put_item(engine, Slot::BAG);
 
-        let inv_cell = OnceCell::new();
-        let _ = inv_cell.set(inv);
-
 
         App {        
 
@@ -134,7 +130,7 @@ impl App {
             world: GameWorld {
                 map,
                 layer_tileset,
-                player_inventory: Rc::new(inv_cell),
+                player_inventory: inv,
             },
             controllers: GameControllers {
                 editor,
@@ -218,19 +214,24 @@ impl App {
             
         });
 
-        self.ui.draw(viewport, &mut self.gl);
-
         {
             let world = &mut self.world;
             let ui = &mut self.ui;
+            self.controllers.current().draw(viewport, &mut self.gl, &ds, ui, world);    
             self.controllers.current().draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
         }
     }
 
 
     fn update(&mut self, args: &UpdateArgs) {
+        
         let map = &mut self.world.map;
         map.update(args.dt);
+
+        {
+            let world = &mut self.world;
+            self.controllers.current().update(world);
+        }
     }
 
 

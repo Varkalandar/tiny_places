@@ -197,6 +197,12 @@ impl UiController for MapEditor {
     }
 
 
+
+    fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics, _ds: &DrawState, ui: &mut UI, _world: &mut Self::Appdata) {
+        ui.draw(viewport, gl);
+    }
+
+
     fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
         let layer_id = world.map.selected_layer;
         let id = self.selected_tile_id;

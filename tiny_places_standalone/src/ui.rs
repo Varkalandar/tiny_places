@@ -20,7 +20,8 @@ pub use font::UiFont;
 
 pub struct MouseState {
     pub position: Vector2<f64>,
-    drag_start: Vector2<f64>,    
+    drag_start: Vector2<f64>,
+    pub left_pressed: bool,    
 }
 
 
@@ -61,8 +62,15 @@ pub trait UiController {
         false
     }
 
+    fn draw(&mut self, _viewport: Viewport, _gl: &mut GlGraphics, _ds: &DrawState, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+
+    }
     
     fn draw_overlay(&mut self, _viewport: Viewport, _gl: &mut GlGraphics, _ds: &DrawState, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+
+    }
+
+    fn update(&mut self, _appdata: &mut Self::Appdata) {
 
     }
 }
@@ -111,7 +119,7 @@ impl UI {
             font_10: Rc::new(UiFont::new(10)),
             font_14: Rc::new(UiFont::new(14)),
 
-            mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0]},
+            mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
         }
     }
@@ -226,7 +234,11 @@ impl UI {
                event.args.button == piston::Button::Keyboard(piston::Key::RShift) {
                 println!("Shift pressed");
                 self.keyboard_state.shift_pressed = true;
-            }    
+            }
+            
+            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                self.mouse_state.left_pressed = true;
+            }
         }
 
         if event.args.state == ButtonState::Release {
@@ -235,6 +247,10 @@ impl UI {
                 println!("Shift released");
                 self.keyboard_state.shift_pressed = false;
             }    
+
+            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                self.mouse_state.left_pressed = false;
+            }
         }
 
         self.root.head.handle_button_event(event)
@@ -242,7 +258,7 @@ impl UI {
 
 
     pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
-        self.root.head.handle_mouse_move_event(event)
+        self.root.head.handle_mouse_move_event(event, &self.mouse_state)
     }
 
 
@@ -300,7 +316,7 @@ pub trait UiHead {
         None
     }
 
-    fn handle_mouse_move_event(&mut self, _event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+    fn handle_mouse_move_event(&mut self, _event: &MouseMoveEvent, _mouse: &MouseState) -> Option<&dyn UiHead> {
         None
     }
 
@@ -399,7 +415,7 @@ impl UiHead for UiContainer {
     }
 
 
-    fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+    fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, mouse: &MouseState) -> Option<&dyn UiHead> {
         let option = self.find_child_at(event.mx, event.my);
                 
         match option {
@@ -407,7 +423,7 @@ impl UiHead for UiContainer {
             },
             Some(child) => {
                 // println!("Mouse moved to {}, {}", event.mx, event.my);
-                return child.head.handle_mouse_move_event(event);
+                return child.head.handle_mouse_move_event(event, mouse);
             }
         }
 

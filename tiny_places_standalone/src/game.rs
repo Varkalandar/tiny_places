@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use piston::{ButtonState, MouseButton};
 use graphics::DrawState;
 use opengl_graphics::GlGraphics;
@@ -9,9 +7,11 @@ use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
-
+use crate::TileSet;
 
 pub struct Game {
+    piv: PlayerInventoryView,
+    show_inventory: bool,
 }
 
 
@@ -53,11 +53,7 @@ impl UiController for Game {
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
-                        let piv = PlayerInventoryView::new(((ui.window_size[0] - 500) / 2) as i32, 10,
-                                                           &ui.font_14,  
-                                                           world.player_inventory.clone(),
-                                                           &world.layer_tileset[6].shallow_copy());
-                        ui.root.head.add_child(Rc::new(piv));
+                        self.show_inventory = true;
                     }        
                 },
                 Some(_comp) => {
@@ -65,12 +61,20 @@ impl UiController for Game {
             }
         }
 
+        if self.show_inventory {
+            return self.piv.handle_button_event(event, &ui.mouse_state, &mut world.player_inventory);
+        }
+
         false
     }
 
 
-    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, _world: &mut Self::Appdata) -> bool {
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
         let _comp = ui.handle_mouse_move_event(event);
+
+        if self.show_inventory {
+            self.piv.handle_mouse_move_event(event, &ui.mouse_state, &world.player_inventory);
+        }
 
         false
     }
@@ -87,17 +91,36 @@ impl UiController for Game {
     }
 
 
+    fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+        ui.draw(viewport, gl);
+ 
+        if self.show_inventory {
+            self.piv.draw(viewport, gl, ds, 0, 10, &world.player_inventory)
+        }
+    }
+
+
     fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, _world: &mut Self::Appdata) {
         ui.font_14.draw(viewport, gl, ds, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
+
+    fn update(&mut self, _world: &mut Self::Appdata) {
+
+    }
 }
 
 
 impl Game {
 
-    pub fn new() -> Game {
+    pub fn new(ui: &UI, item_tiles: &TileSet) -> Game {
+        let piv = PlayerInventoryView::new((ui.window_size[0] as i32) / 2, 0,
+        &ui.font_14,
+        &item_tiles.shallow_copy());
+    
         Game {
+            piv,
+            show_inventory: false,
         }
     }
 }
