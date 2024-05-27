@@ -112,14 +112,14 @@ impl ItemFactory {
 
 fn calc_slot(v: i32) -> Slot {
     match v {
-        0 => Slot::BAG,
-        1 => Slot::STASH,
-        2 => Slot::NOSE,
-        3 => Slot::BODY,
-        4 => Slot::LWING,
-        5 => Slot::RWING,
-        6 => Slot::ENGINE,
-        _ => Slot::BAG,
+        0 => Slot::Bag,
+        1 => Slot::Stash,
+        2 => Slot::Nose,
+        3 => Slot::Body,
+        4 => Slot::LWing,
+        5 => Slot::RWing,
+        6 => Slot::Engine,
+        _ => Slot::Bag,
     }
 }
 

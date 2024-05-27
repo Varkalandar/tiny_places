@@ -73,7 +73,7 @@ impl UiController for Game {
         let _comp = ui.handle_mouse_move_event(event);
 
         if self.show_inventory {
-            self.piv.handle_mouse_move_event(event, &ui.mouse_state, &world.player_inventory);
+            self.piv.handle_mouse_move_event(event, &ui.mouse_state, &mut world.player_inventory);
         }
 
         false

@@ -4,13 +4,14 @@ use crate::ui::UiArea;
 
 #[derive(PartialEq, Eq, Debug, Hash, Clone, Copy)]
 pub enum Slot {
-    BAG = 0,
-    STASH = 1,
-    NOSE = 2,
-    BODY = 3,
-    LWING = 4,
-    RWING = 5,
-    ENGINE = 6,
+    OnCursor = 0,
+    Bag = 1,
+    Stash = 2,
+    Nose = 3,
+    Body = 4,
+    LWing = 5,
+    RWing = 6,
+    Engine = 7,
 }
 
 #[derive(Debug)]
@@ -43,7 +44,7 @@ impl Inventory {
     pub fn put_item(&mut self, item: Item, slot: Slot) {
 
         let spot = 
-            if slot == Slot::BAG 
+            if slot == Slot::Bag 
                 {self.find_free_location(&item)}
             else
                 {[0, 0]};

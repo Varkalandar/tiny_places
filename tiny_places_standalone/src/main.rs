@@ -112,13 +112,13 @@ impl App {
 
         let mut factory = ItemFactory::new();
         let demo_item = factory.make_item(0);
-        inv.put_item(demo_item, Slot::BAG);
+        inv.put_item(demo_item, Slot::Bag);
 
         let laser = factory.make_item(1);
-        inv.put_item(laser, Slot::RWING);
+        inv.put_item(laser, Slot::RWing);
 
         let engine = factory.make_item(2);
-        inv.put_item(engine, Slot::BAG);
+        inv.put_item(engine, Slot::Bag);
 
 
         App {        

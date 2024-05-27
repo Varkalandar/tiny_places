@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use graphics::{draw_state::DrawState, Rectangle, Viewport, ImageSize, Image, types::Matrix2d};
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 
-use crate::ui::{UiHead, UiComponent, UiArea, UiFont, MouseMoveEvent, MouseState, ButtonEvent};
+use crate::ui::{UiArea, UiFont, MouseMoveEvent, MouseState, ButtonEvent};
 use crate::Inventory;
 use crate::inventory::Slot;
 use crate::inventory::Entry;
@@ -38,12 +38,12 @@ impl PlayerInventoryView {
         let texture = Texture::from_path(Path::new("resources/ui/inventory_bg.png"), &TextureSettings::new()).unwrap();
 
         let mut slot_offsets = HashMap::new();
-        slot_offsets.insert(Slot::BAG, [10, 452]);
-        slot_offsets.insert(Slot::RWING, [20, 205]);
+        slot_offsets.insert(Slot::Bag, [10, 452]);
+        slot_offsets.insert(Slot::RWing, [20, 205]);
 
         let mut slot_sizes = HashMap::new();
-        slot_sizes.insert(Slot::LWING, (2*32, 3*32));
-        slot_sizes.insert(Slot::RWING, (2*32, 3*32));
+        slot_sizes.insert(Slot::LWing, (2*32, 3*32));
+        slot_sizes.insert(Slot::RWing, (2*32, 3*32));
 
         PlayerInventoryView {
             area: UiArea {
@@ -69,7 +69,7 @@ impl PlayerInventoryView {
 
     fn find_slot_size(&self, item: &Item, slot: Slot) -> (i32, i32) {
 
-        if slot == Slot::BAG {
+        if slot == Slot::Bag {
             (item.inventory_w * 32, item.inventory_h * 32)
         }
         else {
@@ -101,7 +101,7 @@ impl PlayerInventoryView {
         let area = &self.area;
 
         for entry in &inventory.entries {
-            if entry.slot != Slot::STASH {
+            if entry.slot != Slot::Stash && entry.slot != Slot::OnCursor {
                 let offsets = self.slot_offsets.get(&entry.slot).unwrap();
                 let entry_x = area.x + offsets[0] + entry.location_x * 32;
                 let entry_y = area.y + offsets[1] + entry.location_y * 32;
@@ -171,7 +171,7 @@ impl PlayerInventoryView {
             // show all items which are in the inventory space
             for entry in &inventory.entries {
 
-                if entry.slot != Slot::STASH {
+                if entry.slot != Slot::Stash && entry.slot != Slot::OnCursor {
                     let offsets = self.slot_offsets.get(&entry.slot).unwrap();
                     let entry_x = (xp + offsets[0] + entry.location_x * 32) as f64;
                     let entry_y = (yp + offsets[1] + entry.location_y * 32) as f64;
@@ -201,13 +201,15 @@ impl PlayerInventoryView {
                     let idx = inventory.find_entry_for_id(id).unwrap();
                     let entry = &inventory.entries[idx];
 
-                    let offsets = self.slot_offsets.get(&entry.slot).unwrap();
-                    let item = inventory.bag.get(&id).unwrap();
+                    if entry.slot != Slot::OnCursor {
+                        let offsets = self.slot_offsets.get(&entry.slot).unwrap();
+                        let item = inventory.bag.get(&id).unwrap();
 
-                    let entry_x = xp + offsets[0] + entry.location_x * 32;
-                    let entry_y = yp + offsets[1] + entry.location_y * 32;
+                        let entry_x = xp + offsets[0] + entry.location_x * 32;
+                        let entry_y = yp + offsets[1] + entry.location_y * 32;
 
-                    self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
+                        self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
+                    }
                 }
             }
 
@@ -243,13 +245,14 @@ impl PlayerInventoryView {
                     let idx = inventory.find_entry_for_id(id).unwrap();
                     let entry: &mut Entry = &mut inventory.entries[idx];
                     
-                    let offsets = self.slot_offsets.get(&Slot::BAG).unwrap();
+                    let offsets = self.slot_offsets.get(&Slot::Bag).unwrap();
 
                     let rel_x = (mouse.position[0] as i32) - self.area.x - offsets[0];
                     let rel_y = (mouse.position[1] as i32) - self.area.y - offsets[1];
                     
                     entry.location_x = rel_x / 32;
                     entry.location_y = rel_y / 32;
+                    entry.slot = Slot::Bag; // todo, find real slot
 
                     self.dragged_item = None;
 
@@ -262,7 +265,7 @@ impl PlayerInventoryView {
     }
 
 
-    pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, mouse: &MouseState, inventory: &Inventory) -> bool {
+    pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, mouse: &MouseState, inventory: &mut Inventory) -> bool {
 
         // println!("Mouse moved to {}, {}", event.mx, event.my);
 
@@ -276,6 +279,11 @@ impl PlayerInventoryView {
                 self.dragged_item = item_opt;
 
                 println!("Started to drag item idx={:?} from {}, {}", item_opt, event.mx, event.my);
+                
+                let item_id = item_opt.unwrap();
+                let idx = inventory.find_entry_for_id(item_id).unwrap();
+                let entry: &mut Entry = &mut inventory.entries[idx];
+                entry.slot = Slot::OnCursor;
             }
         }
         else {
