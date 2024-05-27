@@ -3567,64 +3567,64 @@ data
 Tile Description
 v.5
 211
-1 1
+583 421
 0 0
-0 0
+289 254
 End Of Header
 Item
 v.1
 data
 2
-
-
+porcelain_flower
+alien
 1
 0
 0
 Tile Description
 v.5
 212
-1 1
+166 528
 0 0
-0 0
+89 453
 End Of Header
 Item
 v.1
 data
 2
-
-
+space_needle
+alien
 1
 0
 0
 Tile Description
 v.5
 213
-1 1
+278 431
 0 0
-0 0
+150 409
 End Of Header
 Item
 v.1
 data
 2
-
-
+green_space_bud
+alien
 1
 0
 0
 Tile Description
 v.5
 214
-1 1
+960 575
 0 0
-0 0
+635 59
 End Of Header
 Item
 v.1
 data
 2
-
-
+alien_ring_structure
+alien
 1
 0
 0

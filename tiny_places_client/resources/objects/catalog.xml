@@ -3789,68 +3789,68 @@
       <Description>
         <version>4</version>
         <id>211</id>
-        <width>1</width>
-        <height>1</height>
+        <width>583</width>
+        <height>421</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>289</footX>
+        <footY>254</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>porcelain_flower</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>212</id>
-        <width>1</width>
-        <height>1</height>
+        <width>166</width>
+        <height>528</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>89</footX>
+        <footY>453</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>space_needle</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>213</id>
-        <width>1</width>
-        <height>1</height>
+        <width>278</width>
+        <height>431</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>150</footX>
+        <footY>409</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>green_space_bud</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>214</id>
-        <width>1</width>
-        <height>1</height>
+        <width>960</width>
+        <height>575</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>635</footX>
+        <footY>59</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>alien_ring_structure</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
