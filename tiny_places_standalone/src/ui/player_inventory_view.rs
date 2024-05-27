@@ -201,7 +201,7 @@ impl PlayerInventoryView {
                     let idx = inventory.find_entry_for_id(id).unwrap();
                     let entry = &inventory.entries[idx];
 
-                    if entry.slot != Slot::OnCursor {
+                    if self.dragged_item.is_none() && entry.slot != Slot::OnCursor {
                         let offsets = self.slot_offsets.get(&entry.slot).unwrap();
                         let item = inventory.bag.get(&id).unwrap();
 
@@ -216,9 +216,6 @@ impl PlayerInventoryView {
             match self.dragged_item {
                 None => {},
                 Some(id) => {
-                    // let idx = inventory.find_entry_for_id(id).unwrap();
-                    // let entry = &inventory.entries[idx];
-
                     let item = inventory.bag.get(&id).unwrap();
 
                     self.draw_item(gl, draw_state, tf,
@@ -236,7 +233,20 @@ impl PlayerInventoryView {
            event.args.button == piston::Button::Mouse(MouseButton::Left) {
 
             match self.dragged_item {
-                None => {},
+                None => {
+                    if self.hover_item.is_some() {
+                        self.dragged_item = self.hover_item;
+        
+                        println!("Started to drag item idx={:?} from {}, {}", self.dragged_item, event.mx, event.my);
+                        
+                        let item_id = self.dragged_item.unwrap();
+                        let idx = inventory.find_entry_for_id(item_id).unwrap();
+                        let entry: &mut Entry = &mut inventory.entries[idx];
+                        entry.slot = Slot::OnCursor;
+
+                        return true;
+                    }
+                },
                 Some(id) => {
                     let item = inventory.bag.get(&id).unwrap();
 
@@ -270,25 +280,10 @@ impl PlayerInventoryView {
         // println!("Mouse moved to {}, {}", event.mx, event.my);
 
         let item_opt = self.find_item_at(inventory, event.mx, event.my);
+        self.hover_item = item_opt;
 
-        if mouse.left_pressed {
-            self.drag_x = event.mx;
-            self.drag_y = event.my;
-
-            if item_opt.is_some() && self.dragged_item.is_none() {
-                self.dragged_item = item_opt;
-
-                println!("Started to drag item idx={:?} from {}, {}", item_opt, event.mx, event.my);
-                
-                let item_id = item_opt.unwrap();
-                let idx = inventory.find_entry_for_id(item_id).unwrap();
-                let entry: &mut Entry = &mut inventory.entries[idx];
-                entry.slot = Slot::OnCursor;
-            }
-        }
-        else {
-            self.hover_item = item_opt;
-        }
+        self.drag_x = event.mx;
+        self.drag_y = event.my;
 
         false
     }
