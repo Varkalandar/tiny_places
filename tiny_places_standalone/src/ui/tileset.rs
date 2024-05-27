@@ -110,7 +110,7 @@ fn load_tile(path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
     let mut result: Option<Tile> = None;
 
     if width > 1.0 || height > 1.0 {
-        println!("Item {} is {} size={}x{} foot={}x{}", id, name, width, height, foot_x, foot_y);
+        // println!("Item {} is {} size={}x{} foot={}x{}", id, name, width, height, foot_x, foot_y);
 
         let mut filename = id.to_string();
         filename.push_str("-");

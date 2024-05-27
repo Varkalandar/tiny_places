@@ -3,7 +3,7 @@
 Tiny Places is meant to become a collaborative map editor and rpg system. The client is built with
 the Love2d Lua game framework, the server is Java code.
 
-Since May 2024 there is a offline/single user version in development, which is programmed in Rust. It used the "Piston" game engine. 
+Since May 2024 there is an offline/single user version in development, which is programmed in Rust. It uses the "Piston" game engine. 
 
 ## Start the client
 
@@ -26,9 +26,9 @@ Instructions to build the server should be here ...
 
 ## Tiny Places Standalone
 
-You need to have Rust insalled on your computer to build the standalone version from source. Please see https://www.rust-lang.org/tools/install for further instructions. Once Rust is installed, you can compile and start the standalone version this way:
+You need to have Rust installed on your computer to build the standalone version from source. Please see https://www.rust-lang.org/tools/install for further instructions. Once Rust is installed, you can compile and start the standalone version this way:
 
     cd tiny_places_standalone
     cargo run
 
-Cargo is the build tool for Rust. It will download all dependencies needed to compile the standaline version and then run the created binary. To just build without running use "cargo build". "Cargo clean" will delete all artifacts created during the build process.
+Cargo is the build tool for Rust. It will download all dependencies needed to compile the standalone version and then run the created binary. To just build without running the binary, use "cargo build". "Cargo clean" will delete all artifacts created during the build process.

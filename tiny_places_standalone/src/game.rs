@@ -62,7 +62,7 @@ impl UiController for Game {
         }
 
         if self.show_inventory {
-            return self.piv.handle_button_event(event, &ui.mouse_state, &mut world.player_inventory);
+            return self.piv.handle_button_event(event, &ui.mouse_state, world);
         }
 
         false

@@ -37,7 +37,7 @@ impl UiFont {
 
         let lineheight = ((face.ascender() - face.descender()) / 64) as i32 + 5; // TODO: line gap?
 
-        println!("Ascend {} descend {}", face.ascender(), face.descender());
+        // println!("Ascend {} descend {}", face.ascender(), face.descender());
 
         let mut glyphs = HashMap::new();
         let texture = create_glyphs(&face, &mut glyphs, lineheight as u32);
@@ -159,7 +159,7 @@ fn create_glyphs(face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, li
             };
 
             let left = gs.bitmap_left();
-            println!("glyph {} has advance={}, ascend={}, left={}", idx, ug.advance / 64.0, ascend, left);
+            // println!("glyph {} has advance={}, ascend={}, left={}", idx, ug.advance / 64.0, ascend, left);
             
             cursor = convert_bitmap(&mut buffer, &bitmap, cursor, lineheight);
 
@@ -181,7 +181,7 @@ fn convert_bitmap(buffer: &mut Vec<u8>, bitmap: &freetype::Bitmap,cursor: (u32, 
     let mut xp = cursor.0; 
     let mut yp = cursor.1;
     
-    println!("placing glyph at {}, {}", xp, yp);
+    // println!("placing glyph at {}, {}", xp, yp);
 
     for y in 0..bh {
         for x in 0..bw {

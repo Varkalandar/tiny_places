@@ -13,6 +13,8 @@ use crate::TileSet;
 use crate::item::Item;
 use crate::ButtonState;
 use crate::MouseButton;
+use crate::GameWorld;
+
 
 pub struct PlayerInventoryView {
     area: UiArea,
@@ -227,7 +229,7 @@ impl PlayerInventoryView {
     }
 
 
-    pub fn handle_button_event(&mut self, event: &ButtonEvent, mouse: &MouseState, inventory: &mut Inventory) -> bool {
+    pub fn handle_button_event(&mut self, event: &ButtonEvent, mouse: &MouseState, world: &mut GameWorld) -> bool {
 
         if event.args.state == ButtonState::Release &&
            event.args.button == piston::Button::Mouse(MouseButton::Left) {
@@ -237,9 +239,11 @@ impl PlayerInventoryView {
                     if self.hover_item.is_some() {
                         self.dragged_item = self.hover_item;
         
+                        world.speaker.play_sound(0);
                         println!("Started to drag item idx={:?} from {}, {}", self.dragged_item, event.mx, event.my);
                         
                         let item_id = self.dragged_item.unwrap();
+                        let inventory = &mut world.player_inventory;
                         let idx = inventory.find_entry_for_id(item_id).unwrap();
                         let entry: &mut Entry = &mut inventory.entries[idx];
                         entry.slot = Slot::OnCursor;
@@ -248,8 +252,10 @@ impl PlayerInventoryView {
                     }
                 },
                 Some(id) => {
+                    let inventory = &mut world.player_inventory;
                     let item = inventory.bag.get(&id).unwrap();
 
+                    world.speaker.play_sound(0);
                     println!("Dropped an {}", item.name);
 
                     let idx = inventory.find_entry_for_id(id).unwrap();
@@ -275,7 +281,7 @@ impl PlayerInventoryView {
     }
 
 
-    pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, mouse: &MouseState, inventory: &mut Inventory) -> bool {
+    pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, _mouse: &MouseState, inventory: &mut Inventory) -> bool {
 
         // println!("Mouse moved to {}, {}", event.mx, event.my);
 

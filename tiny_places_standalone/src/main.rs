@@ -4,6 +4,7 @@ extern crate opengl_graphics;
 extern crate piston;
 extern crate freetype;
 extern crate image;
+extern crate rodio;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
@@ -28,6 +29,7 @@ mod mob;
 mod editor;
 mod game;
 mod ui;
+mod sound;
 
 #[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
@@ -38,20 +40,26 @@ use editor::MapEditor;
 use game::Game;
 use item::ItemFactory;
 use inventory::{Inventory, Slot};
+use sound::SoundPlayer;
 
+// Game structures
 
 pub struct GameWorld {
     map: Map,
     layer_tileset: [TileSet; 7],
 
     player_inventory: Inventory,
+
+    speaker: SoundPlayer,
 }
+
 
 pub struct GameControllers {
     editor: MapEditor,
     game: Game,
     edit: bool,    
 }
+
 
 impl GameControllers {
     fn current(&mut self) -> &mut dyn UiController<Appdata = GameWorld> {
@@ -131,6 +139,8 @@ impl App {
                 map,
                 layer_tileset,
                 player_inventory: inv,
+                speaker: SoundPlayer::new(),
+
             },
             controllers: GameControllers {
                 editor,
