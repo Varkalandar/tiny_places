@@ -10,6 +10,7 @@ use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent
 use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
 use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
+use crate::sound::Sound;
 
 
 pub struct MapEditor {
@@ -44,7 +45,7 @@ impl UiController for MapEditor {
                         }
                         else {
                             let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
-                            world.speaker.play_sound(0);
+                            world.speaker.play_sound(Sound::Click);
                             println!("creating map object {} at {:?}", id, pos);
                             let object = MapObject::new(id, pos, 1.0);
                             world.map.layers[world.map.selected_layer].push(object);
@@ -150,7 +151,7 @@ impl UiController for MapEditor {
                         println!("Selected tile id={}", id);
 
                         if id > 0 {
-                            world.speaker.play_sound(0);
+                            world.speaker.play_sound(Sound::Click);
                             self.selected_tile_id = id;
                             ui.root.head.clear();
     

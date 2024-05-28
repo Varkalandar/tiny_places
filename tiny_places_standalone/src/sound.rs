@@ -5,6 +5,11 @@ use std::boxed::Box;
 use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink, Sample};
 use rodio::source::{SineWave, Source, Buffered};
 
+pub enum Sound {
+    Click = 0,
+    Test = 1,
+}
+
 
 pub struct SoundPlayer {
     stream: OutputStream,
@@ -46,8 +51,9 @@ impl SoundPlayer {
         }
     }
 
-    pub fn play_sound(&self, id: usize) {
-        println!("Playing sound {}", id);
-        self.sink.append(self.sources[id].clone());
+    pub fn play_sound(&self, id: Sound) {
+        let index = id as usize;
+        println!("Playing sound {}", index);
+        self.sink.append(self.sources[index].clone());
     }
 }

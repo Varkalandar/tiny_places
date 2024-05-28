@@ -25,11 +25,13 @@ pub struct Map {
     pub has_selection: bool,
     pub selected_item: usize,
     pub selected_layer: usize,
+
+    pub backdrop_image_name: String,
 }
 
 
 impl Map {
-    pub fn new() -> Map {
+    pub fn new(backdrop_image_name: &str) -> Map {
         let layers = [Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),];        
         
         let player_visual = Visual {
@@ -48,6 +50,8 @@ impl Map {
             has_selection: false,
             selected_item: 0,
             selected_layer: 0,
+
+            backdrop_image_name: backdrop_image_name.to_string(),
         }
     }
 
@@ -116,7 +120,9 @@ impl Map {
         let mut lines = content.lines();
 
         lines.next(); // version
-        lines.next(); // map name
+        self.backdrop_image_name = lines.next().unwrap().to_string(); // map name
+
+        println!("Backdrop image='{}'", self.backdrop_image_name);
 
         for line in lines {
             println!("{}", line);
@@ -159,7 +165,10 @@ impl Map {
 
             // write a byte to the buffer
             writer.write("v10\n".as_bytes())?;
-            writer.write("Testmap\n".as_bytes())?;
+
+            let backdrop_name = self.backdrop_image_name.to_string()  + "\n";
+
+            writer.write(backdrop_name.as_bytes())?;
             
             self.save_layer(&mut writer, MAP_GROUND_LAYER)?;
             self.save_layer(&mut writer, MAP_DECO_LAYER)?;

@@ -14,6 +14,7 @@ use crate::item::Item;
 use crate::ButtonState;
 use crate::MouseButton;
 use crate::GameWorld;
+use crate::sound::Sound;
 
 
 pub struct PlayerInventoryView {
@@ -239,7 +240,7 @@ impl PlayerInventoryView {
                     if self.hover_item.is_some() {
                         self.dragged_item = self.hover_item;
         
-                        world.speaker.play_sound(0);
+                        world.speaker.play_sound(Sound::Click);
                         println!("Started to drag item idx={:?} from {}, {}", self.dragged_item, event.mx, event.my);
                         
                         let item_id = self.dragged_item.unwrap();
@@ -255,7 +256,7 @@ impl PlayerInventoryView {
                     let inventory = &mut world.player_inventory;
                     let item = inventory.bag.get(&id).unwrap();
 
-                    world.speaker.play_sound(0);
+                    world.speaker.play_sound(Sound::Click);
                     println!("Dropped an {}", item.name);
 
                     let idx = inventory.find_entry_for_id(id).unwrap();

@@ -112,7 +112,7 @@ impl App {
 
 
         let ui = UI::new(window_size);
-        let map = Map::new(); 
+        let map = Map::new("map_puzzle_technoland.png"); 
         let editor = MapEditor::new();
         let game = Game::new(&ui, &layer_tileset[6]);
 
