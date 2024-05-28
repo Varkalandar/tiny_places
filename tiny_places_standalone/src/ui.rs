@@ -70,7 +70,7 @@ pub trait UiController {
 
     }
 
-    fn update(&mut self, _appdata: &mut Self::Appdata) {
+    fn update(&mut self, _appdata: &mut Self::Appdata, _dt: f64) {
 
     }
 }

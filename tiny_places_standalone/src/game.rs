@@ -36,7 +36,7 @@ impl UiController for Game {
                     if event.args.button == piston::Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
 
-                        let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                         let map = &mut world.map;
                         let option = map.find_nearest_object(map.selected_layer, &pos);
 
@@ -105,8 +105,8 @@ impl UiController for Game {
     }
 
 
-    fn update(&mut self, _world: &mut Self::Appdata) {
-
+    fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
+        world.map.update(dt);
     }
 }
 

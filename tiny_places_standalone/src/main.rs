@@ -25,7 +25,6 @@ use std::path::Path;
 mod item;
 mod inventory;
 mod map;
-mod mob;
 mod editor;
 mod game;
 mod ui;
@@ -34,7 +33,7 @@ mod sound;
 #[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
 
-use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
+use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
@@ -158,13 +157,15 @@ impl App {
         self.gl.draw(viewport, |c, gl| {
 
             fn draw_layer(gl: &mut GlGraphics, c: Context, ds: DrawState, window_center: &Vector2<f64>, world: &GameWorld, layer_id: usize) {
-                let player_position = &world.map.player.position;
-                let set = &world.layer_tileset[layer_id];
+                let player_position = &world.map.player_position();
 
                 for idx in 0..world.map.layers[layer_id].len() {
-                    let deco = &world.map.layers[layer_id][idx];
-                    let tile = set.tiles_by_id.get(&deco.tile_id).unwrap();
-                    let tf = build_transform(c.transform, deco, tile.foot, player_position, window_center);        
+                    let mob = &world.map.layers[layer_id][idx];
+                    let set = &world.layer_tileset[mob.visual.tileset_id];
+                    
+                    let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
+
+                    let tf = build_transform(c.transform, mob, tile.foot, player_position, window_center);        
     
                     // mark selected item with an ellipse
                     if world.map.has_selection && 
@@ -175,7 +176,7 @@ impl App {
                                   tf.trans(tile.foot[0], tile.foot[1]), gl);
                     }
     
-                    let image = build_image(tile, &deco.color);
+                    let image = build_image(tile, &mob.visual.color);
                     image.draw(&tile.tex, &ds, tf, gl);
                 }    
             }
@@ -183,7 +184,7 @@ impl App {
             // Clear the screen.
             clear([0.0, 0.0, 0.0, 1.0], gl);
 
-            let player_position = &self.world.map.player.position;
+            let player_position = &self.world.map.player_position();
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
             let offset_x = window_center[0] * 0.5 - player_position[0];
@@ -199,14 +200,6 @@ impl App {
                     .color([0.8, 0.8, 0.8, 1.0]);
             m_image.draw(&self.map_texture, &ds, map_tf, gl);
 
-            let player_set = &self.world.layer_tileset[4];
-            let player_tile_id = self.world.map.player.visual.current_image_id;
-            let p_tile = player_set.tiles_by_id.get(&player_tile_id).unwrap();
-            let p_tf = c.transform.trans(window_center[0], window_center[1]).scale(0.5, 0.5);
-
-            let p_image = build_image(p_tile, &[1.0, 0.8, 0.6, 1.0]); 
-            p_image.draw(&p_tile.tex, &ds, p_tf, gl);
-
             // draw ground decorations (flat)
             draw_layer(gl, c, ds, &window_center, &self.world, MAP_GROUND_LAYER);
 
@@ -214,7 +207,7 @@ impl App {
             // TODO
             
             // draw decorations (upright things)
-            draw_layer(gl, c, ds, &window_center, &self.world, MAP_DECO_LAYER);
+            draw_layer(gl, c, ds, &window_center, &self.world, MAP_OBJECT_LAYER);
 
             // draw lights
             // TODO
@@ -234,14 +227,8 @@ impl App {
 
 
     fn update(&mut self, args: &UpdateArgs) {
-        
-        let map = &mut self.world.map;
-        map.update(args.dt);
-
-        {
-            let world = &mut self.world;
-            self.controllers.current().update(world);
-        }
+        let world = &mut self.world;
+        self.controllers.current().update(world, args.dt);
     }
 
 
@@ -332,20 +319,21 @@ impl App {
         let direction = [screen_direction[0], screen_direction[1] * 2.0];
         
         let distance = vec2_len(direction);
-        let time = distance / self.world.map.player.base_speed; // pixel per second
 
-        let map = &mut self.world.map;
-        let player = &mut map.player;
-        player.move_over_time = time;
-        player.speed = vec2_scale(direction, 1.0/time);
+        let player_index = self.world.map.find_player_index();
+        let player = &mut self.world.map.layers[MAP_OBJECT_LAYER][player_index];
+
+        let time = distance / player.attributes.speed; // pixel per second
+
+        player.move_time_left = time;
+        player.velocity = vec2_scale(direction, 1.0/time);
 
         let dest = vec2_add(player.position, direction);
 
         let d = player.visual.orient(direction[0], direction[1]);
         player.visual.current_image_id = player.visual.base_image_id + d;
 
-        println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);
-        
+        println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);        
     }
 }
 

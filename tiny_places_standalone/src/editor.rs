@@ -7,7 +7,7 @@ use opengl_graphics::GlGraphics;
 use vecmath::Vector2;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent};
-use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_DECO_LAYER, MAP_CLOUD_LAYER};
+use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
 use crate::sound::Sound;
@@ -44,10 +44,10 @@ impl UiController for MapEditor {
                             return ok;
                         }
                         else {
-                            let pos = screen_to_world_pos(&ui, &world.map.player.position, &ui.mouse_state.position);
+                            let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                             world.speaker.play_sound(Sound::Click);
                             println!("creating map object {} at {:?}", id, pos);
-                            let object = MapObject::new(id, pos, 1.0);
+                            let object = MapObject::new(id, world.map.selected_layer, pos, 1.0);
                             world.map.layers[world.map.selected_layer].push(object);
                             return true;
                         }
@@ -73,7 +73,7 @@ impl UiController for MapEditor {
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::D2) {                        
-                        world.map.selected_layer = MAP_DECO_LAYER;
+                        world.map.selected_layer = MAP_OBJECT_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
@@ -110,7 +110,7 @@ impl UiController for MapEditor {
                     if event.args.button == piston::Button::Keyboard(piston::Key::C) {
                         let map = &mut world.map;
                         let object = &mut map.layers[map.selected_layer][map.selected_item];
-                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, object.color);
+                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, object.visual.color);
                         ui.root.head.add_child(Rc::new(color_choice));
                     }        
 
@@ -140,7 +140,7 @@ impl UiController for MapEditor {
 
                             let map = &mut world.map;
                             let object = &mut map.layers[map.selected_layer][map.selected_item];
-                            object.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
+                            object.visual.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
         
                         }
 
@@ -175,7 +175,7 @@ impl UiController for MapEditor {
 
         match comp {
             None => {
-                let pos = screen_to_world_pos(ui, &world.map.player.position, &ui.mouse_state.position);
+                let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
 
                 let map = &mut world.map;
                 let option = map.find_nearest_object(map.selected_layer, &pos);
@@ -186,7 +186,7 @@ impl UiController for MapEditor {
                     },
                     Some(idx) => {
                         let object = map.layers[map.selected_layer].get_mut(idx).unwrap();
-                        println!("Found object {} at scale {}", object.tile_id, object.scale);
+                        println!("Found object {} at scale {}", object.visual.base_image_id, object.scale);
                         object.scale += 0.05 * event.dy;
                     }
                 }
@@ -214,18 +214,18 @@ impl UiController for MapEditor {
 
         if tile_opt.is_some() {
             let tile = tile_opt.unwrap();
-            let player_position = &world.map.player.position;
+            let player_position = &world.map.player_position();
 
             let mp = &ui.mouse_state.position;
             let window_center: Vector2<f64> = ui.window_center(); 
 
             let pos = screen_to_world_pos(&ui, player_position, mp);
-            let deco = MapObject::new(id, pos, 1.0);
+            let object = MapObject::new(id, MAP_OBJECT_LAYER, pos, 1.0);
 
             gl.draw(viewport, |c, gl| {
-                let tf = build_transform(c.transform, &deco, tile.foot, player_position, &window_center);        
+                let tf = build_transform(c.transform, &object, tile.foot, player_position, &window_center);        
 
-                let image = build_image(tile, &deco.color);
+                let image = build_image(tile, &object.visual.color);
                 image.draw(&tile.tex, &ds, tf, gl);
             });
         }
@@ -238,6 +238,10 @@ impl UiController for MapEditor {
         ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
     }
 
+
+    fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
+        world.map.update(dt);
+    }
 }
 
 
@@ -251,7 +255,7 @@ impl MapEditor {
 
 
     fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
-        let pos = screen_to_world_pos(ui, &world.map.player.position, &ui.mouse_state.position);
+        let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
         let map = &mut world.map;
         let option = map.find_nearest_object(map.selected_layer, &pos);
 

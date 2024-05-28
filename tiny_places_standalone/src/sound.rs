@@ -1,9 +1,8 @@
 use std::fs::File;
 use std::io::BufReader;
-use std::boxed::Box;
 
-use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink, Sample};
-use rodio::source::{SineWave, Source, Buffered};
+use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
+use rodio::source::{Source, Buffered};
 
 pub enum Sound {
     Click = 0,
