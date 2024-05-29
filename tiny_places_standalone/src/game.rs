@@ -8,6 +8,7 @@ use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
 use crate::TileSet;
+use crate::MAP_OBJECT_LAYER;
 
 pub struct Game {
     piv: PlayerInventoryView,
@@ -32,11 +33,12 @@ impl UiController for Game {
 
             match comp {
                 None => {
+
+                    let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                     
                     if event.args.button == piston::Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
 
-                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                         let map = &mut world.map;
                         let option = map.find_nearest_object(map.selected_layer, &pos);
 
@@ -52,6 +54,11 @@ impl UiController for Game {
                         }
                     }
 
+                    if event.args.button == piston::Button::Mouse(MouseButton::Right) {
+                        let id = world.map.player_id;
+                        world.map.fire_projectile(id, MAP_OBJECT_LAYER, 1, 0.0, pos, 100.0)
+                    }
+
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
                         self.show_inventory = true;
                     }        
@@ -59,6 +66,7 @@ impl UiController for Game {
                 Some(_comp) => {
                 }
             }
+        
         }
 
         if self.show_inventory {

@@ -1,4 +1,4 @@
-use vecmath::{Vector2, vec2_add, vec2_scale};
+use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 use std::f64::consts::PI;
 
 use std::io::prelude::*;
@@ -107,23 +107,22 @@ impl Map {
     }
 
 
-/*
-    pub fn fireProjectile(source, id, layer, ptype, castTime, dx, dy, speed) {
-        println!("Adding projectile with type {} fired at {}, {}", ptype, dx, dy)
+    pub fn fire_projectile(&mut self, shooter_id: u64, layer: usize, projectile_type: usize, delay: f64, fire_at: Vector2<f64>, speed: f64) {
+        println!("Adding projectile with type {} fired at {:?}", projectile_type, fire_at);
     
-        local shooter, i = findMob(source, layer)
-        local nx = dx - shooter.x
-        local ny = dy - shooter.y
+        let shooter = &self.layers[layer][&shooter_id];
+        let np = vec2_sub(fire_at, shooter.position);
     
-        shooter:orient(nx, ny)
-    
-        local spell = spells.new(map, shooter, id, layer, ptype, castTime, dx, dy, speed, animationSet)
-        
-        // some spells have a buildup time, the projectile will be fired later
-        table.insert(map.actions, spell)
-    
+        let dir = vec2_normalized(np);
+        let velocity = vec2_scale(dir, speed);
+
+        let mut projectile = self.factory.create_mob(projectile_type, layer, shooter.position, 1.0);
+        projectile.velocity = velocity;
+        projectile.move_time_left = 10000.0;
+
+        self.layers[layer].insert(projectile.uid, projectile);
     }    
-*/
+
 
     pub fn update(&mut self, dt: f64) {
 
