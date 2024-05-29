@@ -6,7 +6,7 @@ use graphics::{draw_state::DrawState, Viewport,};
 use opengl_graphics::GlGraphics;
 use vecmath::Vector2;
 
-use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, ScrollEvent};
+use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
@@ -197,6 +197,35 @@ impl UiController for MapEditor {
         }
 
         true
+    }
+
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
+
+        let player_position = &world.map.player_position();
+        let mp = &ui.mouse_state.position;
+        let pos = screen_to_world_pos(&ui, player_position, mp);
+
+        // Dragging?
+        if ui.mouse_state.left_pressed {
+            let map = &mut world.map; 
+            let option = map.find_nearest_object(map.selected_layer, &pos);
+
+            match option {
+                None => {
+                    // Nothing to do
+                },
+                Some(idx) => {
+                    if map.selected_item == idx {
+
+
+                        let mob = &mut map.layers[map.selected_layer][idx];
+                        mob.position = pos;
+                    }
+                }
+            }
+        }
+
+        false
     }
 
 
