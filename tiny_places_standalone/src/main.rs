@@ -21,6 +21,7 @@ use piston::input::{RenderArgs, RenderEvent,
 use piston::window::WindowSettings;
 
 use std::path::Path;
+use std::cmp::Ordering;
 
 mod item;
 mod inventory;
@@ -33,7 +34,7 @@ mod sound;
 #[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
 
-use map::{Map, MapObject, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
+use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
@@ -158,19 +159,36 @@ impl App {
 
             fn draw_layer(gl: &mut GlGraphics, c: Context, ds: DrawState, window_center: &Vector2<f64>, world: &GameWorld, layer_id: usize) {
                 let player_position = &world.map.player_position();
+                let mut objects = Vec::new();
 
-                for idx in 0..world.map.layers[layer_id].len() {
-                    let mob = &world.map.layers[layer_id][idx];
+                for (_key, mob) in &world.map.layers[layer_id] {
+                    objects.push(mob);
+                }
+
+                objects.sort_unstable_by(|a, b| -> Ordering {
+                    let ap = a.position[0] + a.position[1] * 10000.0;
+                    let bp = b.position[0] + b.position[1] * 10000.0;
+
+                    if ap > bp {
+                        Ordering::Greater
+                    } else if ap < bp {
+                        Ordering::Less
+                    } else {
+                        Ordering::Equal
+                    }
+                });
+
+                for mob in objects {
                     let set = &world.layer_tileset[mob.visual.tileset_id];
                     
                     let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
-                    let tf = build_transform(c.transform, mob, tile.foot, player_position, window_center);        
+                    let tf = build_transform(c.transform, &mob.position, mob.scale, tile.foot, player_position, window_center);        
     
                     // mark selected item with an ellipse
                     if world.map.has_selection && 
                        layer_id == world.map.selected_layer &&
-                       idx == world.map.selected_item {
+                       mob.uid == world.map.selected_item {
                         let ellp = Ellipse::new([1.0, 0.9, 0.3, 0.3]); 
                         ellp.draw([-40 as f64, -20 as f64, 80 as f64, 40 as f64], &ds, 
                                   tf.trans(tile.foot[0], tile.foot[1]), gl);
@@ -320,8 +338,7 @@ impl App {
         
         let distance = vec2_len(direction);
 
-        let player_index = self.world.map.find_player_index();
-        let player = &mut self.world.map.layers[MAP_OBJECT_LAYER][player_index];
+        let player = self.world.map.layers[MAP_OBJECT_LAYER].get_mut(&self.world.map.player_id).unwrap();
 
         let time = distance / player.attributes.speed; // pixel per second
 
@@ -351,10 +368,9 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
 }
 
 
-pub fn build_transform(transform: Matrix2d<f64>, thing: &MapObject, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
-    let rel_pos_x = thing.position[0] - player_position[0];        
-    let rel_pos_y = thing.position[1] - player_position[1];  
-    let scale = thing.scale;
+pub fn build_transform(transform: Matrix2d<f64>, position: &Vector2<f64>, scale: f64, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
+    let rel_pos_x = position[0] - player_position[0];        
+    let rel_pos_y = position[1] - player_position[1];  
 
     transform
         .trans(window_center[0], window_center[1])

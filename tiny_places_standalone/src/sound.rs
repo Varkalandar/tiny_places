@@ -4,15 +4,15 @@ use std::io::BufReader;
 use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
 use rodio::source::{Source, Buffered};
 
+
 pub enum Sound {
     Click = 0,
-    Test = 1,
 }
 
 
 pub struct SoundPlayer {
-    stream: OutputStream,
-    stream_handle: OutputStreamHandle,
+    _stream: OutputStream,
+    _stream_handle: OutputStreamHandle,
     sink: Sink,
     sources: Vec <Buffered<Decoder<BufReader<File>>>>
 }
@@ -21,9 +21,6 @@ pub struct SoundPlayer {
 impl SoundPlayer {
 
     pub fn new() -> SoundPlayer {
-
-        // Get an output stream handle to the default physical sound device
-        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
 
         // Load a sound from a file, using a path relative to Cargo.toml
         let file = BufReader::new(File::open("../tiny_places_client/resources/sfx/hard_click.wav").unwrap());
@@ -43,8 +40,8 @@ impl SoundPlayer {
         sources.push(source);
 
         SoundPlayer {
-            stream,
-            stream_handle,
+            _stream: stream,
+            _stream_handle: stream_handle,
             sink,
             sources,
         }

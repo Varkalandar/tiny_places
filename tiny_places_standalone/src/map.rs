@@ -5,6 +5,7 @@ use std::io::prelude::*;
 use std::io::{Result, BufWriter};
 use std::fs::File;
 use std::path::PathBuf;
+use std::collections::HashMap;
 
 use crate::item::Item;
 use crate::inventory::Inventory;
@@ -15,24 +16,26 @@ pub const MAP_CLOUD_LAYER:usize = 2;
 
 
 pub struct Map {
-    pub layers: [Vec<MapObject>; 7],
+    pub layers: [HashMap<u64, MapObject>; 7],
 
     // all items on this map
     pub items: Inventory,
 
     pub has_selection: bool,
-    pub selected_item: usize,
+    pub selected_item: u64,
     pub selected_layer: usize,
 
     pub backdrop_image_name: String,
 
     pub factory: MapObjectFactory,
+
+    pub player_id: u64, 
 }
 
 
 impl Map {
     pub fn new(backdrop_image_name: &str) -> Map {
-        let mut layers = [Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),];        
+        let mut layers = [HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(),];
         
         let player_visual = Visual {
             base_image_id: 39,
@@ -48,9 +51,10 @@ impl Map {
 
 
         let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 1.0);
+        let player_id = player.uid;
         player.visual = player_visual;
 
-        layers[MAP_OBJECT_LAYER].push(player);
+        layers[MAP_OBJECT_LAYER].insert(player.uid, player);
 
         Map {
             layers,
@@ -62,70 +66,46 @@ impl Map {
             backdrop_image_name: backdrop_image_name.to_string(),
         
             factory,
+            player_id,
         }
-    }
-
-
-    pub fn find_player_index(&self) -> usize {
-
-        self.find_index_from_image_id(MAP_OBJECT_LAYER, 39).unwrap()
     }
 
 
     pub fn player_position(&self) -> Vector2<f64> {
-        for mob in &self.layers[MAP_OBJECT_LAYER] {
-            if mob.visual.base_image_id == 39 {
-                return mob.position;
-            }
-        }
 
-        [0.0, 0.0]
+        let mob = self.layers[MAP_OBJECT_LAYER].get(&self.player_id).unwrap();
+        return mob.position;
     }
 
 
-    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>) -> Option<usize> {
+    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>) -> Option<u64> {
         let objects = &self.layers[layer];
         let mut distance = 999999.0;
-        let mut best_idx = 0;
+        let mut best_id = 0;
 
-        for idx in 0..objects.len() {
-            let object = &objects[idx];
+        for (_key, object) in objects {
             let dx = object.position[0] - position[0];
             let dy = object.position[1] - position[1];
             let d2 = dx * dx + dy * dy;
 
-            println!("object {} has distance {}", object.visual.base_image_id, d2);
+            println!("object {} has distance {}", object.uid, d2);
 
             if d2 < distance {
                 distance = d2;
-                best_idx = idx;
+                best_id = object.uid;
             }
         }
 
-        let mut result:Option<usize> = None;
+        let mut result:Option<u64> = None;
 
         if distance < 10000.0 {
-            result = Some(best_idx);
-            println!("  best object is {}", best_idx);
+            result = Some(best_id);
+            println!("  best object is {}", best_id);
         }
 
         result
     }
 
-
-    pub fn find_index_from_image_id(&self, layer: usize, id: usize) -> Option<usize> {
-    
-        let objects = &self.layers[layer];
-
-        for idx in 0..objects.len() {
-            let object = &objects[idx];
-            if object.visual.base_image_id == id {
-                return Some(idx);
-            }
-        }
-
-        None
-    }
 
 /*
     pub fn fireProjectile(source, id, layer, ptype, castTime, dx, dy, speed) {
@@ -147,7 +127,7 @@ impl Map {
 
     pub fn update(&mut self, dt: f64) {
 
-        for mob in &mut self.layers[MAP_OBJECT_LAYER] {
+        for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
             mob.move_dt(dt);
         }
     }
@@ -193,11 +173,10 @@ impl Map {
 
             println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
 
-            let mut m = self.factory.create_mob(tile_id, layer, [x, y], scale);
-            m.visual.color = color;
-            self.layers[layer].push(m);
+            let mut mob = self.factory.create_mob(tile_id, layer, [x, y], scale);
+            mob.visual.color = color;
+            self.layers[layer].insert(mob.uid, mob);
         }
-        
     }
 
 
@@ -229,7 +208,7 @@ impl Map {
     fn save_layer(&self, writer: &mut BufWriter<File>, layer: usize) -> Result<()> {
         let objects = &self.layers[layer];
 
-        for object in objects {
+        for (_key, object) in objects {
             let color = object.visual.color; 
 
             let line = 
@@ -253,7 +232,7 @@ impl Map {
     
     pub fn move_selected_object(&mut self, dx: f64, dy: f64) {        
         if self.has_selection {
-            let object = &mut self.layers[self.selected_layer][self.selected_item];
+            let object = self.layers[self.selected_layer].get_mut(&self.selected_item).unwrap();
             object.position[0] += dx;
             object.position[1] += dy;
         }
@@ -264,7 +243,7 @@ impl Map {
 
 pub struct MapObject {
 
-    uid: u64,
+    pub uid: u64,
     pub visual: Visual,
     pub attributes: MobAttributes,
     pub item: Option<Item>,
@@ -313,6 +292,8 @@ impl MapObjectFactory {
 
         let uid = self.next_id;
         self.next_id += 1;
+
+        println!("MapObjectFactory: next id will be {}", self.next_id);
 
         MapObject {
             uid,
@@ -375,5 +356,3 @@ impl Visual {
 pub struct MobAttributes {
     pub speed: f64,
 }
-
-

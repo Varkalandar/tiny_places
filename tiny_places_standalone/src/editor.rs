@@ -7,7 +7,7 @@ use opengl_graphics::GlGraphics;
 use vecmath::Vector2;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, MouseMoveEvent, ScrollEvent};
-use crate::map::{MapObject, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
+use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
 use crate::sound::Sound;
@@ -47,8 +47,8 @@ impl UiController for MapEditor {
                             let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                             world.speaker.play_sound(Sound::Click);
                             println!("creating map object {} at {:?}", id, pos);
-                            let object = world.map.factory.create_mob(id, world.map.selected_layer, pos, 1.0);
-                            world.map.layers[world.map.selected_layer].push(object);
+                            let mob = world.map.factory.create_mob(id, world.map.selected_layer, pos, 1.0);
+                            world.map.layers[world.map.selected_layer].insert(mob.uid, mob);
                             return true;
                         }
                     }
@@ -109,7 +109,7 @@ impl UiController for MapEditor {
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::C) {
                         let map = &mut world.map;
-                        let object = &mut map.layers[map.selected_layer][map.selected_item];
+                        let object = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
                         let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, object.visual.color);
                         ui.root.head.add_child(Rc::new(color_choice));
                     }        
@@ -139,9 +139,8 @@ impl UiController for MapEditor {
                             println!("selected color is {:02x}{:02x}{:02x}{:02x}", r, g, b, a);
 
                             let map = &mut world.map;
-                            let object = &mut map.layers[map.selected_layer][map.selected_item];
+                            let object = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
                             object.visual.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
-        
                         }
 
                         return true;
@@ -184,9 +183,9 @@ impl UiController for MapEditor {
                     None => {
                         println!("Found no object at {}, {}", pos[0], pos[1]);
                     },
-                    Some(idx) => {
-                        let object = map.layers[map.selected_layer].get_mut(idx).unwrap();
-                        println!("Found object {} at scale {}", object.visual.base_image_id, object.scale);
+                    Some(id) => {
+                        let object = map.layers[map.selected_layer].get_mut(&id).unwrap();
+                        println!("Found object {} at scale {}", object.uid, object.scale);
                         object.scale += 0.05 * event.dy;
                     }
                 }
@@ -214,11 +213,10 @@ impl UiController for MapEditor {
                 None => {
                     // Nothing to do
                 },
-                Some(idx) => {
-                    if map.selected_item == idx {
+                Some(id) => {
+                    if map.selected_item == id {
 
-
-                        let mob = &mut map.layers[map.selected_layer][idx];
+                        let mob = &mut map.layers[map.selected_layer].get_mut(&id).unwrap();
                         mob.position = pos;
                     }
                 }
@@ -249,12 +247,12 @@ impl UiController for MapEditor {
             let window_center: Vector2<f64> = ui.window_center(); 
 
             let pos = screen_to_world_pos(&ui, player_position, mp);
-            let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
+            // let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
 
             gl.draw(viewport, |c, gl| {
-                let tf = build_transform(c.transform, &object, tile.foot, player_position, &window_center);        
+                let tf = build_transform(c.transform, &pos, 1.0, tile.foot, player_position, &window_center);        
 
-                let image = build_image(tile, &object.visual.color);
+                let image = build_image(tile, &[1.0, 1.0, 1.0, 0.5]);
                 image.draw(&tile.tex, &ds, tf, gl);
             });
         }
@@ -293,17 +291,17 @@ impl MapEditor {
                 map.has_selection = false;
                 map.selected_item = 0;
             },
-            Some(idx) => {
+            Some(id) => {
 
                 // toggle
-                if map.has_selection && map.selected_item == idx {
+                if map.has_selection && map.selected_item == id {
                     // was already seelected, unselect
                     map.has_selection = false;
                     map.selected_item = 0;
                 }
                 else {
                     map.has_selection = true;
-                    map.selected_item = idx;
+                    map.selected_item = id;
                 }
 
                 return true;
