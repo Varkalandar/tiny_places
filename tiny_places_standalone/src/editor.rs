@@ -47,7 +47,7 @@ impl UiController for MapEditor {
                             let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                             world.speaker.play_sound(Sound::Click);
                             println!("creating map object {} at {:?}", id, pos);
-                            let object = MapObject::new(id, world.map.selected_layer, pos, 1.0);
+                            let object = world.map.factory.create_mob(id, world.map.selected_layer, pos, 1.0);
                             world.map.layers[world.map.selected_layer].push(object);
                             return true;
                         }
@@ -220,7 +220,7 @@ impl UiController for MapEditor {
             let window_center: Vector2<f64> = ui.window_center(); 
 
             let pos = screen_to_world_pos(&ui, player_position, mp);
-            let object = MapObject::new(id, MAP_OBJECT_LAYER, pos, 1.0);
+            let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
 
             gl.draw(viewport, |c, gl| {
                 let tf = build_transform(c.transform, &object, tile.foot, player_position, &window_center);        

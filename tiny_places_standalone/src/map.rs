@@ -25,6 +25,8 @@ pub struct Map {
     pub selected_layer: usize,
 
     pub backdrop_image_name: String,
+
+    pub factory: MapObjectFactory,
 }
 
 
@@ -40,7 +42,12 @@ impl Map {
             color: [1.0, 1.0, 1.0, 1.0],       
         };
 
-        let mut player = MapObject::new(39, 4, [1000.0, 1000.0], 1.0);
+        let mut factory = MapObjectFactory {
+            next_id: 1,
+        };
+
+
+        let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 1.0);
         player.visual = player_visual;
 
         layers[MAP_OBJECT_LAYER].push(player);
@@ -53,6 +60,8 @@ impl Map {
             selected_layer: 0,
 
             backdrop_image_name: backdrop_image_name.to_string(),
+        
+            factory,
         }
     }
 
@@ -184,7 +193,7 @@ impl Map {
 
             println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
 
-            let mut m = MapObject::new(tile_id, layer, [x, y], scale);
+            let mut m = self.factory.create_mob(tile_id, layer, [x, y], scale);
             m.visual.color = color;
             self.layers[layer].push(m);
         }
@@ -255,6 +264,7 @@ impl Map {
 
 pub struct MapObject {
 
+    uid: u64,
     pub visual: Visual,
     pub attributes: MobAttributes,
     pub item: Option<Item>,
@@ -270,7 +280,24 @@ pub struct MapObject {
 
 impl MapObject {
     
-    pub fn new(tile_id: usize, tileset_id: usize, position: Vector2<f64>, scale: f64) -> MapObject {
+    pub fn move_dt(&mut self, dt: f64) {
+        if self.move_time_left > 0.0 {
+            let distance = vec2_scale(self.velocity, dt);
+            self.position = vec2_add(self.position, distance);
+            self.move_time_left -= dt;
+        }
+    }
+}
+
+
+pub struct MapObjectFactory {
+    next_id: u64,
+}
+
+
+impl MapObjectFactory {
+
+    pub fn create_mob(&mut self, tile_id: usize, tileset_id: usize, position: Vector2<f64>, scale: f64) -> MapObject {
 
         let visual = Visual {
             base_image_id: tile_id,
@@ -284,7 +311,11 @@ impl MapObject {
             speed: 150.0,
         };
 
+        let uid = self.next_id;
+        self.next_id += 1;
+
         MapObject {
+            uid,
             visual,
             attributes,
             item: None,
@@ -293,14 +324,6 @@ impl MapObject {
             velocity: [0.0, 0.0],
             move_time_left: 0.0,
             scale,
-        }
-    }
-
-    pub fn move_dt(&mut self, dt: f64) {
-        if self.move_time_left > 0.0 {
-            let distance = vec2_scale(self.velocity, dt);
-            self.position = vec2_add(self.position, distance);
-            self.move_time_left -= dt;
         }
     }
 }
