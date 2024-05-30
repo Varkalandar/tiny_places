@@ -3551,16 +3551,16 @@ data
 Tile Description
 v.5
 210
-1 1
+336 341
 0 0
-0 0
+171 272
 End Of Header
 Item
 v.1
 data
 2
-
-
+sphere_and_orbitals
+alien
 1
 0
 0
