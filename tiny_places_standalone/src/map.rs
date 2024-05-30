@@ -118,7 +118,8 @@ impl Map {
 
         let mut projectile = self.factory.create_mob(projectile_type, layer, shooter.position, 1.0);
         projectile.velocity = velocity;
-        projectile.move_time_left = 10000.0;
+        projectile.move_time_left = 1.0;
+        projectile.action = MoveEndAction::RemoveFromMap;
 
         self.layers[layer].insert(projectile.uid, projectile);
     }    
@@ -126,8 +127,23 @@ impl Map {
 
     pub fn update(&mut self, dt: f64) {
 
+        let mut killList = Vec::new();
+
         for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
+            let before = mob.move_time_left;
             mob.move_dt(dt);
+            let after = mob.move_time_left;
+
+            // did the move just end?
+            if before > 0.0 && after <= 0.0 {
+                if mob.action == MoveEndAction::RemoveFromMap {
+                    killList.push(mob.uid);
+                }
+            }
+        }
+
+        for id in killList {
+            self.layers[MAP_OBJECT_LAYER].remove(&id);
         }
     }
 
@@ -246,6 +262,7 @@ pub struct MapObject {
     pub visual: Visual,
     pub attributes: MobAttributes,
     pub item: Option<Item>,
+    pub action: MoveEndAction,
 
     // world coordinates of this object. Note that screen coordinates are different
     pub position: Vector2<f64>,
@@ -299,7 +316,7 @@ impl MapObjectFactory {
             visual,
             attributes,
             item: None,
-
+            action: MoveEndAction::None,
             position, 
             velocity: [0.0, 0.0],
             move_time_left: 0.0,
@@ -308,6 +325,11 @@ impl MapObjectFactory {
     }
 }
 
+#[derive(PartialEq)]
+pub enum MoveEndAction {
+    None,
+    RemoveFromMap,
+}
 
 pub struct Visual {
     pub base_image_id: usize,
