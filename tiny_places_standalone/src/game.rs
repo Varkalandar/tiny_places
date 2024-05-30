@@ -56,7 +56,7 @@ impl UiController for Game {
 
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
                         let id = world.map.player_id;
-                        world.map.fire_projectile(id, MAP_OBJECT_LAYER, 1, 0.0, pos, 100.0)
+                        world.map.fire_projectile(id, MAP_OBJECT_LAYER, 25, pos, 200.0)
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {

@@ -107,7 +107,7 @@ impl Map {
     }
 
 
-    pub fn fire_projectile(&mut self, shooter_id: u64, layer: usize, projectile_type: usize, delay: f64, fire_at: Vector2<f64>, speed: f64) {
+    pub fn fire_projectile(&mut self, shooter_id: u64, layer: usize, projectile_type: usize, fire_at: Vector2<f64>, speed: f64) {
         println!("Adding projectile with type {} fired at {:?}", projectile_type, fire_at);
     
         let shooter = &self.layers[layer][&shooter_id];
@@ -116,10 +116,15 @@ impl Map {
         let dir = vec2_normalized(np);
         let velocity = vec2_scale(dir, speed);
 
-        let mut projectile = self.factory.create_mob(projectile_type, layer, shooter.position, 1.0);
+        let start_pos = vec2_add(shooter.position, vec2_scale(dir, 80.0));
+
+        let mut projectile = self.factory.create_mob(projectile_type, 5, start_pos, 1.0);
         projectile.velocity = velocity;
-        projectile.move_time_left = 1.0;
+        projectile.move_time_left = 2.0;
         projectile.action = MoveEndAction::RemoveFromMap;
+
+        let offset = projectile.visual.orient(velocity[0], velocity[1]);
+        projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
 
         self.layers[layer].insert(projectile.uid, projectile);
     }    
@@ -127,7 +132,7 @@ impl Map {
 
     pub fn update(&mut self, dt: f64) {
 
-        let mut killList = Vec::new();
+        let mut kill_list = Vec::new();
 
         for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
             let before = mob.move_time_left;
@@ -137,12 +142,12 @@ impl Map {
             // did the move just end?
             if before > 0.0 && after <= 0.0 {
                 if mob.action == MoveEndAction::RemoveFromMap {
-                    killList.push(mob.uid);
+                    kill_list.push(mob.uid);
                 }
             }
         }
 
-        for id in killList {
+        for id in kill_list {
             self.layers[MAP_OBJECT_LAYER].remove(&id);
         }
     }
@@ -350,7 +355,7 @@ impl Visual {
             let mut r = dy.atan2(dx);
             
             // round to a segment
-            r = r + PI + PI / frames as f64;
+            r = r + PI + PI * 2.0 / frames as f64;
         
             // calculate tile offsets from 0 to frames-1
 

@@ -8,7 +8,7 @@ extern crate rodio;
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
-use graphics::{Context, DrawState, Ellipse, Image, ImageSize, Transformed, clear};
+use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed, clear};
 use graphics::math::Matrix2d;
 use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
@@ -99,6 +99,7 @@ impl App {
         let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
         let creature_tiles = TileSet::load("../tiny_places_client/resources/creatures", "creatures.tica");
         let player_tiles = TileSet::load("../tiny_places_client/resources/players", "players.tica");
+        let projectile_tiles = TileSet::load("../tiny_places_client/resources/projectiles", "projectiles.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -106,7 +107,7 @@ impl App {
             cloud_tiles,
             creature_tiles,
             player_tiles,
-            TileSet::new(),
+            projectile_tiles,
             item_tiles,
             ];        
 
@@ -179,7 +180,8 @@ impl App {
                 });
 
                 for mob in objects {
-                    let set = &world.layer_tileset[mob.visual.tileset_id];
+                    let tileset_id = mob.visual.tileset_id;
+                    let set = &world.layer_tileset[tileset_id];
                     
                     let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
@@ -196,6 +198,16 @@ impl App {
     
                     let image = build_image(tile, &mob.visual.color);
                     image.draw(&tile.tex, &ds, tf, gl);
+
+                    // fake shine for glowing projectiles
+                    if tileset_id == 5 {
+
+                        let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
+
+                        let tf = build_transform(c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
+                        let image = build_image(glow_tile, &[0.5, 0.375, 0.2, 1.0]);
+                        image.draw(&glow_tile.tex, &ds.blend(Blend::Add), tf, gl);
+                    }
                 }    
             }
 
@@ -398,6 +410,7 @@ fn main() {
     let mut window: Window = WindowSettings::new("Rusty Tiny Places", window_size)
         .graphics_api(opengl)
         .exit_on_esc(true)
+        .vsync(true)
         .build()
         .unwrap();
 
