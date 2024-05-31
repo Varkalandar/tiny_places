@@ -4,6 +4,7 @@ use opengl_graphics::GlGraphics;
 use graphics::Viewport;
 
 use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use crate::sound::Sound;
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
@@ -56,6 +57,7 @@ impl UiController for Game {
 
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
                         let id = world.map.player_id;
+                        world.speaker.play_sound(Sound::FireballLaunch);
                         world.map.fire_projectile(id, MAP_OBJECT_LAYER, 25, pos, 200.0)
                     }
 
