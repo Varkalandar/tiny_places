@@ -23,17 +23,19 @@ impl SoundPlayer {
     pub fn new() -> SoundPlayer {
 
         // Load a sound from a file, using a path relative to Cargo.toml
-        let file = BufReader::new(File::open("../tiny_places_client/resources/sfx/hard_click.wav").unwrap());
+        let file = BufReader::new(File::open("resources/sounds/click.wav").unwrap());
+        // let file = BufReader::new(File::open("../tiny_places_client/resources/sfx/fireball_launch.wav").unwrap());
 
         // Decode that sound file into a source
         let source = Decoder::new(file).unwrap().buffered();
 
-        // Play the sound directly on the device
-        // stream_handle.play_raw(source.convert_samples());
-
         // stream must live as long as the sink
         let (stream, stream_handle) = OutputStream::try_default().unwrap();
         let sink = Sink::try_new(&stream_handle).unwrap();
+
+        // Play the sound directly on the device
+        // stream_handle.play_raw(source.clone().convert_samples());
+
 
         // sink.append(source);
         let mut sources = Vec::new();

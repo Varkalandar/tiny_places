@@ -137,6 +137,12 @@ impl App {
         let plugin_gt = factory.make_item(4);
         inv.put_item(plugin_gt, Slot::Bag);
 
+        let plugin_fl = factory.make_item(5);
+        inv.put_item(plugin_fl, Slot::Bag);
+
+        let plugin_sb = factory.make_item(6);
+        inv.put_item(plugin_sb, Slot::Bag);
+
         App {        
 
             gl: GlGraphics::new(opengl),

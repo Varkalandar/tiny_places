@@ -474,8 +474,8 @@
       <Description>
         <version>4</version>
         <id>28</id>
-        <width>1</width>
-        <height>1</height>
+        <width>70</width>
+        <height>61</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -483,8 +483,8 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>plugin_four_leaf</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
@@ -508,8 +508,8 @@
       <Description>
         <version>4</version>
         <id>30</id>
-        <width>1</width>
-        <height>1</height>
+        <width>77</width>
+        <height>72</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -517,8 +517,8 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>plugin_twisted_gears</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
