@@ -383,7 +383,7 @@ data
 Tile Description
 v.5
 24
-1 1
+58 76
 0 0
 0 0
 End Of Header
@@ -391,8 +391,8 @@ Item
 v.1
 data
 2
-
-
+plugin_dumbbell
+alien
 1
 0
 0
@@ -415,7 +415,7 @@ data
 Tile Description
 v.5
 26
-1 1
+90 67
 0 0
 0 0
 End Of Header
@@ -423,8 +423,8 @@ Item
 v.1
 data
 2
-
-
+plugin_green_twist
+alien
 1
 0
 0

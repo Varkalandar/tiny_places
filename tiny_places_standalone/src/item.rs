@@ -54,32 +54,10 @@ pub struct ItemFactory
 impl ItemFactory {
     pub fn new() -> ItemFactory {
 
-        let path = Path::new("resources/items/items.csv");    
-        let rs = read_to_string(path).unwrap();
-        let mut lines = Vec::new();
-        
-        for line in rs.lines() {
-            lines.push(line);
-        }
+        let mut proto_items = read_proto_items();
+        let mut plugins = read_plugins();
 
-        let mut proto_items: Vec<Item> = Vec::new();
-
-        for i in 1..lines.len() {
-            let mut parts = lines[i].split(",");
-
-            proto_items.push(Item {
-                id: 0,
-                name: parts.next().unwrap().to_string(),
-                inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
-                map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
-                inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
-                inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
-                inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
-                slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),                
-                mods: parse_mods(&mut parts),
-            });
-        }
-
+        proto_items.append(&mut plugins);
 
         ItemFactory {
             next_id: 0,
@@ -109,6 +87,69 @@ impl ItemFactory {
         }
     }
 }
+
+fn read_proto_items() -> Vec<Item> {
+
+    let lines = read_lines("resources/items/items.csv");
+    let mut proto_items: Vec<Item> = Vec::new();
+
+    for i in 1..lines.len() {
+        let mut parts = lines[i].split(",");
+
+        proto_items.push(Item {
+            id: 0,
+            name: parts.next().unwrap().to_string(),
+            inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+            map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+            inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
+            inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
+            inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
+            slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),                
+            mods: parse_mods(&mut parts),
+        });
+    }
+
+    proto_items
+}
+
+
+fn read_plugins() -> Vec<Item> {
+
+    let lines = read_lines("resources/items/plugins.csv");
+    let mut plugins: Vec<Item> = Vec::new();
+
+    for i in 1..lines.len() {
+        let mut parts = lines[i].split(",");
+
+        plugins.push(Item {
+            id: 0,
+            name: parts.next().unwrap().to_string(),
+            inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+            map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+            inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
+            inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
+            inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
+            slot: Slot::Bag,
+            mods: Vec::new(),
+        });
+    }
+
+    plugins
+}
+
+
+fn read_lines(pathname: &str) -> Vec<String> {
+    let path = Path::new(pathname);    
+    let rs = read_to_string(path).unwrap();
+    let mut lines = Vec::new();
+    
+    for line in rs.lines() {
+        lines.push(line.to_string());
+    }
+
+    lines
+}
+
 
 fn calc_slot(v: i32) -> Slot {
     match v {

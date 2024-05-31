@@ -1,4 +1,4 @@
-extern crate glutin_window;
+extern crate piston_window;
 extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
@@ -6,7 +6,7 @@ extern crate freetype;
 extern crate image;
 extern crate rodio;
 
-use glutin_window::GlutinWindow as Window;
+// use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
 use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed, clear};
 use graphics::math::Matrix2d;
@@ -18,7 +18,9 @@ use piston::input::{RenderArgs, RenderEvent,
                     UpdateArgs, UpdateEvent, 
                     ButtonArgs, ButtonEvent,
                     MouseCursorEvent, MouseScrollEvent};
-use piston::window::WindowSettings;
+
+use piston_window::PistonWindow;
+use piston_window::WindowSettings;
 
 use std::path::Path;
 use std::cmp::Ordering;
@@ -129,6 +131,11 @@ impl App {
         let engine = factory.make_item(2);
         inv.put_item(engine, Slot::Bag);
 
+        let plugin_db = factory.make_item(3);
+        inv.put_item(plugin_db, Slot::Bag);
+
+        let plugin_gt = factory.make_item(4);
+        inv.put_item(plugin_gt, Slot::Bag);
 
         App {        
 
@@ -407,9 +414,10 @@ fn main() {
     let opengl = OpenGL::V3_2;
 
     // Create a Glutin window.
-    let mut window: Window = WindowSettings::new("Rusty Tiny Places", window_size)
+    let mut window: PistonWindow = WindowSettings::new("Rusty Tiny Places", window_size)
         .graphics_api(opengl)
         .exit_on_esc(true)
+//        .samples(4)
         .vsync(true)
         .build()
         .unwrap();
