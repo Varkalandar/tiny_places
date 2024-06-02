@@ -30,7 +30,7 @@ impl Item {
 
         for m in self.mods {
             if m.attribute == attribute {
-                sum = sum + m.value as f32;
+                sum = sum + m.min_value as f32;
             }            
         }
         
@@ -104,7 +104,7 @@ fn read_proto_items() -> Vec<Item> {
             inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
             inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
             inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
-            slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),                
+            slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),
             mods: parse_mods(&mut parts),
         });
     }
@@ -168,32 +168,59 @@ fn calc_slot(v: i32) -> Slot {
 fn parse_mods(parts: &mut Split<&str>) -> Vec<Mod> {
     let mut result = Vec::new();
 
-    let structure = parts.next().unwrap().parse::<i32>().unwrap();
-    result.push(Mod { attribute: Attribute::Structure, value: structure });
-
-    let agility = parts.next().unwrap().parse::<i32>().unwrap();
-    result.push(Mod { attribute: Attribute::Agility, value: agility });
-
-    let computation = parts.next().unwrap().parse::<i32>().unwrap();
-    result.push(Mod { attribute: Attribute::Computation, value: computation });
-
-    let speed = parts.next().unwrap().parse::<i32>().unwrap();
-    result.push(Mod { attribute: Attribute::Speed, value: speed });
+    result.push(parse_mod(parts.next(), Attribute::Structure));
+    result.push(parse_mod(parts.next(), Attribute::Agility));
+    result.push(parse_mod(parts.next(), Attribute::Armor));
+    result.push(parse_mod(parts.next(), Attribute::Computation));
+    result.push(parse_mod(parts.next(), Attribute::Speed));
+    result.push(parse_mod(parts.next(), Attribute::PhysicalDamage));
+    result.push(parse_mod(parts.next(), Attribute::PlasmaDamage));
+    result.push(parse_mod(parts.next(), Attribute::RadiationDamage));
 
     result
 }
 
+fn parse_mod(input: Option<&str>, attribute: Attribute) -> Mod {
+
+    let (min_value, max_value) = parse_range(input.unwrap());
+
+    Mod { 
+        attribute,
+        min_value,
+        max_value,
+    }
+}
+
+
+fn parse_range(input: &str) -> (i32, i32) {
+    // .parse::<i32>().unwrap();
+
+    if input.contains("-") {
+        let mut parts = input.split("-");
+        let min_value = parts.next().unwrap().parse::<i32>().unwrap();
+        let max_value = parts.next().unwrap().parse::<i32>().unwrap();
+        (min_value, max_value)
+    }
+    else {
+        let value = input.parse::<i32>().unwrap();
+        (value, value)
+    }
+}
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Attribute {
 
-    Structure = 1,
-    Agility = 2,
-    Computation = 3,
-    Speed = 4,
+    Structure,
+    Agility,
+    Armor,
+    Computation,
+    Speed,
+    PhysicalDamage,
+    PlasmaDamage,
+    RadiationDamage,
 
-    Integrity = 5,
-    Energy = 6,
+    Integrity,
+    Energy,
 }
 
 impl std::fmt::Display for Attribute {
@@ -202,9 +229,13 @@ impl std::fmt::Display for Attribute {
         let name = match self {
             Attribute::Structure => "Structure",
             Attribute::Agility => "Agility",
+            Attribute::Armor => "Armor",
             Attribute::Computation => "Computation",
             Attribute::Speed => "Speed",
-        
+            Attribute::PhysicalDamage => "Physical Damage",
+            Attribute::PlasmaDamage => "Plasma Damage",
+            Attribute::RadiationDamage => "Radiation Damage",
+                
             Attribute::Integrity => "Integrity",
             Attribute::Energy => "Energy",        
         };
@@ -217,5 +248,6 @@ impl std::fmt::Display for Attribute {
 #[derive(Debug, Clone)]
 pub struct Mod {
     pub attribute: Attribute,
-    pub value: i32,
+    pub min_value: i32,
+    pub max_value: i32,
 }

@@ -236,9 +236,9 @@ impl App {
             let offset_x = window_center[0] * 0.5 - player_position[0];
             let offset_y = window_center[1] - player_position[1] * 0.5;
 
-            // background image
+            // background image, parallax scrolling at 0.5 times map scroll amount
             let back_tf = c.transform.trans(- player_position[0]*0.5, - player_position[1] * 0.25).scale(2.0, 2.0);
-            let back_image   = 
+            let back_image = 
                 Image::new()
                     .rect([0.0, 0.0, args.window_size[0], args.window_size[1]])
                     .color([1.0, 1.0, 1.0, 1.0]);

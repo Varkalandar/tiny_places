@@ -84,18 +84,44 @@ impl PlayerInventoryView {
     fn show_item_popup(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState,
                        x: i32, y: i32, item: &Item) {
 
-        let linespace = 20;
-        let lines = item.mods.len() as i32 + 1;
-        let mut line = y - lines * linespace;
+        let line_space = 20;
+
+        let mut line_count = 1; // first line is item name
+
+        for modifier in &item.mods {
+            if modifier.max_value > 0 {
+                line_count += 1;
+            }
+        }
+
+        let mut line = y - line_count * line_space;
+
+        gl.draw(viewport, |c, gl| {
+            // show decorated box  ... todo
+            let rect = Rectangle::new([0.0, 0.0, 0.0, 0.5]); 
+            rect.draw([x as f64, line as f64, 200.0, (line_count * line_space) as f64], draw_state, c.transform, gl);
+        });
+
 
         self.font.draw(viewport, gl, draw_state, x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
-        line += linespace;
+        line += line_space;
 
         for modifier in &item.mods {
 
-            let text = modifier.attribute.to_string() + ": " + &modifier.value.to_string();
-            self.font.draw(viewport, gl, draw_state, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
-            line += linespace;
+            let min_value = modifier.min_value;
+            let max_value = modifier.max_value;
+
+            if max_value > 0 {
+                let range = if min_value == max_value {
+                    min_value.to_string()
+                } else {
+                    min_value.to_string() + "-" + &max_value.to_string()
+                };
+
+                let text = modifier.attribute.to_string() + ": " + &range;
+                self.font.draw(viewport, gl, draw_state, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+                line += line_space;
+            }
         }
     }
 

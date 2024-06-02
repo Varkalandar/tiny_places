@@ -1,4 +1,4 @@
-Name,Inventory tile id,Map tile id,Inventory width,Inventory height,Inventory scale,Slot,Structure,Agility,Computation,Speed
-Fusion Blaster,14,1,1,3,0.9,4,0,0,0,0
-High Energy Laser,20,1,1,3,0.9,4,0,0,0,0
-BF Engine,22,21,2,3,1,6,0,0,0,120
+Name,Inventory tile id,Map tile id,Inventory width,Inventory height,Inventory scale,Slot,Structure,Agility,Armor,Computation,Speed,Physical Dam,Plasma Dam,Radiation Dam
+Fusion Blaster,14,1,1,3,0.9,4,0,0,0,0,0,0-0,5-10,0-0
+High Energy Laser,20,1,1,3,0.9,4,0,0,0,0,0,0-0,0-0,5-10
+BF Engine,22,21,2,3,1,6,10,10,0,0,120,0-0,0-0,0-0
