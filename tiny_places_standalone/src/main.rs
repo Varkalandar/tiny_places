@@ -79,6 +79,7 @@ pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     
     map_texture: Texture,
+    map_backdrop: Texture,
 
     ui: UI,
 
@@ -93,7 +94,8 @@ impl App {
         
         // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
         // let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
-        let texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
+        let map_texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
+        let map_backdrop = Texture::from_path(Path::new("resources/map/backdrop_red_blue.png"), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
@@ -146,7 +148,8 @@ impl App {
         App {        
 
             gl: GlGraphics::new(opengl),
-            map_texture: texture,
+            map_texture,
+            map_backdrop,
             
             ui,
             world: GameWorld {
@@ -225,7 +228,7 @@ impl App {
             }
 
             // Clear the screen.
-            clear([0.0, 0.0, 0.0, 1.0], gl);
+            // clear([0.0, 0.0, 0.0, 1.0], gl);
 
             let player_position = &self.world.map.player_position();
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
@@ -233,15 +236,24 @@ impl App {
             let offset_x = window_center[0] * 0.5 - player_position[0];
             let offset_y = window_center[1] - player_position[1] * 0.5;
 
+            // background image
+            let back_tf = c.transform.trans(- player_position[0]*0.5, - player_position[1] * 0.25).scale(2.0, 2.0);
+            let back_image   = 
+                Image::new()
+                    .rect([0.0, 0.0, args.window_size[0], args.window_size[1]])
+                    .color([1.0, 1.0, 1.0, 1.0]);
+            back_image.draw(&self.map_backdrop, &ds, back_tf, gl);
+
+
             // The map is displayed 2 times as big as source image to conserve memory
             // for the map background a high detail level is not needed, that is
             // provided by decorations will are drawn in full resolution
             let map_tf = c.transform.trans(offset_x, offset_y).scale(2.0, 2.0);
-            let m_image   = 
+            let map_image   = 
                 Image::new()
                     .rect([0.0, 0.0, self.map_texture.get_width() as f64, self.map_texture.get_height() as f64])
                     .color([0.8, 0.8, 0.8, 1.0]);
-            m_image.draw(&self.map_texture, &ds, map_tf, gl);
+            map_image.draw(&self.map_texture, &ds, map_tf, gl);
 
             // draw ground decorations (flat)
             draw_layer(gl, c, ds, &window_center, &self.world, MAP_GROUND_LAYER);
