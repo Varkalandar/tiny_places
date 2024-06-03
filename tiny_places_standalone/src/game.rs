@@ -41,7 +41,7 @@ impl UiController for Game {
                         ui.root.head.clear();
 
                         let map = &mut world.map;
-                        let option = map.find_nearest_object(map.selected_layer, &pos);
+                        let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 
                         match option {
                             None => {
@@ -116,7 +116,9 @@ impl UiController for Game {
 
 
     fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
-        world.map.update(dt);
+        let map = &mut world.map;
+        let rng = &mut world.rng;
+        map.update(dt, rng);
     }
 }
 

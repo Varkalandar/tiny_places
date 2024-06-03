@@ -177,7 +177,7 @@ impl UiController for MapEditor {
                 let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
 
                 let map = &mut world.map;
-                let option = map.find_nearest_object(map.selected_layer, &pos);
+                let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
         
                 match option {
                     None => {
@@ -207,7 +207,7 @@ impl UiController for MapEditor {
         // Dragging?
         if ui.mouse_state.left_pressed {
             let map = &mut world.map; 
-            let option = map.find_nearest_object(map.selected_layer, &pos);
+            let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 
             match option {
                 None => {
@@ -267,7 +267,9 @@ impl UiController for MapEditor {
 
 
     fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
-        world.map.update(dt);
+        let map = &mut world.map;
+        let rng = &mut world.rng;
+        map.update(dt, rng);
     }
 }
 
@@ -284,7 +286,7 @@ impl MapEditor {
     fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
         let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
         let map = &mut world.map;
-        let option = map.find_nearest_object(map.selected_layer, &pos);
+        let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 
         match option {
             None => {

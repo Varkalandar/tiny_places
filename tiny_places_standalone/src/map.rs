@@ -7,8 +7,13 @@ use std::fs::File;
 use std::path::PathBuf;
 use std::collections::HashMap;
 
+use rand::Rng;
+use rand::rngs::StdRng;
+
 use crate::item::Item;
 use crate::inventory::Inventory;
+use crate::particle_driver::ParticleDriver;
+
 
 pub const MAP_GROUND_LAYER:usize = 0;
 pub const MAP_OBJECT_LAYER:usize = 1;
@@ -42,7 +47,8 @@ impl Map {
             tileset_id: 4,
             current_image_id: 39,
             frames: 16, 
-            color: [1.0, 1.0, 1.0, 1.0],       
+            color: [1.0, 1.0, 1.0, 1.0],
+            particles: ParticleDriver::new(),       
         };
 
         let mut factory = MapObjectFactory {
@@ -78,9 +84,9 @@ impl Map {
     }
 
 
-    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>) -> Option<u64> {
+    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>, search_radius: f64, ignore_uid: u64) -> Option<u64> {
         let objects = &self.layers[layer];
-        let mut distance = 999999.0;
+        let mut distance = search_radius * search_radius;
         let mut best_id = 0;
 
         for (_key, object) in objects {
@@ -90,7 +96,7 @@ impl Map {
 
             println!("object {} has distance {}", object.uid, d2);
 
-            if d2 < distance {
+            if d2 < distance && object.uid != ignore_uid {
                 distance = d2;
                 best_id = object.uid;
             }
@@ -98,7 +104,7 @@ impl Map {
 
         let mut result:Option<u64> = None;
 
-        if distance < 10000.0 {
+        if distance < search_radius * search_radius {
             result = Some(best_id);
             println!("  best object is {}", best_id);
         }
@@ -122,6 +128,7 @@ impl Map {
         projectile.velocity = velocity;
         projectile.move_time_left = 2.0;
         projectile.action = MoveEndAction::RemoveFromMap;
+        projectile.attributes.is_projectile = true;
 
         let offset = projectile.visual.orient(velocity[0], velocity[1]);
         projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
@@ -130,14 +137,17 @@ impl Map {
     }    
 
 
-    pub fn update(&mut self, dt: f64) {
+    pub fn update(&mut self, dt: f64, rng: &mut StdRng) {
 
         let mut kill_list = Vec::new();
+        let mut phit_list = Vec::new();
 
         for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
             let before = mob.move_time_left;
             mob.move_dt(dt);
             let after = mob.move_time_left;
+
+            mob.visual.particles.drive(dt);
 
             // did the move just end?
             if before > 0.0 && after <= 0.0 {
@@ -147,10 +157,47 @@ impl Map {
             }
         }
 
+        for (_key, mob) in &self.layers[MAP_OBJECT_LAYER] {
+
+            // projectiles may have hit something in the move
+            if mob.attributes.is_projectile {
+                let target = self.find_nearest_object(MAP_OBJECT_LAYER, &mob.position, 15.0, mob.uid);
+                match target {
+                    None => {}
+                    Some(uid) => {
+                        phit_list.push((mob.uid, uid));
+                    }
+                }
+            }
+
+        }
+
+        for (projectile, target) in phit_list {
+
+            self.handle_projectile_hit(projectile, target, rng);
+            kill_list.push(projectile);
+            // kill_list.push(target);
+        }
+
         for id in kill_list {
             self.layers[MAP_OBJECT_LAYER].remove(&id);
         }
     }
+
+
+    fn handle_projectile_hit(&mut self, projectle_uid: u64, target_uid: u64, rng: &mut StdRng) {
+        let target = self.layers[MAP_OBJECT_LAYER].get_mut(&target_uid).unwrap();
+
+        println!("Handle projectile hit, adding particles");
+
+        for _i in 0..100 {
+            let xv = rng.gen::<f64>() * 2.0 - 1.0;
+            let yv = rng.gen::<f64>();
+            target.visual.particles.add_particle(0.0, 0.0, xv * 40.0, -yv * 60.0, 10.0, 403);
+            target.visual.color = [0.2, 0.0, 0.0, 0.5];
+        }
+    }
+
 
 
     pub fn load(&mut self, filename: &str) {
@@ -305,10 +352,12 @@ impl MapObjectFactory {
             frames: 8,
             tileset_id,
             color: [1.0, 1.0, 1.0, 1.0],
+            particles: ParticleDriver::new(),
         };
 
         let attributes = MobAttributes {
-            speed: 150.0,
+            base_speed: 150.0,
+            is_projectile: false,
         };
 
         let uid = self.next_id;
@@ -342,6 +391,8 @@ pub struct Visual {
     pub frames: usize,
     pub tileset_id: usize,
     pub color: [f32; 4],
+
+    pub particles: ParticleDriver,
 }
 
 
@@ -380,5 +431,6 @@ impl Visual {
 
 
 pub struct MobAttributes {
-    pub speed: f64,
+    pub base_speed: f64,
+    pub is_projectile: bool,
 }

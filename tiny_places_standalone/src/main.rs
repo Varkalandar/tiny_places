@@ -5,14 +5,16 @@ extern crate piston;
 extern crate freetype;
 extern crate image;
 extern crate rodio;
+extern crate rand;
 
 // use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
 use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed, clear};
 use graphics::math::Matrix2d;
-use piston::{ButtonState, MouseButton};
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
+use rand::SeedableRng;
 
+use piston::{ButtonState, MouseButton};
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, 
                     UpdateArgs, UpdateEvent, 
@@ -32,6 +34,7 @@ mod editor;
 mod game;
 mod ui;
 mod sound;
+mod particle_driver;
 
 #[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
@@ -53,6 +56,8 @@ pub struct GameWorld {
     player_inventory: Inventory,
 
     speaker: SoundPlayer,
+
+    rng: rand::rngs::StdRng,
 }
 
 
@@ -158,6 +163,7 @@ impl App {
                 player_inventory: inv,
                 speaker: SoundPlayer::new(),
 
+                rng: rand::rngs::StdRng::seed_from_u64(12345678901),
             },
             controllers: GameControllers {
                 editor,
@@ -224,6 +230,24 @@ impl App {
                         let image = build_image(glow_tile, &[0.5, 0.375, 0.2, 1.0]);
                         image.draw(&glow_tile.tex, &ds.blend(Blend::Add), tf, gl);
                     }
+
+                    // particle effects
+                    mob.visual.particles.for_each_particle(|particles, last_particle_mark| {
+                        
+                        for i in 0..last_particle_mark {
+                            let p = &particles[i];
+
+                            if p.active {
+                                println!("pos {}, {}", p.xpos, p.ypos);
+
+                                let tile = set.tiles_by_id.get(&p.tex_id).unwrap();
+                                let tf = build_transform(c.transform, &mob.position, 0.5, tile.foot, player_position, window_center);
+        
+                                let image = build_image(tile, &[1.0, 0.5, 0.1, 0.5]);
+                                image.draw(&tile.tex, &ds, tf.trans(p.xpos, p.ypos), gl);
+                            }
+                        }
+                    });
                 }    
             }
 
@@ -377,7 +401,7 @@ impl App {
 
         let player = self.world.map.layers[MAP_OBJECT_LAYER].get_mut(&self.world.map.player_id).unwrap();
 
-        let time = distance / player.attributes.speed; // pixel per second
+        let time = distance / player.attributes.base_speed; // pixel per second
 
         player.move_time_left = time;
         player.velocity = vec2_scale(direction, 1.0/time);

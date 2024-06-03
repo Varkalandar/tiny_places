@@ -38,7 +38,7 @@ impl SoundPlayer {
 
         // we need as many sinks as there should be sounds played in parallel
 
-        for i in 0..4 {
+        for _i in 0..4 {
             sinks.push(Sink::try_new(&stream_handle).unwrap());
         }
 
