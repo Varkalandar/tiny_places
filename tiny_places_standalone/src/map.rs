@@ -6,6 +6,7 @@ use std::io::{Result, BufWriter};
 use std::fs::File;
 use std::path::PathBuf;
 use std::collections::HashMap;
+use std::boxed::Box;
 
 use rand::Rng;
 use rand::rngs::StdRng;
@@ -13,6 +14,7 @@ use rand::rngs::StdRng;
 use crate::item::Item;
 use crate::inventory::Inventory;
 use crate::particle_driver::ParticleDriver;
+use crate::animation::*;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -22,6 +24,9 @@ pub const MAP_CLOUD_LAYER:usize = 2;
 
 pub struct Map {
     pub layers: [HashMap<u64, MapObject>; 7],
+
+    pub animations: HashMap<u64, Box<dyn Animated>>,
+
 
     // all items on this map
     pub items: Inventory,
@@ -64,6 +69,9 @@ impl Map {
 
         Map {
             layers,
+
+            animations: HashMap::new(),
+
             items: Inventory::new(),
             has_selection: false,
             selected_item: 0,
@@ -127,14 +135,14 @@ impl Map {
         let mut projectile = self.factory.create_mob(projectile_type, 5, start_pos, 1.0);
         projectile.velocity = velocity;
         projectile.move_time_left = 2.0;
-        projectile.action = MoveEndAction::RemoveFromMap;
+        projectile.move_end_action = MoveEndAction::RemoveFromMap;
         projectile.attributes.is_projectile = true;
 
         let offset = projectile.visual.orient(velocity[0], velocity[1]);
         projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
 
         self.layers[layer].insert(projectile.uid, projectile);
-    }    
+    } 
 
 
     pub fn update(&mut self, dt: f64, rng: &mut StdRng) {
@@ -147,13 +155,26 @@ impl Map {
             mob.move_dt(dt);
             let after = mob.move_time_left;
 
-            mob.visual.particles.drive(dt);
-
             // did the move just end?
             if before > 0.0 && after <= 0.0 {
-                if mob.action == MoveEndAction::RemoveFromMap {
+                if mob.move_end_action == MoveEndAction::RemoveFromMap {
                     kill_list.push(mob.uid);
                 }
+            }
+
+            mob.visual.particles.drive(dt);
+
+            let animation_opt = self.animations.get(&mob.uid);
+            match animation_opt {
+                None => {},
+                Some(animation) => {
+                    animation.update(dt, mob);
+                }
+            }
+
+            // must thos mob be removed from the map?
+            if mob.update_action == UpdateAction::RemoveFromMap {
+                kill_list.push(mob.uid);
             }
         }
 
@@ -165,7 +186,7 @@ impl Map {
                 match target {
                     None => {}
                     Some(uid) => {
-                        phit_list.push((mob.uid, uid));
+                        phit_list.push((mob.uid, uid));                        
                     }
                 }
             }
@@ -176,11 +197,13 @@ impl Map {
 
             self.handle_projectile_hit(projectile, target, rng);
             kill_list.push(projectile);
-            // kill_list.push(target);
+
+            self.animations.insert(target, Box::new(RemovalAnimation::new(12.0)));
         }
 
         for id in kill_list {
             self.layers[MAP_OBJECT_LAYER].remove(&id);
+            self.animations.remove(&id);
         }
     }
 
@@ -314,7 +337,6 @@ pub struct MapObject {
     pub visual: Visual,
     pub attributes: MobAttributes,
     pub item: Option<Item>,
-    pub action: MoveEndAction,
 
     // world coordinates of this object. Note that screen coordinates are different
     pub position: Vector2<f64>,
@@ -322,6 +344,10 @@ pub struct MapObject {
     pub move_time_left: f64,
 
     pub scale: f64,
+
+    pub move_end_action: MoveEndAction,
+    pub update_action: UpdateAction,
+    pub animation_timer: f64,
 }
 
 
@@ -370,20 +396,33 @@ impl MapObjectFactory {
             visual,
             attributes,
             item: None,
-            action: MoveEndAction::None,
+
             position, 
             velocity: [0.0, 0.0],
             move_time_left: 0.0,
             scale,
+
+            move_end_action: MoveEndAction::None,
+            update_action: UpdateAction::None,
+            animation_timer: 0.0,
         }
     }
 }
+
 
 #[derive(PartialEq)]
 pub enum MoveEndAction {
     None,
     RemoveFromMap,
 }
+
+
+#[derive(PartialEq)]
+pub enum UpdateAction {
+    None,
+    RemoveFromMap,
+}
+
 
 pub struct Visual {
     pub base_image_id: usize,

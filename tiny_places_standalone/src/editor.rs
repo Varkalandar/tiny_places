@@ -47,8 +47,12 @@ impl UiController for MapEditor {
                             let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                             world.speaker.play_sound(Sound::Click);
                             println!("creating map object {} at {:?}", id, pos);
-                            let mob = world.map.factory.create_mob(id, world.map.selected_layer, pos, 1.0);
-                            world.map.layers[world.map.selected_layer].insert(mob.uid, mob);
+                            
+                            let map = &mut world.map;
+                            let mob = map.factory.create_mob(id, map.selected_layer, pos, 1.0);
+                            let mob_id = mob.uid;
+                            map.layers[map.selected_layer].insert(mob_id, mob);
+
                             return true;
                         }
                     }

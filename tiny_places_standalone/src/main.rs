@@ -35,6 +35,8 @@ mod game;
 mod ui;
 mod sound;
 mod particle_driver;
+mod animation;
+
 
 #[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
@@ -238,7 +240,7 @@ impl App {
                             let p = &particles[i];
 
                             if p.active {
-                                println!("pos {}, {}", p.xpos, p.ypos);
+                                // println!("pos {}, {}", p.xpos, p.ypos);
 
                                 let tile = set.tiles_by_id.get(&p.tex_id).unwrap();
                                 let tf = build_transform(c.transform, &mob.position, 0.5, tile.foot, player_position, window_center);
