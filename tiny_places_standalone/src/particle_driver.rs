@@ -4,10 +4,13 @@ pub struct Particle
 {
     pub active: bool,
     pub lifetime: f64,
+    pub age: f64,
     pub xpos: f64,
     pub ypos: f64,
+    pub zpos: f64,
     pub xvel: f64,
     pub yvel: f64,
+    pub zvel: f64,
     pub tex_id: usize,
 }    
 
@@ -15,10 +18,13 @@ pub struct Particle
 const NEW_PARTICLE: Particle = Particle {
     active: false,
     lifetime: 0.0,
+    age: 0.0,
     xpos: 0.0,
     ypos: 0.0,
+    zpos: 0.0,
     xvel: 0.0,
     yvel: 0.0,
+    zvel: 0.0,
     tex_id: 0,
 };
 
@@ -42,7 +48,7 @@ impl ParticleDriver {
     }
     
 
-    pub fn add_particle(&mut self, x: f64, y: f64, xv: f64, yv: f64, lifetime: f64, tex_id: usize) -> bool {
+    pub fn add_particle(&mut self, x: f64, y: f64, z: f64, xv: f64, yv: f64, zv: f64, lifetime: f64, tex_id: usize) -> bool {
 
         for i in self.start_search_mark .. PMAX {
             if self.particles[i].active == false {
@@ -52,16 +58,19 @@ impl ParticleDriver {
                 
                 particle.active = true;               // now allocated
                 particle.lifetime = lifetime;
+                particle.age = 0.0;
                 particle.xpos = x;
                 particle.ypos = y;
+                particle.zpos = z;
                 particle.xvel = xv;
                 particle.yvel = yv;
+                particle.zvel = zv;
                 particle.tex_id = tex_id;
                 
                 if i > self.last_particle_mark { self.last_particle_mark = i + 1; }
                 if i > self.start_search_mark { self.start_search_mark = i + 1; }
 
-                println!("Activating particle in slot {}, last particle mark is now {}", i, self.last_particle_mark);
+                // println!("Activating particle in slot {}, last particle mark is now {}", i, self.last_particle_mark);
 
                 return true;
             }
@@ -82,11 +91,12 @@ impl ParticleDriver {
                 // found an active particle, drive it
                 let particle = &mut self.particles[i];
 
-                particle.lifetime -= dt;
+                particle.age += dt;
                 particle.xpos += particle.xvel * dt;
                 particle.ypos += particle.yvel * dt;
+                particle.zpos += particle.zvel * dt;
 
-                if particle.lifetime < 0.0 {
+                if particle.age > particle.lifetime {
                     particle.active = false;
                 }
             }

@@ -102,7 +102,7 @@ impl Map {
             let dy = object.position[1] - position[1];
             let d2 = dx * dx + dy * dy;
 
-            println!("object {} has distance {}", object.uid, d2);
+            // println!("object {} has distance {}", object.uid, d2);
 
             if d2 < distance && object.uid != ignore_uid {
                 distance = d2;
@@ -114,7 +114,7 @@ impl Map {
 
         if distance < search_radius * search_radius {
             result = Some(best_id);
-            println!("  best object is {}", best_id);
+            // println!("  best object is {}", best_id);
         }
 
         result
@@ -215,12 +215,14 @@ impl Map {
 
         for _i in 0..100 {
             let xv = rng.gen::<f64>() * 2.0 - 1.0;
-            let yv = rng.gen::<f64>();
-            target.visual.particles.add_particle(0.0, 0.0, xv * 40.0, -yv * 60.0, 10.0, 403);
-            target.visual.color = [0.2, 0.0, 0.0, 0.5];
+            let yv = rng.gen::<f64>() * 2.0 - 1.0;
+            let zv = rng.gen::<f64>();
+            let speed = 100.0;
+
+            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 10.0, 403);
+            target.visual.color = [0.5, 0.0, 0.0, 0.5];
         }
     }
-
 
 
     pub fn load(&mut self, filename: &str) {
