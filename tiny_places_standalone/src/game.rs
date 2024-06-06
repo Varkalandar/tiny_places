@@ -1,3 +1,5 @@
+use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
+
 use piston::{ButtonState, MouseButton};
 use graphics::DrawState;
 use opengl_graphics::GlGraphics;
@@ -10,6 +12,7 @@ use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
 use crate::TileSet;
 use crate::MAP_OBJECT_LAYER;
+use crate::map::MoveEndAction;
 
 pub struct Game {
     piv: PlayerInventoryView,
@@ -57,8 +60,7 @@ impl UiController for Game {
 
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
                         let id = world.map.player_id;
-                        world.speaker.play_sound(Sound::FireballLaunch);
-                        world.map.fire_projectile(id, MAP_OBJECT_LAYER, 25, pos, 200.0)
+                        self.fire_projectile(world, id, MAP_OBJECT_LAYER, 25, pos, 200.0)
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
@@ -135,4 +137,32 @@ impl Game {
             show_inventory: false,
         }
     }
+
+
+    pub fn fire_projectile(&mut self, world: &mut GameWorld, shooter_id: u64, layer: usize, projectile_type: usize, fire_at: Vector2<f64>, speed: f64) {
+        println!("Adding projectile with type {} fired at {:?}", projectile_type, fire_at);
+
+        world.speaker.play_sound(Sound::FireballLaunch);
+
+        let map = &mut world.map;
+
+        let shooter = &map.layers[layer][&shooter_id];
+        let np = vec2_sub(fire_at, shooter.position);
+    
+        let dir = vec2_normalized(np);
+        let velocity = vec2_scale(dir, speed);
+
+        let start_pos = vec2_add(shooter.position, vec2_scale(dir, 80.0));
+
+        let mut projectile = map.factory.create_mob(projectile_type, 5, start_pos, 1.0);
+        projectile.velocity = velocity;
+        projectile.move_time_left = 2.0;
+        projectile.move_end_action = MoveEndAction::RemoveFromMap;
+        projectile.attributes.is_projectile = true;
+
+        let offset = projectile.visual.orient(velocity[0], velocity[1]);
+        projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
+
+        map.layers[layer].insert(projectile.uid, projectile);
+    } 
 }

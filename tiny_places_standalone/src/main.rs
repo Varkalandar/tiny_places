@@ -242,14 +242,14 @@ impl App {
                             let p = &particles[i];
 
                             if p.active {
-                                // println!("pos {}, {}", p.xpos, p.ypos);
+                                // println!("p.tex={} pos {}, {}", p.tex_id, p.xpos, p.ypos);
 
-                                let tile = set.tiles_by_id.get(&p.tex_id).unwrap();
-                                let tf = build_transform(c.transform, &mob.position, 0.5, tile.foot, player_position, window_center);
+                                let tile = &world.layer_tileset[MAP_OBJECT_LAYER].tiles_by_id.get(&p.tex_id).unwrap();
+                                let tf = build_transform(c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
         
                                 // world coordinates to screen coordinates
                                 let xp = p.xpos;
-                                let yp = (p.ypos + p.zpos) * -0.5;
+                                let yp = (p.ypos - p.zpos) * 0.5;
                                 let glow = (1.0 - p.age / p.lifetime) as f32;
                                 let image = build_image(tile, &[1.0*glow, 0.5*glow, 0.1*glow, 1.0]);
                                 image.draw(&tile.tex, &add_blend, tf.trans(xp, yp), gl);

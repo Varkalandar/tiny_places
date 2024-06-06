@@ -64,6 +64,7 @@ impl Map {
         let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 1.0);
         let player_id = player.uid;
         player.visual = player_visual;
+        player.update_action = UpdateAction::EmitDriveParticles;
 
         layers[MAP_OBJECT_LAYER].insert(player.uid, player);
 
@@ -121,30 +122,6 @@ impl Map {
     }
 
 
-    pub fn fire_projectile(&mut self, shooter_id: u64, layer: usize, projectile_type: usize, fire_at: Vector2<f64>, speed: f64) {
-        println!("Adding projectile with type {} fired at {:?}", projectile_type, fire_at);
-    
-        let shooter = &self.layers[layer][&shooter_id];
-        let np = vec2_sub(fire_at, shooter.position);
-    
-        let dir = vec2_normalized(np);
-        let velocity = vec2_scale(dir, speed);
-
-        let start_pos = vec2_add(shooter.position, vec2_scale(dir, 80.0));
-
-        let mut projectile = self.factory.create_mob(projectile_type, 5, start_pos, 1.0);
-        projectile.velocity = velocity;
-        projectile.move_time_left = 2.0;
-        projectile.move_end_action = MoveEndAction::RemoveFromMap;
-        projectile.attributes.is_projectile = true;
-
-        let offset = projectile.visual.orient(velocity[0], velocity[1]);
-        projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
-
-        self.layers[layer].insert(projectile.uid, projectile);
-    } 
-
-
     pub fn update(&mut self, dt: f64, rng: &mut StdRng) {
 
         let mut kill_list = Vec::new();
@@ -172,9 +149,12 @@ impl Map {
                 }
             }
 
-            // must thos mob be removed from the map?
+            // must this mob be removed from the map?
             if mob.update_action == UpdateAction::RemoveFromMap {
                 kill_list.push(mob.uid);
+            }
+            else if mob.update_action == UpdateAction::EmitDriveParticles && after > 0.0 {
+                emit_drive_particles(mob, rng);
             }
         }
 
@@ -329,7 +309,26 @@ impl Map {
             object.position[1] += dy;
         }
     }
+}
 
+fn emit_drive_particles(mob: &mut MapObject, rng: &mut StdRng) {
+    let direction = vec2_scale(mob.velocity, -1.0);
+
+    let rad = 0.5;
+
+    if rng.gen::<f64>() < 0.2 {
+        let xp = direction[0] * rad + direction[1] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
+        let yp = direction[1] * rad + direction[0] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
+
+        let xv = direction[0] + rng.gen::<f64>() * 2.0 - 1.0;
+        let yv = direction[1] + rng.gen::<f64>() * 2.0 - 1.0;
+        let zv = (rng.gen::<f64>() *2.0 - 1.0) * 0.15;
+        let speed = 1.0;
+
+        let spark = 1992 + (rng.gen::<f64>() * 5.0) as usize;
+
+        mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark);
+    }
 }
 
 
@@ -423,6 +422,7 @@ pub enum MoveEndAction {
 pub enum UpdateAction {
     None,
     RemoveFromMap,
+    EmitDriveParticles,
 }
 
 
