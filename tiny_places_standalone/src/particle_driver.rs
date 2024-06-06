@@ -12,6 +12,7 @@ pub struct Particle
     pub yvel: f64,
     pub zvel: f64,
     pub tex_id: usize,
+    pub color: [f32; 3],
 }    
 
 
@@ -26,6 +27,7 @@ const NEW_PARTICLE: Particle = Particle {
     yvel: 0.0,
     zvel: 0.0,
     tex_id: 0,
+    color: [0.0, 0.0, 0.0],
 };
 
 
@@ -48,7 +50,7 @@ impl ParticleDriver {
     }
     
 
-    pub fn add_particle(&mut self, x: f64, y: f64, z: f64, xv: f64, yv: f64, zv: f64, lifetime: f64, tex_id: usize) -> bool {
+    pub fn add_particle(&mut self, x: f64, y: f64, z: f64, xv: f64, yv: f64, zv: f64, lifetime: f64, tex_id: usize, color: [f32; 3]) -> bool {
 
         for i in self.start_search_mark .. PMAX {
             if self.particles[i].active == false {
@@ -66,6 +68,7 @@ impl ParticleDriver {
                 particle.yvel = yv;
                 particle.zvel = zv;
                 particle.tex_id = tex_id;
+                particle.color = color;
                 
                 if i > self.last_particle_mark { self.last_particle_mark = i + 1; }
                 if i > self.start_search_mark { self.start_search_mark = i + 1; }
@@ -98,6 +101,10 @@ impl ParticleDriver {
 
                 if particle.age > particle.lifetime {
                     particle.active = false;
+
+                    if i < self.start_search_mark {
+                        self.start_search_mark = i;
+                    } 
                 }
             }
             else

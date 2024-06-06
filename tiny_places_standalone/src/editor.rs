@@ -254,13 +254,15 @@ impl UiController for MapEditor {
             // let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
 
             gl.draw(viewport, |c, gl| {
-                let tf = build_transform(c.transform, &pos, 1.0, tile.foot, player_position, &window_center);        
+                let tf = build_transform(&c.transform, &pos, 1.0, tile.foot, player_position, &window_center);        
 
-                let image = build_image(tile, &[1.0, 1.0, 1.0, 0.5]);
+                let image = build_image(tile, [1.0, 1.0, 1.0, 0.5]);
                 image.draw(&tile.tex, &ds, tf, gl);
             });
         }
         ui.font_14.draw(viewport, gl, ds, 10, 20, "Use keys 1 .. 3 to select map layers", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(viewport, gl, ds, 10, 40, "Press space to open tile selector", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(viewport, gl, ds, 10, 60, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 

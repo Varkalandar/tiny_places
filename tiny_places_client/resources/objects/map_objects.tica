@@ -32063,7 +32063,7 @@ data
 Tile Description
 v.5
 1992
-1 1
+2 1
 0 0
 0 0
 End Of Header
@@ -32071,7 +32071,7 @@ Item
 v.1
 data
 2
-
+spark_1
 
 1
 0
@@ -32079,15 +32079,15 @@ data
 Tile Description
 v.5
 1993
+3 3
+0 0
 1 1
-0 0
-0 0
 End Of Header
 Item
 v.1
 data
 2
-
+spark_2
 
 1
 0
@@ -32095,15 +32095,15 @@ data
 Tile Description
 v.5
 1994
-1 1
+5 5
 0 0
-0 0
+2 2
 End Of Header
 Item
 v.1
 data
 2
-
+spark_3
 
 1
 0
@@ -32111,15 +32111,15 @@ data
 Tile Description
 v.5
 1995
-1 1
+7 7
 0 0
-0 0
+3 3
 End Of Header
 Item
 v.1
 data
 2
-
+spark_4
 
 1
 0
@@ -32127,15 +32127,15 @@ data
 Tile Description
 v.5
 1996
-1 1
+8 8
 0 0
-0 0
+4 4
 End Of Header
 Item
 v.1
 data
 2
-
+spark_5
 
 1
 0
@@ -32143,7 +32143,7 @@ data
 Tile Description
 v.5
 1997
-1 1
+10 10
 0 0
 0 0
 End Of Header
@@ -32151,7 +32151,7 @@ Item
 v.1
 data
 2
-
+spark_6
 
 1
 0

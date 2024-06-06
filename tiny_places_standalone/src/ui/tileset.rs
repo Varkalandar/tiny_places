@@ -1,6 +1,8 @@
 use vecmath::Vector2;
 use std::{rc::Rc, collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
 use opengl_graphics::{Texture, TextureSettings};
+use piston_window::Filter;
+
 
 pub struct Tile {
     pub id: usize,
@@ -123,7 +125,7 @@ fn load_tile(path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
         path.push(path_str);
         path.push(filename);
 
-        let tex = Texture::from_path(path.as_path(), &TextureSettings::new()).unwrap();
+        let tex = Texture::from_path(path.as_path(), &TextureSettings::new().min(Filter::Linear)).unwrap();
 
         result = Some(Tile {
             id,

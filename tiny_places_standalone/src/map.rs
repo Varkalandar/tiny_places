@@ -134,6 +134,8 @@ impl Map {
 
             // did the move just end?
             if before > 0.0 && after <= 0.0 {
+                mob.visual.particles.clear();
+
                 if mob.move_end_action == MoveEndAction::RemoveFromMap {
                     kill_list.push(mob.uid);
                 }
@@ -178,7 +180,7 @@ impl Map {
             self.handle_projectile_hit(projectile, target, rng);
             kill_list.push(projectile);
 
-            self.animations.insert(target, Box::new(RemovalAnimation::new(12.0)));
+            self.animations.insert(target, Box::new(RemovalAnimation::new(2.0)));
         }
 
         for id in kill_list {
@@ -199,7 +201,7 @@ impl Map {
             let zv = rng.gen::<f64>();
             let speed = 100.0;
 
-            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 10.0, 403);
+            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 2.0, 403, [1.0, 0.5, 0.1]);
             target.visual.color = [0.5, 0.0, 0.0, 0.5];
         }
     }
@@ -325,9 +327,9 @@ fn emit_drive_particles(mob: &mut MapObject, rng: &mut StdRng) {
         let zv = (rng.gen::<f64>() *2.0 - 1.0) * 0.15;
         let speed = 1.0;
 
-        let spark = 1992 + (rng.gen::<f64>() * 5.0) as usize;
+        let spark = 1993 + (rng.gen::<f64>() * 5.0) as usize;
 
-        mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark);
+        mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark, [0.5, 0.8, 1.0]);
     }
 }
 

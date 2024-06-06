@@ -3781,7 +3781,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string>sphere_and_oribtals</string>
+        <string>sphere_and_orbitals</string>
         <string>alien</string>
       </Metadata>
     </Tile>
@@ -34066,7 +34066,7 @@
       <Description>
         <version>4</version>
         <id>1992</id>
-        <width>1</width>
+        <width>2</width>
         <height>1</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
@@ -34075,7 +34075,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -34083,16 +34083,16 @@
       <Description>
         <version>4</version>
         <id>1993</id>
-        <width>1</width>
-        <height>1</height>
+        <width>3</width>
+        <height>3</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>1</footX>
+        <footY>1</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -34100,16 +34100,16 @@
       <Description>
         <version>4</version>
         <id>1994</id>
-        <width>1</width>
-        <height>1</height>
+        <width>5</width>
+        <height>5</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>2</footX>
+        <footY>2</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_3</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -34117,16 +34117,16 @@
       <Description>
         <version>4</version>
         <id>1995</id>
-        <width>1</width>
-        <height>1</height>
+        <width>7</width>
+        <height>7</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>3</footX>
+        <footY>3</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_4</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -34134,16 +34134,16 @@
       <Description>
         <version>4</version>
         <id>1996</id>
-        <width>1</width>
-        <height>1</height>
+        <width>8</width>
+        <height>8</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>4</footX>
+        <footY>4</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_5</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -34151,8 +34151,8 @@
       <Description>
         <version>4</version>
         <id>1997</id>
-        <width>1</width>
-        <height>1</height>
+        <width>10</width>
+        <height>10</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -34160,7 +34160,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spark_6</string>
         <string></string>
       </Metadata>
     </Tile>

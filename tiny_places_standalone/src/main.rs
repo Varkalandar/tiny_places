@@ -9,7 +9,7 @@ extern crate rand;
 
 // use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
-use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed, clear};
+use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed};
 use graphics::math::Matrix2d;
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
@@ -209,7 +209,7 @@ impl App {
                     
                     let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
-                    let tf = build_transform(c.transform, &mob.position, mob.scale, tile.foot, player_position, window_center);        
+                    let tf = build_transform(&c.transform, &mob.position, mob.scale, tile.foot, player_position, window_center);        
     
                     // mark selected item with an ellipse
                     if world.map.has_selection && 
@@ -220,7 +220,7 @@ impl App {
                                   tf.trans(tile.foot[0], tile.foot[1]), gl);
                     }
     
-                    let image = build_image(tile, &mob.visual.color);
+                    let image = build_image(tile, mob.visual.color);
                     image.draw(&tile.tex, &ds, tf, gl);
 
                     let add_blend = ds.blend(Blend::Add);
@@ -230,8 +230,8 @@ impl App {
 
                         let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
 
-                        let tf = build_transform(c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
-                        let image = build_image(glow_tile, &[0.5, 0.375, 0.2, 1.0]);
+                        let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
+                        let image = build_image(glow_tile, [0.5, 0.375, 0.2, 1.0]);
                         image.draw(&glow_tile.tex, &add_blend, tf, gl);
                     }
 
@@ -245,13 +245,13 @@ impl App {
                                 // println!("p.tex={} pos {}, {}", p.tex_id, p.xpos, p.ypos);
 
                                 let tile = &world.layer_tileset[MAP_OBJECT_LAYER].tiles_by_id.get(&p.tex_id).unwrap();
-                                let tf = build_transform(c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
+                                let tf = build_transform(&c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
         
                                 // world coordinates to screen coordinates
                                 let xp = p.xpos;
                                 let yp = (p.ypos - p.zpos) * 0.5;
                                 let glow = (1.0 - p.age / p.lifetime) as f32;
-                                let image = build_image(tile, &[1.0*glow, 0.5*glow, 0.1*glow, 1.0]);
+                                let image = build_image(tile, [p.color[0]*glow, p.color[1]*glow, p.color[2]*glow, 1.0]);
                                 image.draw(&tile.tex, &add_blend, tf.trans(xp, yp), gl);
                             }
                         }
@@ -281,10 +281,11 @@ impl App {
             // for the map background a high detail level is not needed, that is
             // provided by decorations will are drawn in full resolution
             let map_tf = c.transform.trans(offset_x, offset_y).scale(2.0, 2.0);
+            
             let map_image   = 
                 Image::new()
                     .rect([0.0, 0.0, self.map_texture.get_width() as f64, self.map_texture.get_height() as f64])
-                    .color([0.8, 0.8, 0.8, 1.0]);
+                    .color([0.8, 0.8, 0.8, 1.0]);                    
             map_image.draw(&self.map_texture, &ds, map_tf, gl);
 
             // draw ground decorations (flat)
@@ -437,7 +438,7 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
 }
 
 
-pub fn build_transform(transform: Matrix2d<f64>, position: &Vector2<f64>, scale: f64, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
+pub fn build_transform(transform: &Matrix2d<f64>, position: &Vector2<f64>, scale: f64, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
     let rel_pos_x = position[0] - player_position[0];        
     let rel_pos_y = position[1] - player_position[1];  
 
@@ -449,10 +450,10 @@ pub fn build_transform(transform: Matrix2d<f64>, position: &Vector2<f64>, scale:
 }
 
 
-pub fn build_image(tile: &Tile, color: &[f32; 4]) -> Image {
+pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
     Image::new()
         .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-        .color(*color)        
+        .color(color)        
 }
 
 
