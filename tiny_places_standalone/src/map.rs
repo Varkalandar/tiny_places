@@ -193,15 +193,19 @@ impl Map {
         let target = self.layers[MAP_OBJECT_LAYER].get_mut(&target_uid).unwrap();
 
         println!("Handle projectile hit, adding particles");
+        let sparks = [403, 1993, 1994, 1995, 1996, 1997];
 
         for _i in 0..100 {
             let xv = rng.gen::<f64>() * 2.0 - 1.0;
             let yv = rng.gen::<f64>() * 2.0 - 1.0;
             let zv = rng.gen::<f64>();
             let speed = 100.0;
-            let color = [0.8 + rng.gen::<f32>() * 0.2, 0.5 + rng.gen::<f32>() * 0.3, 0.1 + rng.gen::<f32>() * 0.4];
+            let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
+            let tile = sparks[rng.gen_range(0..sparks.len())];
 
-            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 0.7, 403, color);
+            let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
+
+            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
             target.visual.color = [0.0, 0.0, 0.0, 0.0];
         }
     }

@@ -260,9 +260,6 @@ impl App {
                 }    
             }
 
-            // Clear the screen.
-            // clear([0.0, 0.0, 0.0, 1.0], gl);
-
             let player_position = &self.world.map.player_position();
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
@@ -273,10 +270,9 @@ impl App {
             let back_tf = c.transform.trans(- player_position[0]*0.5, - player_position[1] * 0.25).scale(2.0, 2.0);
             let back_image = 
                 Image::new()
-                    .rect([0.0, 0.0, args.window_size[0], args.window_size[1]])
-                    .color([1.0, 1.0, 1.0, 1.0]);
+                    .rect([0.0, 0.0, self.map_backdrop.get_width() as f64, self.map_backdrop.get_height() as f64])
+                    .color([0.8, 0.8, 0.8, 1.0]);
             back_image.draw(&self.map_backdrop, &ds, back_tf, gl);
-
 
             // The map is displayed 2 times as big as source image to conserve memory
             // for the map background a high detail level is not needed, that is
