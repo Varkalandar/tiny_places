@@ -156,7 +156,7 @@ impl Map {
                 kill_list.push(mob.uid);
             }
             else if mob.update_action == UpdateAction::EmitDriveParticles && after > 0.0 {
-                emit_drive_particles(mob, rng);
+                emit_drive_particles(mob, dt, rng);
             }
         }
 
@@ -172,7 +172,6 @@ impl Map {
                     }
                 }
             }
-
         }
 
         for (projectile, target) in phit_list {
@@ -180,7 +179,7 @@ impl Map {
             self.handle_projectile_hit(projectile, target, rng);
             kill_list.push(projectile);
 
-            self.animations.insert(target, Box::new(RemovalAnimation::new(2.0)));
+            self.animations.insert(target, Box::new(RemovalAnimation::new(0.7)));
         }
 
         for id in kill_list {
@@ -200,9 +199,10 @@ impl Map {
             let yv = rng.gen::<f64>() * 2.0 - 1.0;
             let zv = rng.gen::<f64>();
             let speed = 100.0;
+            let color = [0.8 + rng.gen::<f32>() * 0.2, 0.5 + rng.gen::<f32>() * 0.3, 0.1 + rng.gen::<f32>() * 0.4];
 
-            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 2.0, 403, [1.0, 0.5, 0.1]);
-            target.visual.color = [0.5, 0.0, 0.0, 0.5];
+            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 0.7, 403, color);
+            target.visual.color = [0.0, 0.0, 0.0, 0.0];
         }
     }
 
@@ -313,12 +313,15 @@ impl Map {
     }
 }
 
-fn emit_drive_particles(mob: &mut MapObject, rng: &mut StdRng) {
-    let direction = vec2_scale(mob.velocity, -1.0);
+fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
 
+    let direction = vec2_scale(mob.velocity, -1.0);
     let rad = 0.5;
 
-    if rng.gen::<f64>() < 0.2 {
+    let chance_per_second = 10.0;
+    let chance = chance_per_second * dt;
+
+    if rng.gen::<f64>() < chance {
         let xp = direction[0] * rad + direction[1] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
         let yp = direction[1] * rad + direction[0] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
 

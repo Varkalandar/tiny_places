@@ -21,8 +21,7 @@ use piston::input::{RenderArgs, RenderEvent,
                     ButtonArgs, ButtonEvent,
                     MouseCursorEvent, MouseScrollEvent};
 
-use piston_window::PistonWindow;
-use piston_window::WindowSettings;
+use piston_window::{PistonWindow, WindowSettings};
 
 use std::path::Path;
 use std::cmp::Ordering;
@@ -250,8 +249,10 @@ impl App {
                                 // world coordinates to screen coordinates
                                 let xp = p.xpos;
                                 let yp = (p.ypos - p.zpos) * 0.5;
-                                let glow = (1.0 - p.age / p.lifetime) as f32;
-                                let image = build_image(tile, [p.color[0]*glow, p.color[1]*glow, p.color[2]*glow, 1.0]);
+                                // let glow = (1.0 - p.age / p.lifetime) as f32;
+                                let fade = quadratic_fade(p.age / p.lifetime);
+                                
+                                let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
                                 image.draw(&tile.tex, &add_blend, tf.trans(xp, yp), gl);
                             }
                         }
@@ -454,6 +455,11 @@ pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
     Image::new()
         .rect([0.0, 0.0, tile.size[0], tile.size[1]])
         .color(color)        
+}
+
+
+fn quadratic_fade(x: f64) -> f32 {
+    (1.0 - (x*x)) as f32
 }
 
 
