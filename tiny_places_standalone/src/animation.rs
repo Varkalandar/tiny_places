@@ -2,7 +2,7 @@ use crate::map::MapObject;
 use crate::map::UpdateAction;
 
 pub trait Animated {
-    fn update(&self, dt: f64, mob: &mut MapObject) {
+    fn update(&self, _dt: f64, _mob: &mut MapObject) {
 
     }
 }

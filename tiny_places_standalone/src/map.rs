@@ -35,6 +35,8 @@ pub struct Map {
     pub selected_item: u64,
     pub selected_layer: usize,
 
+    pub name: String,
+    pub map_image_name: String,
     pub backdrop_image_name: String,
 
     pub factory: MapObjectFactory,
@@ -44,7 +46,7 @@ pub struct Map {
 
 
 impl Map {
-    pub fn new(backdrop_image_name: &str) -> Map {
+    pub fn new(name: &str, map_image_name: &str, backdrop_image_name: &str) -> Map {
         let mut layers = [HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(),];
         
         let player_visual = Visual {
@@ -78,6 +80,8 @@ impl Map {
             selected_item: 0,
             selected_layer: 0,
 
+            name: name.to_string(),
+            map_image_name: map_image_name.to_string(),
             backdrop_image_name: backdrop_image_name.to_string(),
         
             factory,
@@ -213,6 +217,9 @@ impl Map {
 
     pub fn load(&mut self, filename: &str) {
 
+        // preserve player
+        let player = self.layers[MAP_OBJECT_LAYER].remove(&self.player_id);
+
         for layer in &mut self.layers {
             layer.clear();
         }
@@ -225,36 +232,57 @@ impl Map {
         let mut lines = content.lines();
 
         lines.next(); // version
-        self.backdrop_image_name = lines.next().unwrap().to_string(); // map name
 
-        println!("Backdrop image='{}'", self.backdrop_image_name);
+        lines.next(); // header start
+        self.name = lines.next().unwrap().to_string();
+        self.map_image_name = lines.next().unwrap().to_string();
+        self.backdrop_image_name = lines.next().unwrap().to_string();
+        println!("map name={} image={} backdrop={}", self.name, self.map_image_name, self.backdrop_image_name);
+        lines.next(); // header end
 
+        lines.next(); // objects start
+
+        let end_marker = "end map objects".to_string();
         for line in lines {
-            println!("{}", line);
+            println!("line='{}'", line);
 
-            let parts: Vec<&str> = line.split(",").collect();
-
-            let layer = parts[0].parse::<usize>().unwrap();
-            let tile_id = parts[1].parse::<usize>().unwrap();
-
-            let x = parts[2].parse::<f64>().unwrap();
-            let y = parts[3].parse::<f64>().unwrap();
-            let scale = parts[4].parse::<f64>().unwrap();
-
-            // parts[5] is an RGBA tuple
-            let mut color_in = parts[5].split(" ");
-
-            let mut color: [f32; 4] = [0.0; 4];
-            for i in 0..4 {
-                color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
-            }
-
-            println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
-
-            let mut mob = self.factory.create_mob(tile_id, layer, [x, y], scale);
-            mob.visual.color = color;
-            self.layers[layer].insert(mob.uid, mob);
+            if end_marker != line {
+                self.load_mob(line);
+            }    
         }
+
+        println!("player_id={}", self.player_id);
+
+        self.layers[MAP_OBJECT_LAYER].insert(self.player_id, player.unwrap());
+    }
+
+
+    fn load_mob(&mut self, line: &str) {
+        let parts: Vec<&str> = line.split(",").collect();
+
+        let layer = parts[0].parse::<usize>().unwrap();
+        let tile_id = parts[1].parse::<usize>().unwrap();
+        let frames = parts[2].parse::<usize>().unwrap();
+
+        let x = parts[3].parse::<f64>().unwrap();
+        let y = parts[4].parse::<f64>().unwrap();
+        let scale = parts[5].parse::<f64>().unwrap();
+
+        // parts[6] is an RGBA tuple
+        let mut color_in = parts[6].split(" ");
+
+        let mut color: [f32; 4] = [0.0; 4];
+        for i in 0..4 {
+            color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
+        }
+
+        println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
+
+        let mut mob = self.factory.create_mob(tile_id, layer, [x, y], scale);
+        mob.visual.color = color;
+        mob.visual.frames = frames;
+
+        self.layers[layer].insert(mob.uid, mob);
     }
 
 
@@ -267,16 +295,24 @@ impl Map {
         {        
             let mut writer = BufWriter::new(f);
 
-            // write a byte to the buffer
             writer.write("v10\n".as_bytes())?;
-
-            let backdrop_name = self.backdrop_image_name.to_string()  + "\n";
-
-            writer.write(backdrop_name.as_bytes())?;
             
+            writer.write("begin map header\n".as_bytes())?;
+            let name = self.name.to_string()  + "\n";
+            writer.write(name.as_bytes())?;
+            let map_image_name = self.map_image_name.to_string() + "\n";
+            writer.write(map_image_name.as_bytes())?;
+            let backdrop_image_name = self.backdrop_image_name.to_string() + "\n";
+            writer.write(backdrop_image_name.as_bytes())?;
+            writer.write("end map header\n".as_bytes())?;
+            
+
+            writer.write("begin map objects\n".as_bytes())?;
             self.save_layer(&mut writer, MAP_GROUND_LAYER)?;
             self.save_layer(&mut writer, MAP_OBJECT_LAYER)?;
             self.save_layer(&mut writer, MAP_CLOUD_LAYER)?;
+            writer.write("end map objects\n".as_bytes())?;
+
         }
 
         Ok(())
@@ -287,21 +323,26 @@ impl Map {
         let objects = &self.layers[layer];
 
         for (_key, object) in objects {
-            let color = object.visual.color; 
 
-            let line = 
-            layer.to_string() + "," +
-            &object.visual.base_image_id.to_string() + "," +
-            &object.position[0].to_string() + "," +
-            &object.position[1].to_string() + "," +
-            &object.scale.to_string() + "," +
-            &color[0].to_string() + " " +
-            &color[1].to_string() + " " +
-            &color[2].to_string() + " " +
-            &color[3].to_string() + " " +            
-            "\n";
-            
-            writer.write(line.as_bytes())?;
+            if object.uid != self.player_id {
+
+                let color = object.visual.color; 
+
+                let line = 
+                layer.to_string() + "," +
+                &object.visual.base_image_id.to_string() + "," +
+                &object.visual.frames.to_string() + "," +
+                &object.position[0].to_string() + "," +
+                &object.position[1].to_string() + "," +
+                &object.scale.to_string() + "," +
+                &color[0].to_string() + " " +
+                &color[1].to_string() + " " +
+                &color[2].to_string() + " " +
+                &color[3].to_string() + " " +            
+                "\n";
+                
+                writer.write(line.as_bytes())?;
+            }
         }
 
         Ok(())
@@ -322,7 +363,7 @@ fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
     let direction = vec2_scale(mob.velocity, -1.0);
     let rad = 0.5;
 
-    let chance_per_second = 10.0;
+    let chance_per_second = 20.0;
     let chance = chance_per_second * dt;
 
     if rng.gen::<f64>() < chance {

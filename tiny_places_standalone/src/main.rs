@@ -123,7 +123,7 @@ impl App {
 
 
         let ui = UI::new(window_size);
-        let map = Map::new("map_puzzle_technoland.png"); 
+        let map = Map::new("Demo Map", "map_puzzle_technoland.png", "backdrop_red_blue.png"); 
         let editor = MapEditor::new();
         let game = Game::new(&ui, &layer_tileset[6]);
 

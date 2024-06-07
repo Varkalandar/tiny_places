@@ -8,6 +8,7 @@ use rodio::source::{Source, Buffered};
 pub enum Sound {
     Click = 0,
     FireballLaunch = 1,
+    FireballHit = 2,
 }
 
 
@@ -33,6 +34,7 @@ impl SoundPlayer {
 
         sources.push(load_sound("resources/sounds/click.wav"));
         sources.push(load_sound("../tiny_places_client/resources/sfx/fireball_launch.wav"));
+        sources.push(load_sound("../tiny_places_client/resources/sfx/fireball_hit.wav"));
 
         let mut sinks = Vec::new();
 
