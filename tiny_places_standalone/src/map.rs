@@ -15,6 +15,8 @@ use crate::item::Item;
 use crate::inventory::Inventory;
 use crate::particle_driver::ParticleDriver;
 use crate::animation::*;
+use crate::sound::Sound;
+use crate::SoundPlayer;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -168,7 +170,7 @@ impl Map {
 
             // projectiles may have hit something in the move
             if mob.attributes.is_projectile {
-                let target = self.find_nearest_object(MAP_OBJECT_LAYER, &mob.position, 15.0, mob.uid);
+                let target = self.find_nearest_object(MAP_OBJECT_LAYER, &mob.position, 80.0, mob.uid);
                 match target {
                     None => {}
                     Some(uid) => {

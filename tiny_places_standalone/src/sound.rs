@@ -34,7 +34,7 @@ impl SoundPlayer {
 
         sources.push(load_sound("resources/sounds/click.wav"));
         sources.push(load_sound("../tiny_places_client/resources/sfx/fireball_launch.wav"));
-        sources.push(load_sound("../tiny_places_client/resources/sfx/fireball_hit.wav"));
+        sources.push(load_sound("../tiny_places_client/resources/sfx/fireball_hit_3a.wav"));
 
         let mut sinks = Vec::new();
 
