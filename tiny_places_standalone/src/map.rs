@@ -126,7 +126,7 @@ impl Map {
     }
 
 
-    pub fn update(&mut self, dt: f64, rng: &mut StdRng) {
+    pub fn update(&mut self, dt: f64, rng: &mut StdRng, speaker: &mut SoundPlayer) {
 
         let mut kill_list = Vec::new();
         let mut phit_list = Vec::new();
@@ -180,7 +180,7 @@ impl Map {
 
         for (projectile, target) in phit_list {
 
-            self.handle_projectile_hit(projectile, target, rng);
+            self.handle_projectile_hit(projectile, target, rng, speaker);
             kill_list.push(projectile);
 
             self.animations.insert(target, Box::new(RemovalAnimation::new(0.7)));
@@ -193,11 +193,14 @@ impl Map {
     }
 
 
-    fn handle_projectile_hit(&mut self, projectle_uid: u64, target_uid: u64, rng: &mut StdRng) {
+    fn handle_projectile_hit(&mut self, projectle_uid: u64, target_uid: u64, rng: &mut StdRng, speaker: &mut SoundPlayer) {
+
+        speaker.play_sound(Sound::FireballHit);
+
         let target = self.layers[MAP_OBJECT_LAYER].get_mut(&target_uid).unwrap();
 
         println!("Handle projectile hit, adding particles");
-        let sparks = [403, 1993, 1994, 1995, 1996, 1997];
+        let sparks = [403, 404, 1993, 1994, 1995, 1996, 1997];
 
         for _i in 0..100 {
             let xv = rng.gen::<f64>() * 2.0 - 1.0;

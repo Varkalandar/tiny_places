@@ -120,7 +120,8 @@ impl UiController for Game {
     fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
         let map = &mut world.map;
         let rng = &mut world.rng;
-        map.update(dt, rng);
+        let speaker = &mut world.speaker;
+        map.update(dt, rng, speaker);
     }
 }
 
