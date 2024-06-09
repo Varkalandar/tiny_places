@@ -214,8 +214,11 @@ impl App {
                     if world.map.has_selection && 
                        layer_id == world.map.selected_layer &&
                        mob.uid == world.map.selected_item {
-                        let ellp = Ellipse::new([1.0, 0.9, 0.3, 0.3]); 
-                        ellp.draw([-40 as f64, -20 as f64, 80 as f64, 40 as f64], &ds, 
+                        
+                        let size = tile.size[0] * 0.75;
+                        let ellp = Ellipse::new([1.0, 0.95, 0.9, 0.1]);
+
+                        ellp.draw([-size, -size * 0.5, size * 2.0, size], &ds, 
                                   tf.trans(tile.foot[0], tile.foot[1]), gl);
                     }
     
