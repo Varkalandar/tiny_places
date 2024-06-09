@@ -113,9 +113,23 @@ impl UiController for MapEditor {
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::C) {
                         let map = &mut world.map;
-                        let object = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
-                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, object.visual.color);
+                        let mob = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
+                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, mob.visual.color);
                         ui.root.head.add_child(Rc::new(color_choice));
+                    }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::Delete) {
+                        let map = &mut world.map;
+                        let mob = map.layers[map.selected_layer].get(&map.selected_item);
+
+                        match mob {
+                            None => {}
+                            Some(mob) => {
+                                let uid = mob.uid;
+                                let layer = &mut map.layers[map.selected_layer];
+                                layer.remove(&uid);
+                            }
+                        }
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
