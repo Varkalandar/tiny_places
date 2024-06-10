@@ -463,7 +463,7 @@ fn main() {
     let opengl = OpenGL::V3_2;
 
     // Create a Glutin window.
-    let mut window: PistonWindow = WindowSettings::new("Rusty Tiny Places", window_size)
+    let mut window: PistonWindow = WindowSettings::new("Fractal Lands v0.02", window_size)
         .graphics_api(opengl)
         .exit_on_esc(true)
 //        .samples(4)

@@ -3755,17 +3755,17 @@
       <Description>
         <version>4</version>
         <id>209</id>
-        <width>1</width>
-        <height>1</height>
+        <width>175</width>
+        <height>217</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>87</footX>
+        <footY>164</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>green_helix</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
