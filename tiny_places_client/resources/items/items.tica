@@ -511,7 +511,7 @@ data
 Tile Description
 v.5
 32
-1 1
+70 74
 0 0
 0 0
 End Of Header
@@ -519,8 +519,8 @@ Item
 v.1
 data
 2
-
-
+plugin_crazy_object
+alien
 1
 0
 0

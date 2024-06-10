@@ -139,17 +139,10 @@ impl App {
         let engine = factory.make_item(2);
         inv.put_item(engine, Slot::Bag);
 
-        let plugin_db = factory.make_item(3);
-        inv.put_item(plugin_db, Slot::Bag);
-
-        let plugin_gt = factory.make_item(4);
-        inv.put_item(plugin_gt, Slot::Bag);
-
-        let plugin_fl = factory.make_item(5);
-        inv.put_item(plugin_fl, Slot::Bag);
-
-        let plugin_sb = factory.make_item(6);
-        inv.put_item(plugin_sb, Slot::Bag);
+        for plugin_no in 3..8 {
+            let plugin = factory.make_item(plugin_no);
+            inv.put_item(plugin, Slot::Bag);
+        }
 
         App {        
 
