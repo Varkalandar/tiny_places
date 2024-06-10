@@ -56,6 +56,7 @@ impl Map {
             tileset_id: 4,
             current_image_id: 39,
             frames: 16, 
+            height: 24.0,
             color: [1.0, 1.0, 1.0, 1.0],
             particles: ParticleDriver::new(),       
         };
@@ -65,7 +66,7 @@ impl Map {
         };
 
 
-        let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 1.0);
+        let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 24.0, 1.0);
         let player_id = player.uid;
         player.visual = player_visual;
         player.update_action = UpdateAction::EmitDriveParticles;
@@ -204,6 +205,8 @@ impl Map {
         println!("Handle projectile hit, adding particles");
         let sparks = [403, 404, 1993, 1994, 1995, 1996, 1997];
 
+        let z_off = target.visual.height * target.scale * 0.5;
+
         for _i in 0..100 {
             let xv = rng.gen::<f64>() * 2.0 - 1.0;
             let yv = rng.gen::<f64>() * 2.0 - 1.0;
@@ -214,7 +217,7 @@ impl Map {
 
             let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
 
-            target.visual.particles.add_particle(0.0, 0.0, 0.0, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
+            target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
             target.visual.color = [0.0, 0.0, 0.0, 0.0];
         }
     }
@@ -271,19 +274,20 @@ impl Map {
 
         let x = parts[3].parse::<f64>().unwrap();
         let y = parts[4].parse::<f64>().unwrap();
-        let scale = parts[5].parse::<f64>().unwrap();
+        let height = parts[5].parse::<f64>().unwrap();
+        let scale = parts[6].parse::<f64>().unwrap();
 
         // parts[6] is an RGBA tuple
-        let mut color_in = parts[6].split(" ");
+        let mut color_in = parts[7].split(" ");
 
         let mut color: [f32; 4] = [0.0; 4];
         for i in 0..4 {
             color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
         }
 
-        println!("{}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, scale, color);
+        println!("{}, {}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, height, scale, color);
 
-        let mut mob = self.factory.create_mob(tile_id, layer, [x, y], scale);
+        let mut mob = self.factory.create_mob(tile_id, layer, [x, y], height, scale);
         mob.visual.color = color;
         mob.visual.frames = frames;
 
@@ -339,6 +343,7 @@ impl Map {
                 &object.visual.frames.to_string() + "," +
                 &object.position[0].to_string() + "," +
                 &object.position[1].to_string() + "," +
+                &object.visual.height.to_string() + "," +
                 &object.scale.to_string() + "," +
                 &color[0].to_string() + " " +
                 &color[1].to_string() + " " +
@@ -426,13 +431,14 @@ pub struct MapObjectFactory {
 
 impl MapObjectFactory {
 
-    pub fn create_mob(&mut self, tile_id: usize, tileset_id: usize, position: Vector2<f64>, scale: f64) -> MapObject {
+    pub fn create_mob(&mut self, tile_id: usize, tileset_id: usize, position: Vector2<f64>, height: f64, scale: f64) -> MapObject {
 
         let visual = Visual {
             base_image_id: tile_id,
             current_image_id: tile_id,
             frames: 8,
             tileset_id,
+            height,
             color: [1.0, 1.0, 1.0, 1.0],
             particles: ParticleDriver::new(),
         };
@@ -486,6 +492,7 @@ pub struct Visual {
     pub current_image_id: usize,
     pub frames: usize,
     pub tileset_id: usize,
+    pub height: f64,
     pub color: [f32; 4],
 
     pub particles: ParticleDriver,

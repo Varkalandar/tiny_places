@@ -155,7 +155,7 @@ impl Game {
 
         let start_pos = vec2_add(shooter.position, vec2_scale(dir, 80.0));
 
-        let mut projectile = map.factory.create_mob(projectile_type, 5, start_pos, 1.0);
+        let mut projectile = map.factory.create_mob(projectile_type, 5, start_pos, 12.0, 1.0);
         projectile.velocity = velocity;
         projectile.move_time_left = 2.0;
         projectile.move_end_action = MoveEndAction::RemoveFromMap;

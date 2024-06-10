@@ -49,9 +49,11 @@ impl UiController for MapEditor {
                             println!("creating map object {} at {:?}", id, pos);
                             
                             let map = &mut world.map;
-                            let mob = map.factory.create_mob(id, map.selected_layer, pos, 1.0);
+                            let layer = map.selected_layer;
+                            let height = world.layer_tileset[layer].tiles_by_id.get(&id).unwrap().foot[1];
+                            let mob = map.factory.create_mob(id, layer, pos, height, 1.0);
                             let mob_id = mob.uid;
-                            map.layers[map.selected_layer].insert(mob_id, mob);
+                            map.layers[layer].insert(mob_id, mob);
 
                             return true;
                         }
