@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use piston::{ButtonState, MouseButton};
+use piston_window::draw_state::Blend;
 
 use graphics::{draw_state::DrawState, Viewport,};
 use opengl_graphics::GlGraphics;
@@ -15,6 +16,7 @@ use crate::sound::Sound;
 
 pub struct MapEditor {
     pub selected_tile_id: usize,
+    pub show_editor_keys: bool,
 }
 
 
@@ -73,6 +75,10 @@ impl UiController for MapEditor {
                         }
                     }
                     
+                    if event.args.button == piston::Button::Keyboard(piston::Key::F1) { 
+                        self.show_editor_keys = !self.show_editor_keys;
+                    }        
+
                     if event.args.button == piston::Button::Keyboard(piston::Key::D1) {                        
                         world.map.selected_layer = MAP_GROUND_LAYER;
                         self.selected_tile_id = 0;
@@ -113,6 +119,11 @@ impl UiController for MapEditor {
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
+                    if event.args.button == piston::Button::Keyboard(piston::Key::A) {
+                        let map = &mut world.map;
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = Blend::Add;});
+                    }
+
                     if event.args.button == piston::Button::Keyboard(piston::Key::C) {
                         let map = &mut world.map;
                         let mob = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
@@ -137,6 +148,11 @@ impl UiController for MapEditor {
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
                         world.map.load("test.map");
                     }        
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::M) {
+                        let map = &mut world.map;
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = Blend::Alpha;});
+                    }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::S) {
                         world.map.save("test.map").unwrap();
@@ -276,15 +292,42 @@ impl UiController for MapEditor {
                 image.draw(&tile.tex, &ds, tf, gl);
             });
         }
-        ui.font_14.draw(viewport, gl, ds, 10, 20, "Use keys 1 .. 3 to select map layers", &[1.0, 1.0, 1.0, 1.0]);
-        ui.font_14.draw(viewport, gl, ds, 10, 40, "Press space to open tile selector", &[1.0, 1.0, 1.0, 1.0]);
-        ui.font_14.draw(viewport, gl, ds, 10, 60, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(viewport, gl, ds, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(viewport, gl, ds, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
         ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+
+
+        if self.show_editor_keys {
+            let color = [1.0, 1.0, 1.0, 1.0];
+            let line_space = 20;
+            let left = 100;
+            let mut top = 100;
+
+            ui.font_14.draw(viewport, gl, ds, left, top, "F1: Show/hide this list", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "Space: Open tile selector", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "1,2,3,.. : Select map layer", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "c: Open color selector for selected item", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "Delete: Removes the selected item from the map", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "l: Load a saved map", &color);
+            top += line_space;
+            ui.font_14.draw(viewport, gl, ds, left, top, "s: Save the map", &color);
+            top += line_space;
+        }
+
     }
 
 
@@ -303,6 +346,7 @@ impl MapEditor {
     pub fn new() -> MapEditor {
         MapEditor {
             selected_tile_id: 0,
+            show_editor_keys: false,
         }
     }
 

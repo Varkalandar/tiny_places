@@ -216,9 +216,7 @@ impl App {
                     }
     
                     let image = build_image(tile, mob.visual.color);
-                    image.draw(&tile.tex, &ds, tf, gl);
-
-                    let add_blend = ds.blend(Blend::Add);
+                    image.draw(&tile.tex, &ds.blend(mob.visual.blend), tf, gl);
 
                     // fake shine for glowing projectiles
                     if tileset_id == 5 {
@@ -227,7 +225,7 @@ impl App {
 
                         let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
                         let image = build_image(glow_tile, [0.5, 0.375, 0.2, 1.0]);
-                        image.draw(&glow_tile.tex, &add_blend, tf, gl);
+                        image.draw(&glow_tile.tex, &ds.blend(Blend::Add), tf, gl);
                     }
 
                     // particle effects
@@ -249,7 +247,7 @@ impl App {
                                 let fade = quadratic_fade(p.age / p.lifetime);
                                 
                                 let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
-                                image.draw(&tile.tex, &add_blend, tf.trans(xp, yp), gl);
+                                image.draw(&tile.tex, &ds.blend(Blend::Add), tf.trans(xp, yp), gl);
                             }
                         }
                     });

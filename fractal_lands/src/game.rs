@@ -1,6 +1,7 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
 use piston::{ButtonState, MouseButton};
+use piston_window::draw_state::Blend;
 use graphics::DrawState;
 use opengl_graphics::GlGraphics;
 use graphics::Viewport;
@@ -163,6 +164,7 @@ impl Game {
 
         let offset = projectile.visual.orient(velocity[0], velocity[1]);
         projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
+        projectile.visual.blend = Blend::Add;
 
         map.layers[layer].insert(projectile.uid, projectile);
     } 

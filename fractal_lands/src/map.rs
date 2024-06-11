@@ -11,6 +11,8 @@ use std::boxed::Box;
 use rand::Rng;
 use rand::rngs::StdRng;
 
+use piston_window::draw_state::Blend;
+
 use crate::item::Item;
 use crate::inventory::Inventory;
 use crate::particle_driver::ParticleDriver;
@@ -58,13 +60,13 @@ impl Map {
             frames: 16, 
             height: 24.0,
             color: [1.0, 1.0, 1.0, 1.0],
+            blend: Blend::Alpha,
             particles: ParticleDriver::new(),       
         };
 
         let mut factory = MapObjectFactory {
             next_id: 1,
         };
-
 
         let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 24.0, 1.0);
         let player_id = player.uid;
@@ -218,7 +220,7 @@ impl Map {
             let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
 
             target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
-            target.visual.color = [0.0, 0.0, 0.0, 0.0];
+            target.visual.color = [0.0, 0.0, 0.0, 0.0];            
         }
     }
 
@@ -277,7 +279,7 @@ impl Map {
         let height = parts[5].parse::<f64>().unwrap();
         let scale = parts[6].parse::<f64>().unwrap();
 
-        // parts[6] is an RGBA tuple
+        // parts[7] is an RGBA tuple
         let mut color_in = parts[7].split(" ");
 
         let mut color: [f32; 4] = [0.0; 4];
@@ -285,10 +287,13 @@ impl Map {
             color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
         }
 
-        println!("{}, {}, {}, {}, {}, {}, {:?}", layer, tile_id, x, y, height, scale, color);
+        let blend = key_to_blend(parts[8]);
+
+        println!("{}, {}, {}, {}, {}, {}, {:?}, {:?}", layer, tile_id, x, y, height, scale, color, blend);
 
         let mut mob = self.factory.create_mob(tile_id, layer, [x, y], height, scale);
         mob.visual.color = color;
+        mob.visual.blend = blend;
         mob.visual.frames = frames;
 
         self.layers[layer].insert(mob.uid, mob);
@@ -314,7 +319,6 @@ impl Map {
             let backdrop_image_name = self.backdrop_image_name.to_string() + "\n";
             writer.write(backdrop_image_name.as_bytes())?;
             writer.write("end map header\n".as_bytes())?;
-            
 
             writer.write("begin map objects\n".as_bytes())?;
             self.save_layer(&mut writer, MAP_GROUND_LAYER)?;
@@ -348,7 +352,8 @@ impl Map {
                 &color[0].to_string() + " " +
                 &color[1].to_string() + " " +
                 &color[2].to_string() + " " +
-                &color[3].to_string() + " " +            
+                &color[3].to_string() + "," +            
+                &blend_to_key(object.visual.blend) +
                 "\n";
                 
                 writer.write(line.as_bytes())?;
@@ -364,6 +369,16 @@ impl Map {
             let object = self.layers[self.selected_layer].get_mut(&self.selected_item).unwrap();
             object.position[0] += dx;
             object.position[1] += dy;
+        }
+    }
+
+    pub fn apply_to_selected_mob<F>(&mut self, func: F)
+        where F: FnOnce(&mut MapObject) {
+        let mob = self.layers[self.selected_layer].get_mut(&self.selected_item);
+
+        match mob {
+            None => {}
+            Some(mob) => { func(mob); }
         }
     }
 }
@@ -388,6 +403,40 @@ fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
         let spark = 1993 + (rng.gen::<f64>() * 5.0) as usize;
 
         mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark, [0.5, 0.8, 1.0]);
+    }
+}
+
+
+fn blend_to_key(blend: Blend) -> String {
+    let key =
+        match blend {
+            Blend::Alpha => {"n"}, 
+            Blend::Add => {"a"},
+            Blend::Lighter => {"l"},
+            Blend::Multiply => {"m"},
+            Blend::Invert => {"i"},
+        };
+
+    key.to_string()
+}
+
+
+fn key_to_blend(key: &str) -> Blend {
+
+    println!("key='{}'", key);
+
+    if key == "n" {
+        Blend::Alpha
+    } else if key == "a" {
+        Blend::Add
+    } else if key == "l" {
+        Blend::Lighter
+    } else if key == "m" {
+        Blend::Multiply
+    } else if key == "i" {
+        Blend::Invert
+    } else {
+        Blend::Alpha
     }
 }
 
@@ -440,6 +489,7 @@ impl MapObjectFactory {
             tileset_id,
             height,
             color: [1.0, 1.0, 1.0, 1.0],
+            blend: Blend::Alpha,
             particles: ParticleDriver::new(),
         };
 
@@ -494,7 +544,7 @@ pub struct Visual {
     pub tileset_id: usize,
     pub height: f64,
     pub color: [f32; 4],
-
+    pub blend: Blend,
     pub particles: ParticleDriver,
 }
 
