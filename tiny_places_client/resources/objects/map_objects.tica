@@ -3519,23 +3519,23 @@ data
 Tile Description
 v.5
 208
-1 1
+182 217
 0 0
-0 0
+89 166
 End Of Header
 Item
 v.1
 data
 2
-
-
+fire_rimmed_goblet
+alien
 1
 0
 0
 Tile Description
 v.5
 209
-175 217
+174 214
 0 0
 87 164
 End Of Header
@@ -3585,7 +3585,7 @@ v.5
 212
 166 528
 0 0
-89 453
+89 459
 End Of Header
 Item
 v.1

@@ -3738,25 +3738,25 @@
       <Description>
         <version>4</version>
         <id>208</id>
-        <width>1</width>
-        <height>1</height>
+        <width>182</width>
+        <height>217</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>89</footX>
+        <footY>166</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>fire_rimmed_goblet</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>209</id>
-        <width>175</width>
-        <height>217</height>
+        <width>174</width>
+        <height>214</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>87</footX>
@@ -3811,7 +3811,7 @@
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>89</footX>
-        <footY>453</footY>
+        <footY>459</footY>
       </Description>
       <Metadata>
         <int>0</int>
