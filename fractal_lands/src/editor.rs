@@ -126,9 +126,14 @@ impl UiController for MapEditor {
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::C) {
                         let map = &mut world.map;
-                        let mob = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
-                        let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, mob.visual.color);
-                        ui.root.head.add_child(Rc::new(color_choice));
+                        let object = map.layers[map.selected_layer].get_mut(&map.selected_item);
+                        match object {
+                            None => {},
+                            Some(mob) => {
+                                let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, mob.visual.color);
+                                ui.root.head.add_child(Rc::new(color_choice));
+                            }
+                        }
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::Delete) {
@@ -175,8 +180,13 @@ impl UiController for MapEditor {
                             println!("selected color is {:02x}{:02x}{:02x}{:02x}", r, g, b, a);
 
                             let map = &mut world.map;
-                            let object = map.layers[map.selected_layer].get_mut(&map.selected_item).unwrap();
-                            object.visual.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
+                            let object = map.layers[map.selected_layer].get_mut(&map.selected_item);
+                            match object {
+                                None => {},
+                                Some(mob) => {
+                                    mob.visual.color = [r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, a as f32 / 255.0]
+                                }
+                            }
                         }
 
                         return true;

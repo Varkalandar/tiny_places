@@ -3,8 +3,10 @@ use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 use piston::{ButtonState, MouseButton};
 use piston_window::draw_state::Blend;
 use graphics::DrawState;
-use opengl_graphics::GlGraphics;
+use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 use graphics::Viewport;
+
+use std::path::Path;
 
 use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::sound::Sound;
@@ -14,6 +16,7 @@ use crate::player_inventory_view::PlayerInventoryView;
 use crate::TileSet;
 use crate::MAP_OBJECT_LAYER;
 use crate::map::MoveEndAction;
+use crate::MAP_RESOURCE_PATH;
 
 pub struct Game {
     piv: PlayerInventoryView,
@@ -54,7 +57,7 @@ impl UiController for Game {
                             },
                             Some(_idx) => {
                                 // pick up the item?
-                                return true;
+                                // -> move to it first
                             }
                         }
                     }
@@ -123,6 +126,16 @@ impl UiController for Game {
         let rng = &mut world.rng;
         let speaker = &mut world.speaker;
         map.update(dt, rng, speaker);
+
+        let reload = map.check_player_transition();
+
+        if reload {
+            let map_texture = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + &map.map_image_name)), &TextureSettings::new()).unwrap();
+            let map_backdrop = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + &map.backdrop_image_name)), &TextureSettings::new()).unwrap();
+ 
+            world.map_texture = map_texture;
+            world.map_backdrop = map_backdrop;
+        }
     }
 }
 

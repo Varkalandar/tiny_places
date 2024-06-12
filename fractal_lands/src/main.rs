@@ -48,6 +48,9 @@ use item::ItemFactory;
 use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
 
+const MAP_RESOURCE_PATH: &str = "resources/map/";
+
+
 // Game structures
 
 pub struct GameWorld {
@@ -59,6 +62,9 @@ pub struct GameWorld {
     speaker: SoundPlayer,
 
     rng: rand::rngs::StdRng,
+
+    map_texture: Texture,
+    map_backdrop: Texture,
 }
 
 
@@ -84,9 +90,6 @@ impl GameControllers {
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     
-    map_texture: Texture,
-    map_backdrop: Texture,
-
     ui: UI,
 
     world: GameWorld,
@@ -98,14 +101,13 @@ impl App {
     
     fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
         
-        let map_path = "resources/map/";
         let map_image_file = "map_wasteland.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
         // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
-        let map_texture = Texture::from_path(Path::new(&(map_path.to_string() + map_image_file)), &TextureSettings::new()).unwrap();
+        let map_texture = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + map_image_file)), &TextureSettings::new()).unwrap();
         // let map_texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
-        let map_backdrop = Texture::from_path(Path::new(&(map_path.to_string() + map_backdrop_file)), &TextureSettings::new()).unwrap();
+        let map_backdrop = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + map_backdrop_file)), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
@@ -125,9 +127,11 @@ impl App {
             item_tiles,
             ];        
 
+        let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
+        map.load("start.map");
 
         let ui = UI::new(window_size);
-        let map = Map::new("Demo Map", map_image_file, map_backdrop_file); 
+        
         let editor = MapEditor::new();
         let game = Game::new(&ui, &layer_tileset[6]);
 
@@ -151,8 +155,6 @@ impl App {
         App {        
 
             gl: GlGraphics::new(opengl),
-            map_texture,
-            map_backdrop,
             
             ui,
             world: GameWorld {
@@ -162,6 +164,9 @@ impl App {
                 speaker: SoundPlayer::new(),
 
                 rng: rand::rngs::StdRng::seed_from_u64(12345678901),
+
+                map_texture,
+                map_backdrop,
             },
             controllers: GameControllers {
                 editor,
@@ -258,7 +263,8 @@ impl App {
                 }    
             }
 
-            let player_position = &self.world.map.player_position();
+            let world = &self.world;
+            let player_position = &world.map.player_position();
             let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
 
             let offset_x = window_center[0] * 0.5 - player_position[0];
@@ -268,9 +274,9 @@ impl App {
             let back_tf = c.transform.trans(- player_position[0]*0.5, - player_position[1] * 0.25).scale(2.0, 2.0);
             let back_image = 
                 Image::new()
-                    .rect([0.0, 0.0, self.map_backdrop.get_width() as f64, self.map_backdrop.get_height() as f64])
+                    .rect([0.0, 0.0, world.map_backdrop.get_width() as f64, world.map_backdrop.get_height() as f64])
                     .color([0.8, 0.8, 0.8, 1.0]);
-            back_image.draw(&self.map_backdrop, &ds, back_tf, gl);
+            back_image.draw(&world.map_backdrop, &ds, back_tf, gl);
 
             // The map is displayed 2 times as big as source image to conserve memory
             // for the map background a high detail level is not needed, that is
@@ -279,25 +285,18 @@ impl App {
             
             let map_image   = 
                 Image::new()
-                    .rect([0.0, 0.0, self.map_texture.get_width() as f64, self.map_texture.get_height() as f64])
+                    .rect([0.0, 0.0, world.map_texture.get_width() as f64, world.map_texture.get_height() as f64])
                     .color([0.8, 0.8, 0.8, 1.0]);                    
-            map_image.draw(&self.map_texture, &ds, map_tf, gl);
+            map_image.draw(&world.map_texture, &ds, map_tf, gl);
 
             // draw ground decorations (flat)
-            draw_layer(gl, c, ds, &window_center, &self.world, MAP_GROUND_LAYER);
+            draw_layer(gl, c, ds, &window_center, world, MAP_GROUND_LAYER);
 
-            // draw shadows (flat)
-            // TODO
-            
             // draw decorations (upright things)
-            draw_layer(gl, c, ds, &window_center, &self.world, MAP_OBJECT_LAYER);
-
-            // draw lights
-            // TODO
+            draw_layer(gl, c, ds, &window_center, world, MAP_OBJECT_LAYER);
 
             // draw clouds
-            draw_layer(gl, c, ds, &window_center, &self.world, MAP_CLOUD_LAYER);
-            
+            draw_layer(gl, c, ds, &window_center, world, MAP_CLOUD_LAYER);
         });
 
         {

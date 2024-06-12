@@ -1,4 +1,4 @@
-use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
+use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized, vec2_square_len};
 use std::f64::consts::PI;
 
 use std::io::prelude::*;
@@ -27,10 +27,10 @@ pub const MAP_CLOUD_LAYER:usize = 2;
 
 
 pub struct Map {
+
     pub layers: [HashMap<u64, MapObject>; 7],
-
     pub animations: HashMap<u64, Box<dyn Animated>>,
-
+    pub transitions: Vec<MapTransition>,
 
     // all items on this map
     pub items: Inventory,
@@ -79,7 +79,8 @@ impl Map {
             layers,
 
             animations: HashMap::new(),
-
+            transitions: Vec::new(),
+            
             items: Inventory::new(),
             has_selection: false,
             selected_item: 0,
@@ -198,6 +199,28 @@ impl Map {
     }
 
 
+    pub fn check_player_transition(&mut self) -> bool {
+        let player = self.layers[MAP_OBJECT_LAYER].get(&self.player_id).unwrap();
+        let pos = player.position;
+        let mut best_map = -1;
+        
+        for transit in &self.transitions {
+            let v = vec2_sub(pos, transit.from);
+            let d = vec2_square_len(v);
+            if d < transit.rad * transit.rad {
+                best_map = transit.to;
+            }
+        }
+
+        if best_map >= 0 {
+            self.load("warmup.map");
+            return true;
+        }
+
+        false
+    }
+
+
     fn handle_projectile_hit(&mut self, projectle_uid: u64, target_uid: u64, rng: &mut StdRng, speaker: &mut SoundPlayer) {
 
         speaker.play_sound(Sound::FireballHit);
@@ -228,11 +251,12 @@ impl Map {
     pub fn load(&mut self, filename: &str) {
 
         // preserve player
-        let player = self.layers[MAP_OBJECT_LAYER].remove(&self.player_id);
+        let mut player = self.layers[MAP_OBJECT_LAYER].remove(&self.player_id).unwrap();
 
         for layer in &mut self.layers {
             layer.clear();
         }
+        self.transitions.clear();
 
         let mut path = PathBuf::new();
         path.push("maps");
@@ -251,19 +275,30 @@ impl Map {
         lines.next(); // header end
 
         lines.next(); // objects start
+        let mut line = lines.next().unwrap();
 
-        let end_marker = "end map objects".to_string();
-        for line in lines {
+        let object_end_marker = "end map objects".to_string();
+        while object_end_marker != line {
             println!("line='{}'", line);
+            self.load_mob(line);
+            line = lines.next().unwrap();
+        }
 
-            if end_marker != line {
-                self.load_mob(line);
-            }    
+        lines.next(); // transitions start
+        line = lines.next().unwrap();
+
+        let transition_end_marker = "end map transitions".to_string();
+        while transition_end_marker != line {
+            println!("line='{}'", line);
+            self.load_transition(line);
+            line = lines.next().unwrap();
         }
 
         println!("player_id={}", self.player_id);
 
-        self.layers[MAP_OBJECT_LAYER].insert(self.player_id, player.unwrap());
+        // stop player movement
+        player.move_time_left = 0.0;
+        self.layers[MAP_OBJECT_LAYER].insert(self.player_id, player);
     }
 
 
@@ -297,6 +332,22 @@ impl Map {
         mob.visual.frames = frames;
 
         self.layers[layer].insert(mob.uid, mob);
+    }
+
+
+    fn load_transition(&mut self, line: &str) {
+        let mut parts = line.split(",");
+
+        let x = parts.next().unwrap().parse::<f64>().unwrap();
+        let y = parts.next().unwrap().parse::<f64>().unwrap();
+        let r = parts.next().unwrap().parse::<f64>().unwrap();
+        let map_id = parts.next().unwrap().parse::<i32>().unwrap();
+
+        self.transitions.push(MapTransition {
+            from: [x, y],
+            rad: r,
+            to: map_id,
+        });
     }
 
 
@@ -586,4 +637,15 @@ impl Visual {
 pub struct MobAttributes {
     pub base_speed: f64,
     pub is_projectile: bool,
+}
+
+
+pub struct MapTransition {
+
+    // entrance location
+    from: Vector2<f64>,
+    // catchment area
+    rad: f64,
+    // destination map
+    to: i32,
 }
