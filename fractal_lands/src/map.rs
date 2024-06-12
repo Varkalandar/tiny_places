@@ -377,6 +377,7 @@ impl Map {
             self.save_layer(&mut writer, MAP_CLOUD_LAYER)?;
             writer.write("end map objects\n".as_bytes())?;
 
+            self.save_map_transitions(&mut writer)?
         }
 
         Ok(())
@@ -413,7 +414,25 @@ impl Map {
 
         Ok(())
     }
+
     
+    fn save_map_transitions(&self, writer: &mut BufWriter<File>) -> Result<()> {
+        writer.write("begin map transitions\n".as_bytes())?;
+
+        for transit in &self.transitions {
+            let line = 
+                transit.from[0].to_string() + "," +
+                &transit.from[1].to_string() + "," +
+                &transit.rad.to_string() + "," +
+                &transit.to.to_string() + "\n";
+            writer.write(line.as_bytes())?;
+        }
+
+        writer.write("end map transitions\n".as_bytes())?;
+
+        Ok(())
+    }
+
     
     pub fn move_selected_object(&mut self, dx: f64, dy: f64) {        
         if self.has_selection {
