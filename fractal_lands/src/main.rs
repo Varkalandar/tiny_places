@@ -98,10 +98,14 @@ impl App {
     
     fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
         
+        let map_path = "resources/map/";
+        let map_image_file = "map_wasteland.png";
+        let map_backdrop_file = "backdrop_red_blue.png";
+
         // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
-        // let texture = Texture::from_path(Path::new("resources/map/map_dark_technoland.png"), &TextureSettings::new()).unwrap();
-        let map_texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
-        let map_backdrop = Texture::from_path(Path::new("resources/map/backdrop_red_blue.png"), &TextureSettings::new()).unwrap();
+        let map_texture = Texture::from_path(Path::new(&(map_path.to_string() + map_image_file)), &TextureSettings::new()).unwrap();
+        // let map_texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
+        let map_backdrop = Texture::from_path(Path::new(&(map_path.to_string() + map_backdrop_file)), &TextureSettings::new()).unwrap();
 
         let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
@@ -123,7 +127,7 @@ impl App {
 
 
         let ui = UI::new(window_size);
-        let map = Map::new("Demo Map", "map_puzzle_technoland.png", "backdrop_red_blue.png"); 
+        let map = Map::new("Demo Map", map_image_file, map_backdrop_file); 
         let editor = MapEditor::new();
         let game = Game::new(&ui, &layer_tileset[6]);
 

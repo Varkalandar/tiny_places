@@ -146,7 +146,7 @@ impl UiController for MapEditor {
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
-                        world.map.load("test.map");
+                        world.map.load("start.map");
                     }        
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::M) {

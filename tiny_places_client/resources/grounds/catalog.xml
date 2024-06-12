@@ -542,16 +542,16 @@
       <Description>
         <version>4</version>
         <id>32</id>
-        <width>1</width>
-        <height>1</height>
+        <width>186</width>
+        <height>114</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>95</footX>
+        <footY>72</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>soft_oval</string>
         <string></string>
       </Metadata>
     </Tile>

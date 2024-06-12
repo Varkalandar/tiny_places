@@ -17219,16 +17219,16 @@
       <Description>
         <version>4</version>
         <id>1001</id>
-        <width>1</width>
-        <height>1</height>
+        <width>694</width>
+        <height>191</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>22</footX>
-        <footY>31</footY>
+        <footX>348</footX>
+        <footY>222</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string>globo_bp</string>
+        <string>welcome_earthling</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -17236,16 +17236,16 @@
       <Description>
         <version>4</version>
         <id>1002</id>
-        <width>1</width>
-        <height>1</height>
+        <width>521</width>
+        <height>166</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>264</footX>
+        <footY>186</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>earthling_sights</string>
         <string></string>
       </Metadata>
     </Tile>

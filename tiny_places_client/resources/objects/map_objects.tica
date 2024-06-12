@@ -16207,15 +16207,15 @@ arrow
 Tile Description
 v.5
 1001
-1 1
+694 191
 0 0
-22 31
+348 222
 End Of Header
 Item
 v.1
 data
 2
-globo_bp
+welcome_earthling
 
 1
 0
@@ -16223,15 +16223,15 @@ globo_bp
 Tile Description
 v.5
 1002
-1 1
+521 166
 0 0
-0 0
+264 186
 End Of Header
 Item
 v.1
 data
 2
-
+earthling_sights
 
 1
 0
