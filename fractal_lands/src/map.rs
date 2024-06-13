@@ -19,6 +19,7 @@ use crate::particle_driver::ParticleDriver;
 use crate::animation::*;
 use crate::sound::Sound;
 use crate::SoundPlayer;
+use crate::mob_group::MobGroup;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -31,6 +32,9 @@ pub struct Map {
     pub layers: [HashMap<u64, MapObject>; 7],
     pub animations: HashMap<u64, Box<dyn Animated>>,
     pub transitions: Vec<MapTransition>,
+    
+    // 'AI' controlled objects
+    pub mob_groups: Vec<MobGroup>,
 
     // all items on this map
     pub items: Inventory,
@@ -80,7 +84,8 @@ impl Map {
 
             animations: HashMap::new(),
             transitions: Vec::new(),
-            
+            mob_groups: Vec::new(),
+
             items: Inventory::new(),
             has_selection: false,
             selected_item: 0,
@@ -136,6 +141,11 @@ impl Map {
 
         let mut kill_list = Vec::new();
         let mut phit_list = Vec::new();
+
+        for group in &mut self.mob_groups {
+            group.update(dt, rng);
+        }
+
 
         for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
             let before = mob.move_time_left;
