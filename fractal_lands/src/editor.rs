@@ -152,11 +152,16 @@ impl UiController for MapEditor {
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::L) {
                         world.map.load("start.map");
-                    }        
+                    }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::M) {
                         let map = &mut world.map;
                         map.apply_to_selected_mob(|mob| {mob.visual.blend = Blend::Alpha;});
+                    }
+
+                    if event.args.button == piston::Button::Keyboard(piston::Key::P) {
+                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
+                        place_particle_generator(world, pos);
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::S) {
@@ -437,3 +442,27 @@ impl MapEditor {
         scrolly
     }
 }
+
+
+fn place_particle_generator(world: &mut GameWorld, pos: Vector2<f64>) {
+    let id = 212;
+    let map = &mut world.map;
+    let layer = MAP_OBJECT_LAYER;
+    let height = world.layer_tileset[layer].tiles_by_id.get(&id).unwrap().foot[1];
+    let mut mob = map.factory.create_mob(id, layer, pos, height, 1.0);
+    let mob_id = mob.uid;
+
+    let particles = &mut mob.visual.particles;
+
+    let ids = [44, 45, 46, 47, 48, 49, 50, 51];
+
+    for id in ids {
+        particles.spawn_ids.push(id+8);
+    }
+
+    particles.spawn_chance = 60.0;
+    particles.spawn_tile_set = MAP_CLOUD_LAYER;
+
+    map.layers[layer].insert(mob_id, mob);
+}
+

@@ -161,7 +161,24 @@ impl Map {
                 }
             }
 
-            mob.visual.particles.drive(dt);
+            // particle stuff
+            {
+                let particles = &mut mob.visual.particles;
+                let len = particles.spawn_ids.len();
+
+                if len > 0 {
+                    let chance = particles.spawn_chance * dt;
+                    if rng.gen::<f64>() < chance {
+                        let spark = particles.spawn_ids[rng.gen_range(0..len)];
+                        
+                        particles.add_particle(0.0, -400.0, 0.0, 0.0, 0.0, 0.0, 
+                                               0.1, spark, [0.7, 0.75, 0.9]);
+                    }
+                }
+
+                particles.drive(dt);
+            }
+
 
             let animation_opt = self.animations.get(&mob.uid);
             match animation_opt {

@@ -36,6 +36,14 @@ pub struct ParticleDriver {
     last_particle_mark: usize,
 
     particles: [Particle; PMAX],
+
+    // for auto spawning
+    pub spawn_ids: Vec<usize>,
+
+    // chance to spawn a new partile per second
+    pub spawn_chance: f64,
+
+    pub spawn_tile_set: usize, 
 }
 
 
@@ -46,6 +54,10 @@ impl ParticleDriver {
             start_search_mark: 0,
             last_particle_mark: 0,
             particles: [NEW_PARTICLE; PMAX],
+
+            spawn_ids: Vec::new(),
+            spawn_chance: 0.0,
+            spawn_tile_set: 1,
         }        
     }
     
@@ -81,8 +93,8 @@ impl ParticleDriver {
         
         false
     }
-    
 
+    
     pub fn drive(&mut self, dt: f64)  {
 
         let mut last_active_particle = -1;

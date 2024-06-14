@@ -246,7 +246,8 @@ impl App {
                             if p.active {
                                 // println!("p.tex={} pos {}, {}", p.tex_id, p.xpos, p.ypos);
 
-                                let tile = &world.layer_tileset[MAP_OBJECT_LAYER].tiles_by_id.get(&p.tex_id).unwrap();
+                                let set = mob.visual.particles.spawn_tile_set;
+                                let tile = &world.layer_tileset[set].tiles_by_id.get(&p.tex_id).unwrap();
                                 let tf = build_transform(&c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
         
                                 // world coordinates to screen coordinates

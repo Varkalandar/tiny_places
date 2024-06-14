@@ -372,16 +372,16 @@
       <Description>
         <version>4</version>
         <id>22</id>
-        <width>1</width>
-        <height>1</height>
+        <width>256</width>
+        <height>256</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>122</footX>
+        <footY>125</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>linear_ball_gradient</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -389,16 +389,16 @@
       <Description>
         <version>4</version>
         <id>23</id>
-        <width>1</width>
-        <height>1</height>
+        <width>256</width>
+        <height>256</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>126</footX>
+        <footY>125</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>light_soft</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -406,16 +406,16 @@
       <Description>
         <version>4</version>
         <id>24</id>
-        <width>1</width>
-        <height>1</height>
+        <width>256</width>
+        <height>256</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>125</footX>
+        <footY>126</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>light_hard</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -746,16 +746,16 @@
       <Description>
         <version>4</version>
         <id>44</id>
-        <width>1</width>
-        <height>1</height>
+        <width>160</width>
+        <height>161</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>75</footX>
+        <footY>77</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -763,16 +763,16 @@
       <Description>
         <version>4</version>
         <id>45</id>
-        <width>1</width>
-        <height>1</height>
+        <width>162</width>
+        <height>164</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>88</footX>
+        <footY>84</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -780,16 +780,16 @@
       <Description>
         <version>4</version>
         <id>46</id>
-        <width>1</width>
-        <height>1</height>
+        <width>165</width>
+        <height>164</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>83</footX>
+        <footY>83</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -797,16 +797,16 @@
       <Description>
         <version>4</version>
         <id>47</id>
-        <width>1</width>
-        <height>1</height>
+        <width>160</width>
+        <height>160</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>81</footX>
+        <footY>79</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -814,16 +814,16 @@
       <Description>
         <version>4</version>
         <id>48</id>
-        <width>1</width>
-        <height>1</height>
+        <width>165</width>
+        <height>161</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>82</footX>
+        <footY>79</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -831,16 +831,16 @@
       <Description>
         <version>4</version>
         <id>49</id>
-        <width>1</width>
-        <height>1</height>
+        <width>163</width>
+        <height>160</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>86</footX>
+        <footY>87</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -848,16 +848,16 @@
       <Description>
         <version>4</version>
         <id>50</id>
-        <width>1</width>
-        <height>1</height>
+        <width>156</width>
+        <height>158</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>73</footX>
+        <footY>80</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -865,16 +865,16 @@
       <Description>
         <version>4</version>
         <id>51</id>
-        <width>1</width>
-        <height>1</height>
+        <width>161</width>
+        <height>162</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>80</footX>
+        <footY>82</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -882,16 +882,16 @@
       <Description>
         <version>4</version>
         <id>52</id>
-        <width>1</width>
-        <height>1</height>
+        <width>208</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>102</footX>
+        <footY>88</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -899,16 +899,16 @@
       <Description>
         <version>4</version>
         <id>53</id>
-        <width>1</width>
-        <height>1</height>
+        <width>186</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>88</footX>
+        <footY>90</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -916,16 +916,16 @@
       <Description>
         <version>4</version>
         <id>54</id>
-        <width>1</width>
-        <height>1</height>
+        <width>171</width>
+        <height>169</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>90</footX>
+        <footY>88</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -933,16 +933,16 @@
       <Description>
         <version>4</version>
         <id>55</id>
-        <width>1</width>
-        <height>1</height>
+        <width>170</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>85</footX>
+        <footY>86</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -950,16 +950,16 @@
       <Description>
         <version>4</version>
         <id>56</id>
-        <width>1</width>
-        <height>1</height>
+        <width>172</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>85</footX>
+        <footY>85</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -967,16 +967,16 @@
       <Description>
         <version>4</version>
         <id>57</id>
-        <width>1</width>
-        <height>1</height>
+        <width>172</width>
+        <height>170</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>89</footX>
+        <footY>87</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -984,16 +984,16 @@
       <Description>
         <version>4</version>
         <id>58</id>
-        <width>1</width>
-        <height>1</height>
+        <width>171</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>83</footX>
+        <footY>84</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1001,16 +1001,16 @@
       <Description>
         <version>4</version>
         <id>59</id>
-        <width>1</width>
-        <height>1</height>
+        <width>171</width>
+        <height>171</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>86</footX>
+        <footY>88</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>elmos_fire_contrast</string>
         <string></string>
       </Metadata>
     </Tile>

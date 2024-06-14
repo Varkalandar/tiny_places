@@ -24,11 +24,11 @@ Instructions to build the server should be here ...
 
     java -jar tiny_places_server/dist/TinyPlacesServer.jar
 
-## Tiny Places Standalone
+## Fractal Lands (formerly Tiny Places Standalone)
 
-You need to have Rust installed on your computer to build the standalone version from source. Please see https://www.rust-lang.org/tools/install for further instructions. Once Rust is installed, you can compile and start the standalone version this way:
+You need to have Rust installed on your computer to build fractal lands from source. Please see https://www.rust-lang.org/tools/install for further instructions. Once Rust is installed, you can compile and start fractal lands this way:
 
-    cd tiny_places_standalone
+    cd fractal_lands
     cargo run
 
-Cargo is the build tool for Rust. It will download all dependencies needed to compile the standalone version and then run the created binary. To just build without running the binary, use "cargo build". "Cargo clean" will delete all artifacts created during the build process.
+Cargo is the build tool for Rust. It will download all dependencies needed to compile fractal lands and then run the created binary. To just build without running the binary, use "cargo build". "Cargo clean" will delete all artifacts created during the build process.
