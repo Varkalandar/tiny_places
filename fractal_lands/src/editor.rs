@@ -460,7 +460,7 @@ fn place_particle_generator(world: &mut GameWorld, pos: Vector2<f64>) {
         particles.spawn_ids.push(id+8);
     }
 
-    particles.spawn_chance = 60.0;
+    particles.spawn_chance = 30.0;
     particles.spawn_tile_set = MAP_CLOUD_LAYER;
 
     map.layers[layer].insert(mob_id, mob);

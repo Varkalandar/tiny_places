@@ -478,7 +478,73 @@ impl Map {
             Some(mob) => { func(mob); }
         }
     }
+
+
+    pub fn make_mobs(&mut self, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> Vec<MapObject> {
+
+        let count = rng.gen_range(min_count ..= max_count) as usize;
+        
+        let mut list: Vec<MapObject> = Vec::with_capacity(count);
+    
+        for i in 0 .. count {
+            let mut tries = 0;
+            
+            // don't place mobs in the same spot if possible
+            // 10 tries will be made to find a clear spot
+            loop {
+                let x = center[0] + spacing * rng.gen::<f64>() * 10.0 - 5.0;
+                let y = center[1] + spacing * rng.gen::<f64>() * 10.0 - 5.0;
+    
+                let mut ok = true;
+                for mob in &list {
+
+                    let dx = mob.position[0] - x;
+                    let dy = mob.position[1] - y;
+                    let d = dx * dx + dy * dy;
+                    
+                    // must be at least 20 units from each other
+                    ok = d > 20.0 * 20.0;
+                }
+
+                tries += 1;
+
+                if ok {
+                    let id = 1;
+                    let mob = self.factory.create_mob(id, MAP_OBJECT_LAYER, [x, y], 32.0, 1.0);
+                    list.push(mob);
+
+                    break; 
+                }
+                
+                if tries > 10 { 
+                    break; 
+                }
+            }
+                    
+        }
+    
+        list
+    }
+
+    
+    pub fn make_mob_group(&mut self, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> MobGroup {
+        let mut mobs = self.make_mobs(min_count, max_count, center, spacing, rng);
+        let mut list = Vec::new();
+
+        for i in (0..mobs.len()).rev() {
+            let mob = mobs.remove(i);
+            let id = mob.uid;
+
+            self.layers[MAP_OBJECT_LAYER].insert(id, mob);
+            list.push(id);
+        }
+
+
+        MobGroup::new(list, center)
+    }
+    
 }
+
 
 fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
 
