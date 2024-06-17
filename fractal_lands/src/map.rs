@@ -1,4 +1,4 @@
-use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized, vec2_square_len};
+use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_len, vec2_square_len};
 use std::f64::consts::PI;
 
 use std::io::prelude::*;
@@ -142,8 +142,14 @@ impl Map {
         let mut kill_list = Vec::new();
         let mut phit_list = Vec::new();
 
-        for group in &mut self.mob_groups {
-            group.update(dt, rng);
+        {
+            let groups = &mut self.mob_groups;
+            let mobs = &mut self.layers[MAP_OBJECT_LAYER];
+            let factory = &mut self.factory;
+
+            for group in groups {
+                group.update(self.player_id, dt, mobs, rng, factory);
+            }
         }
 
 
@@ -520,7 +526,6 @@ impl Map {
                     break; 
                 }
             }
-                    
         }
     
         list
@@ -539,10 +544,8 @@ impl Map {
             list.push(id);
         }
 
-
-        MobGroup::new(list, center)
+        MobGroup::new(list, center, true, rng)
     }
-    
 }
 
 
@@ -567,6 +570,21 @@ fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
 
         mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark, [0.5, 0.8, 1.0]);
     }
+}
+
+
+pub fn move_mob(mob: &mut MapObject, direction: Vector2<f64>, base_speed: f64) {
+
+    let distance = vec2_len(direction);
+    let time = distance / base_speed; // pixel per second
+
+    mob.move_time_left = time;
+    mob.velocity = vec2_scale(direction, 1.0/time);
+
+    let dest = vec2_add(mob.position, direction);
+
+    let d = mob.visual.orient(direction[0], direction[1]);
+    mob.visual.current_image_id = mob.visual.base_image_id + d;
 }
 
 
