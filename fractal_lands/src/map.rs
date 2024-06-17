@@ -20,6 +20,7 @@ use crate::animation::*;
 use crate::sound::Sound;
 use crate::SoundPlayer;
 use crate::mob_group::MobGroup;
+use crate::MAP_CREATURE_TILESET;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -205,8 +206,10 @@ impl Map {
 
         for (_key, mob) in &self.layers[MAP_OBJECT_LAYER] {
 
-            // projectiles may have hit something in the move
-            if mob.attributes.is_projectile {
+            let mob_type = mob.attributes.mob_type;
+            if mob_type == MobType::PlayerProjectile || mob_type == MobType::CreatureProjectile {
+
+                // projectiles may have hit something in the move
                 let target = self.find_nearest_object(MAP_OBJECT_LAYER, &mob.position, 80.0, mob.uid);
                 match target {
                     None => {}
@@ -219,10 +222,14 @@ impl Map {
 
         for (projectile, target) in phit_list {
 
-            self.handle_projectile_hit(projectile, target, rng, speaker);
-            kill_list.push(projectile);
+            // some projectiles can only hit certain targets, check if the hit was valid
+            let valid = self.handle_projectile_hit(projectile, target, rng, speaker);
 
-            self.animations.insert(target, Box::new(RemovalAnimation::new(0.7)));
+            if valid {
+                speaker.play_sound(Sound::FireballHit);
+                kill_list.push(projectile);
+                self.animations.insert(target, Box::new(RemovalAnimation::new(0.7)));
+            }
         }
 
         for id in kill_list {
@@ -254,30 +261,58 @@ impl Map {
     }
 
 
-    fn handle_projectile_hit(&mut self, projectle_uid: u64, target_uid: u64, rng: &mut StdRng, speaker: &mut SoundPlayer) {
+    fn handle_projectile_hit(&mut self, projectile_uid: u64, target_uid: u64, rng: &mut StdRng, speaker: &mut SoundPlayer) -> bool {
 
-        speaker.play_sound(Sound::FireballHit);
-
+        let projectile_type = self.layers[MAP_OBJECT_LAYER].get_mut(&projectile_uid).unwrap().attributes.mob_type;
         let target = self.layers[MAP_OBJECT_LAYER].get_mut(&target_uid).unwrap();
 
-        println!("Handle projectile hit, adding particles");
+        // projectiles can only hit "the enemy" or obstacles on the map
+        if projectile_type == MobType::PlayerProjectile &&
+            target.attributes.mob_type == MobType::Player {
+            // no, we do not shoot ourselves into the foot
+            return false;
+        }
+
+        if projectile_type == MobType::CreatureProjectile && 
+           target.attributes.mob_type == MobType::Creature {
+            return false;
+        }
+
+        // println!("Handle projectile hit, adding particles");
         let sparks = [403, 404, 1993, 1994, 1995, 1996, 1997];
 
         let z_off = target.visual.height * target.scale * 0.5;
 
-        for _i in 0..100 {
-            let xv = rng.gen::<f64>() * 2.0 - 1.0;
-            let yv = rng.gen::<f64>() * 2.0 - 1.0;
-            let zv = rng.gen::<f64>();
-            let speed = 100.0;
-            let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
-            let tile = sparks[rng.gen_range(0..sparks.len())];
+        if projectile_type == MobType::PlayerProjectile && 
+           target.attributes.mob_type == MobType::Creature {
+            for _i in 0..100 {
+                let xv = rng.gen::<f64>() * 2.0 - 1.0;
+                let yv = rng.gen::<f64>() * 2.0 - 1.0;
+                let zv = rng.gen::<f64>();
+                let speed = 100.0;
+                let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
+                let tile = sparks[rng.gen_range(0..sparks.len())];
 
-            let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
+                let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
 
-            target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
-            target.visual.color = [0.0, 0.0, 0.0, 0.0];            
+                target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
+                target.visual.color = [0.0, 0.0, 0.0, 0.0];            
+            }
+        
+            return true;
         }
+
+        // don't kill the player (yet)
+        false
+    }
+
+
+    pub fn populate(&mut self, _filename: &str, rng: &mut StdRng) {
+
+        let position = [1216.0, 1448.0];
+
+        let group = self.make_creature_group(41, 5, 9, position, 40.0, rng);
+        self.mob_groups.push(group);
     }
 
 
@@ -486,7 +521,7 @@ impl Map {
     }
 
 
-    pub fn make_mobs(&mut self, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> Vec<MapObject> {
+    pub fn make_creatures(&mut self, id: usize, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, scale: f64, rng: &mut StdRng) -> Vec<MapObject> {
 
         let count = rng.gen_range(min_count ..= max_count) as usize;
         
@@ -498,8 +533,8 @@ impl Map {
             // don't place mobs in the same spot if possible
             // 10 tries will be made to find a clear spot
             loop {
-                let x = center[0] + spacing * rng.gen::<f64>() * 10.0 - 5.0;
-                let y = center[1] + spacing * rng.gen::<f64>() * 10.0 - 5.0;
+                let x = center[0] + spacing * (rng.gen::<f64>() * 10.0 - 5.0);
+                let y = center[1] + spacing * (rng.gen::<f64>() * 10.0 - 5.0);
     
                 let mut ok = true;
                 for mob in &list {
@@ -515,8 +550,8 @@ impl Map {
                 tries += 1;
 
                 if ok {
-                    let id = 1;
-                    let mob = self.factory.create_mob(id, MAP_OBJECT_LAYER, [x, y], 32.0, 1.0);
+                    let mut mob = self.factory.create_mob(id, MAP_CREATURE_TILESET, [x, y], 32.0, scale);
+                    mob.attributes.mob_type = MobType::Creature;
                     list.push(mob);
 
                     break; 
@@ -532,8 +567,9 @@ impl Map {
     }
 
     
-    pub fn make_mob_group(&mut self, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> MobGroup {
-        let mut mobs = self.make_mobs(min_count, max_count, center, spacing, rng);
+    pub fn make_creature_group(&mut self, id: usize, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> MobGroup {
+        
+        let mut mobs = self.make_creatures(id, min_count, max_count, center, spacing, 0.5, rng);
         let mut list = Vec::new();
 
         for i in (0..mobs.len()).rev() {
@@ -542,6 +578,8 @@ impl Map {
 
             self.layers[MAP_OBJECT_LAYER].insert(id, mob);
             list.push(id);
+        
+            self.animations.insert(id, Box::new(SpinAnimation::new(24.0)));
         }
 
         MobGroup::new(list, center, true, rng)
@@ -573,15 +611,17 @@ fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
 }
 
 
-pub fn move_mob(mob: &mut MapObject, direction: Vector2<f64>, base_speed: f64) {
+pub fn move_mob(mob: &mut MapObject, destination: Vector2<f64>, base_speed: f64) {
+
+    let direction = vec2_sub(destination, mob.position);
+
+    println!("creature {} moves in direction {:?}", mob.uid, direction);
 
     let distance = vec2_len(direction);
     let time = distance / base_speed; // pixel per second
 
     mob.move_time_left = time;
     mob.velocity = vec2_scale(direction, 1.0/time);
-
-    let dest = vec2_add(mob.position, direction);
 
     let d = mob.visual.orient(direction[0], direction[1]);
     mob.visual.current_image_id = mob.visual.base_image_id + d;
@@ -676,7 +716,7 @@ impl MapObjectFactory {
 
         let attributes = MobAttributes {
             base_speed: 150.0,
-            is_projectile: false,
+            mob_type: MobType::MapObject,
         };
 
         let uid = self.next_id;
@@ -763,10 +803,19 @@ impl Visual {
     }
 }
 
+#[derive(PartialEq, Clone, Copy)]
+pub enum MobType {
+    MapObject,
+    Player,
+    Creature,
+    PlayerProjectile,
+    CreatureProjectile,
+}
+
 
 pub struct MobAttributes {
     pub base_speed: f64,
-    pub is_projectile: bool,
+    pub mob_type: MobType,
 }
 
 

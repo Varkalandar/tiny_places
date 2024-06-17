@@ -49,7 +49,7 @@ use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
-
+const MAP_CREATURE_TILESET: usize = 3;
 
 // Game structures
 
@@ -127,8 +127,10 @@ impl App {
             item_tiles,
             ];        
 
+        let mut rng = rand::rngs::StdRng::seed_from_u64(12345678901);
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         map.load("start.map");
+        map.populate("start.csv", &mut rng);
 
         let ui = UI::new(window_size);
         
@@ -163,7 +165,7 @@ impl App {
                 player_inventory: inv,
                 speaker: SoundPlayer::new(),
 
-                rng: rand::rngs::StdRng::seed_from_u64(12345678901),
+                rng,
 
                 map_texture,
                 map_backdrop,

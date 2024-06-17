@@ -19,6 +19,7 @@ use crate::TileSet;
 use crate::map::MoveEndAction;
 use crate::map::MapObject;
 use crate::map::MapObjectFactory;
+use crate::map::MobType;
 use crate::MAP_RESOURCE_PATH;
 use crate::MAP_OBJECT_LAYER;
 
@@ -75,7 +76,8 @@ impl UiController for Game {
                         let player = world.map.layers[MAP_OBJECT_LAYER].get_mut(&id).unwrap();
                         let factory =&mut world.map.factory;
 
-                        let projectile = fire_projectile(player.position, 25, pos, 200.0, factory);
+                        let projectile = fire_projectile(player.position, 25, pos, 200.0, 
+                                                         MobType::PlayerProjectile, factory);
                         world.map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
@@ -167,8 +169,9 @@ impl Game {
 }
 
 
-pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_type: usize, fire_at: Vector2<f64>, speed: f64, factory: &mut MapObjectFactory) -> MapObject {
-    println!("Adding projectile with type {} fired at {:?}", projectile_type, fire_at);
+pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_graphics: usize, fire_at: Vector2<f64>, speed: f64, 
+                       projectile_type: MobType, factory: &mut MapObjectFactory) -> MapObject {
+    println!("Adding projectile with type {} fired at {:?}", projectile_graphics, fire_at);
 
     let np = vec2_sub(fire_at, shooter_position);
 
@@ -177,11 +180,11 @@ pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_type: usize, f
 
     let start_pos = vec2_add(shooter_position, vec2_scale(dir, 80.0));
 
-    let mut projectile = factory.create_mob(projectile_type, 5, start_pos, 12.0, 1.0);
+    let mut projectile = factory.create_mob(projectile_graphics, 5, start_pos, 12.0, 1.0);
     projectile.velocity = velocity;
     projectile.move_time_left = 2.0;
     projectile.move_end_action = MoveEndAction::RemoveFromMap;
-    projectile.attributes.is_projectile = true;
+    projectile.attributes.mob_type = projectile_type;
 
     let offset = projectile.visual.orient(velocity[0], velocity[1]);
     projectile.visual.current_image_id = projectile.visual.base_image_id + offset;

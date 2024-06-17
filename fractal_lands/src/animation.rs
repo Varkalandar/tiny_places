@@ -17,17 +17,24 @@ impl Animated for NoAnimation {
 
 
 pub struct SpinAnimation {
+    speed: f64,
+}
 
+impl SpinAnimation {
+    pub fn new(speed: f64) -> SpinAnimation {
+        SpinAnimation {
+            speed,
+        }
+    }
 }
 
 impl Animated for SpinAnimation {
     fn update(&self, dt: f64, mob: &mut MapObject) {
         mob.animation_timer += dt;
 
-        let frame = (mob.animation_timer * 24.0) as usize;
+        let frame = (mob.animation_timer * self.speed) as usize;
         mob.visual.current_image_id = mob.visual.base_image_id + (frame % 8);
     }
-
 }
 
 
