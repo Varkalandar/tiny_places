@@ -3721,16 +3721,16 @@
       <Description>
         <version>4</version>
         <id>207</id>
-        <width>1</width>
-        <height>1</height>
+        <width>357</width>
+        <height>161</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>178</footX>
+        <footY>89</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_flower_bowl</string>
         <string></string>
       </Metadata>
     </Tile>
