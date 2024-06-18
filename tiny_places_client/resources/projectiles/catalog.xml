@@ -13581,16 +13581,16 @@
       <Description>
         <version>4</version>
         <id>799</id>
-        <width>1</width>
-        <height>1</height>
+        <width>6</width>
+        <height>6</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>2</footX>
+        <footY>2</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>steel_shot</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -13598,16 +13598,16 @@
       <Description>
         <version>4</version>
         <id>800</id>
-        <width>1</width>
-        <height>1</height>
+        <width>12</width>
+        <height>12</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>3</footX>
+        <footY>1</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>large_steel_shot</string>
         <string></string>
       </Metadata>
     </Tile>

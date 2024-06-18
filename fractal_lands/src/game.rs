@@ -76,7 +76,7 @@ impl UiController for Game {
                         let player = world.map.layers[MAP_OBJECT_LAYER].get_mut(&id).unwrap();
                         let factory =&mut world.map.factory;
 
-                        let projectile = fire_projectile(player.position, 25, pos, 200.0, 
+                        let projectile = fire_projectile(player.position, 25, pos, 400.0, 
                                                          MobType::PlayerProjectile, factory);
                         world.map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
@@ -180,11 +180,16 @@ pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_graphics: usiz
 
     let start_pos = vec2_add(shooter_position, vec2_scale(dir, 80.0));
 
-    let mut projectile = factory.create_mob(projectile_graphics, 5, start_pos, 12.0, 1.0);
+    let mut projectile = factory.create_mob(projectile_graphics, 5, start_pos, 12.0, 0.5);
     projectile.velocity = velocity;
     projectile.move_time_left = 2.0;
     projectile.move_end_action = MoveEndAction::RemoveFromMap;
     projectile.attributes.mob_type = projectile_type;
+
+    // single frame shots
+    if projectile_graphics >= 799 {
+        projectile.visual.frames = 1;
+    }
 
     let offset = projectile.visual.orient(velocity[0], velocity[1]);
     projectile.visual.current_image_id = projectile.visual.base_image_id + offset;

@@ -12783,15 +12783,15 @@ data
 Tile Description
 v.5
 799
-1 1
+6 6
 0 0
-0 0
+2 2
 End Of Header
 Item
 v.1
 data
 2
-
+steel_shot
 
 1
 0
@@ -12799,15 +12799,15 @@ data
 Tile Description
 v.5
 800
-1 1
+12 12
 0 0
-0 0
+3 1
 End Of Header
 Item
 v.1
 data
 2
-
+large_steel_shot
 
 1
 0

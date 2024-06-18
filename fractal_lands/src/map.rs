@@ -20,7 +20,7 @@ use crate::animation::*;
 use crate::sound::Sound;
 use crate::SoundPlayer;
 use crate::mob_group::MobGroup;
-use crate::MAP_CREATURE_TILESET;
+use crate::CREATURE_TILESET;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -189,7 +189,8 @@ impl Map {
 
             let animation_opt = self.animations.get(&mob.uid);
             match animation_opt {
-                None => {},
+                None => {
+                },
                 Some(animation) => {
                     animation.update(dt, mob);
                 }
@@ -228,7 +229,9 @@ impl Map {
             if valid {
                 speaker.play_sound(Sound::FireballHit);
                 kill_list.push(projectile);
-                self.animations.insert(target, Box::new(RemovalAnimation::new(0.7)));
+                
+                let start_time = self.layers[MAP_OBJECT_LAYER].get(&target).unwrap().animation_timer;
+                self.animations.insert(target, Box::new(RemovalAnimation::new(start_time, 0.7)));
             }
         }
 
@@ -284,19 +287,23 @@ impl Map {
         let z_off = target.visual.height * target.scale * 0.5;
 
         if projectile_type == MobType::PlayerProjectile && 
-           target.attributes.mob_type == MobType::Creature {
-            for _i in 0..100 {
+           target.attributes.mob_type == MobType::Creature &&
+           target.attributes.hit_points > 0 {
+            for _i in 0..10 {
                 let xv = rng.gen::<f64>() * 2.0 - 1.0;
                 let yv = rng.gen::<f64>() * 2.0 - 1.0;
                 let zv = rng.gen::<f64>();
-                let speed = 100.0;
+                let speed = 40.0;
                 let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
                 let tile = sparks[rng.gen_range(0..sparks.len())];
 
                 let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
 
                 target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
-                target.visual.color = [0.0, 0.0, 0.0, 0.0];            
+                target.visual.color = [0.0, 0.0, 0.0, 0.0];
+                
+                let damage = 10; // todo
+                target.attributes.hit_points -= damage;
             }
         
             return true;
@@ -550,8 +557,10 @@ impl Map {
                 tries += 1;
 
                 if ok {
-                    let mut mob = self.factory.create_mob(id, MAP_CREATURE_TILESET, [x, y], 32.0, scale);
+                    let mut mob = self.factory.create_mob(id, CREATURE_TILESET, [x, y], 32.0, scale);
                     mob.attributes.mob_type = MobType::Creature;
+                    mob.attributes.hit_points = 1;
+                    mob.animation_timer = rng.gen::<f64>(); // otherwise all start with the very same frame
                     list.push(mob);
 
                     break; 
@@ -716,6 +725,7 @@ impl MapObjectFactory {
 
         let attributes = MobAttributes {
             base_speed: 150.0,
+            hit_points: 0,
             mob_type: MobType::MapObject,
         };
 
@@ -815,6 +825,7 @@ pub enum MobType {
 
 pub struct MobAttributes {
     pub base_speed: f64,
+    pub hit_points: i32,
     pub mob_type: MobType,
 }
 

@@ -49,13 +49,14 @@ use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
-const MAP_CREATURE_TILESET: usize = 3;
+const CREATURE_TILESET: usize = 3;
+const ANIMATION_TILESET: usize = 7;
 
 // Game structures
 
 pub struct GameWorld {
     map: Map,
-    layer_tileset: [TileSet; 7],
+    layer_tileset: [TileSet; 8],
 
     player_inventory: Inventory,
 
@@ -116,6 +117,7 @@ impl App {
         let creature_tiles = TileSet::load("../tiny_places_client/resources/creatures", "creatures.tica");
         let player_tiles = TileSet::load("../tiny_places_client/resources/players", "players.tica");
         let projectile_tiles = TileSet::load("../tiny_places_client/resources/projectiles", "projectiles.tica");
+        let animation_tiles = TileSet::load("../tiny_places_client/resources/animations", "animations.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -125,6 +127,7 @@ impl App {
             player_tiles,
             projectile_tiles,
             item_tiles,
+            animation_tiles,
             ];        
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(12345678901);

@@ -75,8 +75,8 @@ impl MobGroup {
 
                             // world.speaker.play_sound(Sound::FireballLaunch);
 
-                            let projectile = fire_projectile(mob.position, 25, player_position, 200.0, 
-                                                            MobType::CreatureProjectile, factory);
+                            let projectile = fire_projectile(mob.position, 800, player_position, 200.0, 
+                                                             MobType::CreatureProjectile, factory);
                             mobs.insert(projectile.uid, projectile);
 
                             member.action_countdown = 1.0 + rng.gen::<f64>();
