@@ -184,7 +184,7 @@ pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_graphics: usiz
     projectile.velocity = velocity;
     projectile.move_time_left = 2.0;
     projectile.move_end_action = MoveEndAction::RemoveFromMap;
-    projectile.attributes.mob_type = projectile_type;
+    projectile.mob_type = projectile_type;
 
     // single frame shots
     if projectile_graphics >= 799 {

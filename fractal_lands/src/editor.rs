@@ -235,9 +235,9 @@ impl UiController for MapEditor {
                         println!("Found no object at {}, {}", pos[0], pos[1]);
                     },
                     Some(id) => {
-                        let object = map.layers[map.selected_layer].get_mut(&id).unwrap();
-                        println!("Found object {} at scale {}", object.uid, object.scale);
-                        object.scale += 0.05 * event.dy;
+                        let mob = map.layers[map.selected_layer].get_mut(&id).unwrap();
+                        println!("Found object {} at scale {}", mob.uid, mob.visual.scale);
+                        mob.visual.scale += 0.05 * event.dy;
                     }
                 }
             },
@@ -249,7 +249,7 @@ impl UiController for MapEditor {
         true
     }
 
-    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, _event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
 
         let player_position = &world.map.player_position();
         let mp = &ui.mouse_state.position;

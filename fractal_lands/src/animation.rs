@@ -73,7 +73,7 @@ impl Animated for RemovalAnimation {
             mob.visual.color = [1.0, 1.0, 1.0, 1.0];
             mob.visual.blend = Blend::Add;
             mob.visual.tileset_id = ANIMATION_TILESET;
-            mob.scale = 2.0;
+            mob.visual.scale = 1.5;
         }
         else {
             mob.update_action = UpdateAction::RemoveFromMap;

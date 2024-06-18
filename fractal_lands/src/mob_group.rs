@@ -111,7 +111,8 @@ impl MobGroup {
 
                             // println!("id=" + creature.id + "moves to " + x + ", " + y);
 
-                            move_mob(mob, [x, y], mob.attributes.base_speed);
+                            let creature = mob.creature.as_ref().unwrap();
+                            move_mob(mob, [x, y], creature.base_speed);
                             
                             member.action_countdown = 3.0 + rng.gen::<f64>() * 2.0;
                         }

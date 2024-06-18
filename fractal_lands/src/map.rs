@@ -14,6 +14,8 @@ use rand::rngs::StdRng;
 use piston_window::draw_state::Blend;
 
 use crate::item::Item;
+use crate::creature::Creature;
+use crate::creature::CreatureFactory;
 use crate::inventory::Inventory;
 use crate::particle_driver::ParticleDriver;
 use crate::animation::*;
@@ -49,7 +51,7 @@ pub struct Map {
     pub backdrop_image_name: String,
 
     pub factory: MapObjectFactory,
-
+    pub creature_factory: CreatureFactory,
     pub player_id: u64, 
 }
 
@@ -64,6 +66,7 @@ impl Map {
             current_image_id: 39,
             frames: 16, 
             height: 24.0,
+            scale: 1.0,
             color: [1.0, 1.0, 1.0, 1.0],
             blend: Blend::Alpha,
             particles: ParticleDriver::new(),       
@@ -73,11 +76,13 @@ impl Map {
             next_id: 1,
         };
 
+        let creature_factory = CreatureFactory::new();
+
         let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 24.0, 1.0);
         let player_id = player.uid;
         player.visual = player_visual;
         player.update_action = UpdateAction::EmitDriveParticles;
-
+        player.creature = Some(creature_factory.create("Player"));
         layers[MAP_OBJECT_LAYER].insert(player.uid, player);
 
         Map {
@@ -97,6 +102,7 @@ impl Map {
             backdrop_image_name: backdrop_image_name.to_string(),
         
             factory,
+            creature_factory,
             player_id,
         }
     }
@@ -207,7 +213,7 @@ impl Map {
 
         for (_key, mob) in &self.layers[MAP_OBJECT_LAYER] {
 
-            let mob_type = mob.attributes.mob_type;
+            let mob_type = mob.mob_type;
             if mob_type == MobType::PlayerProjectile || mob_type == MobType::CreatureProjectile {
 
                 // projectiles may have hit something in the move
@@ -227,11 +233,10 @@ impl Map {
             let valid = self.handle_projectile_hit(projectile, target, rng, speaker);
 
             if valid {
-                speaker.play_sound(Sound::FireballHit);
                 kill_list.push(projectile);
                 
                 let start_time = self.layers[MAP_OBJECT_LAYER].get(&target).unwrap().animation_timer;
-                self.animations.insert(target, Box::new(RemovalAnimation::new(start_time, 0.7)));
+                self.animations.insert(target, Box::new(RemovalAnimation::new(start_time, 0.3)));
             }
         }
 
@@ -266,34 +271,47 @@ impl Map {
 
     fn handle_projectile_hit(&mut self, projectile_uid: u64, target_uid: u64, rng: &mut StdRng, speaker: &mut SoundPlayer) -> bool {
 
-        let projectile_type = self.layers[MAP_OBJECT_LAYER].get_mut(&projectile_uid).unwrap().attributes.mob_type;
+        let projectile_type = self.layers[MAP_OBJECT_LAYER].get_mut(&projectile_uid).unwrap().mob_type;
         let target = self.layers[MAP_OBJECT_LAYER].get_mut(&target_uid).unwrap();
 
         // projectiles can only hit "the enemy" or obstacles on the map
         if projectile_type == MobType::PlayerProjectile &&
-            target.attributes.mob_type == MobType::Player {
+            target.mob_type == MobType::Player {
             // no, we do not shoot ourselves into the foot
             return false;
         }
 
         if projectile_type == MobType::CreatureProjectile && 
-           target.attributes.mob_type == MobType::Creature {
+           target.mob_type == MobType::Creature {
             return false;
         }
 
-        // println!("Handle projectile hit, adding particles");
+        // what to do about projectile-projectile hits?
+        if (projectile_type == MobType::CreatureProjectile ||
+            projectile_type == MobType::PlayerProjectile) && 
+           (target.mob_type == MobType::CreatureProjectile ||
+            target.mob_type == MobType::PlayerProjectile) {
+            return false;
+        } 
+    
+
+        println!("Handle projectile hit on {}", target.uid);
         let sparks = [403, 404, 1993, 1994, 1995, 1996, 1997];
 
-        let z_off = target.visual.height * target.scale * 0.5;
+        let z_off = target.visual.height * target.visual.scale * 0.5;
+        let creature = target.creature.as_mut().unwrap();
 
         if projectile_type == MobType::PlayerProjectile && 
-           target.attributes.mob_type == MobType::Creature &&
-           target.attributes.hit_points > 0 {
+           target.mob_type == MobType::Creature &&
+           creature.hit_points > 0 {
+
+            speaker.play_sound(Sound::FireballHit);
+
             for _i in 0..10 {
                 let xv = rng.gen::<f64>() * 2.0 - 1.0;
                 let yv = rng.gen::<f64>() * 2.0 - 1.0;
                 let zv = rng.gen::<f64>();
-                let speed = 40.0;
+
                 let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
                 let tile = sparks[rng.gen_range(0..sparks.len())];
 
@@ -303,7 +321,7 @@ impl Map {
                 target.visual.color = [0.0, 0.0, 0.0, 0.0];
                 
                 let damage = 10; // todo
-                target.attributes.hit_points -= damage;
+                creature.hit_points -= damage;
             }
         
             return true;
@@ -318,7 +336,7 @@ impl Map {
 
         let position = [1216.0, 1448.0];
 
-        let group = self.make_creature_group(41, 5, 9, position, 40.0, rng);
+        let group = self.make_creature_group("Targetting Drone", 5, 9, position, 40.0, rng);
         self.mob_groups.push(group);
     }
 
@@ -475,7 +493,7 @@ impl Map {
                 &object.position[0].to_string() + "," +
                 &object.position[1].to_string() + "," +
                 &object.visual.height.to_string() + "," +
-                &object.scale.to_string() + "," +
+                &object.visual.scale.to_string() + "," +
                 &color[0].to_string() + " " +
                 &color[1].to_string() + " " +
                 &color[2].to_string() + " " +
@@ -528,13 +546,15 @@ impl Map {
     }
 
 
-    pub fn make_creatures(&mut self, id: usize, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, scale: f64, rng: &mut StdRng) -> Vec<MapObject> {
+    pub fn make_creatures(&mut self, id: &str, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, scale: f64, rng: &mut StdRng) -> Vec<MapObject> {
 
         let count = rng.gen_range(min_count ..= max_count) as usize;
-        
+
         let mut list: Vec<MapObject> = Vec::with_capacity(count);
     
-        for i in 0 .. count {
+        for _i in 0 .. count {
+
+            let creature = self.creature_factory.create(id);
             let mut tries = 0;
             
             // don't place mobs in the same spot if possible
@@ -557,9 +577,9 @@ impl Map {
                 tries += 1;
 
                 if ok {
-                    let mut mob = self.factory.create_mob(id, CREATURE_TILESET, [x, y], 32.0, scale);
-                    mob.attributes.mob_type = MobType::Creature;
-                    mob.attributes.hit_points = 1;
+                    let mut mob = self.factory.create_mob(creature.base_tile_id, CREATURE_TILESET, [x, y], 32.0, scale);
+                    mob.mob_type = MobType::Creature;
+                    mob.creature = Some(creature);
                     mob.animation_timer = rng.gen::<f64>(); // otherwise all start with the very same frame
                     list.push(mob);
 
@@ -576,7 +596,7 @@ impl Map {
     }
 
     
-    pub fn make_creature_group(&mut self, id: usize, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> MobGroup {
+    pub fn make_creature_group(&mut self, id: &str, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, rng: &mut StdRng) -> MobGroup {
         
         let mut mobs = self.make_creatures(id, min_count, max_count, center, spacing, 0.5, rng);
         let mut list = Vec::new();
@@ -599,7 +619,7 @@ impl Map {
 fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
 
     let direction = vec2_scale(mob.velocity, -1.0);
-    let rad = 0.5;
+    let rad = 0.25;
 
     let chance_per_second = 20.0;
     let chance = chance_per_second * dt;
@@ -673,17 +693,16 @@ fn key_to_blend(key: &str) -> Blend {
 
 pub struct MapObject {
 
+    pub mob_type: MobType,
     pub uid: u64,
     pub visual: Visual,
-    pub attributes: MobAttributes,
+    pub creature: Option<Creature>,
     pub item: Option<Item>,
 
     // world coordinates of this object. Note that screen coordinates are different
     pub position: Vector2<f64>,
     pub velocity: Vector2<f64>,
     pub move_time_left: f64,
-
-    pub scale: f64,
 
     pub move_end_action: MoveEndAction,
     pub update_action: UpdateAction,
@@ -718,16 +737,18 @@ impl MapObjectFactory {
             frames: 8,
             tileset_id,
             height,
+            scale,
             color: [1.0, 1.0, 1.0, 1.0],
             blend: Blend::Alpha,
             particles: ParticleDriver::new(),
         };
 
-        let attributes = MobAttributes {
+        /*
+        let attributes = CreatureAttributes {
             base_speed: 150.0,
             hit_points: 0,
-            mob_type: MobType::MapObject,
         };
+        */
 
         let uid = self.next_id;
         self.next_id += 1;
@@ -735,15 +756,15 @@ impl MapObjectFactory {
         println!("MapObjectFactory: next id will be {}", self.next_id);
 
         MapObject {
+            mob_type: MobType::MapObject,
             uid,
             visual,
-            attributes,
+            creature: None,
             item: None,
 
             position, 
             velocity: [0.0, 0.0],
             move_time_left: 0.0,
-            scale,
 
             move_end_action: MoveEndAction::None,
             update_action: UpdateAction::None,
@@ -774,6 +795,7 @@ pub struct Visual {
     pub frames: usize,
     pub tileset_id: usize,
     pub height: f64,
+    pub scale: f64,
     pub color: [f32; 4],
     pub blend: Blend,
     pub particles: ParticleDriver,
@@ -820,13 +842,6 @@ pub enum MobType {
     Creature,
     PlayerProjectile,
     CreatureProjectile,
-}
-
-
-pub struct MobAttributes {
-    pub base_speed: f64,
-    pub hit_points: i32,
-    pub mob_type: MobType,
 }
 
 

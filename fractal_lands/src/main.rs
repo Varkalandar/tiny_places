@@ -23,10 +23,12 @@ use piston::input::{RenderArgs, RenderEvent,
 
 use piston_window::{PistonWindow, WindowSettings};
 
+use std::fs::read_to_string;
 use std::path::Path;
 use std::cmp::Ordering;
 
 mod item;
+mod creature;
 mod inventory;
 mod map;
 mod editor;
@@ -143,17 +145,17 @@ impl App {
         let mut inv = Inventory::new();
 
         let mut factory = ItemFactory::new();
-        let demo_item = factory.make_item(0);
+        let demo_item = factory.create(0);
         inv.put_item(demo_item, Slot::Bag);
 
-        let laser = factory.make_item(1);
+        let laser = factory.create(1);
         inv.put_item(laser, Slot::RWing);
 
-        let engine = factory.make_item(2);
+        let engine = factory.create(2);
         inv.put_item(engine, Slot::Bag);
 
         for plugin_no in 3..8 {
-            let plugin = factory.make_item(plugin_no);
+            let plugin = factory.create(plugin_no);
             inv.put_item(plugin, Slot::Bag);
         }
 
@@ -215,7 +217,7 @@ impl App {
                     
                     let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
-                    let tf = build_transform(&c.transform, &mob.position, mob.scale, tile.foot, player_position, window_center);        
+                    let tf = build_transform(&c.transform, &mob.position, mob.visual.scale, tile.foot, player_position, window_center);        
     
                     // mark selected item with an ellipse
                     if world.map.has_selection && 
@@ -409,8 +411,8 @@ impl App {
         let distance = vec2_len(direction);
 
         let player = self.world.map.layers[MAP_OBJECT_LAYER].get_mut(&self.world.map.player_id).unwrap();
-
-        let time = distance / player.attributes.base_speed; // pixel per second
+        let attributes = player.creature.as_ref().unwrap();
+        let time = distance / attributes.base_speed; // pixel per second
 
         player.move_time_left = time;
         player.velocity = vec2_scale(direction, 1.0/time);
@@ -422,6 +424,19 @@ impl App {
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);        
     }
+}
+
+
+pub fn read_lines(pathname: &str) -> Vec<String> {
+    let path = Path::new(pathname);    
+    let rs = read_to_string(path).unwrap();
+    let mut lines = Vec::new();
+    
+    for line in rs.lines() {
+        lines.push(line.to_string());
+    }
+
+    lines
 }
 
 

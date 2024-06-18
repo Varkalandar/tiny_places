@@ -1,9 +1,8 @@
-use std::fs::read_to_string;
-use std::path::Path;
 use std::fmt::Formatter;
 use core::str::Split;
 
 use crate::inventory::Slot;
+use crate::read_lines;
 
 #[derive(Debug)]
 pub struct Item {
@@ -66,7 +65,7 @@ impl ItemFactory {
     }
 
 
-    pub fn make_item(&mut self, key: usize) -> Item {
+    pub fn create(&mut self, key: usize) -> Item {
         let id = self.next_id;
         self.next_id += 1;
         
@@ -135,19 +134,6 @@ fn read_plugins() -> Vec<Item> {
     }
 
     plugins
-}
-
-
-fn read_lines(pathname: &str) -> Vec<String> {
-    let path = Path::new(pathname);    
-    let rs = read_to_string(path).unwrap();
-    let mut lines = Vec::new();
-    
-    for line in rs.lines() {
-        lines.push(line.to_string());
-    }
-
-    lines
 }
 
 
