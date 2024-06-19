@@ -16,6 +16,7 @@ use piston_window::draw_state::Blend;
 use crate::item::Item;
 use crate::creature::Creature;
 use crate::creature::CreatureFactory;
+use crate::projectile::ProjectileBuilder;
 use crate::inventory::Inventory;
 use crate::particle_driver::ParticleDriver;
 use crate::animation::*;
@@ -52,6 +53,7 @@ pub struct Map {
 
     pub factory: MapObjectFactory,
     pub creature_factory: CreatureFactory,
+    pub projectile_builder: ProjectileBuilder,
     pub player_id: u64, 
 }
 
@@ -64,7 +66,8 @@ impl Map {
             base_image_id: 39,
             tileset_id: 4,
             current_image_id: 39,
-            frames: 16, 
+            directions: 16,
+            phases: 1, 
             height: 24.0,
             scale: 1.0,
             color: [1.0, 1.0, 1.0, 1.0],
@@ -77,6 +80,7 @@ impl Map {
         };
 
         let creature_factory = CreatureFactory::new();
+        let projectile_builder = ProjectileBuilder::new();
 
         let mut player = factory.create_mob(39, 4, [1000.0, 1000.0], 24.0, 1.0);
         let player_id = player.uid;
@@ -103,6 +107,7 @@ impl Map {
         
             factory,
             creature_factory,
+            projectile_builder,
             player_id,
         }
     }
@@ -153,9 +158,10 @@ impl Map {
             let groups = &mut self.mob_groups;
             let mobs = &mut self.layers[MAP_OBJECT_LAYER];
             let factory = &mut self.factory;
+            let projectile_builder = &mut self.projectile_builder;
 
             for group in groups {
-                group.update(self.player_id, dt, mobs, rng, factory);
+                group.update(self.player_id, dt, mobs, rng, factory, projectile_builder);
             }
         }
 
@@ -299,32 +305,36 @@ impl Map {
         let sparks = [403, 404, 1993, 1994, 1995, 1996, 1997];
 
         let z_off = target.visual.height * target.visual.scale * 0.5;
-        let creature = target.creature.as_mut().unwrap();
+        let creature_opt = &mut target.creature;
 
-        if projectile_type == MobType::PlayerProjectile && 
-           target.mob_type == MobType::Creature &&
-           creature.hit_points > 0 {
+        if creature_opt.is_some() {
+           let creature = creature_opt.as_mut().unwrap();
 
-            speaker.play_sound(Sound::FireballHit);
+           if projectile_type == MobType::PlayerProjectile && 
+              target.mob_type == MobType::Creature &&
+              creature.hit_points > 0 {
 
-            for _i in 0..10 {
-                let xv = rng.gen::<f64>() * 2.0 - 1.0;
-                let yv = rng.gen::<f64>() * 2.0 - 1.0;
-                let zv = rng.gen::<f64>();
+                speaker.play_sound(Sound::FireballHit);
 
-                let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
-                let tile = sparks[rng.gen_range(0..sparks.len())];
+                for _i in 0..10 {
+                    let xv = rng.gen::<f64>() * 2.0 - 1.0;
+                    let yv = rng.gen::<f64>() * 2.0 - 1.0;
+                    let zv = rng.gen::<f64>();
 
-                let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
+                    let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
+                    let tile = sparks[rng.gen_range(0..sparks.len())];
 
-                target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
-                target.visual.color = [0.0, 0.0, 0.0, 0.0];
-                
-                let damage = 10; // todo
-                creature.hit_points -= damage;
+                    let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
+
+                    target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
+                    target.visual.color = [0.0, 0.0, 0.0, 0.0];
+                    
+                    let damage = 10; // todo
+                    creature.hit_points -= damage;
+                }
+            
+                return true;
             }
-        
-            return true;
         }
 
         // don't kill the player (yet)
@@ -400,7 +410,7 @@ impl Map {
 
         let layer = parts[0].parse::<usize>().unwrap();
         let tile_id = parts[1].parse::<usize>().unwrap();
-        let frames = parts[2].parse::<usize>().unwrap();
+        let directions = parts[2].parse::<usize>().unwrap();
 
         let x = parts[3].parse::<f64>().unwrap();
         let y = parts[4].parse::<f64>().unwrap();
@@ -422,7 +432,7 @@ impl Map {
         let mut mob = self.factory.create_mob(tile_id, layer, [x, y], height, scale);
         mob.visual.color = color;
         mob.visual.blend = blend;
-        mob.visual.frames = frames;
+        mob.visual.directions = directions;
 
         self.layers[layer].insert(mob.uid, mob);
     }
@@ -489,7 +499,7 @@ impl Map {
                 let line = 
                 layer.to_string() + "," +
                 &object.visual.base_image_id.to_string() + "," +
-                &object.visual.frames.to_string() + "," +
+                &object.visual.directions.to_string() + "," +
                 &object.position[0].to_string() + "," +
                 &object.position[1].to_string() + "," +
                 &object.visual.height.to_string() + "," +
@@ -652,7 +662,7 @@ pub fn move_mob(mob: &mut MapObject, destination: Vector2<f64>, base_speed: f64)
     mob.move_time_left = time;
     mob.velocity = vec2_scale(direction, 1.0/time);
 
-    let d = mob.visual.orient(direction[0], direction[1]);
+    let d = mob.visual.orient(direction);
     mob.visual.current_image_id = mob.visual.base_image_id + d;
 }
 
@@ -734,7 +744,8 @@ impl MapObjectFactory {
         let visual = Visual {
             base_image_id: tile_id,
             current_image_id: tile_id,
-            frames: 8,
+            directions: 8,
+            phases: 1,
             tileset_id,
             height,
             scale,
@@ -742,13 +753,6 @@ impl MapObjectFactory {
             blend: Blend::Alpha,
             particles: ParticleDriver::new(),
         };
-
-        /*
-        let attributes = CreatureAttributes {
-            base_speed: 150.0,
-            hit_points: 0,
-        };
-        */
 
         let uid = self.next_id;
         self.next_id += 1;
@@ -792,7 +796,8 @@ pub enum UpdateAction {
 pub struct Visual {
     pub base_image_id: usize,
     pub current_image_id: usize,
-    pub frames: usize,
+    pub directions: usize,
+    pub phases: usize, // animation phases per direction 
     pub tileset_id: usize,
     pub height: f64,
     pub scale: f64,
@@ -803,28 +808,28 @@ pub struct Visual {
 
 
 impl Visual {
-    pub fn orient(&self, dx: f64, dy: f64) -> usize {
-        let frames = self.frames;
+    pub fn orient(&self, direction: Vector2<f64>) -> usize {
+        let directions = self.directions;
         let mut result = 0;
 
-        if dx != 0.0 && dy != 0.0 {
+        if direction[0] != 0.0 && direction[1] != 0.0 {
             // calculate facing
-            let mut r = dy.atan2(dx);
+            let mut r = direction[1].atan2(direction[0]);
             
             // round to a segment
-            r = r + PI + PI * 2.0 / frames as f64;
+            r = r + PI + PI * 2.0 / directions as f64;
         
-            // calculate tile offsets from 0 to frames-1
+            // calculate tile offsets from 0 to directions-1
 
-            let f = (r * frames as f64)  / (PI * 2.0) - 0.5;
+            let f = (r * directions as f64)  / (PI * 2.0) - 0.5;
 
-            result = frames/2 + f.floor() as usize;
+            result = directions/2 + f.floor() as usize;
 
-            if result >= frames {
-                result = result - frames;
+            if result >= directions {
+                result = result - directions;
             }
 
-            println!("dx={} dy={} r={} frames={}", dx, dy, result, frames);
+            // println!("dx={} dy={} r={} directions={}", direction[0], direction[1], result, directions);
         } 
         else {
             // error case, zero length move
@@ -833,7 +838,16 @@ impl Visual {
 
         result
     }
+
+
+    pub fn orient_in_direction(&mut self, direction: Vector2<f64>) {
+        let offset = self.orient(direction);
+        self.current_image_id = self.base_image_id + offset;
+
+        println!("dx={} dy={} base={} offset={} directions={}", direction[0], direction[1], self.base_image_id, offset, self.directions);
+    }
 }
+
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum MobType {

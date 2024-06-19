@@ -1,7 +1,6 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
 use piston::{ButtonState, MouseButton};
-use piston_window::draw_state::Blend;
 use graphics::DrawState;
 use opengl_graphics::{GlGraphics, Texture, TextureSettings};
 use graphics::Viewport;
@@ -22,6 +21,7 @@ use crate::map::MapObjectFactory;
 use crate::map::MobType;
 use crate::MAP_RESOURCE_PATH;
 use crate::MAP_OBJECT_LAYER;
+use crate::PROJECTILE_TILESET;
 
 
 pub struct Game {
@@ -72,13 +72,16 @@ impl UiController for Game {
 
                         world.speaker.play_sound(Sound::FireballLaunch);
 
-                        let id = world.map.player_id;
-                        let player = world.map.layers[MAP_OBJECT_LAYER].get_mut(&id).unwrap();
-                        let factory =&mut world.map.factory;
+                        let map = &mut world.map;
+                        let id = map.player_id;
+                        let player = map.layers[MAP_OBJECT_LAYER].get_mut(&id).unwrap();
+                        let factory = &mut map.factory;
+                        // let direction = vec2_sub(pos, player.position);
 
-                        let projectile = fire_projectile(player.position, 25, pos, 400.0, 
-                                                         MobType::PlayerProjectile, factory);
-                        world.map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
+                        let mut projectile = fire_projectile(player.position, pos, 400.0, 
+                                                             MobType::PlayerProjectile, factory);
+                        map.projectile_builder.configure_projectile("Fireball", &mut projectile.visual, projectile.velocity);
+                        map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
@@ -169,9 +172,9 @@ impl Game {
 }
 
 
-pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_graphics: usize, fire_at: Vector2<f64>, speed: f64, 
+pub fn fire_projectile(shooter_position: Vector2<f64>, fire_at: Vector2<f64>, speed: f64, 
                        projectile_type: MobType, factory: &mut MapObjectFactory) -> MapObject {
-    println!("Adding projectile with type {} fired at {:?}", projectile_graphics, fire_at);
+    println!("New projectile fired at {:?}", fire_at);
 
     let np = vec2_sub(fire_at, shooter_position);
 
@@ -180,20 +183,11 @@ pub fn fire_projectile(shooter_position: Vector2<f64>, projectile_graphics: usiz
 
     let start_pos = vec2_add(shooter_position, vec2_scale(dir, 80.0));
 
-    let mut projectile = factory.create_mob(projectile_graphics, 5, start_pos, 12.0, 0.5);
+    let mut projectile = factory.create_mob(1, PROJECTILE_TILESET, start_pos, 12.0, 0.5);
     projectile.velocity = velocity;
     projectile.move_time_left = 2.0;
     projectile.move_end_action = MoveEndAction::RemoveFromMap;
     projectile.mob_type = projectile_type;
-
-    // single frame shots
-    if projectile_graphics >= 799 {
-        projectile.visual.frames = 1;
-    }
-
-    let offset = projectile.visual.orient(velocity[0], velocity[1]);
-    projectile.visual.current_image_id = projectile.visual.base_image_id + offset;
-    projectile.visual.blend = Blend::Add;
 
     projectile
 } 

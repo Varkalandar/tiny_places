@@ -30,6 +30,7 @@ use std::cmp::Ordering;
 mod item;
 mod creature;
 mod inventory;
+mod projectile;
 mod map;
 mod editor;
 mod game;
@@ -52,6 +53,7 @@ use sound::SoundPlayer;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
 const CREATURE_TILESET: usize = 3;
+const PROJECTILE_TILESET: usize = 5;
 const ANIMATION_TILESET: usize = 7;
 
 // Game structures
@@ -213,8 +215,10 @@ impl App {
 
                 for mob in objects {
                     let tileset_id = mob.visual.tileset_id;
-                    let set = &world.layer_tileset[tileset_id];
-                    
+
+                    // println!("Accessing mob {} with tile {} from tileset {}", mob.uid, mob.visual.current_image_id, tileset_id);
+
+                    let set = &world.layer_tileset[tileset_id];                    
                     let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
                     let tf = build_transform(&c.transform, &mob.position, mob.visual.scale, tile.foot, player_position, window_center);        
@@ -419,7 +423,7 @@ impl App {
 
         let dest = vec2_add(player.position, direction);
 
-        let d = player.visual.orient(direction[0], direction[1]);
+        let d = player.visual.orient(direction);
         player.visual.current_image_id = player.visual.base_image_id + d;
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);        

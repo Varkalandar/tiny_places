@@ -9,6 +9,7 @@ use crate::map::MapObjectFactory;
 use crate::map::MobType;
 use crate::map::move_mob;
 use crate::game::fire_projectile;
+use crate::projectile::ProjectileBuilder;
 
 
 pub struct MobGroup {
@@ -49,7 +50,8 @@ impl MobGroup {
     }
 
 
-    pub fn update(&mut self, player_id: u64, dt: f64, mobs: &mut HashMap<u64, MapObject>, rng: &mut StdRng, factory: &mut MapObjectFactory) {
+    pub fn update(&mut self, player_id: u64, dt: f64, mobs: &mut HashMap<u64, MapObject>, rng: &mut StdRng, 
+                  factory: &mut MapObjectFactory, projectile_builder: &mut ProjectileBuilder) {
             
         let player_position = mobs.get(&player_id).unwrap().position;
 
@@ -75,8 +77,9 @@ impl MobGroup {
 
                             // world.speaker.play_sound(Sound::FireballLaunch);
 
-                            let projectile = fire_projectile(mob.position, 800, player_position, 200.0, 
+                            let mut projectile = fire_projectile(mob.position, player_position, 200.0, 
                                                              MobType::CreatureProjectile, factory);
+                            projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, projectile.velocity);
                             mobs.insert(projectile.uid, projectile);
 
                             member.action_countdown = 1.0 + rng.gen::<f64>();

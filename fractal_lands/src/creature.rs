@@ -28,6 +28,7 @@ impl CreatureFactory {
 
     pub fn new() -> CreatureFactory {
         let prototypes = read_creature_prototypes();
+
         CreatureFactory {
             prototypes,
         }
@@ -56,7 +57,6 @@ fn read_creature_prototypes() -> HashMap <String, CreaturePrototype> {
         let mut parts = lines[i].split(",");
 
         let name = parts.next().unwrap().to_string();
-
 
         prototypes.insert(name, 
             CreaturePrototype {
