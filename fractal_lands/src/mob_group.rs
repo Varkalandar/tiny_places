@@ -82,9 +82,8 @@ impl MobGroup {
                             let reach = 500.0 * 500.0;
                             if len < reach {
 
-                                let mut projectile = fire_projectile(mob.position, player_position, 200.0, 
-                                MobType::CreatureProjectile, factory);
-                                projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, projectile.velocity, speaker);
+                                let mut projectile = fire_projectile(mob.position, player_position, MobType::CreatureProjectile, factory);
+                                projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, &mut projectile.velocity, speaker);
                                 mobs.insert(projectile.uid, projectile);
 
                                 member.action_countdown = 1.0 + rng.gen::<f64>();

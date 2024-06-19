@@ -73,9 +73,8 @@ impl UiController for Game {
                         let factory = &mut map.factory;
                         // let direction = vec2_sub(pos, player.position);
 
-                        let mut projectile = fire_projectile(player.position, pos, 400.0, 
-                                                             MobType::PlayerProjectile, factory);
-                        map.projectile_builder.configure_projectile("Fireball", &mut projectile.visual, projectile.velocity, &mut world.speaker);
+                        let mut projectile = fire_projectile(player.position, pos, MobType::PlayerProjectile, factory);
+                        map.projectile_builder.configure_projectile("Fireball", &mut projectile.visual, &mut projectile.velocity, &mut world.speaker);
                         map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
@@ -139,7 +138,7 @@ impl UiController for Game {
         let speaker = &mut world.speaker;
         map.update(dt, rng, speaker);
 
-        let reload = map.check_player_transition();
+        let reload = map.check_player_transition(rng);
 
         if reload {
             let map_texture = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + &map.map_image_name)), &TextureSettings::new()).unwrap();
@@ -167,19 +166,16 @@ impl Game {
 }
 
 
-pub fn fire_projectile(shooter_position: Vector2<f64>, fire_at: Vector2<f64>, speed: f64, 
+pub fn fire_projectile(shooter_position: Vector2<f64>, fire_at: Vector2<f64>, 
                        projectile_type: MobType, factory: &mut MapObjectFactory) -> MapObject {
     println!("New projectile fired at {:?}", fire_at);
 
     let np = vec2_sub(fire_at, shooter_position);
-
     let dir = vec2_normalized(np);
-    let velocity = vec2_scale(dir, speed);
-
     let start_pos = vec2_add(shooter_position, vec2_scale(dir, 80.0));
 
     let mut projectile = factory.create_mob(1, PROJECTILE_TILESET, start_pos, 12.0, 0.5);
-    projectile.velocity = velocity;
+    projectile.velocity = dir;
     projectile.move_time_left = 2.0;
     projectile.move_end_action = MoveEndAction::RemoveFromMap;
     projectile.mob_type = projectile_type;

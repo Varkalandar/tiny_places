@@ -23,6 +23,7 @@ use piston::input::{RenderArgs, RenderEvent,
 
 use piston_window::{PistonWindow, WindowSettings};
 
+use std::time::SystemTime;
 use std::fs::read_to_string;
 use std::path::Path;
 use std::cmp::Ordering;
@@ -99,6 +100,8 @@ pub struct App {
 
     world: GameWorld,
     controllers: GameControllers,
+
+    update_time: SystemTime,
 }
 
 
@@ -134,10 +137,9 @@ impl App {
             animation_tiles,
             ];        
 
-        let mut rng = rand::rngs::StdRng::seed_from_u64(12345678901);
+        let rng = rand::rngs::StdRng::seed_from_u64(12345678901);
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         map.load("start.map");
-        map.populate("start.csv", &mut rng);
 
         let ui = UI::new(window_size);
         
@@ -181,7 +183,9 @@ impl App {
                 editor,
                 game,
                 edit: true,
-            }
+            },
+
+            update_time: SystemTime::now(),
         }
     }
 
@@ -320,9 +324,16 @@ impl App {
     }
 
 
-    fn update(&mut self, args: &UpdateArgs) {
+    fn update(&mut self, _args: &UpdateArgs) {
         let world = &mut self.world;
-        self.controllers.current().update(world, args.dt);
+
+        let now = SystemTime::now();
+        let difference = now.duration_since(self.update_time);
+
+        if difference.is_ok() {
+            self.update_time = now;
+            self.controllers.current().update(world, difference.unwrap().as_secs_f64());
+        }
     }
 
 

@@ -70,7 +70,7 @@ impl Map {
             directions: 16,
             phases: 1, 
             height: 24.0,
-            scale: 1.0,
+            scale: 0.75,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
             blend: Blend::Alpha,
@@ -255,7 +255,7 @@ impl Map {
     }
 
 
-    pub fn check_player_transition(&mut self) -> bool {
+    pub fn check_player_transition(&mut self, rng: &mut StdRng) -> bool {
         let player = self.layers[MAP_OBJECT_LAYER].get(&self.player_id).unwrap();
         let pos = player.position;
         let mut best_map = -1;
@@ -270,6 +270,8 @@ impl Map {
 
         if best_map >= 0 {
             self.load("warmup.map");
+            self.populate("warmup.csv", rng);
+
             return true;
         }
 
@@ -420,7 +422,7 @@ impl Map {
         let scale = parts[6].parse::<f64>().unwrap();
 
         // parts[7] is an RGBA tuple
-        let mut color = parse_rgba(parts[7]);
+        let color = parse_rgba(parts[7]);
         let blend = key_to_blend(parts[8]);
 
         println!("{}, {}, {}, {}, {}, {}, {:?}, {:?}", layer, tile_id, x, y, height, scale, color, blend);
@@ -614,7 +616,7 @@ impl Map {
             self.layers[MAP_OBJECT_LAYER].insert(id, mob);
             list.push(id);
         
-            self.animations.insert(id, Box::new(SpinAnimation::new(24.0)));
+            self.animations.insert(id, Box::new(SpinAnimation::new(12.0)));
         }
 
         MobGroup::new(list, center, true, rng)
