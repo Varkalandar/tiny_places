@@ -24,6 +24,7 @@ use crate::sound::Sound;
 use crate::SoundPlayer;
 use crate::mob_group::MobGroup;
 use crate::CREATURE_TILESET;
+use crate::parse_rgba;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -71,6 +72,7 @@ impl Map {
             height: 24.0,
             scale: 1.0,
             color: [1.0, 1.0, 1.0, 1.0],
+            glow: [1.0, 1.0, 1.0, 1.0],
             blend: Blend::Alpha,
             particles: ParticleDriver::new(),       
         };
@@ -161,7 +163,7 @@ impl Map {
             let projectile_builder = &mut self.projectile_builder;
 
             for group in groups {
-                group.update(self.player_id, dt, mobs, rng, factory, projectile_builder);
+                group.update(self.player_id, dt, mobs, rng, factory, projectile_builder, speaker);
             }
         }
 
@@ -314,7 +316,7 @@ impl Map {
               target.mob_type == MobType::Creature &&
               creature.hit_points > 0 {
 
-                speaker.play_sound(Sound::FireballHit);
+                speaker.play(Sound::FireballHit, 0.5);
 
                 for _i in 0..10 {
                     let xv = rng.gen::<f64>() * 2.0 - 1.0;
@@ -418,13 +420,7 @@ impl Map {
         let scale = parts[6].parse::<f64>().unwrap();
 
         // parts[7] is an RGBA tuple
-        let mut color_in = parts[7].split(" ");
-
-        let mut color: [f32; 4] = [0.0; 4];
-        for i in 0..4 {
-            color[i] = color_in.next().unwrap().parse::<f32>().unwrap();
-        }
-
+        let mut color = parse_rgba(parts[7]);
         let blend = key_to_blend(parts[8]);
 
         println!("{}, {}, {}, {}, {}, {}, {:?}, {:?}", layer, tile_id, x, y, height, scale, color, blend);
@@ -750,6 +746,7 @@ impl MapObjectFactory {
             height,
             scale,
             color: [1.0, 1.0, 1.0, 1.0],
+            glow: [1.0, 1.0, 1.0, 1.0],
             blend: Blend::Alpha,
             particles: ParticleDriver::new(),
         };
@@ -802,6 +799,7 @@ pub struct Visual {
     pub height: f64,
     pub scale: f64,
     pub color: [f32; 4],
+    pub glow: [f32; 4], // ground illumination color
     pub blend: Blend,
     pub particles: ParticleDriver,
 }

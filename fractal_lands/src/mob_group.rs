@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rand::Rng;
 use rand::rngs::StdRng;
-use vecmath::Vector2;
+use vecmath::{Vector2, vec2_sub, vec2_square_len};
 
 use crate::map::MapObject;
 use crate::map::MapObjectFactory;
@@ -10,6 +10,7 @@ use crate::map::MobType;
 use crate::map::move_mob;
 use crate::game::fire_projectile;
 use crate::projectile::ProjectileBuilder;
+use crate::SoundPlayer;
 
 
 pub struct MobGroup {
@@ -51,7 +52,8 @@ impl MobGroup {
 
 
     pub fn update(&mut self, player_id: u64, dt: f64, mobs: &mut HashMap<u64, MapObject>, rng: &mut StdRng, 
-                  factory: &mut MapObjectFactory, projectile_builder: &mut ProjectileBuilder) {
+                  factory: &mut MapObjectFactory, projectile_builder: &mut ProjectileBuilder,
+                  speaker: &mut SoundPlayer) {
             
         let player_position = mobs.get(&player_id).unwrap().position;
 
@@ -75,14 +77,18 @@ impl MobGroup {
                         // fire at a player?
                         if rng.gen::<f64>() < 0.25 {
 
-                            // world.speaker.play_sound(Sound::FireballLaunch);
+                            // player in range?
+                            let len = vec2_square_len(vec2_sub(mob.position, player_position));
+                            let reach = 500.0 * 500.0;
+                            if len < reach {
 
-                            let mut projectile = fire_projectile(mob.position, player_position, 200.0, 
-                                                             MobType::CreatureProjectile, factory);
-                            projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, projectile.velocity);
-                            mobs.insert(projectile.uid, projectile);
+                                let mut projectile = fire_projectile(mob.position, player_position, 200.0, 
+                                MobType::CreatureProjectile, factory);
+                                projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, projectile.velocity, speaker);
+                                mobs.insert(projectile.uid, projectile);
 
-                            member.action_countdown = 1.0 + rng.gen::<f64>();
+                                member.action_countdown = 1.0 + rng.gen::<f64>();
+                            }
                         }
                         else if member.mobile {
                             

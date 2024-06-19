@@ -8,13 +8,10 @@ use graphics::Viewport;
 use std::path::Path;
 
 use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
-use crate::sound::Sound;
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
 use crate::TileSet;
-
-// use crate::Map;
 use crate::map::MoveEndAction;
 use crate::map::MapObject;
 use crate::map::MapObjectFactory;
@@ -70,8 +67,6 @@ impl UiController for Game {
 
                     if event.args.button == piston::Button::Mouse(MouseButton::Right) {
 
-                        world.speaker.play_sound(Sound::FireballLaunch);
-
                         let map = &mut world.map;
                         let id = map.player_id;
                         let player = map.layers[MAP_OBJECT_LAYER].get_mut(&id).unwrap();
@@ -80,7 +75,7 @@ impl UiController for Game {
 
                         let mut projectile = fire_projectile(player.position, pos, 400.0, 
                                                              MobType::PlayerProjectile, factory);
-                        map.projectile_builder.configure_projectile("Fireball", &mut projectile.visual, projectile.velocity);
+                        map.projectile_builder.configure_projectile("Fireball", &mut projectile.visual, projectile.velocity, &mut world.speaker);
                         map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 

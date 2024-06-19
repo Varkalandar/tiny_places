@@ -52,13 +52,18 @@ impl SoundPlayer {
         }
     }
 
-    pub fn play_sound(&self, id: Sound) {
+    pub fn play(&self, id: Sound, volume: f32) {
         let index = id as usize;
+        self.play_sound(index, volume)
+    }
+
+    pub fn play_sound(&self, index: usize, volume: f32) {
+
         println!("Playing sound {}", index);
 
         for sink in &self.sinks {
             if sink.empty() {
-                sink.set_volume(0.5);
+                sink.set_volume(volume);
                 sink.append(self.sources[index].clone());
                 return;
             }

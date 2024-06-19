@@ -244,7 +244,7 @@ impl App {
                         let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
 
                         let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
-                        let image = build_image(glow_tile, [0.5, 0.375, 0.2, 1.0]);
+                        let image = build_image(glow_tile, mob.visual.glow);
                         image.draw(&glow_tile.tex, &ds.blend(Blend::Add), tf, gl);
                     }
 
@@ -441,6 +441,18 @@ pub fn read_lines(pathname: &str) -> Vec<String> {
     }
 
     lines
+}
+
+
+pub fn parse_rgba(color_str: &str) -> [f32; 4] {
+    let mut color_iter = color_str.split(" ");
+
+    let mut color: [f32; 4] = [0.0; 4];
+    for i in 0..4 {
+        color[i] = color_iter.next().unwrap().parse::<f32>().unwrap();
+    }
+
+    color
 }
 
 

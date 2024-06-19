@@ -47,7 +47,7 @@ impl UiController for MapEditor {
                         }
                         else {
                             let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
-                            world.speaker.play_sound(Sound::Click);
+                            world.speaker.play(Sound::Click, 0.5);
                             println!("creating map object {} at {:?}", id, pos);
                             
                             let map = &mut world.map;
@@ -201,7 +201,7 @@ impl UiController for MapEditor {
                         println!("Selected tile id={}", id);
 
                         if id > 0 {
-                            world.speaker.play_sound(Sound::Click);
+                            world.speaker.play(Sound::Click, 0.5);
                             self.selected_tile_id = id;
                             ui.root.head.clear();
     
