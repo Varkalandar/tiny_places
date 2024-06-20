@@ -23,7 +23,7 @@ pub struct PlayerInventoryView {
     item_tiles: TileSet,
 
     slot_offsets: HashMap<Slot, [i32; 2]>,
-    slot_sizes: HashMap<Slot, (i32, i32)>,
+    slot_sizes: HashMap<Slot, [i32; 2]>,
 
     hover_item: Option<usize>,
     dragged_item: Option<usize>,
@@ -43,10 +43,13 @@ impl PlayerInventoryView {
         let mut slot_offsets = HashMap::new();
         slot_offsets.insert(Slot::Bag, [10, 452]);
         slot_offsets.insert(Slot::RWing, [20, 205]);
+        slot_offsets.insert(Slot::Engine, [214, 96]);
 
         let mut slot_sizes = HashMap::new();
-        slot_sizes.insert(Slot::LWing, (2*32, 3*32));
-        slot_sizes.insert(Slot::RWing, (2*32, 3*32));
+        slot_sizes.insert(Slot::Bag, [16*32, 10*32]); // todo
+        slot_sizes.insert(Slot::LWing, [2*32, 3*32]);
+        slot_sizes.insert(Slot::RWing, [2*32, 3*32]);
+        slot_sizes.insert(Slot::Engine, [2*32, 3*32]);
 
         PlayerInventoryView {
             area: UiArea {
@@ -70,10 +73,10 @@ impl PlayerInventoryView {
     }
 
 
-    fn find_slot_size(&self, item: &Item, slot: Slot) -> (i32, i32) {
+    fn find_slot_size(&self, item: &Item, slot: Slot) -> [i32; 2] {
 
         if slot == Slot::Bag {
-            (item.inventory_w * 32, item.inventory_h * 32)
+            [item.inventory_w * 32, item.inventory_h * 32]
         }
         else {
             *self.slot_sizes.get(&slot).unwrap()
@@ -126,6 +129,23 @@ impl PlayerInventoryView {
     }
 
 
+    fn find_slot_at(&self, mx: i32, my: i32) -> Option<Slot> {
+        let area = &self.area;
+
+        for key in self.slot_offsets.keys() {
+            let offset = self.slot_offsets.get(key).unwrap();
+            let size = self.slot_sizes.get(key).unwrap();
+        
+            if mx >= offset[0] && my >= offset[1] &&
+               mx < offset[0] + size[0] && my < offset[1] + size[1] {
+                return Some(*key);
+            }
+        }
+ 
+        None
+    }
+
+
     fn find_item_at(&self, inventory: &Inventory, mx: i32, my: i32) -> Option<usize> {
         let area = &self.area;
 
@@ -136,10 +156,10 @@ impl PlayerInventoryView {
                 let entry_y = area.y + offsets[1] + entry.location_y * 32;
                 
                 let item = inventory.bag.get(&entry.item_id).unwrap();
-                let (w, h) = self.find_slot_size(item, entry.slot);
+                let size = self.find_slot_size(item, entry.slot);
 
                 if mx >= entry_x && my >= entry_y &&
-                   mx < entry_x + w && my < entry_y + h {
+                   mx < entry_x + size[0] && my < entry_y + size[1] {
                     // println!("Found {}", &item.name);
                     return Some(item.id);
                 }
@@ -207,8 +227,8 @@ impl PlayerInventoryView {
                     
                     let item = inventory.bag.get(&entry.item_id).unwrap();
                     let size = self.find_slot_size(item, entry.slot);
-                    let w = size.0 as f64;
-                    let h = size.1 as f64;
+                    let w = size[0] as f64;
+                    let h = size[1] as f64;
 
                     if self.hover_item == Some(item.id) {
                         let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
@@ -283,23 +303,40 @@ impl PlayerInventoryView {
                     let item = inventory.bag.get(&id).unwrap();
 
                     world.speaker.play(Sound::Click, 0.5);
-                    println!("Dropped an {}", item.name);
 
                     let idx = inventory.find_entry_for_id(id).unwrap();
                     let entry: &mut Entry = &mut inventory.entries[idx];
                     
                     let offsets = self.slot_offsets.get(&Slot::Bag).unwrap();
 
-                    let rel_x = (mouse.position[0] as i32) - self.area.x - offsets[0];
-                    let rel_y = (mouse.position[1] as i32) - self.area.y - offsets[1];
+                    let mx = (mouse.position[0] as i32) - self.area.x;
+                    let my = (mouse.position[1] as i32) - self.area.y;
+                    let rel_x = mx - offsets[0];
+                    let rel_y = my - offsets[1];
                     
-                    entry.location_x = rel_x / 32;
-                    entry.location_y = rel_y / 32;
-                    entry.slot = Slot::Bag; // todo, find real slot
+                    let slot_opt = self.find_slot_at(mx, my);
 
-                    self.dragged_item = None;
+                    if slot_opt.is_some() {
+                        let slot = slot_opt.unwrap();
+                        entry.slot = slot;
+                        self.dragged_item = None;
 
-                    return true;
+                        println!("Dropped an {} to slot {:?}", item.name, slot);
+
+                        if slot == Slot::Bag {
+                            entry.location_x = rel_x / 32;
+                            entry.location_y = rel_y / 32;
+                        }
+                        else {
+                            entry.location_x = 0;
+                            entry.location_y = 0;
+                        }
+    
+                        return true;
+                    }
+                    else {
+                        println!("No suitable drop location {}, {}", mx, my);
+                    }
                 }
             }
         }

@@ -79,7 +79,7 @@ impl UiController for Game {
                     }
 
                     if event.args.button == piston::Button::Keyboard(piston::Key::I) {
-                        self.show_inventory = true;
+                        self.show_inventory = !self.show_inventory;
                     }        
                 },
                 Some(_comp) => {
