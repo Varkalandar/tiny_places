@@ -3471,32 +3471,32 @@ data
 Tile Description
 v.5
 205
-1 1
+246 243
 0 0
-0 0
+127 194
 End Of Header
 Item
 v.1
 data
 2
-
-
+wormy_cube
+alien
 1
 0
 0
 Tile Description
 v.5
 206
-1 1
+254 237
 0 0
-0 0
+130 165
 End Of Header
 Item
 v.1
 data
 2
-
-
+cosmic_cauliflower
+alien
 1
 0
 0

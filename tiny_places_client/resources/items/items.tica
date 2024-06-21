@@ -543,7 +543,7 @@ data
 Tile Description
 v.5
 34
-1 1
+72 72
 0 0
 0 0
 End Of Header
@@ -551,8 +551,8 @@ Item
 v.1
 data
 2
-
-
+angry_high_power
+alien
 1
 0
 0

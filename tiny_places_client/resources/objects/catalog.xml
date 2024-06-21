@@ -3687,34 +3687,34 @@
       <Description>
         <version>4</version>
         <id>205</id>
-        <width>1</width>
-        <height>1</height>
+        <width>246</width>
+        <height>243</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>127</footX>
+        <footY>194</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>wormy_cube</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
       <Description>
         <version>4</version>
         <id>206</id>
-        <width>1</width>
-        <height>1</height>
+        <width>254</width>
+        <height>237</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>130</footX>
+        <footY>165</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>cosmic_cauliflower</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
