@@ -610,8 +610,8 @@
       <Description>
         <version>4</version>
         <id>36</id>
-        <width>1</width>
-        <height>1</height>
+        <width>78</width>
+        <height>78</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -619,8 +619,8 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
-        <string></string>
+        <string>plugin_compute</string>
+        <string>alien</string>
       </Metadata>
     </Tile>
     <Tile>
