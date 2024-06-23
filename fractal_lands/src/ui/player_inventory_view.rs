@@ -42,6 +42,8 @@ impl PlayerInventoryView {
 
         let mut slot_offsets = HashMap::new();
         slot_offsets.insert(Slot::Bag, [10, 452]);
+        slot_offsets.insert(Slot::Body, [204, 213]);
+        slot_offsets.insert(Slot::LWing, [400, 202]);
         slot_offsets.insert(Slot::RWing, [20, 205]);
         slot_offsets.insert(Slot::Engine, [214, 96]);
 
@@ -50,6 +52,7 @@ impl PlayerInventoryView {
         slot_sizes.insert(Slot::LWing, [2*32, 3*32]);
         slot_sizes.insert(Slot::RWing, [2*32, 3*32]);
         slot_sizes.insert(Slot::Engine, [2*32, 3*32]);
+        slot_sizes.insert(Slot::Body, [2*32, 3*32]);
 
         PlayerInventoryView {
             area: UiArea {
@@ -171,23 +174,25 @@ impl PlayerInventoryView {
 
 
     fn draw_item(&self, gl: &mut GlGraphics, draw_state: &DrawState, tf: Matrix2d<f64>,
-                 id: usize, entry_x: f64, entry_y: f64, w: f64, h: f64, inventory_scale: f64) {
+                 id: usize, entry_x: f64, entry_y: f64, slot_w: f64, slot_h: f64,
+                 item_inventory_w: f64 , item_inventory_h: f64,
+                 inventory_scale: f64) {
 
         let tile = self.item_tiles.tiles_by_id.get(&id).unwrap();
 
         let mut tw = tile.tex.get_width() as f64;
         let mut th = tile.tex.get_height() as f64;
 
-        let s1 = w / tw;
-        let s2 = h / th;
+        let s1 = item_inventory_w / tw;
+        let s2 = item_inventory_h / th;
 
         let scale = if s1 < s2 { s1 } else { s2 };
 
         tw = tw * scale * 0.95 * inventory_scale;
         th = th * scale * 0.95 * inventory_scale;
 
-        let ox = (w - tw) / 2.0;
-        let oy = (h - th) / 2.0;
+        let ox = (slot_w - tw) / 2.0;
+        let oy = (slot_h - th) / 2.0;
 
         let image = 
             Image::new()
@@ -240,7 +245,9 @@ impl PlayerInventoryView {
                     }
 
                     self.draw_item(gl, draw_state, tf,
-                        item.inventory_tile_id, entry_x, entry_y, w, h, item.inventory_scale);
+                        item.inventory_tile_id, entry_x, entry_y, w, h, 
+                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64,
+                        item.inventory_scale);
                 }
             }
         
@@ -268,8 +275,10 @@ impl PlayerInventoryView {
                     let item = inventory.bag.get(&id).unwrap();
 
                     self.draw_item(gl, draw_state, tf,
-                        item.inventory_tile_id, self.drag_x as f64, self.drag_y as f64, 
-                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64, item.inventory_scale);
+                        item.inventory_tile_id, (self.drag_x - 16) as f64, (self.drag_y - 16) as f64, 
+                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64, 
+                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64,
+                        item.inventory_scale);
                 }
             }
         });
@@ -306,13 +315,9 @@ impl PlayerInventoryView {
 
                     let idx = inventory.find_entry_for_id(id).unwrap();
                     let entry: &mut Entry = &mut inventory.entries[idx];
-                    
-                    let offsets = self.slot_offsets.get(&Slot::Bag).unwrap();
 
                     let mx = (mouse.position[0] as i32) - self.area.x;
                     let my = (mouse.position[1] as i32) - self.area.y;
-                    let rel_x = mx - offsets[0];
-                    let rel_y = my - offsets[1];
                     
                     let slot_opt = self.find_slot_at(mx, my);
 
@@ -324,6 +329,9 @@ impl PlayerInventoryView {
                         println!("Dropped an {} to slot {:?}", item.name, slot);
 
                         if slot == Slot::Bag {
+                            let offsets = self.slot_offsets.get(&Slot::Bag).unwrap();
+                            let rel_x = mx - offsets[0];
+                            let rel_y = my - offsets[1];
                             entry.location_x = rel_x / 32;
                             entry.location_y = rel_y / 32;
                         }
