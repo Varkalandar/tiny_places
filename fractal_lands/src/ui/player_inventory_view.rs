@@ -48,7 +48,7 @@ impl PlayerInventoryView {
         slot_offsets.insert(Slot::Engine, [214, 96]);
 
         let mut slot_sizes = HashMap::new();
-        slot_sizes.insert(Slot::Bag, [16*32, 10*32]); // todo
+        slot_sizes.insert(Slot::Bag, [15*32, 9*32]);
         slot_sizes.insert(Slot::LWing, [2*32, 3*32]);
         slot_sizes.insert(Slot::RWing, [2*32, 3*32]);
         slot_sizes.insert(Slot::Engine, [2*32, 3*32]);

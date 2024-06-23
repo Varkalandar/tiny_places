@@ -158,7 +158,7 @@ impl App {
         let engine = factory.create(2);
         inv.put_item(engine, Slot::Bag);
 
-        for plugin_no in 3..8 {
+        for plugin_no in 3..9 {
             let plugin = factory.create(plugin_no);
             inv.put_item(plugin, Slot::Bag);
         }
