@@ -1,9 +1,6 @@
 use vecmath::Vector2;
 
-#[path = "ui/tileset.rs"]
 mod tileset;
-
-#[path = "ui/font.rs"]
 mod font;
 
 use std::rc::Rc;

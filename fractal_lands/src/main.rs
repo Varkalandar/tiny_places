@@ -40,8 +40,6 @@ mod sound;
 mod particle_driver;
 mod animation;
 mod mob_group;
-
-#[path = "ui/player_inventory_view.rs"]
 mod player_inventory_view;
 
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
