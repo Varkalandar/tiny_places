@@ -1,27 +1,22 @@
-extern crate piston_window;
-extern crate graphics;
-extern crate opengl_graphics;
-extern crate piston;
+extern crate sdl2;
 extern crate freetype;
 extern crate image;
 extern crate rodio;
 extern crate rand;
 
 // use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{GlGraphics, OpenGL, Texture, TextureSettings};
-use graphics::{Context, DrawState, draw_state::Blend, Ellipse, Image, ImageSize, Transformed};
-use graphics::math::Matrix2d;
+use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
+use sdl2::video::Window;
+use sdl2::render::WindowCanvas;
+use sdl2::render::TextureAccess;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::Texture;
+use sdl2::rect::Rect;
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
 
-use piston::{ButtonState, MouseButton};
-use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderArgs, RenderEvent, 
-                    UpdateArgs, UpdateEvent, 
-                    ButtonArgs, ButtonEvent,
-                    MouseCursorEvent, MouseScrollEvent};
-
-use piston_window::{PistonWindow, WindowSettings};
 
 use std::time::SystemTime;
 use std::fs::read_to_string;
@@ -506,21 +501,20 @@ fn main() {
     
     let window_size = [1200, 770];
 
-    // Change this to OpenGL::V2_1 if not working.
-    let opengl = OpenGL::V3_2;
+    let sdl_context = sdl2::init().unwrap();
+    let video_subsystem = sdl_context.video().unwrap();
 
-    // Create a Glutin window.
-    let mut window: PistonWindow = WindowSettings::new("Fractal Lands v0.02", window_size)
-        .graphics_api(opengl)
-        .exit_on_esc(true)
-//        .samples(4)
-        .vsync(true)
+    let window = video_subsystem
+        .window("Fractal Lands 0.0.1", width as u32, height as u32)
+        .position_centered()
+        .opengl()
         .build()
-        .unwrap();
+        .map_err(|e| e.to_string()).unwrap();
 
     // Create a new game and run it.
-    let mut app = App::new(opengl, window_size);
+    let mut app = App::new(window, window_size);
 
+    /*
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -543,5 +537,5 @@ fn main() {
             app.mouse_scroll(&args);
         }
     }
-    
+    */    
 }
