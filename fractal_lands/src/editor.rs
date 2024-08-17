@@ -1,13 +1,11 @@
 use std::rc::Rc;
 
-use piston::{ButtonState, MouseButton};
-use piston_window::draw_state::Blend;
+use sdl2::keyboard::Keycode;
+use sdl2::mouse::MouseButton;
 
-use graphics::{draw_state::DrawState, Viewport,};
-use opengl_graphics::GlGraphics;
 use vecmath::Vector2;
 
-use crate::ui::{UI, UiController, UiComponent, TileSet, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use crate::ui::{UI, UiController, UiComponent, TileSet, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::{screen_to_world_pos, build_transform, build_image};
 use crate::GameWorld;
@@ -38,7 +36,7 @@ impl UiController for MapEditor {
             match comp {
                 None => {
                     
-                    if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                    if event.args.button == Button::Mouse(MouseButton::Left) {
                         let id = self.selected_tile_id;
 
                         if id == 0 {
@@ -61,7 +59,7 @@ impl UiController for MapEditor {
                         }
                     }
 
-                    if event.args.button == piston::Button::Mouse(MouseButton::Right) {
+                    if event.args.button == Button::Mouse(MouseButton::Right) {
 
                         // close dialogs
                         ui.root.head.clear();
@@ -75,56 +73,56 @@ impl UiController for MapEditor {
                         }
                     }
                     
-                    if event.args.button == piston::Button::Keyboard(piston::Key::F1) { 
+                    if event.args.button == Button::Keyboard(Keycode::F1) { 
                         self.show_editor_keys = !self.show_editor_keys;
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::D1) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Num1) {                        
                         world.map.selected_layer = MAP_GROUND_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::D2) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Num2) {                        
                         world.map.selected_layer = MAP_OBJECT_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::D3) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Num3) {                        
                         world.map.selected_layer = MAP_CLOUD_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
                     let step = if ui.keyboard_state.shift_pressed {8.0} else {1.0};
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Right) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Right) {                        
                         world.map.move_selected_object(step, 0.0);
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Left) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Left) {                        
                         world.map.move_selected_object(-step, 0.0);
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Up) {  
+                    if event.args.button == Button::Keyboard(Keycode::Up) {  
                         world.map.move_selected_object(0.0, -step);
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Down) {                        
+                    if event.args.button == Button::Keyboard(Keycode::Down) {                        
                         world.map.move_selected_object(0.0, step);
                     }        
 
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Space) {
+                    if event.args.button == Button::Keyboard(Keycode::Space) {
                         let set = &world.layer_tileset[world.map.selected_layer];
                         let cont = self.make_tile_selector(&ui, set);
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::A) {
+                    if event.args.button == Button::Keyboard(Keycode::A) {
                         let map = &mut world.map;
-                        map.apply_to_selected_mob(|mob| {mob.visual.blend = Blend::Add;});
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = sdl2::render::BlendMode::Add;});
                     }
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::C) {
+                    if event.args.button == Button::Keyboard(Keycode::C) {
                         let map = &mut world.map;
                         let object = map.layers[map.selected_layer].get_mut(&map.selected_item);
                         match object {
@@ -136,7 +134,7 @@ impl UiController for MapEditor {
                         }
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::Delete) {
+                    if event.args.button == Button::Keyboard(Keycode::Delete) {
                         let map = &mut world.map;
                         let mob = map.layers[map.selected_layer].get(&map.selected_item);
 
@@ -150,21 +148,21 @@ impl UiController for MapEditor {
                         }
                     }        
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::L) {
+                    if event.args.button == Button::Keyboard(Keycode::L) {
                         world.map.load("start.map");
                     }
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::M) {
+                    if event.args.button == Button::Keyboard(Keycode::M) {
                         let map = &mut world.map;
-                        map.apply_to_selected_mob(|mob| {mob.visual.blend = Blend::Alpha;});
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = sdl2::render::BlendMode::Blend;});
                     }
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::P) {
+                    if event.args.button == Button::Keyboard(Keycode::P) {
                         let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                         place_particle_generator(world, pos);
                     }
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::S) {
+                    if event.args.button == Button::Keyboard(Keycode::S) {
                         world.map.save("test.map").unwrap();
                     }        
                 },
@@ -279,12 +277,12 @@ impl UiController for MapEditor {
 
 
 
-    fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics, _ds: &DrawState, ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.draw(viewport, gl);
+    fn draw(&mut self, ui: &mut UI, _world: &mut Self::Appdata) {
+        // ui.draw(viewport, gl);
     }
 
 
-    fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+    fn draw_overlay(&mut self, ui: &mut UI, world: &mut Self::Appdata) {
         let layer_id = world.map.selected_layer;
         let id = self.selected_tile_id;
         let set = &world.layer_tileset[layer_id];
@@ -299,22 +297,23 @@ impl UiController for MapEditor {
 
             let pos = screen_to_world_pos(&ui, player_position, mp);
             // let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
-
+/*
             gl.draw(viewport, |c, gl| {
                 let tf = build_transform(&c.transform, &pos, 1.0, tile.foot, player_position, &window_center);        
 
                 let image = build_image(tile, [1.0, 1.0, 1.0, 0.5]);
                 image.draw(&tile.tex, &ds, tf, gl);
             });
+            */
         }
-        ui.font_14.draw(viewport, gl, ds, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
-        ui.font_14.draw(viewport, gl, ds, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
-        ui.font_14.draw(viewport, gl, ds, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
 
 
         if self.show_editor_keys {
@@ -323,23 +322,23 @@ impl UiController for MapEditor {
             let left = 100;
             let mut top = 100;
 
-            ui.font_14.draw(viewport, gl, ds, left, top, "F1: Show/hide this list", &color);
+            ui.font_14.draw(left, top, "F1: Show/hide this list", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "Space: Open tile selector", &color);
+            ui.font_14.draw(left, top, "Space: Open tile selector", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "1,2,3,.. : Select map layer", &color);
+            ui.font_14.draw(left, top, "1,2,3,.. : Select map layer", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "c: Open color selector for selected item", &color);
+            ui.font_14.draw(left, top, "c: Open color selector for selected item", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
+            ui.font_14.draw(left, top, "a: Set blend mode on selected item to 'Addition'", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
+            ui.font_14.draw(left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "Delete: Removes the selected item from the map", &color);
+            ui.font_14.draw(left, top, "Delete: Removes the selected item from the map", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "l: Load a saved map", &color);
+            ui.font_14.draw(left, top, "l: Load a saved map", &color);
             top += line_space;
-            ui.font_14.draw(viewport, gl, ds, left, top, "s: Save the map", &color);
+            ui.font_14.draw(left, top, "s: Save the map", &color);
             top += line_space;
         }
 

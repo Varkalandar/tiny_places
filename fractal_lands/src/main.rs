@@ -14,6 +14,11 @@ use sdl2::render::TextureAccess;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::render::Texture;
 use sdl2::rect::Rect;
+use sdl2::render::TextureCreator;
+use sdl2::render::CanvasBuilder;
+
+use image::ImageReader;
+
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
 
@@ -87,7 +92,7 @@ impl GameControllers {
 
 
 pub struct App {
-    gl: GlGraphics, // OpenGL drawing backend.
+    window: Window,
     
     ui: UI,
 
@@ -100,24 +105,32 @@ pub struct App {
 
 impl App {
     
-    fn new(opengl: OpenGL, window_size: [u32; 2]) -> App {
-        
+    fn new(window: Window, window_size: [u32; 2]) -> App {
+
+        let canvas_builder = CanvasBuilder::new(window);
+        let canvas = 
+            canvas_builder
+                .accelerated()
+                .present_vsync()
+                .build()
+                .unwrap();
+
+        let creator = &mut canvas.texture_creator();
+
         let map_image_file = "map_wasteland.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
-        // let texture = Texture::from_path(Path::new("resources/map/map_soft_grass.png"), &TextureSettings::new()).unwrap();
-        let map_texture = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + map_image_file)), &TextureSettings::new()).unwrap();
-        // let map_texture = Texture::from_path(Path::new("resources/map/map_puzzle_technoland.png"), &TextureSettings::new()).unwrap();
-        let map_backdrop = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + map_backdrop_file)), &TextureSettings::new()).unwrap();
+        let map_texture = load_texture(creator, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
+        let map_backdrop = load_texture(creator, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
 
-        let ground_tiles = TileSet::load("../tiny_places_client/resources/grounds", "map_objects.tica");
-        let decoration_tiles = TileSet::load("../tiny_places_client/resources/objects", "map_objects.tica");
-        let item_tiles = TileSet::load("../tiny_places_client/resources/items", "items.tica");
-        let cloud_tiles = TileSet::load("../tiny_places_client/resources/clouds", "map_objects.tica");
-        let creature_tiles = TileSet::load("../tiny_places_client/resources/creatures", "creatures.tica");
-        let player_tiles = TileSet::load("../tiny_places_client/resources/players", "players.tica");
-        let projectile_tiles = TileSet::load("../tiny_places_client/resources/projectiles", "projectiles.tica");
-        let animation_tiles = TileSet::load("../tiny_places_client/resources/animations", "animations.tica");
+        let ground_tiles = TileSet::load(creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
+        let decoration_tiles = TileSet::load(creator, "../tiny_places_client/resources/objects", "map_objects.tica");
+        let item_tiles = TileSet::load(creator, "../tiny_places_client/resources/items", "items.tica");
+        let cloud_tiles = TileSet::load(creator, "../tiny_places_client/resources/clouds", "map_objects.tica");
+        let creature_tiles = TileSet::load(creator, "../tiny_places_client/resources/creatures", "creatures.tica");
+        let player_tiles = TileSet::load(creator, "../tiny_places_client/resources/players", "players.tica");
+        let projectile_tiles = TileSet::load(creator, "../tiny_places_client/resources/projectiles", "projectiles.tica");
+        let animation_tiles = TileSet::load(creator, "../tiny_places_client/resources/animations", "animations.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -134,10 +147,12 @@ impl App {
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         map.load("start.map");
 
-        let ui = UI::new(window_size);
+        let ui = UI::new(&canvas, window_size);
         
         let editor = MapEditor::new();
-        let game = Game::new(&ui, &layer_tileset[6]);
+
+        let inventory_bg = load_texture(creator, "resources/ui/inventory_bg.png");
+        let game = Game::new(inventory_bg, &ui, &layer_tileset[6]);
 
         let mut inv = Inventory::new();
 
@@ -157,10 +172,9 @@ impl App {
         }
 
         App {        
-
-            gl: GlGraphics::new(opengl),
-            
+            window,
             ui,
+
             world: GameWorld {
                 map,
                 layer_tileset,
@@ -172,6 +186,7 @@ impl App {
                 map_texture,
                 map_backdrop,
             },
+
             controllers: GameControllers {
                 editor,
                 game,
@@ -182,7 +197,7 @@ impl App {
         }
     }
 
-    
+/*
     fn render(&mut self, args: &RenderArgs) {
         let viewport = args.viewport();
         let ds = DrawState::new_alpha();
@@ -242,7 +257,7 @@ impl App {
 
                         let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
                         let image = build_image(glow_tile, mob.visual.glow);
-                        image.draw(&glow_tile.tex, &ds.blend(Blend::Add), tf, gl);
+                        image.draw(&glow_tile.tex, &ds.blend(sdl2::render::BlendMode::Add), tf, gl);
                     }
 
                     // particle effects
@@ -265,7 +280,7 @@ impl App {
                                 let fade = quadratic_fade(p.age / p.lifetime);
                                 
                                 let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
-                                image.draw(&tile.tex, &ds.blend(Blend::Add), tf.trans(xp, yp), gl);
+                                image.draw(&tile.tex, &ds.blend(sdl2::render::BlendMode::Add), tf.trans(xp, yp), gl);
                             }
                         }
                     });
@@ -346,11 +361,11 @@ impl App {
         // editor/game swtich must be handled here, the button pres is not handed down ATM
 
         if event.args.state == ButtonState::Release {
-            if event.args.button == piston::Button::Keyboard(piston::Key::E) {    
+            if event.args.button == Button::Keyboard(Keycode::E) {    
                 self.controllers.edit = true;
                 println!("Switching to editor mode.");
             }
-            if event.args.button == piston::Button::Keyboard(piston::Key::G) {                        
+            if event.args.button == Button::Keyboard(Keycode::G) {                        
                 self.controllers.edit = false;
                 println!("Switching to game mode.");
             }        
@@ -366,7 +381,7 @@ impl App {
         let consumed = controller.handle_button_event(ui, &event, world);
 
         if event.args.state == ButtonState::Release && !consumed {
-            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+            if event.args.button == Button::Mouse(MouseButton::Left) {
                 self.move_player(window_center);            
             }
         }
@@ -406,6 +421,7 @@ impl App {
 
         controller.handle_scroll_event(ui, &event, world);
     }
+    */
 
 
     fn move_player(&mut self, window_center: Vector2<f64>) {
@@ -472,7 +488,7 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
     world_pos
 }
 
-
+/*
 pub fn build_transform(transform: &Matrix2d<f64>, position: &Vector2<f64>, scale: f64, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
     let rel_pos_x = position[0] - player_position[0];        
     let rel_pos_y = position[1] - player_position[1];  
@@ -490,6 +506,40 @@ pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
         .rect([0.0, 0.0, tile.size[0], tile.size[1]])
         .color(color)        
 }
+*/
+
+
+pub fn texture_from_data<'a, T>(creator: &'a mut TextureCreator<T>, data: &[u8], width: u32, height: u32) -> Texture<'a> {
+    let mut tex =
+        creator 
+        .create_texture(PixelFormatEnum::RGBA8888, 
+        TextureAccess::Static, 
+        width, height).unwrap();
+
+    let r = Rect::new(0, 0, width, height);
+    tex.update(Some(r), data, width as usize * 4).unwrap();
+
+    tex
+}
+
+
+pub fn load_texture<'a, T>(creator: &'a mut TextureCreator<T>, filename: &str) -> Texture<'a> {
+
+    let reader = ImageReader::open("path/to/image.png").unwrap();
+    let image = reader.decode();
+
+    let mut tex =
+        creator 
+        .create_texture(PixelFormatEnum::RGBA8888, 
+        TextureAccess::Static, 
+        32, 32).unwrap();
+
+
+    // let r = Rect::new(0, 0, width, height);
+    // tex.update(Some(r), colors, width as usize * 4).unwrap();
+
+    tex
+}
 
 
 fn quadratic_fade(x: f64) -> f32 {
@@ -505,7 +555,7 @@ fn main() {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("Fractal Lands 0.0.1", width as u32, height as u32)
+        .window("Fractal Lands 0.0.1", window_size[0], window_size[1])
         .position_centered()
         .opengl()
         .build()

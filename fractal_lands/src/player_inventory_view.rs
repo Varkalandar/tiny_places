@@ -2,8 +2,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::collections::HashMap;
 
-use graphics::{draw_state::DrawState, Rectangle, Viewport, ImageSize, Image, types::Matrix2d};
-use opengl_graphics::{GlGraphics, Texture, TextureSettings};
+use sdl2::render::Texture;
 
 use crate::ui::{UiArea, UiFont, MouseMoveEvent, MouseState, ButtonEvent};
 use crate::Inventory;
@@ -15,6 +14,7 @@ use crate::ButtonState;
 use crate::MouseButton;
 use crate::GameWorld;
 use crate::sound::Sound;
+use crate::ui::Button;
 
 
 pub struct PlayerInventoryView {
@@ -36,9 +36,7 @@ pub struct PlayerInventoryView {
 
 impl PlayerInventoryView {
 
-    pub fn new(x: i32, y: i32, font: &Rc<UiFont>, tiles: &TileSet) -> PlayerInventoryView {
-
-        let texture = Texture::from_path(Path::new("resources/ui/inventory_bg.png"), &TextureSettings::new()).unwrap();
+    pub fn new(x: i32, y: i32, font: &Rc<UiFont>, tiles: &TileSet, texture: Texture) -> PlayerInventoryView {
 
         let mut slot_offsets = HashMap::new();
         slot_offsets.insert(Slot::Bag, [10, 452]);
@@ -54,12 +52,14 @@ impl PlayerInventoryView {
         slot_sizes.insert(Slot::Engine, [2*32, 3*32]);
         slot_sizes.insert(Slot::Body, [2*32, 3*32]);
 
+        let query = texture.query();
+
         PlayerInventoryView {
             area: UiArea {
                 x, 
                 y,
-                w: texture.get_width() as i32,
-                h: texture.get_height() as i32,                
+                w: query.width as i32,
+                h: query.height as i32,                
             },
             
             texture,
@@ -87,8 +87,7 @@ impl PlayerInventoryView {
     }
 
 
-    fn show_item_popup(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState,
-                       x: i32, y: i32, item: &Item) {
+    fn show_item_popup(&self, x: i32, y: i32, item: &Item) {
 
         let line_space = 20;
 
@@ -102,14 +101,15 @@ impl PlayerInventoryView {
 
         let mut line = y - line_count * line_space;
 
+        /*
         gl.draw(viewport, |c, gl| {
             // show decorated box  ... todo
             let rect = Rectangle::new([0.0, 0.0, 0.0, 0.5]); 
             rect.draw([x as f64, line as f64, 200.0, (line_count * line_space) as f64], draw_state, c.transform, gl);
         });
+        */
 
-
-        self.font.draw(viewport, gl, draw_state, x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
+        self.font.draw(x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
         line += line_space;
 
         for modifier in &item.mods {
@@ -125,7 +125,7 @@ impl PlayerInventoryView {
                 };
 
                 let text = modifier.attribute.to_string() + ": " + &range;
-                self.font.draw(viewport, gl, draw_state, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+                self.font.draw(x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
                 line += line_space;
             }
         }
@@ -173,13 +173,13 @@ impl PlayerInventoryView {
     }
 
 
-    fn draw_item(&self, gl: &mut GlGraphics, draw_state: &DrawState, tf: Matrix2d<f64>,
+    fn draw_item(&self,
                  id: usize, entry_x: f64, entry_y: f64, slot_w: f64, slot_h: f64,
                  item_inventory_w: f64 , item_inventory_h: f64,
                  inventory_scale: f64) {
 
         let tile = self.item_tiles.tiles_by_id.get(&id).unwrap();
-
+/*
         let mut tw = tile.tex.get_width() as f64;
         let mut th = tile.tex.get_height() as f64;
 
@@ -199,14 +199,15 @@ impl PlayerInventoryView {
                 .rect([entry_x + ox, entry_y + oy, tw, th])
                 .color([1.0, 1.0, 1.0, 1.0]);
         image.draw(&tile.tex, draw_state, tf, gl);
+        */
     }
 
 
-    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32, inventory: &Inventory) {
+    pub fn draw(&self, x: i32, y: i32, inventory: &Inventory) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;
-
+/*
         gl.draw(viewport, |c, gl| {
 
             // placeholder
@@ -282,13 +283,14 @@ impl PlayerInventoryView {
                 }
             }
         });
+        */
     }
 
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent, mouse: &MouseState, world: &mut GameWorld) -> bool {
 
         if event.args.state == ButtonState::Release &&
-           event.args.button == piston::Button::Mouse(MouseButton::Left) {
+           event.args.button == Button::Mouse(MouseButton::Left) {
 
             match self.dragged_item {
                 None => {

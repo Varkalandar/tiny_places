@@ -11,8 +11,6 @@ use std::boxed::Box;
 use rand::Rng;
 use rand::rngs::StdRng;
 
-use piston_window::draw_state::Blend;
-
 use crate::item::Item;
 use crate::creature::Creature;
 use crate::creature::CreatureFactory;
@@ -73,7 +71,7 @@ impl Map {
             scale: 0.75,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
-            blend: Blend::Alpha,
+            blend: sdl2::render::BlendMode::Blend,
             particles: ParticleDriver::new(),       
         };
 
@@ -665,36 +663,31 @@ pub fn move_mob(mob: &mut MapObject, destination: Vector2<f64>, base_speed: f64)
 }
 
 
-fn blend_to_key(blend: Blend) -> String {
+fn blend_to_key(blend: sdl2::render::BlendMode) -> String {
     let key =
         match blend {
-            Blend::Alpha => {"n"}, 
-            Blend::Add => {"a"},
-            Blend::Lighter => {"l"},
-            Blend::Multiply => {"m"},
-            Blend::Invert => {"i"},
+            sdl2::render::BlendMode::Blend => {"n"}, 
+            sdl2::render::BlendMode::Add => {"a"},
+            sdl2::render::BlendMode::Mul => {"m"},
+            _ => {panic!("Unsupported blend mode")},
         };
 
     key.to_string()
 }
 
 
-fn key_to_blend(key: &str) -> Blend {
+fn key_to_blend(key: &str) -> sdl2::render::BlendMode {
 
     println!("key='{}'", key);
 
     if key == "n" {
-        Blend::Alpha
+        sdl2::render::BlendMode::Blend
     } else if key == "a" {
-        Blend::Add
-    } else if key == "l" {
-        Blend::Lighter
+        sdl2::render::BlendMode::Add
     } else if key == "m" {
-        Blend::Multiply
-    } else if key == "i" {
-        Blend::Invert
+        sdl2::render::BlendMode::Mul
     } else {
-        Blend::Alpha
+        sdl2::render::BlendMode::Blend
     }
 }
 
@@ -749,7 +742,7 @@ impl MapObjectFactory {
             scale,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
-            blend: Blend::Alpha,
+            blend: sdl2::render::BlendMode::Blend,
             particles: ParticleDriver::new(),
         };
 
@@ -802,7 +795,7 @@ pub struct Visual {
     pub scale: f64,
     pub color: [f32; 4],
     pub glow: [f32; 4], // ground illumination color
-    pub blend: Blend,
+    pub blend: sdl2::render::BlendMode,
     pub particles: ParticleDriver,
 }
 

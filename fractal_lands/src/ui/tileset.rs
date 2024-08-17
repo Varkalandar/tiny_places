@@ -2,6 +2,9 @@ use vecmath::Vector2;
 use std::{rc::Rc, collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
 
 use sdl2::render::Texture;
+use sdl2::render::TextureCreator;
+
+use crate::load_texture;
 
 pub struct Tile {
     pub id: usize,
@@ -32,7 +35,7 @@ impl TileSet {
     }
     */
     
-    pub fn load(texture_creator: &TextureCreator, path_str: &str, file_str: &str) -> TileSet {
+    pub fn load(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str: &str, file_str: &str) -> TileSet {
         
         let mut fullpath = PathBuf::new();
         fullpath.push(path_str);
@@ -59,7 +62,7 @@ impl TileSet {
             
             if line.starts_with("Tile Description") {
                 
-                let tile_opt = load_tile(canvas, path_str, &line_vec, i);
+                let tile_opt = load_tile(creator, path_str, &line_vec, i);
                 
                 if tile_opt.is_some() {
                     let tile = tile_opt.unwrap();
@@ -96,7 +99,7 @@ impl TileSet {
 }
 
 
-fn load_tile(texture_creator: &TextureCreator, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
+fn load_tile(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
 
     let id = lines[start + 2].parse::<usize>().unwrap();
 
@@ -115,26 +118,11 @@ fn load_tile(texture_creator: &TextureCreator, path_str: &str, lines: &Vec<&str>
     if width > 1.0 || height > 1.0 {
         // println!("Item {} is {} size={}x{} foot={}x{}", id, name, width, height, foot_x, foot_y);
 
-        let mut filename = id.to_string();
-        filename.push_str("-");
-        filename.push_str(name);
-        filename.push_str(".png");
+        let filename = 
+            path_str.to_string() +
+            &id.to_string() + "-" + name + ".png";
         
-        let mut path = PathBuf::new();
-        path.push(path_str);
-        path.push(filename);
-        
-        let mut tex =
-            creator 
-            .create_texture(PixelFormatEnum::RGBA8888, TextureAccess::Streaming, width as u32, height as u32).unwrap();
-
-        // let tex = Texture::from_path(path.as_path(), &TextureSettings::new().min(Filter::Linear)).unwrap();
-
-        let image_raw = ImageReader::open("path/to/image.png").unwrap();
-        let image = image_raw.decode();
-
-        let r = Rect::new(0, 0, width, height);
-        tex.update(Some(r), colors, width as usize * 4).unwrap();
+        let mut tex = load_texture(creator, &filename);
 
         result = Some(Tile {
             id,

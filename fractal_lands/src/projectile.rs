@@ -43,7 +43,7 @@ impl ProjectileBuilder {
         visual.directions = pd.directions;
         visual.phases = pd.phases;
         visual.glow = pd.glow;
-        visual.blend = Blend::Add;
+        visual.blend = sdl2::render::BlendMode::Add;
         visual.orient_in_direction(*velocity);
 
         velocity[0] *= pd.speed;

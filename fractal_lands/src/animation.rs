@@ -71,7 +71,7 @@ impl Animated for RemovalAnimation {
 
             mob.visual.current_image_id = tile_id;
             mob.visual.color = [1.0, 1.0, 1.0, 1.0];
-            mob.visual.blend = Blend::Add;
+            mob.visual.blend = sdl2::render::BlendMode::Add;
             mob.visual.tileset_id = ANIMATION_TILESET;
             mob.visual.scale = 1.5;
         }

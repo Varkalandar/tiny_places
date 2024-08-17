@@ -6,13 +6,37 @@ mod font;
 use std::rc::Rc;
 use std::cmp::{min, max};
 
-use graphics::{draw_state::DrawState, Rectangle, Viewport, Image,};
-use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use piston::{MouseButton, ButtonState, ButtonArgs};
 use image::{RgbaImage, Rgba};
+use image::Image;
+
+use sdl2::keyboard::Keycode;
+use sdl2::render::WindowCanvas;
+use sdl2::mouse::MouseButton;
+
+use crate::texture_from_data;
 
 pub use tileset::*;
 pub use font::UiFont;
+
+
+#[derive(PartialEq)]
+pub enum Button {
+    Keyboard(Keycode),
+    Mouse(MouseButton),
+}
+
+#[derive(PartialEq)]
+pub enum ButtonState {
+    Press,
+    Release, 
+}
+
+#[derive(PartialEq)]
+pub struct ButtonArgs {
+    pub state: ButtonState,
+    pub button: Button,
+    pub scancode: Option<i32>,
+}
 
 
 pub struct MouseState {
@@ -59,11 +83,11 @@ pub trait UiController {
         false
     }
 
-    fn draw(&mut self, _viewport: Viewport, _gl: &mut GlGraphics, _ds: &DrawState, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+    fn draw(&mut self, _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
     
-    fn draw_overlay(&mut self, _viewport: Viewport, _gl: &mut GlGraphics, _ds: &DrawState, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+    fn draw_overlay(&mut self, _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
 
@@ -108,13 +132,13 @@ pub struct UI
 
 impl UI {
 
-    pub fn new(window_size: [u32; 2]) -> UI {
+    pub fn new(canvas: &WindowCanvas, window_size: [u32; 2]) -> UI {
         
         UI { 
             window_size,
             root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
-            font_10: Rc::new(UiFont::new(10)),
-            font_14: Rc::new(UiFont::new(14)),
+            font_10: Rc::new(UiFont::new(canvas, 10)),
+            font_14: Rc::new(UiFont::new(canvas, 14)),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
@@ -219,33 +243,33 @@ impl UI {
     }
 
 
-    pub fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics) {
-        let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
-        self.root.head.draw(viewport, gl, &draw_state, 0, 0);
+    pub fn draw(&mut self) {
+        // let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
+        // self.root.head.draw(viewport, gl, &draw_state, 0, 0);
     }
 
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
         if event.args.state == ButtonState::Press {
-            if event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
-               event.args.button == piston::Button::Keyboard(piston::Key::RShift) {
+            if event.args.button == Button::Keyboard(Keycode::LShift) || 
+               event.args.button == Button::Keyboard(Keycode::RShift) {
                 println!("Shift pressed");
                 self.keyboard_state.shift_pressed = true;
             }
             
-            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+            if event.args.button == Button::Mouse(MouseButton::Left) {
                 self.mouse_state.left_pressed = true;
             }
         }
 
         if event.args.state == ButtonState::Release {
-            if event.args.button == piston::Button::Keyboard(piston::Key::LShift) || 
-               event.args.button == piston::Button::Keyboard(piston::Key::RShift) {
+            if event.args.button == Button::Keyboard(Keycode::LShift) || 
+               event.args.button == Button::Keyboard(Keycode::RShift) {
                 println!("Shift released");
                 self.keyboard_state.shift_pressed = false;
             }    
 
-            if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+            if event.args.button == Button::Mouse(MouseButton::Left) {
                 self.mouse_state.left_pressed = false;
             }
         }
@@ -305,7 +329,7 @@ pub trait UiHead {
     fn set_position(&mut self, _x: i32, _y: i32) {
     }
 
-    fn draw(&self, _viewport: Viewport, _gl: &mut GlGraphics, _draw_state: &DrawState, _x: i32, _y: i32) {
+    fn draw(&self, _x: i32, _y: i32) {
     } 
 
     fn handle_button_event(&mut self, _event: &ButtonEvent) -> Option<&dyn UiHead> {
@@ -377,8 +401,9 @@ impl UiHead for UiContainer {
     }
 
 
-    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
         // draw only children which are inside visible area
+/*
         let scissor = draw_state.scissor.unwrap();
         let xp = x + self.area.x;
         let yp = y + self.area.y;
@@ -390,9 +415,10 @@ impl UiHead for UiContainer {
             if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
                xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.y <= (scissor[1] + scissor[3]) as i32 {
 
-                child.head.draw(viewport, gl, draw_state, xp, yp);
+                child.head.draw(xp, yp);
             }
         }
+            */
     }
 
 
@@ -468,23 +494,23 @@ impl UiHead for UiButton {
         &self.area
     }
 
-
-    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
 
         let area = self.area();
-
+/*
         gl.draw(viewport, |c, gl| {
 
             let rect = Rectangle::new([1.0, 0.5, 0.0, 1.0]); 
             rect.draw([x as f64, y as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl)
         });
-
+*/
         let label_width = self.font.calc_string_width(&self.label) as i32;
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + (area.h - self.font.lineheight) / 2;
 
-        self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
+        self.font.draw(label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
     } 
+
 }
 
 
@@ -506,11 +532,11 @@ impl UiHead for UiIcon
     }
 
 
-    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
         let area = self.area();
         let xp = x + area.x;
         let yp = y + area.y;
-
+/*
         gl.draw(viewport, |c, gl| {
 
             
@@ -537,13 +563,14 @@ impl UiHead for UiIcon
         let label_y = yp + area.h - self.font.lineheight;
 
         self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
+        */
     } 
 
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
         // which buttons should trigger this icon?
-        if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+        if event.args.button == Button::Mouse(MouseButton::Left) {
             return Some(self);
         }
 
@@ -576,20 +603,21 @@ impl UiHead for UiScrollpane
     }
 
 
-    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
         let area = self.area();
         let xp = x + area.x;
         let yp = y + area.y;
-
+/*
         gl.draw(viewport, |c, gl| {
 
             let rect = Rectangle::new([0.3, 0.2, 0.1, 0.5]);
 
             rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
         });
+*/
 
-        let scissor_state = draw_state.scissor([xp as u32, yp as u32, area.w as u32, area.h as u32]);
-        self.child.head.draw(viewport, gl, &scissor_state, xp + self.offset_x, yp + self.offset_y);
+        // let scissor_state = draw_state.scissor([xp as u32, yp as u32, area.w as u32, area.h as u32]);
+        self.child.head.draw(xp + self.offset_x, yp + self.offset_y);
     }
 
 
@@ -606,12 +634,12 @@ impl UiHead for UiScrollpane
 
         if event.args.state == ButtonState::Press {
             // paging keys
-            if event.args.button == piston::Button::Keyboard(piston::Key::PageDown) {
+            if event.args.button == Button::Keyboard(Keycode::PageDown) {
                 self.offset_y -= self.area.h;
                 return Some(self);
             }
 
-            if event.args.button == piston::Button::Keyboard(piston::Key::PageUp) {
+            if event.args.button == Button::Keyboard(Keycode::PageUp) {
                 self.offset_y += self.area.h;
                 return Some(self);
             }
@@ -628,9 +656,9 @@ pub struct UiColorchoice {
     pub area: UiArea,
     bandwidth: i32,
     pub id: usize,
-    tex: Texture,
-    light: Texture,
-    trans: Texture,
+//    tex: Texture,
+//    light: Texture,
+//    trans: Texture,
     r: u32,
     g: u32,
     b: u32,
@@ -660,13 +688,13 @@ impl UiColorchoice {
             b: (color[2] * 255.0) as u32,
             a: (color[3] * 255.0) as u32,
             lightness: 255,
-            tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
-            light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
-            trans: UiColorchoice::make_trans_tex((tw - 4) as u32, (h - tw) as u32),
+            // tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
+            // light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
+            // trans: UiColorchoice::make_trans_tex((tw - 4) as u32, (h - tw) as u32),
         }
     }
 
-
+/*
     fn make_color_tex(w: u32, h: u32) -> Texture {
         
         let mut img = RgbaImage::new(w, h);
@@ -692,7 +720,7 @@ impl UiColorchoice {
 
         tex
     }
-
+*/
     
     fn yuv_to_rgb(y: i32, u: i32, v: i32) -> (u8, u8, u8) {
         // R = (y + 1.4075 * (v - 128));
@@ -708,7 +736,7 @@ impl UiColorchoice {
         (max(min(r, 255), 0) as u8, max(min(g, 255), 0) as u8, max(min(b, 255), 0) as u8)
     }
 
-
+/*
     fn make_light_tex(w: u32, h: u32) -> Texture {
         
         let mut img = RgbaImage::new(w, h);
@@ -743,6 +771,7 @@ impl UiColorchoice {
 
         tex
     }
+        */
 }
 
 
@@ -758,7 +787,7 @@ impl UiHead for UiColorchoice
         self.area.y = y;
     }
 
-    fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, draw_state: &DrawState, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;
@@ -766,7 +795,7 @@ impl UiHead for UiColorchoice
         let bw = self.bandwidth;
 
         // println!("Drawing at {} {} {} {}", xp, yp, area.w, area.h);
-
+/*
         gl.draw(viewport, |c, gl| {
             
             // white "reset" area
@@ -794,6 +823,7 @@ impl UiHead for UiColorchoice
                     .color([1.0, 1.0, 1.0, 1.0]);
             image.draw(&self.tex, draw_state, c.transform, gl);
         });
+        */
     } 
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {

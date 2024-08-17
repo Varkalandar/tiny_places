@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
-use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use graphics::{Image, Transformed, Viewport, DrawState};
+use sdl2::render::Texture;
+use sdl2::render::WindowCanvas;
+
+use crate::texture_from_data;
 
 const PITCH: u32 = 1024;
 
@@ -29,7 +31,7 @@ pub struct UiFont {
 
 impl UiFont {
 
-    pub fn new(size: u32) -> UiFont {
+    pub fn new(canvas: &WindowCanvas, size: u32) -> UiFont {
         let ft = freetype::Library::init().unwrap();
         let font = "resources/font/FiraSans-Regular.ttf";
         let face = ft.new_face(font, 0).unwrap();
@@ -40,7 +42,7 @@ impl UiFont {
         // println!("Ascend {} descend {}", face.ascender(), face.descender());
 
         let mut glyphs = HashMap::new();
-        let texture = create_glyphs(&face, &mut glyphs, lineheight as u32);
+        let texture = create_glyphs(canvas: &WindowCanvas, &face, &mut glyphs, lineheight as u32);
 
         UiFont {
             face,
@@ -65,23 +67,11 @@ impl UiFont {
     }
 
 
-    pub fn draw(&self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, x: i32, y: i32, text: &str, color: &[f32; 4])
+    pub fn draw(&self, x: i32, y: i32, text: &str, color: &[f32; 4])
     {
+/*
         gl.draw(viewport, |c, gl| {
 
-            // debug
-            /*
-                // let image = Image::new_color([0.0, 0.0, 0.0, 1.0]);
-                let image = Image::new_color([1.0, 1.0, 1.0, 1.0]);
-                
-                image.draw(
-                    &self.texture,
-                    &c.draw_state,
-                    c.transform,
-                    gl
-                );                
-            */            
-     
             let mut xp = x as f64;
             let yp = (y as f64) + (self.face.ascender() / 64) as f64;
             
@@ -107,12 +97,12 @@ impl UiFont {
                 xp += glyph.advance;                
             }
         });
+        */
     }
-
 }
 
 
-fn create_glyphs(face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture {
+fn create_glyphs(canvas: WindowCanvas, face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture {
     
     let mut num_glyphs = 0;
 
@@ -167,7 +157,7 @@ fn create_glyphs(face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, li
         }
     }
 
-    Texture::from_memory_alpha(&buffer, b_width, b_height, &TextureSettings::new()).unwrap()
+    texture_from_data(&mut canvas.texture_creator(), &buffer, b_width, b_height)
 }
 
     

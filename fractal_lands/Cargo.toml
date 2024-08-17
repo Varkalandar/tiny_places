@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sdl2 = "0.35"
+sdl2 = "0.37"
 rodio = "0.18.1"
 freetype-rs = "0.34.0"
 vecmath = "1.0.0"

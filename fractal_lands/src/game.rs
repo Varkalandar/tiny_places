@@ -1,13 +1,12 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
-use piston::{ButtonState, MouseButton};
-use graphics::DrawState;
-use opengl_graphics::{GlGraphics, Texture, TextureSettings};
-use graphics::Viewport;
+use sdl2::render::Texture;
+use sdl2::keyboard::Keycode;
+use sdl2::mouse::MouseButton;
 
 use std::path::Path;
 
-use crate::ui::{UI, UiController, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use crate::ui::{UI, UiController, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
@@ -47,7 +46,7 @@ impl UiController for Game {
 
                     let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                     
-                    if event.args.button == piston::Button::Mouse(MouseButton::Left) {
+                    if event.args.button == Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
 
                         let map = &mut world.map;
@@ -65,7 +64,7 @@ impl UiController for Game {
                         }
                     }
 
-                    if event.args.button == piston::Button::Mouse(MouseButton::Right) {
+                    if event.args.button == Button::Mouse(MouseButton::Right) {
 
                         let map = &mut world.map;
                         let id = map.player_id;
@@ -78,7 +77,7 @@ impl UiController for Game {
                         map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
-                    if event.args.button == piston::Button::Keyboard(piston::Key::I) {
+                    if event.args.button == Button::Keyboard(Keycode::I) {
                         self.show_inventory = !self.show_inventory;
                     }        
                 },
@@ -118,17 +117,19 @@ impl UiController for Game {
     }
 
 
-    fn draw(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, world: &mut Self::Appdata) {
+    fn draw(&mut self, ui: &mut UI, world: &mut Self::Appdata) {
+        /*
         ui.draw(viewport, gl);
  
         if self.show_inventory {
-            self.piv.draw(viewport, gl, ds, 0, 10, &world.player_inventory)
+            self.piv.draw(0, 10, &world.player_inventory)
         }
+            */
     }
 
 
-    fn draw_overlay(&mut self, viewport: Viewport, gl: &mut GlGraphics, ds: &DrawState, ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.font_14.draw(viewport, gl, ds, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
+    fn draw_overlay(&mut self, ui: &mut UI, _world: &mut Self::Appdata) {
+        ui.font_14.draw(10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 
@@ -141,11 +142,13 @@ impl UiController for Game {
         let reload = map.check_player_transition(rng);
 
         if reload {
+/*
             let map_texture = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + &map.map_image_name)), &TextureSettings::new()).unwrap();
             let map_backdrop = Texture::from_path(Path::new(&(MAP_RESOURCE_PATH.to_string() + &map.backdrop_image_name)), &TextureSettings::new()).unwrap();
  
             world.map_texture = map_texture;
             world.map_backdrop = map_backdrop;
+*/
         }
     }
 }
@@ -153,10 +156,13 @@ impl UiController for Game {
 
 impl Game {
 
-    pub fn new(ui: &UI, item_tiles: &TileSet) -> Game {
-        let piv = PlayerInventoryView::new((ui.window_size[0] as i32) / 2, 0,
-        &ui.font_14,
-        &item_tiles.shallow_copy());
+    pub fn new(inventory_bg: Texture, ui: &UI, item_tiles: &TileSet) -> Game {
+
+        let piv = PlayerInventoryView::new(
+            (ui.window_size[0] as i32) / 2, 0,
+            &ui.font_14,
+            &item_tiles.shallow_copy(),
+            texture,);
     
         Game {
             piv,
