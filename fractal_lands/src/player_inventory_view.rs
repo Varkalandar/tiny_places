@@ -1,8 +1,8 @@
-use std::path::Path;
 use std::rc::Rc;
 use std::collections::HashMap;
 
 use sdl2::render::Texture;
+use sdl2::mouse::MouseButton;
 
 use crate::ui::{UiArea, UiFont, MouseMoveEvent, MouseState, ButtonEvent};
 use crate::Inventory;
@@ -10,11 +10,10 @@ use crate::inventory::Slot;
 use crate::inventory::Entry;
 use crate::TileSet;
 use crate::item::Item;
-use crate::ButtonState;
-use crate::MouseButton;
 use crate::GameWorld;
 use crate::sound::Sound;
 use crate::ui::Button;
+use crate::ui::ButtonState;
 
 
 pub struct PlayerInventoryView {

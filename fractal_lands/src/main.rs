@@ -16,8 +16,10 @@ use sdl2::render::Texture;
 use sdl2::rect::Rect;
 use sdl2::render::TextureCreator;
 use sdl2::render::CanvasBuilder;
+use sdl2::video::WindowContext;
 
-use image::ImageReader;
+use image::GenericImageView;
+use image::Pixel;
 
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
@@ -92,7 +94,7 @@ impl GameControllers {
 
 
 pub struct App {
-    window: Window,
+    creator: TextureCreator<WindowContext>,
     
     ui: UI,
 
@@ -115,22 +117,22 @@ impl App {
                 .build()
                 .unwrap();
 
-        let creator = &mut canvas.texture_creator();
+        let creator = canvas.texture_creator();
 
         let map_image_file = "map_wasteland.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
-        let map_texture = load_texture(creator, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
-        let map_backdrop = load_texture(creator, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
+        let map_texture = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
+        let map_backdrop = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
 
-        let ground_tiles = TileSet::load(creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
-        let decoration_tiles = TileSet::load(creator, "../tiny_places_client/resources/objects", "map_objects.tica");
-        let item_tiles = TileSet::load(creator, "../tiny_places_client/resources/items", "items.tica");
-        let cloud_tiles = TileSet::load(creator, "../tiny_places_client/resources/clouds", "map_objects.tica");
-        let creature_tiles = TileSet::load(creator, "../tiny_places_client/resources/creatures", "creatures.tica");
-        let player_tiles = TileSet::load(creator, "../tiny_places_client/resources/players", "players.tica");
-        let projectile_tiles = TileSet::load(creator, "../tiny_places_client/resources/projectiles", "projectiles.tica");
-        let animation_tiles = TileSet::load(creator, "../tiny_places_client/resources/animations", "animations.tica");
+        let ground_tiles = TileSet::load(&creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
+        let decoration_tiles = TileSet::load(&creator, "../tiny_places_client/resources/objects", "map_objects.tica");
+        let item_tiles = TileSet::load(&creator, "../tiny_places_client/resources/items", "items.tica");
+        let cloud_tiles = TileSet::load(&creator, "../tiny_places_client/resources/clouds", "map_objects.tica");
+        let creature_tiles = TileSet::load(&creator, "../tiny_places_client/resources/creatures", "creatures.tica");
+        let player_tiles = TileSet::load(&creator, "../tiny_places_client/resources/players", "players.tica");
+        let projectile_tiles = TileSet::load(&creator, "../tiny_places_client/resources/projectiles", "projectiles.tica");
+        let animation_tiles = TileSet::load(&creator, "../tiny_places_client/resources/animations", "animations.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -147,11 +149,11 @@ impl App {
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         map.load("start.map");
 
-        let ui = UI::new(&canvas, window_size);
+        let ui = UI::new(&creator, window_size);
         
         let editor = MapEditor::new();
 
-        let inventory_bg = load_texture(creator, "resources/ui/inventory_bg.png");
+        let inventory_bg = load_texture(&creator, "resources/ui/inventory_bg.png");
         let game = Game::new(inventory_bg, &ui, &layer_tileset[6]);
 
         let mut inv = Inventory::new();
@@ -172,7 +174,7 @@ impl App {
         }
 
         App {        
-            window,
+            creator,
             ui,
 
             world: GameWorld {
@@ -509,34 +511,51 @@ pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
 */
 
 
-pub fn texture_from_data<'a, T>(creator: &'a mut TextureCreator<T>, data: &[u8], width: u32, height: u32) -> Texture<'a> {
+pub fn texture_from_data<T>(creator: &TextureCreator<T>, data: &[u8], width: u32, height: u32) -> Texture {
     let mut tex =
         creator 
         .create_texture(PixelFormatEnum::RGBA8888, 
         TextureAccess::Static, 
         width, height).unwrap();
 
-    let r = Rect::new(0, 0, width, height);
-    tex.update(Some(r), data, width as usize * 4).unwrap();
+    // let r = Rect::new(0, 0, width, height);
+    // tex.update(Some(r), data, width as usize * 4).unwrap();
 
     tex
 }
 
 
-pub fn load_texture<'a, T>(creator: &'a mut TextureCreator<T>, filename: &str) -> Texture<'a> {
+pub fn load_texture<T>(creator: &TextureCreator<T>, filename: &str) -> Texture {
 
-    let reader = ImageReader::open("path/to/image.png").unwrap();
-    let image = reader.decode();
+    // println!("{}", filename);
+
+    let image = image::open(filename).unwrap();
+    let width = image.width();
+    let height = image.height();
 
     let mut tex =
         creator 
-        .create_texture(PixelFormatEnum::RGBA8888, 
-        TextureAccess::Static, 
-        32, 32).unwrap();
+            .create_texture(PixelFormatEnum::RGBA8888, 
+                            TextureAccess::Static,
+                            width, 
+                            height)
+            .unwrap();
 
+    let mut data: Vec<u8> = Vec::with_capacity((width * height) as usize);
 
-    // let r = Rect::new(0, 0, width, height);
-    // tex.update(Some(r), colors, width as usize * 4).unwrap();
+    for y in 0..height {
+        for x in 0..width {
+            let pixel = image.get_pixel(x, y).to_rgba();
+
+            data.push(pixel[0]);
+            data.push(pixel[1]);
+            data.push(pixel[2]);
+            data.push(pixel[3]);
+        }
+    }
+
+    let r = Rect::new(0, 0, width, height);
+    tex.update(Some(r), &data, width as usize * 4).unwrap();
 
     tex
 }

@@ -6,12 +6,14 @@ mod font;
 use std::rc::Rc;
 use std::cmp::{min, max};
 
-use image::{RgbaImage, Rgba};
-use image::Image;
+// use image::{RgbaImage, Rgba};
+// use image::Image;
 
 use sdl2::keyboard::Keycode;
 use sdl2::render::WindowCanvas;
 use sdl2::mouse::MouseButton;
+use sdl2::video::WindowContext;
+use sdl2::render::TextureCreator;
 
 use crate::texture_from_data;
 
@@ -132,13 +134,13 @@ pub struct UI
 
 impl UI {
 
-    pub fn new(canvas: &WindowCanvas, window_size: [u32; 2]) -> UI {
+    pub fn new(creator: &TextureCreator<WindowContext>, window_size: [u32; 2]) -> UI {
         
         UI { 
             window_size,
             root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
-            font_10: Rc::new(UiFont::new(canvas, 10)),
-            font_14: Rc::new(UiFont::new(canvas, 14)),
+            font_10: Rc::new(UiFont::new::<WindowContext>(creator, 10)),
+            font_14: Rc::new(UiFont::new::<WindowContext>(creator, 14)),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},

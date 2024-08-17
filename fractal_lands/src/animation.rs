@@ -1,5 +1,3 @@
-use piston_window::draw_state::Blend;
-
 use crate::map::MapObject;
 use crate::map::UpdateAction;
 use crate::ANIMATION_TILESET;

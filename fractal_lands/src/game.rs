@@ -162,7 +162,7 @@ impl Game {
             (ui.window_size[0] as i32) / 2, 0,
             &ui.font_14,
             &item_tiles.shallow_copy(),
-            texture,);
+            inventory_bg,);
     
         Game {
             piv,

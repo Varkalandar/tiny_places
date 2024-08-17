@@ -2,6 +2,9 @@ use std::collections::HashMap;
 
 use sdl2::render::Texture;
 use sdl2::render::WindowCanvas;
+use sdl2::render::TextureAccess;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::TextureCreator;
 
 use crate::texture_from_data;
 
@@ -31,7 +34,7 @@ pub struct UiFont {
 
 impl UiFont {
 
-    pub fn new(canvas: &WindowCanvas, size: u32) -> UiFont {
+    pub fn new<T>(creator: &TextureCreator<T>, size: u32) -> UiFont {
         let ft = freetype::Library::init().unwrap();
         let font = "resources/font/FiraSans-Regular.ttf";
         let face = ft.new_face(font, 0).unwrap();
@@ -42,7 +45,7 @@ impl UiFont {
         // println!("Ascend {} descend {}", face.ascender(), face.descender());
 
         let mut glyphs = HashMap::new();
-        let texture = create_glyphs(canvas: &WindowCanvas, &face, &mut glyphs, lineheight as u32);
+        let texture = create_glyphs(creator, &face, &mut glyphs, lineheight as u32);
 
         UiFont {
             face,
@@ -102,7 +105,7 @@ impl UiFont {
 }
 
 
-fn create_glyphs(canvas: WindowCanvas, face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture {
+fn create_glyphs<T>(creator: &TextureCreator<T>, face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture {
     
     let mut num_glyphs = 0;
 
@@ -157,7 +160,16 @@ fn create_glyphs(canvas: WindowCanvas, face: &freetype::Face, glyphs: &mut HashM
         }
     }
 
-    texture_from_data(&mut canvas.texture_creator(), &buffer, b_width, b_height)
+    let mut tex =
+        creator 
+        .create_texture(PixelFormatEnum::RGBA8888, 
+        TextureAccess::Static, 
+        32, 32).unwrap();
+    
+
+    tex
+    
+    // texture_from_data(&mut canvas.texture_creator(), &buffer, b_width, b_height)
 }
 
     

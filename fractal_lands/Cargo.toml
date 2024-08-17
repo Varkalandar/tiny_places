@@ -5,10 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dependencies.image]
+version = "0.25"
+default-features = false
+features = ["png", "jpeg"]
+
 [dependencies]
-sdl2 = "0.37"
+sdl2 = { Version = "0.37", features = ["unsafe_textures"] }
 rodio = "0.18.1"
 freetype-rs = "0.34.0"
 vecmath = "1.0.0"
-image = "0.25.1"
 rand = "0.8.5"

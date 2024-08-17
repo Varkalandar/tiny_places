@@ -7,7 +7,7 @@ use vecmath::Vector2;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
-use crate::{screen_to_world_pos, build_transform, build_image};
+use crate::screen_to_world_pos;
 use crate::GameWorld;
 use crate::sound::Sound;
 

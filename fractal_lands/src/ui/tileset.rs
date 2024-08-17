@@ -35,7 +35,7 @@ impl TileSet {
     }
     */
     
-    pub fn load(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str: &str, file_str: &str) -> TileSet {
+    pub fn load(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &str, file_str: &str) -> TileSet {
         
         let mut fullpath = PathBuf::new();
         fullpath.push(path_str);
@@ -99,7 +99,7 @@ impl TileSet {
 }
 
 
-fn load_tile(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
+fn load_tile(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
 
     let id = lines[start + 2].parse::<usize>().unwrap();
 
@@ -119,8 +119,7 @@ fn load_tile(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str:
         // println!("Item {} is {} size={}x{} foot={}x{}", id, name, width, height, foot_x, foot_y);
 
         let filename = 
-            path_str.to_string() +
-            &id.to_string() + "-" + name + ".png";
+            path_str.to_string() + "/" + &id.to_string() + "-" + name + ".png";
         
         let mut tex = load_texture(creator, &filename);
 
@@ -137,28 +136,34 @@ fn load_tile(creator: &mut TextureCreator<sdl2::video::WindowContext>, path_str:
 }
 
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use sdl2::render::CanvasBuilder;
 
 
     #[test]
     fn test_load_tileset() {
-        let window_size = [1200, 770];
-
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
     
         let window = video_subsystem
-            .window("Fractal Lands 0.0.1", width as u32, height as u32)
+            .window("Fractal Lands 0.0.1", 800, 500)
             .position_centered()
             .opengl()
             .build()
             .map_err(|e| e.to_string()).unwrap();
-    
-        let creator = window.texture_creator();
 
-        let set = TileSet.load(creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
+        let canvas_builder = CanvasBuilder::new(window);
+        let canvas = 
+            canvas_builder
+                .accelerated()
+                .present_vsync()
+                .build()
+                .unwrap();
+
+        let creator = canvas.texture_creator();
+
+        let set = TileSet::load(&creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
     }
 }
