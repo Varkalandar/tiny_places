@@ -11,8 +11,9 @@ default-features = false
 features = ["png", "jpeg"]
 
 [dependencies]
-sdl2 = { Version = "0.37", features = ["unsafe_textures"] }
+sdl2 = { version = "0.37", features = ["unsafe_textures"] }
 rodio = "0.18.1"
 freetype-rs = "0.34.0"
 vecmath = "1.0.0"
 rand = "0.8.5"
+glium = "0.35"
