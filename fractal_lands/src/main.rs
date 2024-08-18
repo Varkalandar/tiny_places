@@ -4,19 +4,20 @@ extern crate image;
 extern crate rodio;
 extern crate rand;
 
-// use glutin_window::GlutinWindow as Window;
+use sdl2::Sdl;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::rect::Rect;
 use sdl2::video::Window;
+use sdl2::video::WindowContext;
 use sdl2::render::WindowCanvas;
 use sdl2::render::TextureAccess;
-use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::Canvas;
 use sdl2::render::Texture;
-use sdl2::rect::Rect;
 use sdl2::render::TextureCreator;
 use sdl2::render::CanvasBuilder;
-use sdl2::video::WindowContext;
 
 use image::GenericImageView;
 use image::Pixel;
@@ -95,7 +96,8 @@ impl GameControllers {
 
 pub struct App {
     creator: TextureCreator<WindowContext>,
-    
+    canvas: WindowCanvas,
+
     ui: UI,
 
     world: GameWorld,
@@ -124,6 +126,16 @@ impl App {
 
         let map_texture = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
         let map_backdrop = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
+/*
+        unsafe {
+            let raw = map_backdrop.raw();
+            
+            // sdl2::sys::SDL_SetTextureBlendMode(raw, sdl2::sys::SDL_BlendMode::SDL_BLENDMODE_BLEND);
+
+            let m = sdl2::sys::SDL_ScaleMode::SDL_ScaleModeLinear;
+            sdl2::sys::SDL_SetTextureScaleMode(raw, m);
+        }
+*/
 
         let ground_tiles = TileSet::load(&creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
         let decoration_tiles = TileSet::load(&creator, "../tiny_places_client/resources/objects", "map_objects.tica");
@@ -175,6 +187,8 @@ impl App {
 
         App {        
             creator,
+            canvas,
+
             ui,
 
             world: GameWorld {
@@ -198,6 +212,50 @@ impl App {
             update_time: SystemTime::now(),
         }
     }
+
+
+    fn update(&mut self) {
+        let world = &mut self.world;
+
+        let now = SystemTime::now();
+        let difference = now.duration_since(self.update_time);
+
+        if difference.is_ok() {
+            self.update_time = now;
+            self.controllers.current().update(world, difference.unwrap().as_secs_f64());
+        }
+    }
+
+    fn render(&mut self) {
+
+        let world = &self.world;
+        let canvas = &mut self.canvas;
+
+        let width = self.ui.window_size[0];
+        let height = self.ui.window_size[1];
+        let window_center = [width / 2, height / 2];
+
+        let player_position = &world.map.player_position();
+        let player_x = player_position[0] as i32;
+        let player_y = player_position[1] as i32;
+
+        let offset_x = width as i32 / 2 - player_x;
+        let offset_y = height as i32 / 2 - player_y / 2;
+
+        // background image, parallax scrolling at 0.5 times map scroll amount
+        let back_off_x = - player_x / 2;
+        let back_off_y = - player_y / 4;
+
+        canvas.clear();
+        canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
+        
+        let s = Rect::new(back_off_x, back_off_y, 600, 450);
+        let d = Rect::new(0, 0, width, height);
+        canvas.copy(&world.map_backdrop, Some(s), Some(d)).unwrap();        
+
+        canvas.present();
+    }
+
 
 /*
     fn render(&mut self, args: &RenderArgs) {
@@ -330,19 +388,6 @@ impl App {
             let ui = &mut self.ui;
             self.controllers.current().draw(viewport, &mut self.gl, &ds, ui, world);    
             self.controllers.current().draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
-        }
-    }
-
-
-    fn update(&mut self, _args: &UpdateArgs) {
-        let world = &mut self.world;
-
-        let now = SystemTime::now();
-        let difference = now.duration_since(self.update_time);
-
-        if difference.is_ok() {
-            self.update_time = now;
-            self.controllers.current().update(world, difference.unwrap().as_secs_f64());
         }
     }
 
@@ -518,9 +563,9 @@ pub fn texture_from_data<T>(creator: &TextureCreator<T>, data: &[u8], width: u32
         TextureAccess::Static, 
         width, height).unwrap();
 
-    // let r = Rect::new(0, 0, width, height);
-    // tex.update(Some(r), data, width as usize * 4).unwrap();
-
+    let r = Rect::new(0, 0, width, height);
+    tex.update(Some(r), data, width as usize * 4).unwrap();
+    
     tex
 }
 
@@ -547,10 +592,12 @@ pub fn load_texture<T>(creator: &TextureCreator<T>, filename: &str) -> Texture {
         for x in 0..width {
             let pixel = image.get_pixel(x, y).to_rgba();
 
-            data.push(pixel[0]);
-            data.push(pixel[1]);
-            data.push(pixel[2]);
+            // texture channels are ARGB order
+
             data.push(pixel[3]);
+            data.push(pixel[2]);
+            data.push(pixel[1]);
+            data.push(pixel[0]);
         }
     }
 
@@ -566,11 +613,33 @@ fn quadratic_fade(x: f64) -> f32 {
 }
 
 
+fn game_loop(app: &mut App, sdl_context: &mut Sdl) {
+
+    let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut go = true;
+
+    while go {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => {go = false;},
+                _ => {}
+            }
+        }
+
+        app.update();
+        app.render();
+    }
+}
+
 fn main() {
     
     let window_size = [1200, 770];
 
-    let sdl_context = sdl2::init().unwrap();
+    let mut sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
@@ -583,28 +652,5 @@ fn main() {
     // Create a new game and run it.
     let mut app = App::new(window, window_size);
 
-    /*
-    let mut events = Events::new(EventSettings::new());
-    while let Some(e) = events.next(&mut window) {
-        if let Some(args) = e.render_args() {
-            app.render(&args);
-        }
-
-        if let Some(args) = e.update_args() {
-            app.update(&args);
-        }
-
-        if let Some(args) = e.button_args() {
-            app.button(&args);
-        }
-
-        if let Some(args) = e.mouse_cursor_args() {
-            app.mouse_cursor(&args);
-        }
-
-        if let Some(args) = e.mouse_scroll_args() {
-            app.mouse_scroll(&args);
-        }
-    }
-    */    
+    game_loop(&mut app, &mut sdl_context);
 }
