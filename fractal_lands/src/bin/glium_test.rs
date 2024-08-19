@@ -1,8 +1,16 @@
 extern crate glium;
+extern crate glutin;
+
+use std::io::BufReader;
+use std::fs::File;
 
 use glium::Surface;
+use glium::Display;
 use glium::implement_vertex;
 use glium::uniform;
+use glutin::surface::SurfaceTypeTrait;
+use glutin::surface::ResizeableSurface;
+use glium::backend::Facade;
 
 #[derive(Copy, Clone)]
 struct Vertex {
@@ -10,6 +18,21 @@ struct Vertex {
     tex_coords: [f32; 2],
 }
 implement_vertex!(Vertex, position, tex_coords);
+
+
+fn load_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, filename: &str) -> glium::Texture2d {
+    
+    let file = File::open(filename).unwrap();
+    let reader = BufReader::new(file);
+
+    let image = image::load(std::io::Cursor::new(&include_bytes!("../../resources/map/backdrop_red_blue.png")),
+    image::ImageFormat::Png).unwrap().to_rgba8();
+    let image_dimensions = image.dimensions();
+    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
+    let texture = glium::Texture2d::new(display, image).unwrap();
+    
+    texture
+}
 
 
 fn main() {
@@ -24,12 +47,7 @@ fn main() {
         .with_title("Glium tutorial #1")
         .build(&event_loop);
 
-
-    let image = image::load(std::io::Cursor::new(&include_bytes!("../../resources/map/backdrop_red_blue.png")),
-                            image::ImageFormat::Png).unwrap().to_rgba8();
-    let image_dimensions = image.dimensions();
-    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
-    let texture = glium::Texture2d::new(&display, image).unwrap();
+    let texture = load_texture(&display, "resources/map/backdrop_red_blue.png");
 
     // We've changed our shape to a rectangle so the image isn't distorted.
     let shape = vec![

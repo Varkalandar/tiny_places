@@ -1,12 +1,10 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
-use sdl2::render::Texture;
-use sdl2::keyboard::Keycode;
-use sdl2::mouse::MouseButton;
-
 use std::path::Path;
 
-use crate::ui::{UI, UiController, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use glium::Texture2d;
+
+use crate::ui::{UI, UiController, Keycode, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
@@ -156,7 +154,7 @@ impl UiController for Game {
 
 impl Game {
 
-    pub fn new(inventory_bg: Texture, ui: &UI, item_tiles: &TileSet) -> Game {
+    pub fn new(inventory_bg: Texture2d, ui: &UI, item_tiles: &TileSet) -> Game {
 
         let piv = PlayerInventoryView::new(
             (ui.window_size[0] as i32) / 2, 0,

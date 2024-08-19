@@ -1,8 +1,9 @@
 use vecmath::Vector2;
 use std::{rc::Rc, collections::HashMap, fs::read_to_string, path::{Path, PathBuf}};
 
-use sdl2::render::Texture;
-use sdl2::render::TextureCreator;
+use glutin::surface::WindowSurface;
+use glium::Display;
+use glium::Texture2d;
 
 use crate::load_texture;
 
@@ -10,7 +11,7 @@ pub struct Tile {
     pub id: usize,
     pub size: Vector2<f64>,
     pub foot: Vector2<f64>,
-    pub tex: Texture,
+    pub tex: Texture2d,
     pub name: String,
 }
 
@@ -35,7 +36,7 @@ impl TileSet {
     }
     */
     
-    pub fn load(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &str, file_str: &str) -> TileSet {
+    pub fn load(display: &Display<WindowSurface>, path_str: &str, file_str: &str) -> TileSet {
         
         let mut fullpath = PathBuf::new();
         fullpath.push(path_str);
@@ -62,7 +63,7 @@ impl TileSet {
             
             if line.starts_with("Tile Description") {
                 
-                let tile_opt = load_tile(creator, path_str, &line_vec, i);
+                let tile_opt = load_tile(display, path_str, &line_vec, i);
                 
                 if tile_opt.is_some() {
                     let tile = tile_opt.unwrap();
@@ -99,7 +100,7 @@ impl TileSet {
 }
 
 
-fn load_tile(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
+fn load_tile(display: &Display<WindowSurface>, path_str: &str, lines: &Vec<&str>, start: usize) -> Option<Tile> {
 
     let id = lines[start + 2].parse::<usize>().unwrap();
 
@@ -121,7 +122,7 @@ fn load_tile(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &st
         let filename = 
             path_str.to_string() + "/" + &id.to_string() + "-" + name + ".png";
         
-        let mut tex = load_texture(creator, &filename);
+        let mut tex = load_texture(display, &filename);
 
         result = Some(Tile {
             id,
@@ -139,31 +140,9 @@ fn load_tile(creator: &TextureCreator<sdl2::video::WindowContext>, path_str: &st
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sdl2::render::CanvasBuilder;
 
 
     #[test]
     fn test_load_tileset() {
-        let sdl_context = sdl2::init().unwrap();
-        let video_subsystem = sdl_context.video().unwrap();
-    
-        let window = video_subsystem
-            .window("Fractal Lands 0.0.1", 800, 500)
-            .position_centered()
-            .opengl()
-            .build()
-            .map_err(|e| e.to_string()).unwrap();
-
-        let canvas_builder = CanvasBuilder::new(window);
-        let canvas = 
-            canvas_builder
-                .accelerated()
-                .present_vsync()
-                .build()
-                .unwrap();
-
-        let creator = canvas.texture_creator();
-
-        let set = TileSet::load(&creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
     }
 }

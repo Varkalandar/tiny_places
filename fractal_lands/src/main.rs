@@ -1,30 +1,22 @@
-extern crate sdl2;
+extern crate glium;
+extern crate glutin;
+
 extern crate freetype;
 extern crate image;
 extern crate rodio;
 extern crate rand;
 
-use sdl2::Sdl;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
-use sdl2::pixels::PixelFormatEnum;
-use sdl2::rect::Rect;
-use sdl2::video::Window;
-use sdl2::video::WindowContext;
-use sdl2::render::WindowCanvas;
-use sdl2::render::TextureAccess;
-use sdl2::render::Canvas;
-use sdl2::render::Texture;
-use sdl2::render::TextureCreator;
-use sdl2::render::CanvasBuilder;
+use glutin::surface::WindowSurface;
 
-use image::GenericImageView;
-use image::Pixel;
+use glium::Surface;
+use glium::Display;
+use glium::Texture2d;
+use glium::Program;
+use glium::implement_vertex;
+use glium::uniform;
 
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
-
 
 use std::time::SystemTime;
 use std::fs::read_to_string;
@@ -44,6 +36,7 @@ mod particle_driver;
 mod animation;
 mod mob_group;
 mod player_inventory_view;
+mod gl_support;
 
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
@@ -52,6 +45,9 @@ use game::Game;
 use item::ItemFactory;
 use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
+use gl_support::load_texture;
+use gl_support::build_program;
+use gl_support::Vertex;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
 const CREATURE_TILESET: usize = 3;
@@ -70,8 +66,8 @@ pub struct GameWorld {
 
     rng: rand::rngs::StdRng,
 
-    map_texture: Texture,
-    map_backdrop: Texture,
+    map_texture: Texture2d,
+    map_backdrop: Texture2d,
 }
 
 
@@ -95,9 +91,6 @@ impl GameControllers {
 
 
 pub struct App {
-    creator: TextureCreator<WindowContext>,
-    canvas: WindowCanvas,
-
     ui: UI,
 
     world: GameWorld,
@@ -109,42 +102,22 @@ pub struct App {
 
 impl App {
     
-    fn new(window: Window, window_size: [u32; 2]) -> App {
-
-        let canvas_builder = CanvasBuilder::new(window);
-        let canvas = 
-            canvas_builder
-                .accelerated()
-                .present_vsync()
-                .build()
-                .unwrap();
-
-        let creator = canvas.texture_creator();
+    fn new(display: &Display<WindowSurface>, window_size: [u32; 2]) -> App {
 
         let map_image_file = "map_wasteland.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
-        let map_texture = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
-        let map_backdrop = load_texture(&creator, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
-/*
-        unsafe {
-            let raw = map_backdrop.raw();
-            
-            // sdl2::sys::SDL_SetTextureBlendMode(raw, sdl2::sys::SDL_BlendMode::SDL_BLENDMODE_BLEND);
+        let map_texture = load_texture(display, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
+        let map_backdrop = load_texture(display, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
 
-            let m = sdl2::sys::SDL_ScaleMode::SDL_ScaleModeLinear;
-            sdl2::sys::SDL_SetTextureScaleMode(raw, m);
-        }
-*/
-
-        let ground_tiles = TileSet::load(&creator, "../tiny_places_client/resources/grounds", "map_objects.tica");
-        let decoration_tiles = TileSet::load(&creator, "../tiny_places_client/resources/objects", "map_objects.tica");
-        let item_tiles = TileSet::load(&creator, "../tiny_places_client/resources/items", "items.tica");
-        let cloud_tiles = TileSet::load(&creator, "../tiny_places_client/resources/clouds", "map_objects.tica");
-        let creature_tiles = TileSet::load(&creator, "../tiny_places_client/resources/creatures", "creatures.tica");
-        let player_tiles = TileSet::load(&creator, "../tiny_places_client/resources/players", "players.tica");
-        let projectile_tiles = TileSet::load(&creator, "../tiny_places_client/resources/projectiles", "projectiles.tica");
-        let animation_tiles = TileSet::load(&creator, "../tiny_places_client/resources/animations", "animations.tica");
+        let ground_tiles = TileSet::load(display, "../tiny_places_client/resources/grounds", "map_objects.tica");
+        let decoration_tiles = TileSet::load(display, "../tiny_places_client/resources/objects", "map_objects.tica");
+        let item_tiles = TileSet::load(display, "../tiny_places_client/resources/items", "items.tica");
+        let cloud_tiles = TileSet::load(display, "../tiny_places_client/resources/clouds", "map_objects.tica");
+        let creature_tiles = TileSet::load(display, "../tiny_places_client/resources/creatures", "creatures.tica");
+        let player_tiles = TileSet::load(display, "../tiny_places_client/resources/players", "players.tica");
+        let projectile_tiles = TileSet::load(display, "../tiny_places_client/resources/projectiles", "projectiles.tica");
+        let animation_tiles = TileSet::load(display, "../tiny_places_client/resources/animations", "animations.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -161,11 +134,11 @@ impl App {
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         map.load("start.map");
 
-        let ui = UI::new(&creator, window_size);
+        let ui = UI::new(display, window_size);
         
         let editor = MapEditor::new();
 
-        let inventory_bg = load_texture(&creator, "resources/ui/inventory_bg.png");
+        let inventory_bg = load_texture(display, "resources/ui/inventory_bg.png");
         let game = Game::new(inventory_bg, &ui, &layer_tileset[6]);
 
         let mut inv = Inventory::new();
@@ -186,9 +159,6 @@ impl App {
         }
 
         App {        
-            creator,
-            canvas,
-
             ui,
 
             world: GameWorld {
@@ -226,10 +196,9 @@ impl App {
         }
     }
 
-    fn render(&mut self) {
+    fn render(&mut self, display: &Display<WindowSurface>, program: &Program) {
 
         let world = &self.world;
-        let canvas = &mut self.canvas;
 
         let width = self.ui.window_size[0];
         let height = self.ui.window_size[1];
@@ -246,14 +215,43 @@ impl App {
         let back_off_x = - player_x / 2;
         let back_off_y = - player_y / 4;
 
-        canvas.clear();
-        canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
-        
-        let s = Rect::new(back_off_x, back_off_y, 600, 450);
-        let d = Rect::new(0, 0, width, height);
-        canvas.copy(&world.map_backdrop, Some(s), Some(d)).unwrap();        
+        let mut target = display.draw();
+        target.clear_color(0.0, 0.0, 1.0, 1.0);
 
-        canvas.present();
+        let shape = vec![
+            Vertex { position: [-0.5 * 100.0, -0.5 * 100.0], tex_coords: [0.0, 0.0] },
+            Vertex { position: [ 0.5 * 100.0, -0.5 * 100.0], tex_coords: [1.0, 0.0] },
+            Vertex { position: [ 0.5 * 100.0,  0.5 * 100.0], tex_coords: [1.0, 1.0] },
+    
+            Vertex { position: [ 0.5 * 100.0,  0.5 * 100.0], tex_coords: [1.0, 1.0] },
+            Vertex { position: [-0.5 * 100.0,  0.5 * 100.0], tex_coords: [0.0, 1.0] },
+            Vertex { position: [-0.5 * 100.0, -0.5 * 100.0], tex_coords: [0.0, 0.0] },
+        ];
+
+        let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
+        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+
+        let texture = &self.world.map_backdrop;
+
+
+        let xf: f32 = 2.0 / (width as f32); 
+        let yf: f32 = 2.0 / (height as f32); 
+
+
+        let uniforms = uniform! {
+            matrix: [
+                [ xf, 0.0, 0.0, 0.0],
+                [0.0,  yf, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0_f32],
+            ],                        
+            tex: texture,                        
+        };
+
+        target.draw(&vertex_buffer, &indices, &program, &uniforms,
+                    &Default::default()).unwrap();
+                    
+        target.finish().unwrap();
     }
 
 
@@ -317,7 +315,7 @@ impl App {
 
                         let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
                         let image = build_image(glow_tile, mob.visual.glow);
-                        image.draw(&glow_tile.tex, &ds.blend(sdl2::render::BlendMode::Add), tf, gl);
+                        image.draw(&glow_tile.tex, &ds.blend(BlendMode::Add), tf, gl);
                     }
 
                     // particle effects
@@ -340,7 +338,7 @@ impl App {
                                 let fade = quadratic_fade(p.age / p.lifetime);
                                 
                                 let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
-                                image.draw(&tile.tex, &ds.blend(sdl2::render::BlendMode::Add), tf.trans(xp, yp), gl);
+                                image.draw(&tile.tex, &ds.blend(BlendMode::Add), tf.trans(xp, yp), gl);
                             }
                         }
                     });
@@ -556,101 +554,82 @@ pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
 */
 
 
-pub fn texture_from_data<T>(creator: &TextureCreator<T>, data: &[u8], width: u32, height: u32) -> Texture {
-    let mut tex =
-        creator 
-        .create_texture(PixelFormatEnum::RGBA8888, 
-        TextureAccess::Static, 
-        width, height).unwrap();
-
-    let r = Rect::new(0, 0, width, height);
-    tex.update(Some(r), data, width as usize * 4).unwrap();
-    
-    tex
-}
-
-
-pub fn load_texture<T>(creator: &TextureCreator<T>, filename: &str) -> Texture {
-
-    // println!("{}", filename);
-
-    let image = image::open(filename).unwrap();
-    let width = image.width();
-    let height = image.height();
-
-    let mut tex =
-        creator 
-            .create_texture(PixelFormatEnum::RGBA8888, 
-                            TextureAccess::Static,
-                            width, 
-                            height)
-            .unwrap();
-
-    let mut data: Vec<u8> = Vec::with_capacity((width * height) as usize);
-
-    for y in 0..height {
-        for x in 0..width {
-            let pixel = image.get_pixel(x, y).to_rgba();
-
-            // texture channels are ARGB order
-
-            data.push(pixel[3]);
-            data.push(pixel[2]);
-            data.push(pixel[1]);
-            data.push(pixel[0]);
-        }
-    }
-
-    let r = Rect::new(0, 0, width, height);
-    tex.update(Some(r), &data, width as usize * 4).unwrap();
-
-    tex
-}
-
-
 fn quadratic_fade(x: f64) -> f32 {
     (1.0 - (x*x)) as f32
 }
 
 
-fn game_loop(app: &mut App, sdl_context: &mut Sdl) {
-
-    let mut event_pump = sdl_context.event_pump().unwrap();
-    let mut go = true;
-
-    while go {
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => {go = false;},
-                _ => {}
-            }
-        }
-
-        app.update();
-        app.render();
-    }
-}
-
 fn main() {
     
     let window_size = [1200, 770];
 
-    let mut sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
-
-    let window = video_subsystem
-        .window("Fractal Lands 0.0.1", window_size[0], window_size[1])
-        .position_centered()
-        .opengl()
+    // We start by creating the EventLoop, this can only be done once per process.
+    // This also needs to happen on the main thread to make the program portable.
+    let event_loop = glium::winit::event_loop::EventLoop::builder()
         .build()
-        .map_err(|e| e.to_string()).unwrap();
+        .expect("event loop building");
 
-    // Create a new game and run it.
-    let mut app = App::new(window, window_size);
+    let (window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
+        .with_title("Glium tutorial #1")
+        .with_inner_size(window_size[0], window_size[1])
+        .build(&event_loop);
 
-    game_loop(&mut app, &mut sdl_context);
+
+    let program = build_program(&display);
+
+    let mut app = App::new(&display, window_size);
+
+    // Now we wait until the program is closed
+    #[allow(deprecated)]
+    event_loop.run(move |event, window_target| {
+        match event {
+            glium::winit::event::Event::WindowEvent { event, .. } => match event {
+                // This event is sent by the OS when you close the Window, or request the program to quit via the taskbar.
+                glium::winit::event::WindowEvent::CloseRequested => {
+                    window_target.exit();
+                },
+                // We now need to render everyting in response to a RedrawRequested event due to the animation
+                glium::winit::event::WindowEvent::RedrawRequested => {
+
+                    app.update();
+                    app.render(&display, &program);
+
+
+                    /*
+                    let x = t.sin() * 0.5;
+
+                    let mut target = display.draw();
+                    target.clear_color(0.0, 0.0, 1.0, 1.0);
+
+                    let uniforms = uniform! {
+                        matrix: [
+                            [1.0, 0.0, 0.0, 0.0],
+                            [0.0, 1.0, 0.0, 0.0],
+                            [0.0, 0.0, 1.0, 0.0],
+                            [  x, 0.0, 0.0, 1.0],
+                        ],                        
+                        tex: &texture,                        
+                    };
+
+                    target.draw(&vertex_buffer, &indices, &program, &uniforms,
+                                &Default::default()).unwrap();
+                    target.finish().unwrap();
+*/                    
+                },
+                // Because glium doesn't know about windows we need to resize the display
+                // when the window's size has changed.
+                glium::winit::event::WindowEvent::Resized(window_size) => {
+                    display.resize(window_size.into());
+                },
+                _ => (),
+            },
+            // By requesting a redraw in response to a RedrawEventsCleared event we get continuous rendering.
+            // For applications that only change due to user input you could remove this handler.
+            glium::winit::event::Event::AboutToWait => {
+                window.request_redraw();
+            },
+            _ => (),
+        };
+    })
+    .unwrap();
 }

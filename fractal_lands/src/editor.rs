@@ -1,15 +1,13 @@
 use std::rc::Rc;
 
-use sdl2::keyboard::Keycode;
-use sdl2::mouse::MouseButton;
-
 use vecmath::Vector2;
 
-use crate::ui::{UI, UiController, UiComponent, TileSet, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use crate::ui::{UI, UiController, UiComponent, TileSet, Keycode, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::screen_to_world_pos;
 use crate::GameWorld;
 use crate::sound::Sound;
+use crate::gl_support::BlendMode;
 
 
 pub struct MapEditor {
@@ -119,7 +117,7 @@ impl UiController for MapEditor {
 
                     if event.args.button == Button::Keyboard(Keycode::A) {
                         let map = &mut world.map;
-                        map.apply_to_selected_mob(|mob| {mob.visual.blend = sdl2::render::BlendMode::Add;});
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Add;});
                     }
 
                     if event.args.button == Button::Keyboard(Keycode::C) {
@@ -154,7 +152,7 @@ impl UiController for MapEditor {
 
                     if event.args.button == Button::Keyboard(Keycode::M) {
                         let map = &mut world.map;
-                        map.apply_to_selected_mob(|mob| {mob.visual.blend = sdl2::render::BlendMode::Blend;});
+                        map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Blend;});
                     }
 
                     if event.args.button == Button::Keyboard(Keycode::P) {

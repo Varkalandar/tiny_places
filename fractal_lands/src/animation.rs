@@ -1,7 +1,7 @@
 use crate::map::MapObject;
 use crate::map::UpdateAction;
 use crate::ANIMATION_TILESET;
-
+use crate::gl_support::BlendMode;
 
 pub trait Animated {
     fn update(&self, _dt: f64, _mob: &mut MapObject) {
@@ -69,7 +69,7 @@ impl Animated for RemovalAnimation {
 
             mob.visual.current_image_id = tile_id;
             mob.visual.color = [1.0, 1.0, 1.0, 1.0];
-            mob.visual.blend = sdl2::render::BlendMode::Add;
+            mob.visual.blend = BlendMode::Add;
             mob.visual.tileset_id = ANIMATION_TILESET;
             mob.visual.scale = 1.5;
         }

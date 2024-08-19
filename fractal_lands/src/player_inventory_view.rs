@@ -1,10 +1,9 @@
 use std::rc::Rc;
 use std::collections::HashMap;
 
-use sdl2::render::Texture;
-use sdl2::mouse::MouseButton;
+use glium::Texture2d;
 
-use crate::ui::{UiArea, UiFont, MouseMoveEvent, MouseState, ButtonEvent};
+use crate::ui::{UiArea, UiFont, MouseButton, MouseMoveEvent, MouseState, ButtonEvent};
 use crate::Inventory;
 use crate::inventory::Slot;
 use crate::inventory::Entry;
@@ -18,7 +17,7 @@ use crate::ui::ButtonState;
 
 pub struct PlayerInventoryView {
     area: UiArea,
-    texture: Texture,
+    texture: Texture2d,
     item_tiles: TileSet,
 
     slot_offsets: HashMap<Slot, [i32; 2]>,
@@ -35,7 +34,7 @@ pub struct PlayerInventoryView {
 
 impl PlayerInventoryView {
 
-    pub fn new(x: i32, y: i32, font: &Rc<UiFont>, tiles: &TileSet, texture: Texture) -> PlayerInventoryView {
+    pub fn new(x: i32, y: i32, font: &Rc<UiFont>, tiles: &TileSet, texture: Texture2d) -> PlayerInventoryView {
 
         let mut slot_offsets = HashMap::new();
         slot_offsets.insert(Slot::Bag, [10, 452]);
@@ -51,14 +50,14 @@ impl PlayerInventoryView {
         slot_sizes.insert(Slot::Engine, [2*32, 3*32]);
         slot_sizes.insert(Slot::Body, [2*32, 3*32]);
 
-        let query = texture.query();
+        // let query = texture.query();
 
         PlayerInventoryView {
             area: UiArea {
                 x, 
                 y,
-                w: query.width as i32,
-                h: query.height as i32,                
+                w: 500,
+                h: 750,                
             },
             
             texture,

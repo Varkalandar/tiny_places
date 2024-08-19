@@ -23,6 +23,7 @@ use crate::SoundPlayer;
 use crate::mob_group::MobGroup;
 use crate::CREATURE_TILESET;
 use crate::parse_rgba;
+use crate::gl_support::BlendMode;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -71,7 +72,7 @@ impl Map {
             scale: 0.75,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
-            blend: sdl2::render::BlendMode::Blend,
+            blend: BlendMode::Blend,
             particles: ParticleDriver::new(),       
         };
 
@@ -504,7 +505,7 @@ impl Map {
                 &color[1].to_string() + " " +
                 &color[2].to_string() + " " +
                 &color[3].to_string() + "," +            
-                &blend_to_key(object.visual.blend) +
+                &blend_to_key(&object.visual.blend) +
                 "\n";
                 
                 writer.write(line.as_bytes())?;
@@ -663,12 +664,11 @@ pub fn move_mob(mob: &mut MapObject, destination: Vector2<f64>, base_speed: f64)
 }
 
 
-fn blend_to_key(blend: sdl2::render::BlendMode) -> String {
+fn blend_to_key(blend: &BlendMode) -> String {
     let key =
         match blend {
-            sdl2::render::BlendMode::Blend => {"n"}, 
-            sdl2::render::BlendMode::Add => {"a"},
-            sdl2::render::BlendMode::Mul => {"m"},
+            BlendMode::Blend => {"n"}, 
+            BlendMode::Add => {"a"},
             _ => {panic!("Unsupported blend mode")},
         };
 
@@ -676,18 +676,16 @@ fn blend_to_key(blend: sdl2::render::BlendMode) -> String {
 }
 
 
-fn key_to_blend(key: &str) -> sdl2::render::BlendMode {
+fn key_to_blend(key: &str) -> BlendMode {
 
     println!("key='{}'", key);
 
     if key == "n" {
-        sdl2::render::BlendMode::Blend
+        BlendMode::Blend
     } else if key == "a" {
-        sdl2::render::BlendMode::Add
-    } else if key == "m" {
-        sdl2::render::BlendMode::Mul
+        BlendMode::Add
     } else {
-        sdl2::render::BlendMode::Blend
+        BlendMode::Blend
     }
 }
 
@@ -742,7 +740,7 @@ impl MapObjectFactory {
             scale,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
-            blend: sdl2::render::BlendMode::Blend,
+            blend: BlendMode::Blend,
             particles: ParticleDriver::new(),
         };
 
@@ -795,7 +793,7 @@ pub struct Visual {
     pub scale: f64,
     pub color: [f32; 4],
     pub glow: [f32; 4], // ground illumination color
-    pub blend: sdl2::render::BlendMode,
+    pub blend: BlendMode,
     pub particles: ParticleDriver,
 }
 

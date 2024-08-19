@@ -1,12 +1,10 @@
 use std::collections::HashMap;
 
-use sdl2::render::Texture;
-use sdl2::render::WindowCanvas;
-use sdl2::render::TextureAccess;
-use sdl2::pixels::PixelFormatEnum;
-use sdl2::render::TextureCreator;
+use glutin::surface::WindowSurface;
+use glium::Display;
+use glium::Texture2d;
 
-use crate::texture_from_data;
+use crate::gl_support::texture_from_data;
 
 const PITCH: u32 = 1024;
 
@@ -28,13 +26,13 @@ pub struct UiFont {
     pub lineheight: i32,
     
     glyphs: HashMap<usize, UiGlyph>,
-    texture: Texture,
+    texture: Texture2d,
 }
 
 
 impl UiFont {
 
-    pub fn new<T>(creator: &TextureCreator<T>, size: u32) -> UiFont {
+    pub fn new(display: &Display<WindowSurface>, size: u32) -> UiFont {
         let ft = freetype::Library::init().unwrap();
         let font = "resources/font/FiraSans-Regular.ttf";
         let face = ft.new_face(font, 0).unwrap();
@@ -45,7 +43,7 @@ impl UiFont {
         // println!("Ascend {} descend {}", face.ascender(), face.descender());
 
         let mut glyphs = HashMap::new();
-        let texture = create_glyphs(creator, &face, &mut glyphs, lineheight as u32);
+        let texture = create_glyphs(display, &face, &mut glyphs, lineheight as u32);
 
         UiFont {
             face,
@@ -105,7 +103,7 @@ impl UiFont {
 }
 
 
-fn create_glyphs<T>(creator: &TextureCreator<T>, face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture {
+fn create_glyphs(display: &Display<WindowSurface>, face: &freetype::Face, glyphs: &mut HashMap<usize, UiGlyph>, lineheight: u32) -> Texture2d {
     
     let mut num_glyphs = 0;
 
@@ -121,7 +119,7 @@ fn create_glyphs<T>(creator: &TextureCreator<T>, face: &freetype::Face, glyphs: 
     let b_width = PITCH;
     let b_height = (num_glyphs / 32) * lineheight;
 
-    let mut buffer = vec![0_u8; (b_width * b_height) as usize];
+    let mut buffer = vec![0_u8; (b_width * b_height * 4) as usize];
 
     // cursor to write glyphs into the texture buffer
     let mut cursor: (u32, u32) = (0, 0);
@@ -159,17 +157,8 @@ fn create_glyphs<T>(creator: &TextureCreator<T>, face: &freetype::Face, glyphs: 
             glyphs.insert(glyph_nr, ug);
         }
     }
-
-    let mut tex =
-        creator 
-        .create_texture(PixelFormatEnum::RGBA8888, 
-        TextureAccess::Static, 
-        32, 32).unwrap();
     
-
-    tex
-    
-    // texture_from_data(&mut canvas.texture_creator(), &buffer, b_width, b_height)
+    texture_from_data(display, &buffer, b_width, b_height)
 }
 
     
@@ -219,6 +208,9 @@ fn convert_bitmap(buffer: &mut Vec<u8>, bitmap: &freetype::Bitmap,cursor: (u32, 
 
 
 fn buffer_setpix(buffer: &mut Vec<u8>, x: u32, y: u32, alpha: u8) {
-    let dpos = ((y * PITCH) + x) as usize;
-    buffer[dpos] = alpha;
+    let dpos = ((y * PITCH * 4) + x) as usize;
+    buffer[dpos] = 255;
+    buffer[dpos+1] = 255;
+    buffer[dpos+2] = 255;
+    buffer[dpos+3] = alpha;
 }

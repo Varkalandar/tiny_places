@@ -6,6 +6,7 @@ use crate::read_lines;
 use crate::parse_rgba;
 use crate::map::Visual;
 use crate::SoundPlayer;
+use crate::gl_support::BlendMode;
 
 
 pub struct ProjectileBuilder {
@@ -43,7 +44,7 @@ impl ProjectileBuilder {
         visual.directions = pd.directions;
         visual.phases = pd.phases;
         visual.glow = pd.glow;
-        visual.blend = sdl2::render::BlendMode::Add;
+        visual.blend = BlendMode::Add;
         visual.orient_in_direction(*velocity);
 
         velocity[0] *= pd.speed;
