@@ -48,6 +48,7 @@ use sound::SoundPlayer;
 use gl_support::load_texture;
 use gl_support::build_program;
 use gl_support::Vertex;
+use crate::gl_support::draw_texture;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
 const CREATURE_TILESET: usize = 3;
@@ -192,7 +193,11 @@ impl App {
 
         if difference.is_ok() {
             self.update_time = now;
-            self.controllers.current().update(world, difference.unwrap().as_secs_f64());
+            let secs = difference.unwrap().as_secs_f64();
+
+            // println!("seconds: {}", secs);
+
+            self.controllers.current().update(world, secs);
         }
     }
 
@@ -200,57 +205,30 @@ impl App {
 
         let world = &self.world;
 
-        let width = self.ui.window_size[0];
-        let height = self.ui.window_size[1];
-        let window_center = [width / 2, height / 2];
+        let width = self.ui.window_size[0] as f32;
+        let height = self.ui.window_size[1] as f32;
+        // let window_center = [width / 2, height / 2];
 
         let player_position = &world.map.player_position();
-        let player_x = player_position[0] as i32;
-        let player_y = player_position[1] as i32;
+        let player_x = player_position[0] as f32;
+        let player_y = player_position[1] as f32;
 
-        let offset_x = width as i32 / 2 - player_x;
-        let offset_y = height as i32 / 2 - player_y / 2;
+        let offset_x = width / 2.0 - player_x;
+        let offset_y = height / 2.0 - player_y / 2.0;
 
         // background image, parallax scrolling at 0.5 times map scroll amount
-        let back_off_x = - player_x / 2;
-        let back_off_y = - player_y / 4;
+        let back_off_x = - player_x / 2.0;
+        let back_off_y = - player_y / 4.0;
 
         let mut target = display.draw();
         target.clear_color(0.0, 0.0, 1.0, 1.0);
 
-        let shape = vec![
-            Vertex { position: [-0.5 * 100.0, -0.5 * 100.0], tex_coords: [0.0, 0.0] },
-            Vertex { position: [ 0.5 * 100.0, -0.5 * 100.0], tex_coords: [1.0, 0.0] },
-            Vertex { position: [ 0.5 * 100.0,  0.5 * 100.0], tex_coords: [1.0, 1.0] },
-    
-            Vertex { position: [ 0.5 * 100.0,  0.5 * 100.0], tex_coords: [1.0, 1.0] },
-            Vertex { position: [-0.5 * 100.0,  0.5 * 100.0], tex_coords: [0.0, 1.0] },
-            Vertex { position: [-0.5 * 100.0, -0.5 * 100.0], tex_coords: [0.0, 0.0] },
-        ];
+        draw_texture(display, &mut target, program, &self.world.map_backdrop, 
+                     0.0, 0.0, 2.0, 2.0);
 
-        let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+        draw_texture(display, &mut target, program, &self.world.map_texture, 
+                     offset_x, offset_y, 2.0, 2.0);
 
-        let texture = &self.world.map_backdrop;
-
-
-        let xf: f32 = 2.0 / (width as f32); 
-        let yf: f32 = 2.0 / (height as f32); 
-
-
-        let uniforms = uniform! {
-            matrix: [
-                [ xf, 0.0, 0.0, 0.0],
-                [0.0,  yf, 0.0, 0.0],
-                [0.0, 0.0, 1.0, 0.0],
-                [0.0, 0.0, 0.0, 1.0_f32],
-            ],                        
-            tex: texture,                        
-        };
-
-        target.draw(&vertex_buffer, &indices, &program, &uniforms,
-                    &Default::default()).unwrap();
-                    
         target.finish().unwrap();
     }
 
