@@ -39,7 +39,7 @@ mod player_inventory_view;
 mod gl_support;
 
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
-use ui::{UI, UiController, TileSet, Tile, MouseMoveEvent, ScrollEvent};
+use ui::{UI, UiController, TileSet, Tile, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
 use item::ItemFactory;
@@ -568,37 +568,40 @@ fn main() {
                 },
                 // We now need to render everyting in response to a RedrawRequested event due to the animation
                 glium::winit::event::WindowEvent::RedrawRequested => {
-
                     app.update();
                     app.render(&display, &program);
-
-
-                    /*
-                    let x = t.sin() * 0.5;
-
-                    let mut target = display.draw();
-                    target.clear_color(0.0, 0.0, 1.0, 1.0);
-
-                    let uniforms = uniform! {
-                        matrix: [
-                            [1.0, 0.0, 0.0, 0.0],
-                            [0.0, 1.0, 0.0, 0.0],
-                            [0.0, 0.0, 1.0, 0.0],
-                            [  x, 0.0, 0.0, 1.0],
-                        ],                        
-                        tex: &texture,                        
-                    };
-
-                    target.draw(&vertex_buffer, &indices, &program, &uniforms,
-                                &Default::default()).unwrap();
-                    target.finish().unwrap();
-*/                    
                 },
                 // Because glium doesn't know about windows we need to resize the display
                 // when the window's size has changed.
                 glium::winit::event::WindowEvent::Resized(window_size) => {
                     display.resize(window_size.into());
                 },
+
+                glium::winit::event::WindowEvent::MouseInput { device_id, button, state } => {
+                    println!("Button = {:?}, state = {:?}", button, state);
+    
+                    let button_event = ButtonEvent {
+                        args: ButtonArgs {
+                            state: if state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                            button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
+                            scancode: None,
+                        },
+                        mx: 0,
+                        my: 0,
+                    };
+                    app.ui.handle_button_event(&button_event);
+                },
+
+                glium::winit::event::WindowEvent::CursorMoved { device_id, position } => {
+                    // println!("mouse position = {:?}", position);
+
+                    let event = MouseMoveEvent {
+                        mx: position.x as i32,
+                        my: position.y as i32,
+                    };
+                    app.ui.handle_mouse_move_event(&event);
+                },
+
                 _ => (),
             },
             // By requesting a redraw in response to a RedrawEventsCleared event we get continuous rendering.

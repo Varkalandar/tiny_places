@@ -13,7 +13,7 @@ pub use tileset::*;
 pub use font::UiFont;
 
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum Keycode {
     Backspace,
     Tab,
@@ -252,31 +252,47 @@ pub enum Keycode {
     Sleep,
 }
 
-
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum MouseButton {
     Left,
     Right,
 }
 
-
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum Button {
     Keyboard(Keycode),
     Mouse(MouseButton),
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum ButtonState {
     Press,
     Release, 
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub struct ButtonArgs {
     pub state: ButtonState,
     pub button: Button,
     pub scancode: Option<i32>,
+}
+
+
+#[derive(Clone)]
+pub struct ButtonEvent {
+    pub args: ButtonArgs,
+    pub mx: i32,
+    pub my: i32,
+}
+
+impl ButtonEvent {
+    fn translate(&self, x: i32, y: i32) -> ButtonEvent {
+        ButtonEvent {
+            args: self.args.clone(),
+            mx: self.mx + x,
+            my: self.my + y,
+        }
+    }
 }
 
 
@@ -367,6 +383,8 @@ pub struct UI
     pub window_size: [u32; 2],
 
     pub mouse_state: MouseState,
+    pub mouse_x: i32,
+    pub mouse_y: i32,
     pub keyboard_state: KeyboardState,
 }
 
@@ -382,6 +400,9 @@ impl UI {
             font_14: Rc::new(UiFont::new(display, 14)),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
+            mouse_x: 0,
+            mouse_y: 0,
+
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
         }
     }
@@ -515,7 +536,11 @@ impl UI {
             }
         }
 
-        self.root.head.handle_button_event(event)
+        let mut complete_event = event.clone();
+        complete_event.mx = self.mouse_x;
+        complete_event.my = self.mouse_y;
+
+        self.root.head.handle_button_event(&complete_event)
     }
 
 
@@ -528,24 +553,6 @@ impl UI {
         self.root.head.handle_scroll_event(event)
     }
 }
-
-
-pub struct ButtonEvent<'a> {
-    pub args: &'a ButtonArgs,
-    pub mx: i32,
-    pub my: i32,
-}
-
-impl ButtonEvent <'_> {
-    fn translate(&self, x: i32, y: i32) -> ButtonEvent {
-        ButtonEvent {
-            args: self.args,
-            mx: self.mx + x,
-            my: self.my + y,
-        }
-    }
-}
-
 
 pub struct MouseMoveEvent {
     pub mx: i32,
