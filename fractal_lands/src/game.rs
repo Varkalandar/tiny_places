@@ -3,8 +3,10 @@ use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 use std::path::Path;
 
 use glium::Texture2d;
+use glium::winit::keyboard::Key;
+use glium::winit::keyboard::NamedKey;
 
-use crate::ui::{UI, UiController, Keycode, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use crate::ui::{UI, UiController, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
 use crate::screen_to_world_pos;
 use crate::player_inventory_view::PlayerInventoryView;
@@ -75,7 +77,7 @@ impl UiController for Game {
                         map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
-                    if event.args.button == Button::Keyboard(Keycode::I) {
+                    if event.args.button == Button::Keyboard(Key::Character("I".into())) {
                         self.show_inventory = !self.show_inventory;
                     }        
                 },

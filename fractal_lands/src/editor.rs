@@ -2,7 +2,10 @@ use std::rc::Rc;
 
 use vecmath::Vector2;
 
-use crate::ui::{UI, UiController, UiComponent, TileSet, Keycode, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use glium::winit::keyboard::Key;
+use glium::winit::keyboard::NamedKey;
+
+use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 use crate::screen_to_world_pos;
 use crate::GameWorld;
@@ -33,6 +36,8 @@ impl UiController for MapEditor {
 
             match comp {
                 None => {
+
+                    println!("button pressed {:?}", event.args.button);                     
                     
                     if event.args.button == Button::Mouse(MouseButton::Left) {
                         let id = self.selected_tile_id;
@@ -71,56 +76,56 @@ impl UiController for MapEditor {
                         }
                     }
                     
-                    if event.args.button == Button::Keyboard(Keycode::F1) { 
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::F1)) { 
                         self.show_editor_keys = !self.show_editor_keys;
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Num1) {                        
+                    if event.args.button == Button::Keyboard(Key::Character("1".into())) {
                         world.map.selected_layer = MAP_GROUND_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Num2) {                        
+                    if event.args.button == Button::Keyboard(Key::Character("2".into())) {                        
                         world.map.selected_layer = MAP_OBJECT_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Num3) {                        
+                    if event.args.button == Button::Keyboard(Key::Character("3".into())) {                        
                         world.map.selected_layer = MAP_CLOUD_LAYER;
                         self.selected_tile_id = 0;
                     }        
 
                     let step = if ui.keyboard_state.shift_pressed {8.0} else {1.0};
 
-                    if event.args.button == Button::Keyboard(Keycode::Right) {                        
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::ArrowRight)) {                        
                         world.map.move_selected_object(step, 0.0);
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Left) {                        
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::ArrowLeft)) {                        
                         world.map.move_selected_object(-step, 0.0);
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Up) {  
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::ArrowUp)) {  
                         world.map.move_selected_object(0.0, -step);
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Down) {                        
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::ArrowDown)) {
                         world.map.move_selected_object(0.0, step);
                     }        
 
 
-                    if event.args.button == Button::Keyboard(Keycode::Space) {
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::Space)) {
                         let set = &world.layer_tileset[world.map.selected_layer];
                         let cont = self.make_tile_selector(&ui, set);
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::A) {
+                    if event.args.button == Button::Keyboard(Key::Character("A".into())) {
                         let map = &mut world.map;
                         map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Add;});
                     }
 
-                    if event.args.button == Button::Keyboard(Keycode::C) {
+                    if event.args.button == Button::Keyboard(Key::Character("C".into())) {
                         let map = &mut world.map;
                         let object = map.layers[map.selected_layer].get_mut(&map.selected_item);
                         match object {
@@ -132,7 +137,7 @@ impl UiController for MapEditor {
                         }
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::Delete) {
+                    if event.args.button == Button::Keyboard(Key::Named(NamedKey::Delete)) {
                         let map = &mut world.map;
                         let mob = map.layers[map.selected_layer].get(&map.selected_item);
 
@@ -146,21 +151,21 @@ impl UiController for MapEditor {
                         }
                     }        
 
-                    if event.args.button == Button::Keyboard(Keycode::L) {
+                    if event.args.button == Button::Keyboard(Key::Character("L".into())) {
                         world.map.load("start.map");
                     }
 
-                    if event.args.button == Button::Keyboard(Keycode::M) {
+                    if event.args.button == Button::Keyboard(Key::Character("M".into())) {
                         let map = &mut world.map;
                         map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Blend;});
                     }
 
-                    if event.args.button == Button::Keyboard(Keycode::P) {
+                    if event.args.button == Button::Keyboard(Key::Character("P".into())) {
                         let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                         place_particle_generator(world, pos);
                     }
 
-                    if event.args.button == Button::Keyboard(Keycode::S) {
+                    if event.args.button == Button::Keyboard(Key::Character("S".into())) {
                         world.map.save("test.map").unwrap();
                     }        
                 },

@@ -229,6 +229,13 @@ impl App {
         draw_texture(display, &mut target, program, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0);
 
+        {
+            let world = &mut self.world;
+            let ui = &mut self.ui;
+            self.controllers.current().draw(ui, world);    
+            self.controllers.current().draw_overlay(ui, world);    
+        }
+
         target.finish().unwrap();
     }
 
@@ -384,11 +391,11 @@ impl App {
         // editor/game swtich must be handled here, the button pres is not handed down ATM
 
         if event.args.state == ButtonState::Release {
-            if event.args.button == Button::Keyboard(Keycode::E) {    
+            if event.args.button == Button::Keyboard(glium::winit::keyboard::Key::Named::E) {    
                 self.controllers.edit = true;
                 println!("Switching to editor mode.");
             }
-            if event.args.button == Button::Keyboard(Keycode::G) {                        
+            if event.args.button == Button::Keyboard(glium::winit::keyboard::Key::Named::G) {                        
                 self.controllers.edit = false;
                 println!("Switching to game mode.");
             }        
@@ -470,6 +477,22 @@ impl App {
         player.visual.current_image_id = player.visual.base_image_id + d;
 
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);        
+    }
+
+    pub fn handle_button_event(&mut self, button_event: &ButtonEvent) {
+
+        let window_center: Vector2<f64> = self.ui.window_center(); 
+        let controller = &mut self.controllers.current();
+        let world = &mut self.world;
+        let ui = &mut self.ui;
+
+        let consumed = controller.handle_button_event(ui, &button_event, world);
+
+        if button_event.args.state == ButtonState::Release && !consumed {
+            if button_event.args.button == Button::Mouse(MouseButton::Left) {
+                self.move_player(window_center);            
+            }
+        }
     }
 }
 
@@ -589,7 +612,8 @@ fn main() {
                         mx: 0,
                         my: 0,
                     };
-                    app.ui.handle_button_event(&button_event);
+
+                    app.handle_button_event(&button_event);
                 },
 
                 glium::winit::event::WindowEvent::CursorMoved { device_id, position } => {
@@ -601,6 +625,24 @@ fn main() {
                     };
                     app.ui.handle_mouse_move_event(&event);
                 },
+
+                glium::winit::event::WindowEvent::KeyboardInput { device_id, event, is_synthetic } => {
+                    
+                    println!("key event = {:?}", event);
+                    // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
+
+                    let button_event = ButtonEvent {
+                        args: ButtonArgs {
+                            state: if event.state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                            button: Button::Keyboard(event.logical_key),
+                            scancode: None,
+                        },
+                        mx: 0,
+                        my: 0,
+                    };
+
+                    app.ui.handle_button_event(&button_event);
+                }
 
                 _ => (),
             },

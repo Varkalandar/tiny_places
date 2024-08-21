@@ -34,7 +34,7 @@ pub fn load_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
-    let image = image::load(reader, image::ImageFormat::Png).unwrap().to_rgba8();
+    let image = image::load(reader, image::ImageFormat::Png).unwrap().flipv().to_rgba8();
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
     let texture = glium::Texture2d::new(display, image).unwrap();
@@ -119,9 +119,9 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
     let uniforms = uniform! {
         matrix: [
             [  xf,  0.0,  0.0,  0.0],
-            [ 0.0,   yf,  0.0,  0.0],
+            [ 0.0,  -yf,  0.0,  0.0],
             [ 0.0,  0.0,  1.0,  0.0],
-            [-1.0, -1.0,  0.0,  1.0],
+            [-1.0,  1.0,  0.0,  1.0],
         ],                        
         tex: texture,                        
     };
