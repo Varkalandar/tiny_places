@@ -27,13 +27,13 @@ pub enum Button {
     Mouse(MouseButton),
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ButtonState {
     Press,
     Release, 
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct ButtonArgs {
     pub state: ButtonState,
     pub button: Button,
@@ -41,19 +41,19 @@ pub struct ButtonArgs {
 }
 
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ButtonEvent {
     pub args: ButtonArgs,
-    pub mx: i32,
-    pub my: i32,
+    pub mx: f64,
+    pub my: f64,
 }
 
 impl ButtonEvent {
     fn translate(&self, x: i32, y: i32) -> ButtonEvent {
         ButtonEvent {
             args: self.args.clone(),
-            mx: self.mx + x,
-            my: self.my + y,
+            mx: self.mx + x as f64,
+            my: self.my + y as f64,
         }
     }
 }
@@ -146,8 +146,6 @@ pub struct UI
     pub window_size: [u32; 2],
 
     pub mouse_state: MouseState,
-    pub mouse_x: i32,
-    pub mouse_y: i32,
     pub keyboard_state: KeyboardState,
 }
 
@@ -163,8 +161,6 @@ impl UI {
             font_14: Rc::new(UiFont::new(display, 14)),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
-            mouse_x: 0,
-            mouse_y: 0,
 
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
         }
@@ -297,15 +293,12 @@ impl UI {
             }
         }
 
-        let mut complete_event = event.clone();
-        complete_event.mx = self.mouse_x;
-        complete_event.my = self.mouse_y;
-
-        self.root.head.handle_button_event(&complete_event)
+        self.root.head.handle_button_event(event)
     }
 
 
     pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
+        self.mouse_state.position = [event.mx as f64, event.my as f64];
         self.root.head.handle_mouse_move_event(event, &self.mouse_state)
     }
 
@@ -316,16 +309,16 @@ impl UI {
 }
 
 pub struct MouseMoveEvent {
-    pub mx: i32,
-    pub my: i32,
+    pub mx: f64,
+    pub my: f64,
 }
 
 
 pub struct ScrollEvent {
     pub dx: f64,
     pub dy: f64,
-    pub mx: i32,
-    pub my: i32,
+    pub mx: f64,
+    pub my: f64,
 }
 
 
@@ -433,7 +426,7 @@ impl UiHead for UiContainer {
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
-        let option = self.find_child_at(event.mx, event.my);
+        let option = self.find_child_at(event.mx as i32, event.my as i32);
                 
         match option {
             None => {
@@ -448,7 +441,7 @@ impl UiHead for UiContainer {
 
 
     fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent, mouse: &MouseState) -> Option<&dyn UiHead> {
-        let option = self.find_child_at(event.mx, event.my);
+        let option = self.find_child_at(event.mx as i32, event.my as i32);
                 
         match option {
             None => {
@@ -465,7 +458,7 @@ impl UiHead for UiContainer {
 
     fn handle_scroll_event(&mut self, event: &ScrollEvent) -> Option<&dyn UiHead> {
 
-        let option = self.find_child_at(event.mx, event.my);
+        let option = self.find_child_at(event.mx as i32, event.my as i32);
                 
         match option {
             None => {
@@ -837,11 +830,14 @@ impl UiHead for UiColorchoice
 
     fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
 
-        if event.my < self.area.y + self.bandwidth {
+        let mx = event.mx as i32;
+        let my = event.my as i32;
+
+        if my < self.area.y + self.bandwidth {
             // light choice or reset area
-            if event.mx < self.area.x + self.area.w - self.bandwidth {
+            if mx < self.area.x + self.area.w - self.bandwidth {
                 // light
-                let lightness = ((event.mx-self.area.x) * 255 / (self.area.w-self.bandwidth)) as u32;
+                let lightness = ((mx - self.area.x) * 255 / (self.area.w-self.bandwidth)) as u32;
 
                 self.r = min(255, self.r * lightness / self.lightness);
                 self.g = min(255, self.g * lightness / self.lightness);
@@ -863,10 +859,10 @@ impl UiHead for UiColorchoice
         }
         else {
             // color choice or transparency
-            if event.mx < self.area.x + self.area.w - self.bandwidth {
+            if mx < self.area.x + self.area.w - self.bandwidth {
                 // color
-                let i = event.mx - self.area.x;
-                let j = event.my - self.area.y;
+                let i = mx - self.area.x;
+                let j = my - self.area.y;
         
                 let y = 64;
                 let u = (i * 255) / self.area.h;
@@ -880,7 +876,7 @@ impl UiHead for UiColorchoice
             }
             else {
                 // transp
-                let alpha = 255 - (event.my-self.area.y-self.bandwidth) * 255 / (self.area.h-self.bandwidth);
+                let alpha = 255 - (event.my as i32 -self.area.y-self.bandwidth) * 255 / (self.area.h-self.bandwidth);
                 self.a = alpha as u32;
                 println!("New alpha {}", self.a);
             }

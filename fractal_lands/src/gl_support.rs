@@ -10,6 +10,9 @@ use glium::Texture2d;
 use glium::Program;
 use glium::Surface;
 use glium::Frame;
+use glium::BlendingFunction;
+use glium::LinearBlendingFactor;
+use glium::Blend;
 use glium::implement_vertex;
 use glium::uniform;
 
@@ -21,8 +24,7 @@ pub struct Vertex {
 implement_vertex!(Vertex, position, tex_coords);
 
 
-// until there is real support, this can be used
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum BlendMode {
     Blend,
     Add,
@@ -71,11 +73,12 @@ pub fn build_program(display: &Display<WindowSurface>) -> glium::Program {
     
     in vec2 v_tex_coords;
     out vec4 color;
-    
+
+    uniform vec4 col;
     uniform sampler2D tex;
     
     void main() {
-        color = texture(tex, v_tex_coords);
+        color = texture(tex, v_tex_coords) * col;
     }
     "#;
     
@@ -87,11 +90,13 @@ pub fn build_program(display: &Display<WindowSurface>) -> glium::Program {
 pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
                                                              target: &mut Frame,   
                                                              program: &Program,  
+                                                             blend: BlendMode,
                                                              texture: &Texture2d,
                                                              xp: f32,
                                                              yp: f32, 
                                                              sx: f32, 
-                                                             sy: f32) {
+                                                             sy: f32,
+                                                             color: &[f32; 4]) {
 
     let fw = texture.width() as f32 * sx;
     let fh = texture.height() as f32 * sy;
@@ -123,11 +128,30 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
             [ 0.0,  0.0,  1.0,  0.0],
             [-1.0,  1.0,  0.0,  1.0],
         ],                        
-        tex: texture,                        
+        tex: texture,
+        col: *color,
+        // col: [1.0, 1.0, 1.0, 1.0_f32],
+    };
+
+    let gl_blend = if blend == BlendMode::Blend {
+        glium::Blend::alpha_blending()
+    }
+    else {
+        Blend {
+            color: BlendingFunction::Addition {
+                source: LinearBlendingFactor::One,
+                destination: LinearBlendingFactor::One,
+            },
+            alpha: BlendingFunction::Addition {
+                source: LinearBlendingFactor::One,
+                destination: LinearBlendingFactor::One
+            },
+            constant_value: (0.0, 0.0, 0.0, 0.0)
+        }
     };
 
     let params = glium::DrawParameters {
-        blend: glium::Blend::alpha_blending(),
+        blend: gl_blend,
         .. Default::default()
     };
 

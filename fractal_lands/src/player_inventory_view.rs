@@ -25,8 +25,8 @@ pub struct PlayerInventoryView {
 
     hover_item: Option<usize>,
     dragged_item: Option<usize>,
-    drag_x: i32,
-    drag_y: i32,
+    drag_x: f64,
+    drag_y: f64,
 
     font: Rc<UiFont>,
 }
@@ -67,8 +67,8 @@ impl PlayerInventoryView {
             slot_sizes,
             hover_item: None,
             dragged_item: None,
-            drag_x: 0,
-            drag_y: 0,
+            drag_x: 0.0,
+            drag_y: 0.0,
             font: font.clone(),
         }
     }
@@ -357,7 +357,7 @@ impl PlayerInventoryView {
 
         // println!("Mouse moved to {}, {}", event.mx, event.my);
 
-        let item_opt = self.find_item_at(inventory, event.mx, event.my);
+        let item_opt = self.find_item_at(inventory, event.mx as i32, event.my as i32);
         self.hover_item = item_opt;
 
         self.drag_x = event.mx;
