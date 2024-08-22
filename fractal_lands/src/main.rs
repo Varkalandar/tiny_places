@@ -13,6 +13,8 @@ use glium::Display;
 use glium::Frame;
 use glium::Texture2d;
 use glium::Program;
+use glium::winit::keyboard::Key;
+use glium::winit::keyboard::NamedKey;
 use glium::implement_vertex;
 use glium::uniform;
 
@@ -317,16 +319,20 @@ impl App {
                 &mob.visual.color);
 
             // fake shine for glowing projectiles
-            /*
             if tileset_id == 5 {
 
                 let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
+                let tpos = Self::calc_tile_position(&mob.position, glow_tile.foot, 0.9, player_position, &window_center);
 
-                let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
-                let image = build_image(glow_tile, mob.visual.glow);
-                image.draw(&glow_tile.tex, &ds.blend(BlendMode::Add), tf, gl);
+                draw_texture(display, target, program,
+                    BlendMode::Add,
+                    &glow_tile.tex,
+                    tpos[0] - 170.0,
+                    tpos[1] - 50.0, 
+                    0.9, 
+                    0.9,
+                    &mob.visual.glow);    
             }
-            */
 
             // particle effects
             /*
@@ -357,6 +363,7 @@ impl App {
         }    
     }
 
+    
     fn calc_tile_position(position: &Vector2<f64>, foot: Vector2<f64>, scale: f64, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [f32; 2] {
         
         let mut pos_x = position[0] - player_position[0];
@@ -610,17 +617,33 @@ impl App {
         println!("  moving {} pixels over {} seconds, destination is {:?}", distance, time, dest);        
     }
 
-    pub fn handle_button_event(&mut self, button_event: &ButtonEvent) {
+
+    pub fn handle_button_event(&mut self, event: &ButtonEvent) {
+
+        // editor/game switch must be handled here, the button press is not handed down ATM
+
+        println!("button event = {:?}", event);
+
+        if event.args.state == ButtonState::Release {
+            if event.args.button == Button::Keyboard(Key::Character("e".into())) {    
+                self.controllers.edit = true;
+                println!("Switching to editor mode.");
+            }
+            if event.args.button == Button::Keyboard(Key::Character("g".into())) {                        
+                self.controllers.edit = false;
+                println!("Switching to game mode.");
+            }        
+        }
 
         let window_center: Vector2<f64> = self.ui.window_center(); 
         let controller = &mut self.controllers.current();
         let world = &mut self.world;
         let ui = &mut self.ui;
 
-        let consumed = controller.handle_button_event(ui, &button_event, world);
+        let consumed = controller.handle_button_event(ui, &event, world);
 
-        if button_event.args.state == ButtonState::Release && !consumed {
-            if button_event.args.button == Button::Mouse(MouseButton::Left) {
+        if event.args.state == ButtonState::Release && !consumed {
+            if event.args.button == Button::Mouse(MouseButton::Left) {
                 self.move_player(window_center);            
             }
         }
@@ -743,7 +766,7 @@ fn main() {
                         my: app.ui.mouse_state.position[1],
                     };
 
-                    println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
+                    // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
 
                     app.handle_button_event(&button_event);
                 },
@@ -773,7 +796,7 @@ fn main() {
                         my: app.ui.mouse_state.position[1],
                     };
 
-                    app.ui.handle_button_event(&button_event);
+                    app.handle_button_event(&button_event);
                 }
 
                 _ => (),
