@@ -139,7 +139,7 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
     else {
         Blend {
             color: BlendingFunction::Addition {
-                source: LinearBlendingFactor::One,
+                source: LinearBlendingFactor::SourceAlpha,
                 destination: LinearBlendingFactor::One,
             },
             alpha: BlendingFunction::Addition {

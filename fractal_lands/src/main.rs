@@ -230,7 +230,7 @@ impl App {
                      0.0, 0.0, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
         draw_texture(display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
-                     offset_x, offset_y, 2.0, 2.0, &[1.0, 1.0, 1.0, 1.0]);
+                     offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
 
         // draw ground decorations (flat)
