@@ -363,7 +363,7 @@ impl App {
         }    
     }
 
-    
+
     fn calc_tile_position(position: &Vector2<f64>, foot: Vector2<f64>, scale: f64, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [f32; 2] {
         
         let mut pos_x = position[0] - player_position[0];
@@ -648,6 +648,16 @@ impl App {
             }
         }
     }
+
+
+    fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) {
+        
+        let controller = &mut self.controllers.current();
+        let world = &mut self.world;
+        let ui = &mut self.ui;
+
+        controller.handle_mouse_move_event(ui, &event, world);
+    }
 }
 
 
@@ -778,7 +788,7 @@ fn main() {
                         mx: position.x,
                         my: position.y,
                     };
-                    app.ui.handle_mouse_move_event(&event);
+                    app.handle_mouse_move_event(&event);
                 },
 
                 glium::winit::event::WindowEvent::KeyboardInput { device_id, event, is_synthetic } => {

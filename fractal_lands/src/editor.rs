@@ -250,7 +250,9 @@ impl UiController for MapEditor {
         true
     }
 
-    fn handle_mouse_move_event(&mut self, ui: &mut UI, _event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
+    fn handle_mouse_move_event(&mut self, ui: &mut UI, event: &MouseMoveEvent, world: &mut Self::Appdata) -> bool {
+
+        ui.handle_mouse_move_event(event);
 
         let player_position = &world.map.player_position();
         let mp = &ui.mouse_state.position;
