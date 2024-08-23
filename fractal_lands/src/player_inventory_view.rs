@@ -107,7 +107,7 @@ impl PlayerInventoryView {
         });
         */
 
-        self.font.draw(x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
+        // self.font.draw(x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
         line += line_space;
 
         for modifier in &item.mods {
@@ -123,7 +123,7 @@ impl PlayerInventoryView {
                 };
 
                 let text = modifier.attribute.to_string() + ": " + &range;
-                self.font.draw(x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+                // self.font.draw(x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
                 line += line_space;
             }
         }

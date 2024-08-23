@@ -30,23 +30,35 @@ pub enum BlendMode {
     Add,
 }
 
+pub struct RectF32 {
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+}
+
+impl RectF32 {
+    pub fn new(x: f32, y: f32, width: f32, height: f32) -> Self {
+        RectF32 {x, y, width, height }
+    }
+}
 
 pub fn load_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, filename: &str) -> glium::Texture2d {
     
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
-    let image = image::load(reader, image::ImageFormat::Png).unwrap().flipv().to_rgba8();
+    let image = image::load(reader, image::ImageFormat::Png).unwrap().to_rgba8();
     let image_dimensions = image.dimensions();
-    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
+    let image = glium::texture::RawImage2d::from_raw_rgba(image.into_raw(), image_dimensions);
     let texture = glium::Texture2d::new(display, image).unwrap();
     
     texture
 }
 
-pub fn texture_from_data<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, data: &[u8], width: u32, height: u32) -> glium::Texture2d {
+pub fn texture_from_data<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, data: Vec<u8>, width: u32, height: u32) -> glium::Texture2d {
 
-    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(data, (width, height));
+    let image = glium::texture::RawImage2d::from_raw_rgba(data, (width, height));
     let texture = glium::Texture2d::new(display, image).unwrap();
     
     texture
@@ -111,6 +123,57 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
     ];
 
+    draw_shape(display, target, program, blend, shape, texture, color);
+}
+
+
+pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
+                                                             target: &mut Frame,   
+                                                             program: &Program,  
+                                                             blend: BlendMode,
+                                                             texture: &Texture2d,
+                                                             src_rect: RectF32, 
+                                                             dst_rect: RectF32,
+                                                             color: &[f32; 4]) {
+
+    let tw = texture.width() as f32;
+    let th = texture.height() as f32;
+
+    let xp = dst_rect.x;
+    let yp = dst_rect.y;
+    let fw = dst_rect.width;
+    let fh = dst_rect.height;
+
+    let tcx = src_rect.x / tw;
+    let tcy = src_rect.y / th;
+    let tcw = src_rect.width / tw;
+    let tch = src_rect.height / th;
+
+    // println!("tex coords = {}, {}, {}, {}", tcx, tcy, tcw, tch);
+    // println!("vertex coords = {}, {}, {}, {}", xp, yp, fw, fh);
+
+    let shape = vec![
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
+        Vertex { position: [xp +  fw, yp + 0.0], tex_coords: [tcx + tcw, tcy] },
+        Vertex { position: [xp +  fw, yp +  fh], tex_coords: [tcx + tcw, tcy + tch] },
+
+        Vertex { position: [xp +  fw,  yp + fh], tex_coords: [tcx + tcw, tcy + tch] },
+        Vertex { position: [xp + 0.0,  yp + fh], tex_coords: [tcx      , tcy + tch] },
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
+    ];
+
+    draw_shape(display, target, program, blend, shape, texture, color);
+}
+
+pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
+    display: &Display<T>,
+    target: &mut Frame,   
+    program: &Program,  
+    blend: BlendMode,
+    shape: Vec<Vertex>,
+    texture: &Texture2d,
+    color: &[f32; 4]) {
+
     let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
 
@@ -130,7 +193,6 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
         ],                        
         tex: texture,
         col: *color,
-        // col: [1.0, 1.0, 1.0, 1.0_f32],
     };
 
     let gl_blend = if blend == BlendMode::Blend {
@@ -142,7 +204,7 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
                 source: LinearBlendingFactor::SourceAlpha,
                 destination: LinearBlendingFactor::One,
             },
-            alpha: BlendingFunction::Addition {
+                alpha: BlendingFunction::Addition {
                 source: LinearBlendingFactor::One,
                 destination: LinearBlendingFactor::One
             },

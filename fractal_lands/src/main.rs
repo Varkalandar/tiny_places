@@ -247,8 +247,8 @@ impl App {
         {
             let world = &mut self.world;
             let ui = &mut self.ui;
-            self.controllers.current().draw(ui, world);    
-            self.controllers.current().draw_overlay(ui, world);    
+            self.controllers.current().draw(display, &mut target, program, ui, world);    
+            self.controllers.current().draw_overlay(display, &mut target, program, ui, world);    
         }
 
         target.finish().unwrap();

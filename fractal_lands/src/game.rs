@@ -5,6 +5,10 @@ use std::path::Path;
 use glium::Texture2d;
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
+use glium::Program;
+use glium::Frame;
+use glutin::surface::WindowSurface;
+use glium::Display;
 
 use crate::ui::{UI, UiController, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;
@@ -117,7 +121,8 @@ impl UiController for Game {
     }
 
 
-    fn draw(&mut self, ui: &mut UI, world: &mut Self::Appdata) {
+    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+            ui: &mut UI, world: &mut Self::Appdata) {
         /*
         ui.draw(viewport, gl);
  
@@ -128,8 +133,9 @@ impl UiController for Game {
     }
 
 
-    fn draw_overlay(&mut self, ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.font_14.draw(10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
+    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                    ui: &mut UI, _world: &mut Self::Appdata) {
+        ui.font_14.draw(display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 

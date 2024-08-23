@@ -4,6 +4,10 @@ use vecmath::Vector2;
 
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
+use glium::Program;
+use glium::Frame;
+use glutin::surface::WindowSurface;
+use glium::Display;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
@@ -282,12 +286,15 @@ impl UiController for MapEditor {
 
 
 
-    fn draw(&mut self, ui: &mut UI, _world: &mut Self::Appdata) {
+    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+            ui: &mut UI, _world: &mut Self::Appdata) {
         // ui.draw(viewport, gl);
     }
 
 
-    fn draw_overlay(&mut self, ui: &mut UI, world: &mut Self::Appdata) {
+    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                    ui: &mut UI, world: &mut Self::Appdata) {
+
         let layer_id = world.map.selected_layer;
         let id = self.selected_tile_id;
         let set = &world.layer_tileset[layer_id];
@@ -311,14 +318,15 @@ impl UiController for MapEditor {
             });
             */
         }
-        ui.font_14.draw(10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
-        ui.font_14.draw(10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
+        
+        ui.font_14.draw(display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
-        ui.font_14.draw(10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+        ui.font_14.draw(display, target, program, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
 
 
         if self.show_editor_keys {
@@ -327,23 +335,23 @@ impl UiController for MapEditor {
             let left = 100;
             let mut top = 100;
 
-            ui.font_14.draw(left, top, "F1: Show/hide this list", &color);
+            ui.font_14.draw(display, target, program, left, top, "F1: Show/hide this list", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "Space: Open tile selector", &color);
+            ui.font_14.draw(display, target, program, left, top, "Space: Open tile selector", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "1,2,3,.. : Select map layer", &color);
+            ui.font_14.draw(display, target, program, left, top, "1,2,3,.. : Select map layer", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "c: Open color selector for selected item", &color);
+            ui.font_14.draw(display, target, program, left, top, "c: Open color selector for selected item", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "a: Set blend mode on selected item to 'Addition'", &color);
+            ui.font_14.draw(display, target, program, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
+            ui.font_14.draw(display, target, program, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "Delete: Removes the selected item from the map", &color);
+            ui.font_14.draw(display, target, program, left, top, "Delete: Removes the selected item from the map", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "l: Load a saved map", &color);
+            ui.font_14.draw(display, target, program, left, top, "l: Load a saved map", &color);
             top += line_space;
-            ui.font_14.draw(left, top, "s: Save the map", &color);
+            ui.font_14.draw(display, target, program, left, top, "s: Save the map", &color);
             top += line_space;
         }
 

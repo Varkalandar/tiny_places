@@ -10,6 +10,8 @@ use glutin::surface::WindowSurface;
 use glium::Display;
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
+use glium::Program;
+use glium::Frame;
 
 pub use tileset::*;
 pub use font::UiFont;
@@ -103,11 +105,13 @@ pub trait UiController {
         false
     }
 
-    fn draw(&mut self, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+            _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
     
-    fn draw_overlay(&mut self, _ui: &mut UI, _appdata: &mut Self::Appdata) {
+    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                    _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
 
@@ -510,7 +514,7 @@ impl UiHead for UiButton {
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + (area.h - self.font.lineheight) / 2;
 
-        self.font.draw(label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
+        // self.font.draw(label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
     } 
 
 }

@@ -3,8 +3,14 @@ use std::collections::HashMap;
 use glutin::surface::WindowSurface;
 use glium::Display;
 use glium::Texture2d;
+use glium::Program;
+use glium::Frame;
 
 use crate::gl_support::texture_from_data;
+use crate::gl_support::RectF32;
+use crate::gl_support::draw_tex_area;
+use crate::gl_support::draw_texture;
+use crate::gl_support::BlendMode;
 
 const PITCH: u32 = 1024;
 
@@ -13,11 +19,11 @@ struct UiGlyph {
     pub metrics: freetype::GlyphMetrics,
     tex_x: u32,
     tex_y: u32,
-    advance: f64,
-    top: f64, // pixels above the baseline
-    left: f64, // left-right shift
-    bm_w: f64,
-    bm_h: f64,
+    advance: f32,
+    top:  f32, // pixels above the baseline
+    left: f32, // left-right shift
+    bm_w: f32,
+    bm_h: f32,
 }
 
 
@@ -54,7 +60,7 @@ impl UiFont {
     }
 
 
-    pub fn calc_string_width(&self, text: &str) -> f64
+    pub fn calc_string_width(&self, text: &str) -> f32
     {
         let mut w = 0.0;
         
@@ -68,37 +74,28 @@ impl UiFont {
     }
 
 
-    pub fn draw(&self, x: i32, y: i32, text: &str, color: &[f32; 4])
+    pub fn draw(&self,
+                display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                x: i32, y: i32, text: &str, color: &[f32; 4])
     {
-/*
-        gl.draw(viewport, |c, gl| {
-
-            let mut xp = x as f64;
-            let yp = (y as f64) + (self.face.ascender() / 64) as f64;
+        let mut xp = x as f32;
+        let yp = (y as f32) + (self.face.ascender() / 64) as f32;
+        
+        for ch in text.chars() {
             
-            for ch in text.chars() {
-                
-                // println!("char {} usize {}", ch, ch);
-                let idx = ch as usize;
-                
-                let glyph = self.glyphs.get(&idx).unwrap();
+            // println!("char {} usize {}", ch, ch);
+            let idx = ch as usize;
+            let glyph = self.glyphs.get(&idx).unwrap();
 
-                let image = 
-                    Image
-                    ::new_color(*color)
-                    .src_rect([glyph.tex_x as f64, glyph.tex_y as f64, glyph.bm_w, glyph.bm_h]);
-                                    
-                image.draw(
-                    &self.texture,
-                    ds,
-                    c.transform.trans(xp + glyph.left, yp - glyph.top),
-                    gl
-                );
-                
-                xp += glyph.advance;                
-            }
-        });
-        */
+            draw_tex_area(display, target, program,
+                BlendMode::Blend,
+                &self.texture,
+                RectF32::new(glyph.tex_x as f32, glyph.tex_y as f32, glyph.bm_w, glyph.bm_h),
+                RectF32::new(xp + glyph.left, yp - glyph.top, glyph.bm_w, glyph.bm_h),
+                color);
+
+            xp += glyph.advance;                
+        }
     }
 }
 
@@ -142,11 +139,11 @@ fn create_glyphs(display: &Display<WindowSurface>, face: &freetype::Face, glyphs
                 metrics: m,
                 tex_x: cursor.0,
                 tex_y: cursor.1,
-                advance: m.horiAdvance as f64 / 64.0,
-                top: gs.bitmap_top() as f64,
-                left: gs.bitmap_left() as f64,
-                bm_w: bitmap.width() as f64,
-                bm_h: bitmap.rows() as f64,
+                advance: m.horiAdvance as f32 / 64.0,
+                top: gs.bitmap_top() as f32,
+                left: gs.bitmap_left() as f32,
+                bm_w: bitmap.width() as f32,
+                bm_h: bitmap.rows() as f32,
             };
 
             let left = gs.bitmap_left();
@@ -158,7 +155,7 @@ fn create_glyphs(display: &Display<WindowSurface>, face: &freetype::Face, glyphs
         }
     }
     
-    texture_from_data(display, &buffer, b_width, b_height)
+    texture_from_data(display, buffer, b_width, b_height)
 }
 
     
@@ -208,7 +205,7 @@ fn convert_bitmap(buffer: &mut Vec<u8>, bitmap: &freetype::Bitmap,cursor: (u32, 
 
 
 fn buffer_setpix(buffer: &mut Vec<u8>, x: u32, y: u32, alpha: u8) {
-    let dpos = ((y * PITCH * 4) + x) as usize;
+    let dpos = ((y * PITCH + x) * 4) as usize;
     buffer[dpos] = 255;
     buffer[dpos+1] = 255;
     buffer[dpos+2] = 255;
