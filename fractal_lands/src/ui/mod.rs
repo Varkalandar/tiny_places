@@ -12,11 +12,13 @@ use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
 use glium::Program;
 use glium::Frame;
+use glium::Texture2d;
 
 pub use tileset::*;
 pub use font::UiFont;
 use crate::BlendMode;
-use crate::draw_texture;
+use crate::gl_support::draw_texture;
+use crate::gl_support::texture_from_data;
 
 
 #[derive(PartialEq, Clone, Debug)]
@@ -148,7 +150,8 @@ pub struct UI
     pub root: UiComponent,
     pub font_10: Rc<UiFont>,
     pub font_14: Rc<UiFont>,
-    
+    pub tex_white: Rc<Texture2d>,
+
     pub window_size: [u32; 2],
 
     pub mouse_state: MouseState,
@@ -160,14 +163,18 @@ impl UI {
 
     pub fn new(display: &Display<WindowSurface>, window_size: [u32; 2]) -> UI {
         
+        let pixels = vec![255_u8; 1024];
+
+        let tex_white = texture_from_data(display, pixels, 16, 16);
+
         UI { 
             window_size,
             root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
             font_10: Rc::new(UiFont::new(display, 10)),
             font_14: Rc::new(UiFont::new(display, 14)),
+            tex_white: Rc::new(tex_white),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
-
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
         }
     }
@@ -228,6 +235,7 @@ impl UI {
                 h,                
             }, 
             font: self.font_10.clone(),
+            tex_white: self.tex_white.clone(),
             label: label.to_string(),
             tile: tile.clone(),
             id,
@@ -526,6 +534,7 @@ pub struct UiIcon
 {
     pub area: UiArea,
     pub font: Rc<UiFont>,
+    pub tex_white: Rc<Texture2d>,
     pub label: String,
     pub tile: Rc<Tile>,
     pub id: usize,
@@ -534,7 +543,6 @@ pub struct UiIcon
 
 impl UiHead for UiIcon
 {
-
     fn area(&self) -> &UiArea {
         &self.area
     }
@@ -549,6 +557,15 @@ impl UiHead for UiIcon
         //    let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
         //    rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
 
+        draw_texture(display, target, program,
+            BlendMode::Blend,
+            &self.tex_white,
+            xp,
+            yp, 
+            area.w as f32 / 16.0, 
+            area.h as f32 / 16.0,
+            &[0.1, 0.1, 0.1, 1.0]);    
+
         let tw = self.tile.tex.width() as f32 * 0.25;
         let th = self.tile.tex.height() as f32 * 0.25;
 
@@ -558,7 +575,7 @@ impl UiHead for UiIcon
         let image_y = y_base - th;
 
         draw_texture(display, target, program,
-            BlendMode::Add,
+            BlendMode::Blend,
             &self.tile.tex,
             image_x,
             image_y, 

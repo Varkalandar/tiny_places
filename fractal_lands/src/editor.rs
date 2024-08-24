@@ -126,12 +126,12 @@ impl UiController for MapEditor {
                         ui.root.head.add_child(Rc::new(cont));
                     }        
 
-                    if event.args.button == Button::Keyboard(Key::Character("A".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("a".into())) {
                         let map = &mut world.map;
                         map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Add;});
                     }
 
-                    if event.args.button == Button::Keyboard(Key::Character("C".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("c".into())) {
                         let map = &mut world.map;
                         let object = map.layers[map.selected_layer].get_mut(&map.selected_item);
                         match object {
@@ -157,21 +157,21 @@ impl UiController for MapEditor {
                         }
                     }        
 
-                    if event.args.button == Button::Keyboard(Key::Character("L".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("l".into())) {
                         world.map.load("start.map");
                     }
 
-                    if event.args.button == Button::Keyboard(Key::Character("M".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("m".into())) {
                         let map = &mut world.map;
                         map.apply_to_selected_mob(|mob| {mob.visual.blend = BlendMode::Blend;});
                     }
 
-                    if event.args.button == Button::Keyboard(Key::Character("P".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("p".into())) {
                         let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
                         place_particle_generator(world, pos);
                     }
 
-                    if event.args.button == Button::Keyboard(Key::Character("S".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("s".into())) {
                         world.map.save("test.map").unwrap();
                     }        
                 },

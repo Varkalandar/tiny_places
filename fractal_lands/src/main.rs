@@ -25,6 +25,7 @@ use std::time::SystemTime;
 use std::fs::read_to_string;
 use std::path::Path;
 use std::cmp::Ordering;
+use std::rc::Rc;
 
 mod item;
 mod creature;
@@ -234,15 +235,16 @@ impl App {
         draw_texture(display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
+        let tex_white = &self.ui.tex_white;
 
         // draw ground decorations (flat)
-        Self::render_layer(display, &mut target, program, world, MAP_GROUND_LAYER);
+        Self::render_layer(display, &mut target, program, world, tex_white, MAP_GROUND_LAYER);
 
         // draw decorations (upright things)
-        Self::render_layer(display, &mut target, program, world, MAP_OBJECT_LAYER);
+        Self::render_layer(display, &mut target, program, world, tex_white, MAP_OBJECT_LAYER);
 
         // draw clouds
-        Self::render_layer(display, &mut target, program, world, MAP_CLOUD_LAYER);
+        Self::render_layer(display, &mut target, program, world, tex_white, MAP_CLOUD_LAYER);
 
         {
             let world = &mut self.world;
@@ -256,7 +258,7 @@ impl App {
 
 
     fn render_layer(display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
-                    world: &GameWorld, layer_id: usize) {
+                    world: &GameWorld, tex_white: &Texture2d, layer_id: usize) {
 
         let (width, height) = display.get_framebuffer_dimensions();
         let window_center = [width as f64 * 0.5, height as f64 * 0.5];
@@ -289,22 +291,6 @@ impl App {
             let set = &world.layer_tileset[tileset_id];                    
             let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
 
-            // let tf = build_transform(&c.transform, &mob.position, mob.visual.scale, tile.foot, player_position, window_center);        
-
-            // mark selected item with an ellipse
-            if world.map.has_selection && 
-               layer_id == world.map.selected_layer &&
-               mob.uid == world.map.selected_item {
-                
-                let size = tile.size[0] * 0.75;
-                /*
-                let ellp = Ellipse::new([1.0, 0.95, 0.9, 0.1]);
-
-                ellp.draw([-size, -size * 0.5, size * 2.0, size], &ds, 
-                          tf.trans(tile.foot[0], tile.foot[1]), gl);
-                */
-            }
-
             let tpos = calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
 
             draw_texture(display, target, program,
@@ -315,6 +301,21 @@ impl App {
                 mob.visual.scale as f32, 
                 mob.visual.scale as f32,
                 &mob.visual.color);
+
+            // highlight selected item
+            if world.map.has_selection && 
+               layer_id == world.map.selected_layer &&
+               mob.uid == world.map.selected_item {
+                
+                draw_texture(display, target, program,
+                    BlendMode::Add,
+                    tex_white,
+                    tpos[0],
+                    tpos[1], 
+                    (tile.size[0] * mob.visual.scale / 16.0) as f32, 
+                    (tile.size[1] * mob.visual.scale / 16.0) as f32, 
+                    &[0.15, 0.2, 0.1, 1.0]);
+            }
 
             // fake shine for glowing projectiles
             if tileset_id == 5 {
