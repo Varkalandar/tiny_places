@@ -334,7 +334,6 @@ impl App {
             }
 
             // particle effects
-            /*
             mob.visual.particles.for_each_particle(|particles, last_particle_mark| {
                 
                 for i in 0..last_particle_mark {
@@ -345,20 +344,25 @@ impl App {
 
                         let set = mob.visual.particles.spawn_tile_set;
                         let tile = &world.layer_tileset[set].tiles_by_id.get(&p.tex_id).unwrap();
-                        let tf = build_transform(&c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
+                        let tpos = calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
 
                         // world coordinates to screen coordinates
-                        let xp = p.xpos;
-                        let yp = (p.ypos - p.zpos) * 0.5;
-                        // let glow = (1.0 - p.age / p.lifetime) as f32;
+                        let xp = p.xpos as f32;
+                        let yp = ((p.ypos - p.zpos) * 0.5)  as f32;
+
                         let fade = quadratic_fade(p.age / p.lifetime);
-                        
-                        let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
-                        image.draw(&tile.tex, &ds.blend(BlendMode::Add), tf.trans(xp, yp), gl);
+
+                        draw_texture(display, target, program,
+                            BlendMode::Add,
+                            &tile.tex,
+                            tpos[0] + xp,
+                            tpos[1] + yp, 
+                            1.0, 
+                            1.0,
+                            &[p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0])
                     }
                 }
             });
-            */
         }    
     }
 
