@@ -19,6 +19,7 @@ pub use font::UiFont;
 use crate::BlendMode;
 use crate::gl_support::draw_texture;
 use crate::gl_support::texture_from_data;
+use crate::gl_support::draw_texture_clip;
 
 
 #[derive(PartialEq, Clone, Debug)]
@@ -125,6 +126,7 @@ pub trait UiController {
 }
 
 
+#[derive(Debug, Clone)]
 pub struct UiArea {
     pub x: i32, 
     pub y: i32,
@@ -145,17 +147,23 @@ pub struct UiComponent {
 }
 
 
-pub struct UI
+pub struct UiContext
 {
-    pub root: UiComponent,
     pub font_10: Rc<UiFont>,
     pub font_14: Rc<UiFont>,
     pub tex_white: Rc<Texture2d>,
 
     pub window_size: [u32; 2],
-
+    pub scissors: Option<UiArea>,
     pub mouse_state: MouseState,
     pub keyboard_state: KeyboardState,
+}
+
+
+pub struct UI
+{
+    pub root: UiComponent,
+    pub context: UiContext,
 }
 
 
@@ -167,21 +175,27 @@ impl UI {
 
         let tex_white = texture_from_data(display, pixels, 16, 16);
 
-        UI { 
+        let c = UiContext { 
             window_size,
-            root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
+            scissors: None,
+
             font_10: Rc::new(UiFont::new(display, 10)),
             font_14: Rc::new(UiFont::new(display, 14)),
             tex_white: Rc::new(tex_white),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
+        };
+
+        UI { 
+            root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
+            context: c,
         }
     }
 
     
     pub fn window_center(&self) -> Vector2<f64> {
-        [(self.window_size[0] / 2) as f64, (self.window_size[1] / 2) as f64]
+        [(self.context.window_size[0] / 2) as f64, (self.context.window_size[1] / 2) as f64]
     }
 
 
@@ -215,7 +229,7 @@ impl UI {
                 w,
                 h,                
             }, 
-            font: self.font_14.clone(),
+            font: self.context.font_14.clone(),
             label: label.to_string(),    
         };
         
@@ -234,8 +248,7 @@ impl UI {
                 w,
                 h,                
             }, 
-            font: self.font_10.clone(),
-            tex_white: self.tex_white.clone(),
+            font: self.context.font_10.clone(),
             label: label.to_string(),
             tile: tile.clone(),
             id,
@@ -279,7 +292,9 @@ impl UI {
 
 
     pub fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program) {
-        self.root.head.draw(display, target, program, 0, 0);
+        let context = &mut self.context;
+        let head = &self.root.head;
+        head.draw(display, target, program, context, 0, 0);
     }
 
 
@@ -287,22 +302,22 @@ impl UI {
         if event.args.state == ButtonState::Press {
             if event.args.button == Button::Keyboard(Key::Named(NamedKey::Shift)) {
                 println!("Shift pressed");
-                self.keyboard_state.shift_pressed = true;
+                self.context.keyboard_state.shift_pressed = true;
             }
             
             if event.args.button == Button::Mouse(MouseButton::Left) {
-                self.mouse_state.left_pressed = true;
+                self.context.mouse_state.left_pressed = true;
             }
         }
 
         if event.args.state == ButtonState::Release {
             if event.args.button == Button::Keyboard(Key::Named(NamedKey::Shift)) {
                 println!("Shift released");
-                self.keyboard_state.shift_pressed = false;
+                self.context.keyboard_state.shift_pressed = false;
             }    
 
             if event.args.button == Button::Mouse(MouseButton::Left) {
-                self.mouse_state.left_pressed = false;
+                self.context.mouse_state.left_pressed = false;
             }
         }
 
@@ -311,8 +326,8 @@ impl UI {
 
 
     pub fn handle_mouse_move_event(&mut self, event: &MouseMoveEvent) -> Option<&dyn UiHead> {
-        self.mouse_state.position = [event.mx as f64, event.my as f64];
-        self.root.head.handle_mouse_move_event(event, &self.mouse_state)
+        self.context.mouse_state.position = [event.mx as f64, event.my as f64];
+        self.root.head.handle_mouse_move_event(event, &self.context.mouse_state)
     }
 
 
@@ -345,7 +360,7 @@ pub trait UiHead {
     }
 
     fn draw(&self, _display: &Display<WindowSurface>, _target: &mut Frame, _program: &Program,
-            _x: i32, _y: i32) {
+            _context: &mut UiContext, _x: i32, _y: i32) {
     } 
 
     fn handle_button_event(&mut self, _event: &ButtonEvent) -> Option<&dyn UiHead> {
@@ -416,24 +431,29 @@ impl UiHead for UiContainer {
         &self.area
     }
 
-
     fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
-            x: i32, y: i32) {
+            context: &mut UiContext, x: i32, y: i32) {
         // draw only children which are inside visible area
 
-        // let scissor = draw_state.scissor.unwrap();
         let xp = x + self.area.x;
         let yp = y + self.area.y;
+        let scissors = 
+            match &context.scissors {
+                Some(area) => area.clone(),
+                None => UiArea{x: 0, y: 0, w: context.window_size[0] as i32, h: context.window_size[1] as i32},
+            };
+
+        // println!("Scissors = {:?}", scissors);
 
         for i in 0..self.children.len() {
             let child = &self.children[i];    
             let a = child.head.area();
 
-//            if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
-//               xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.y <= (scissor[1] + scissor[3]) as i32 {
+            if xp + a.x + a.w >= scissors.x && yp + a.y + a.h >= scissors.y &&
+               xp + a.x <= scissors.x + scissors.w && yp + a.y <= scissors.y + scissors.h {
 
-                child.head.draw(display, target, program, xp, yp);
-//            }
+                child.head.draw(display, target, program, context, xp, yp);
+            }
         }
     }
 
@@ -510,7 +530,8 @@ impl UiHead for UiButton {
         &self.area
     }
 
-    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
+            _context: &mut UiContext, x: i32, y: i32) {
 
         let area = self.area();
 /*
@@ -534,7 +555,6 @@ pub struct UiIcon
 {
     pub area: UiArea,
     pub font: Rc<UiFont>,
-    pub tex_white: Rc<Texture2d>,
     pub label: String,
     pub tile: Rc<Tile>,
     pub id: usize,
@@ -547,24 +567,21 @@ impl UiHead for UiIcon
         &self.area
     }
 
-
     fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
-            x: i32, y: i32) {
+            context: &mut UiContext, x: i32, y: i32) {
         let area = self.area();
         let xp = (x + area.x) as f32;
         let yp = (y + area.y) as f32;
 
-        //    let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
-        //    rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
-
-        draw_texture(display, target, program,
+        draw_texture_clip(display, target, program,
             BlendMode::Blend,
-            &self.tex_white,
+            &context.tex_white,
             xp,
             yp, 
             area.w as f32 / 16.0, 
             area.h as f32 / 16.0,
-            &[0.1, 0.1, 0.1, 1.0]);    
+            &[0.1, 0.1, 0.1, 1.0],
+            &context.scissors);    
 
         let tw = self.tile.tex.width() as f32 * 0.25;
         let th = self.tile.tex.height() as f32 * 0.25;
@@ -574,14 +591,15 @@ impl UiHead for UiIcon
         let image_x = xp + (area.w as f32 - tw) / 2.0;
         let image_y = y_base - th;
 
-        draw_texture(display, target, program,
+        draw_texture_clip(display, target, program,
             BlendMode::Blend,
             &self.tile.tex,
             image_x,
             image_y, 
             0.25, 
             0.25,
-            &[1.0, 1.0, 1.0, 1.0]);    
+            &[1.0, 1.0, 1.0, 1.0], 
+            &context.scissors);    
 
         let label_width = self.font.calc_string_width(&self.label) as i32;
         let label_x = xp as i32 + (area.w - label_width) / 2;
@@ -628,21 +646,26 @@ impl UiHead for UiScrollpane
 
 
     fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
-            x: i32, y: i32) {
+            context: &mut UiContext, x: i32, y: i32) {
         let area = self.area();
         let xp = x + area.x;
         let yp = y + area.y;
-/*
-        gl.draw(viewport, |c, gl| {
 
-            let rect = Rectangle::new([0.3, 0.2, 0.1, 0.5]);
+        draw_texture(display, target, program,
+            BlendMode::Blend,
+            &context.tex_white,
+            xp as f32,
+            yp as f32, 
+            area.w as f32 / 16.0, 
+            area.h as f32 / 16.0,
+            &[0.3, 0.2, 0.1, 0.5]);
 
-            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
-        });
-*/
+        context.scissors = Some(UiArea {x: xp, y: yp, w: area.w, h: area.h});
 
-        // let scissor_state = draw_state.scissor([xp as u32, yp as u32, area.w as u32, area.h as u32]);
-        self.child.head.draw(display, target, program, xp + self.offset_x, yp + self.offset_y);
+        self.child.head.draw(display, target, program, 
+                             context, xp + self.offset_x, yp + self.offset_y);
+
+        context.scissors = None;
     }
 
 
@@ -810,7 +833,8 @@ impl UiHead for UiColorchoice
         self.area.y = y;
     }
 
-    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
+            _context: &mut UiContext, x: i32, y: i32) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;

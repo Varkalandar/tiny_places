@@ -53,7 +53,8 @@ impl UiController for MapEditor {
                             return ok;
                         }
                         else {
-                            let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
+                            let pos = screen_to_world_pos(&ui, &world.map.player_position(), 
+                                                          &ui.context.mouse_state.position);
                             world.speaker.play(Sound::Click, 0.5);
                             println!("creating map object {} at {:?}", id, pos);
                             
@@ -101,7 +102,7 @@ impl UiController for MapEditor {
                         self.selected_tile_id = 0;
                     }        
 
-                    let step = if ui.keyboard_state.shift_pressed {8.0} else {1.0};
+                    let step = if ui.context.keyboard_state.shift_pressed {8.0} else {1.0};
 
                     if event.args.button == Button::Keyboard(Key::Named(NamedKey::ArrowRight)) {                        
                         world.map.move_selected_object(step, 0.0);
@@ -167,7 +168,8 @@ impl UiController for MapEditor {
                     }
 
                     if event.args.button == Button::Keyboard(Key::Character("p".into())) {
-                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
+                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), 
+                                                      &ui.context.mouse_state.position);
                         place_particle_generator(world, pos);
                     }
 
@@ -232,7 +234,8 @@ impl UiController for MapEditor {
 
         match comp {
             None => {
-                let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
+                let pos = screen_to_world_pos(ui, &world.map.player_position(), 
+                                              &ui.context.mouse_state.position);
 
                 let map = &mut world.map;
                 let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
@@ -261,11 +264,11 @@ impl UiController for MapEditor {
         ui.handle_mouse_move_event(event);
 
         let player_position = &world.map.player_position();
-        let mp = &ui.mouse_state.position;
+        let mp = &ui.context.mouse_state.position;
         let pos = screen_to_world_pos(&ui, player_position, mp);
 
         // Dragging?
-        if ui.mouse_state.left_pressed {
+        if ui.context.mouse_state.left_pressed {
             let map = &mut world.map; 
             let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 
@@ -305,20 +308,10 @@ impl UiController for MapEditor {
             let tile = tile_opt.unwrap();
             let player_position = &world.map.player_position();
 
-            let mp = &ui.mouse_state.position;
+            let mp = &ui.context.mouse_state.position;
             let window_center: Vector2<f64> = ui.window_center(); 
 
             let pos = screen_to_world_pos(&ui, player_position, mp);
-            // let object = world.map.factory.create_mob(id, MAP_OBJECT_LAYER, pos, 1.0);
-/*
-            gl.draw(viewport, |c, gl| {
-                let tf = build_transform(&c.transform, &pos, 1.0, tile.foot, player_position, &window_center);        
-
-                let image = build_image(tile, [1.0, 1.0, 1.0, 0.5]);
-                image.draw(&tile.tex, &ds, tf, gl);
-            });
-            */
-
             let tpos = calc_tile_position(&pos, tile.foot, 1.0, player_position, &window_center);            
             
             draw_texture(display, target, program,
@@ -330,15 +323,17 @@ impl UiController for MapEditor {
                 1.0,
                 &[1.0, 1.0, 1.0, 0.5]);
         }
+
+        let font = &ui.context.font_14;
         
-        ui.font_14.draw(display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
-        ui.font_14.draw(display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
-        ui.font_14.draw(display, target, program, 10, (ui.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(display, target, program, 10, (ui.context.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
 
 
         if self.show_editor_keys {
@@ -347,26 +342,26 @@ impl UiController for MapEditor {
             let left = 100;
             let mut top = 100;
 
-            ui.font_14.draw(display, target, program, left, top, "F1: Show/hide this list", &color);
+
+            font.draw(display, target, program, left, top, "F1: Show/hide this list", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "Space: Open tile selector", &color);
+            font.draw(display, target, program, left, top, "Space: Open tile selector", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "1,2,3,.. : Select map layer", &color);
+            font.draw(display, target, program, left, top, "1,2,3,.. : Select map layer", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "c: Open color selector for selected item", &color);
+            font.draw(display, target, program, left, top, "c: Open color selector for selected item", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
+            font.draw(display, target, program, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
+            font.draw(display, target, program, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "Delete: Removes the selected item from the map", &color);
+            font.draw(display, target, program, left, top, "Delete: Removes the selected item from the map", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "l: Load a saved map", &color);
+            font.draw(display, target, program, left, top, "l: Load a saved map", &color);
             top += line_space;
-            ui.font_14.draw(display, target, program, left, top, "s: Save the map", &color);
+            font.draw(display, target, program, left, top, "s: Save the map", &color);
             top += line_space;
         }
-
     }
 
 
@@ -391,7 +386,7 @@ impl MapEditor {
 
 
     fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
-        let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.mouse_state.position);
+        let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.context.mouse_state.position);
         let map = &mut world.map;
         let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 
@@ -424,7 +419,7 @@ impl MapEditor {
     pub fn make_tile_selector(&self, ui: &UI, tileset: &TileSet) -> UiComponent {
         // let count = tileset.tiles_by_id.len();
         // let rows = count / 8;
-        let size = &ui.window_size;
+        let size = &ui.context.window_size;
         
         let ww = size[0] as i32;
         let wh = size[1] as i32;

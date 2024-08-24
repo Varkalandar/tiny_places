@@ -13,8 +13,11 @@ use glium::Frame;
 use glium::BlendingFunction;
 use glium::LinearBlendingFactor;
 use glium::Blend;
+use glium::Rect;
 use glium::implement_vertex;
 use glium::uniform;
+
+use crate::ui::UiArea;
 
 #[derive(Copy, Clone)]
 pub struct Vertex {
@@ -123,9 +126,47 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
     ];
 
-    draw_shape(display, target, program, blend, shape, texture, color);
+    draw_shape(display, target, program, blend, shape, texture, color, None);
 }
 
+pub fn draw_texture_clip<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
+    target: &mut Frame,   
+    program: &Program,  
+    blend: BlendMode,
+    texture: &Texture2d,
+    xp: f32,
+    yp: f32, 
+    sx: f32, 
+    sy: f32,
+    color: &[f32; 4],
+    scissors: &Option<UiArea>) {
+
+    let fw = texture.width() as f32 * sx;
+    let fh = texture.height() as f32 * sy;
+
+    let shape = vec![
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+        Vertex { position: [xp +  fw, yp + 0.0], tex_coords: [1.0, 0.0] },
+        Vertex { position: [xp +  fw, yp +  fh], tex_coords: [1.0, 1.0] },
+
+        Vertex { position: [xp +  fw,  yp + fh], tex_coords: [1.0, 1.0] },
+        Vertex { position: [xp + 0.0,  yp + fh], tex_coords: [0.0, 1.0] },
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+    ];
+
+    let clip = 
+        match scissors {
+            Some(scissors) => Some(Rect {
+                left: scissors.x as u32,
+                bottom: scissors.y as u32,
+                width: scissors.w as u32,
+                height: scissors.h as u32,
+            }),
+            None => None,
+        };
+
+    draw_shape(display, target, program, blend, shape, texture, color, clip);
+}
 
 pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
                                                              target: &mut Frame,   
@@ -162,7 +203,7 @@ pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
     ];
 
-    draw_shape(display, target, program, blend, shape, texture, color);
+    draw_shape(display, target, program, blend, shape, texture, color, None);
 }
 
 pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
@@ -172,7 +213,8 @@ pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
     blend: BlendMode,
     shape: Vec<Vertex>,
     texture: &Texture2d,
-    color: &[f32; 4]) {
+    color: &[f32; 4],
+    scissor: Option<Rect>) {
 
     let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
@@ -214,6 +256,7 @@ pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
 
     let params = glium::DrawParameters {
         blend: gl_blend,
+        scissor,
         .. Default::default()
     };
 

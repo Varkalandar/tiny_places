@@ -212,9 +212,8 @@ impl App {
 
         let world = &self.world;
 
-        let width = self.ui.window_size[0] as f32;
-        let height = self.ui.window_size[1] as f32;
-        // let window_center = [width / 2, height / 2];
+        let width = self.ui.context.window_size[0] as f32;
+        let height = self.ui.context.window_size[1] as f32;
 
         let player_position = &world.map.player_position();
         let player_x = player_position[0] as f32;
@@ -236,7 +235,7 @@ impl App {
         draw_texture(display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
-        let tex_white = &self.ui.tex_white;
+        let tex_white = &self.ui.context.tex_white;
 
         // draw ground decorations (flat)
         Self::render_layer(display, &mut target, program, world, tex_white, MAP_GROUND_LAYER);
@@ -367,224 +366,10 @@ impl App {
         }    
     }
 
-
-/*
-    fn render(&mut self, args: &RenderArgs) {
-        let viewport = args.viewport();
-        let ds = DrawState::new_alpha();
-
-        self.gl.draw(viewport, |c, gl| {
-
-            fn draw_layer(gl: &mut GlGraphics, c: Context, ds: DrawState, window_center: &Vector2<f64>, world: &GameWorld, layer_id: usize) {
-                let player_position = &world.map.player_position();
-                let mut objects = Vec::new();
-
-                for (_key, mob) in &world.map.layers[layer_id] {
-                    objects.push(mob);
-                }
-
-                objects.sort_unstable_by(|a, b| -> Ordering {
-                    let ap = a.position[0] + a.position[1] * 10000.0;
-                    let bp = b.position[0] + b.position[1] * 10000.0;
-
-                    if ap > bp {
-                        Ordering::Greater
-                    } else if ap < bp {
-                        Ordering::Less
-                    } else {
-                        Ordering::Equal
-                    }
-                });
-
-                for mob in objects {
-                    let tileset_id = mob.visual.tileset_id;
-
-                    // println!("Accessing mob {} with tile {} from tileset {}", mob.uid, mob.visual.current_image_id, tileset_id);
-
-                    let set = &world.layer_tileset[tileset_id];                    
-                    let tile = set.tiles_by_id.get(&mob.visual.current_image_id).unwrap();
-
-                    let tf = build_transform(&c.transform, &mob.position, mob.visual.scale, tile.foot, player_position, window_center);        
-    
-                    // mark selected item with an ellipse
-                    if world.map.has_selection && 
-                       layer_id == world.map.selected_layer &&
-                       mob.uid == world.map.selected_item {
-                        
-                        let size = tile.size[0] * 0.75;
-                        let ellp = Ellipse::new([1.0, 0.95, 0.9, 0.1]);
-
-                        ellp.draw([-size, -size * 0.5, size * 2.0, size], &ds, 
-                                  tf.trans(tile.foot[0], tile.foot[1]), gl);
-                    }
-    
-                    let image = build_image(tile, mob.visual.color);
-                    image.draw(&tile.tex, &ds.blend(mob.visual.blend), tf, gl);
-
-                    // fake shine for glowing projectiles
-                    if tileset_id == 5 {
-
-                        let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
-
-                        let tf = build_transform(&c.transform, &mob.position, 0.9, glow_tile.foot, player_position, window_center).trans(-170.0, -50.0);
-                        let image = build_image(glow_tile, mob.visual.glow);
-                        image.draw(&glow_tile.tex, &ds.blend(BlendMode::Add), tf, gl);
-                    }
-
-                    // particle effects
-                    mob.visual.particles.for_each_particle(|particles, last_particle_mark| {
-                        
-                        for i in 0..last_particle_mark {
-                            let p = &particles[i];
-
-                            if p.active {
-                                // println!("p.tex={} pos {}, {}", p.tex_id, p.xpos, p.ypos);
-
-                                let set = mob.visual.particles.spawn_tile_set;
-                                let tile = &world.layer_tileset[set].tiles_by_id.get(&p.tex_id).unwrap();
-                                let tf = build_transform(&c.transform, &mob.position, 1.0, tile.foot, player_position, window_center);
-        
-                                // world coordinates to screen coordinates
-                                let xp = p.xpos;
-                                let yp = (p.ypos - p.zpos) * 0.5;
-                                // let glow = (1.0 - p.age / p.lifetime) as f32;
-                                let fade = quadratic_fade(p.age / p.lifetime);
-                                
-                                let image = build_image(tile, [p.color[0]*fade, p.color[1]*fade, p.color[2]*fade, 1.0]);
-                                image.draw(&tile.tex, &ds.blend(BlendMode::Add), tf.trans(xp, yp), gl);
-                            }
-                        }
-                    });
-                }    
-            }
-
-            let world = &self.world;
-            let player_position = &world.map.player_position();
-            let window_center: Vector2<f64> = [args.window_size[0] * 0.5, args.window_size[1] * 0.5];
-
-            let offset_x = window_center[0] * 0.5 - player_position[0];
-            let offset_y = window_center[1] - player_position[1] * 0.5;
-
-            // background image, parallax scrolling at 0.5 times map scroll amount
-            let back_tf = c.transform.trans(- player_position[0]*0.5, - player_position[1] * 0.25).scale(2.0, 2.0);
-            let back_image = 
-                Image::new()
-                    .rect([0.0, 0.0, world.map_backdrop.get_width() as f64, world.map_backdrop.get_height() as f64])
-                    .color([0.8, 0.8, 0.8, 1.0]);
-            back_image.draw(&world.map_backdrop, &ds, back_tf, gl);
-
-            // The map is displayed 2 times as big as source image to conserve memory
-            // for the map background a high detail level is not needed, that is
-            // provided by decorations will are drawn in full resolution
-            let map_tf = c.transform.trans(offset_x, offset_y).scale(2.0, 2.0);
-            
-            let map_image   = 
-                Image::new()
-                    .rect([0.0, 0.0, world.map_texture.get_width() as f64, world.map_texture.get_height() as f64])
-                    .color([0.8, 0.8, 0.8, 1.0]);                    
-            map_image.draw(&world.map_texture, &ds, map_tf, gl);
-
-            // draw ground decorations (flat)
-            draw_layer(gl, c, ds, &window_center, world, MAP_GROUND_LAYER);
-
-            // draw decorations (upright things)
-            draw_layer(gl, c, ds, &window_center, world, MAP_OBJECT_LAYER);
-
-            // draw clouds
-            draw_layer(gl, c, ds, &window_center, world, MAP_CLOUD_LAYER);
-        });
-
-        {
-            let world = &mut self.world;
-            let ui = &mut self.ui;
-            self.controllers.current().draw(viewport, &mut self.gl, &ds, ui, world);    
-            self.controllers.current().draw_overlay(viewport, &mut self.gl, &ds, ui, world);    
-        }
-    }
-
-
-    fn button(&mut self, args: &ButtonArgs) {
-        println!("Button event {:?}", args);
-        
-        if args.state == ButtonState::Press {
-            self.ui.mouse_state.record_drag_start();
-        }
-
-        let event = ui::ButtonEvent {
-            args,
-            mx: self.ui.mouse_state.position[0] as i32,
-            my: self.ui.mouse_state.position[1] as i32,
-        };
-
-        // editor/game swtich must be handled here, the button pres is not handed down ATM
-
-        if event.args.state == ButtonState::Release {
-            if event.args.button == Button::Keyboard(glium::winit::keyboard::Key::Named::E) {    
-                self.controllers.edit = true;
-                println!("Switching to editor mode.");
-            }
-            if event.args.button == Button::Keyboard(glium::winit::keyboard::Key::Named::G) {                        
-                self.controllers.edit = false;
-                println!("Switching to game mode.");
-            }        
-        }
-
-        // now the ordinary events
-
-        let window_center: Vector2<f64> = self.ui.window_center(); 
-        let controller = &mut self.controllers.current();
-        let world = &mut self.world;
-        let ui = &mut self.ui;
-
-        let consumed = controller.handle_button_event(ui, &event, world);
-
-        if event.args.state == ButtonState::Release && !consumed {
-            if event.args.button == Button::Mouse(MouseButton::Left) {
-                self.move_player(window_center);            
-            }
-        }
-    }    
-    
-    
-    fn mouse_cursor(&mut self, args: &[f64; 2]) {
-        
-        self.ui.mouse_state.position = *args;
-
-        let event = MouseMoveEvent {
-            mx: self.ui.mouse_state.position[0] as i32,
-            my: self.ui.mouse_state.position[1] as i32,
-        };
-
-        let controller = &mut self.controllers.current();
-        let world = &mut self.world;
-        let ui = &mut self.ui;
-
-        controller.handle_mouse_move_event(ui, &event, world);
-    }
-    
-
-    fn mouse_scroll(&mut self, args: &[f64; 2]) {
-        println!("Mouse scroll event {:?}", args);
-
-        let event = ScrollEvent {
-            dx: args[0],
-            dy: args[1],
-            mx: self.ui.mouse_state.position[0] as i32,
-            my: self.ui.mouse_state.position[1] as i32,
-        };
-
-        let controller = &mut &mut self.controllers.current();
-        let world = &mut self.world;
-        let ui = &mut self.ui;
-
-        controller.handle_scroll_event(ui, &event, world);
-    }
-    */
-
     
     fn move_player(&mut self, window_center: Vector2<f64>) {
         
-        let screen_direction = vec2_sub(self.ui.mouse_state.position, window_center);
+        let screen_direction = vec2_sub(self.ui.context.mouse_state.position, window_center);
         
         // world coordinates have y components double as large
         // as screen coordinates
@@ -688,8 +473,8 @@ pub fn parse_rgba(color_str: &str) -> [f32; 4] {
 
 pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vector2<f64>) -> Vector2<f64>
 {
-    let rel_mouse_x = screen_pos[0] - (ui.window_size[0]/2) as f64;
-    let rel_mouse_y = (screen_pos[1] - (ui.window_size[1]/2) as f64) * 2.0;
+    let rel_mouse_x = screen_pos[0] - (ui.context.window_size[0]/2) as f64;
+    let rel_mouse_y = (screen_pos[1] - (ui.context.window_size[1]/2) as f64) * 2.0;
 
     // transform to world coordinates
     // it is relatrive to player position
@@ -766,8 +551,8 @@ fn main() {
                             button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
                             scancode: None,
                         },
-                        mx: app.ui.mouse_state.position[0],
-                        my: app.ui.mouse_state.position[1],
+                        mx: app.ui.context.mouse_state.position[0],
+                        my: app.ui.context.mouse_state.position[1],
                     };
 
                     // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
@@ -793,8 +578,8 @@ fn main() {
                             let event = ScrollEvent {
                                 dx: dx as f64,
                                 dy: dy as f64,
-                                mx: app.ui.mouse_state.position[0],
-                                my: app.ui.mouse_state.position[1],
+                                mx: app.ui.context.mouse_state.position[0],
+                                my: app.ui.context.mouse_state.position[1],
                             };
                             app.handle_scroll_event(&event);
                         },
@@ -815,8 +600,8 @@ fn main() {
                             button: Button::Keyboard(event.logical_key),
                             scancode: None,
                         },
-                        mx: app.ui.mouse_state.position[0],
-                        my: app.ui.mouse_state.position[1],
+                        mx: app.ui.context.mouse_state.position[0],
+                        my: app.ui.context.mouse_state.position[1],
                     };
 
                     app.handle_button_event(&button_event);

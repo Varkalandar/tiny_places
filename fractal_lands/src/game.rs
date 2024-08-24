@@ -48,7 +48,7 @@ impl UiController for Game {
             match comp {
                 None => {
 
-                    let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.mouse_state.position);
+                    let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.context.mouse_state.position);
                     
                     if event.args.button == Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
@@ -92,7 +92,7 @@ impl UiController for Game {
         }
 
         if self.show_inventory {
-            return self.piv.handle_button_event(event, &ui.mouse_state, world);
+            return self.piv.handle_button_event(event, &ui.context.mouse_state, world);
         }
 
         false
@@ -103,7 +103,7 @@ impl UiController for Game {
         let _comp = ui.handle_mouse_move_event(event);
 
         if self.show_inventory {
-            self.piv.handle_mouse_move_event(event, &ui.mouse_state, &mut world.player_inventory);
+            self.piv.handle_mouse_move_event(event, &ui.context.mouse_state, &mut world.player_inventory);
         }
 
         false
@@ -135,7 +135,7 @@ impl UiController for Game {
 
     fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
                     ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.font_14.draw(display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
+        ui.context.font_14.draw(display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 
@@ -165,8 +165,8 @@ impl Game {
     pub fn new(inventory_bg: Texture2d, ui: &UI, item_tiles: &TileSet) -> Game {
 
         let piv = PlayerInventoryView::new(
-            (ui.window_size[0] as i32) / 2, 0,
-            &ui.font_14,
+            (ui.context.window_size[0] as i32) / 2, 0,
+            &ui.context.font_14,
             &item_tiles.shallow_copy(),
             inventory_bg,);
     
