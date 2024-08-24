@@ -14,7 +14,7 @@ use glium::Frame;
 use glium::Texture2d;
 use glium::Program;
 use glium::winit::keyboard::Key;
-use glium::winit::keyboard::NamedKey;
+use glium::winit::event::MouseScrollDelta;
 use glium::implement_vertex;
 use glium::uniform;
 
@@ -206,6 +206,7 @@ impl App {
             self.controllers.current().update(world, secs);
         }
     }
+
 
     fn render(&mut self, display: &Display<WindowSurface>, program: &Program) {
 
@@ -647,6 +648,16 @@ impl App {
 
         controller.handle_mouse_move_event(ui, &event, world);
     }
+
+
+    fn handle_scroll_event(&mut self, event: &ScrollEvent) {
+
+        let controller = &mut &mut self.controllers.current();
+        let world = &mut self.world;
+        let ui = &mut self.ui;
+
+        controller.handle_scroll_event(ui, &event, world);
+    }
 }
 
 
@@ -772,6 +783,25 @@ fn main() {
                         my: position.y,
                     };
                     app.handle_mouse_move_event(&event);
+                },
+
+                glium::winit::event::WindowEvent::MouseWheel { device_id, delta, phase } => {
+                    println!("wheel delta = {:?}", delta);
+
+                    match delta {
+                        MouseScrollDelta::LineDelta(dx, dy) => {
+                            let event = ScrollEvent {
+                                dx: dx as f64,
+                                dy: dy as f64,
+                                mx: app.ui.mouse_state.position[0],
+                                my: app.ui.mouse_state.position[1],
+                            };
+                            app.handle_scroll_event(&event);
+                        },
+                        _ => {
+
+                        }
+                    }
                 },
 
                 glium::winit::event::WindowEvent::KeyboardInput { device_id, event, is_synthetic } => {
