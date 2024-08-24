@@ -11,10 +11,12 @@ use glium::Display;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
-use crate::screen_to_world_pos;
 use crate::GameWorld;
 use crate::sound::Sound;
 use crate::gl_support::BlendMode;
+use crate::gl_support::draw_texture;
+use crate::calc_tile_position;
+use crate::screen_to_world_pos;
 
 
 pub struct MapEditor {
@@ -285,10 +287,9 @@ impl UiController for MapEditor {
     }
 
 
-
     fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
             ui: &mut UI, _world: &mut Self::Appdata) {
-        // ui.draw(viewport, gl);
+        ui.draw(display, target, program);
     }
 
 
@@ -317,6 +318,17 @@ impl UiController for MapEditor {
                 image.draw(&tile.tex, &ds, tf, gl);
             });
             */
+
+            let tpos = calc_tile_position(&pos, tile.foot, 1.0, player_position, &window_center);            
+            
+            draw_texture(display, target, program,
+                BlendMode::Blend,
+                &tile.tex,
+                tpos[0],
+                tpos[1], 
+                1.0, 
+                1.0,
+                &[1.0, 1.0, 1.0, 0.5]);
         }
         
         ui.font_14.draw(display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);

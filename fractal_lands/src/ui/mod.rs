@@ -15,6 +15,8 @@ use glium::Frame;
 
 pub use tileset::*;
 pub use font::UiFont;
+use crate::BlendMode;
+use crate::draw_texture;
 
 
 #[derive(PartialEq, Clone, Debug)]
@@ -268,9 +270,8 @@ impl UI {
     }
 
 
-    pub fn draw(&mut self) {
-        // let draw_state = DrawState::new_alpha().scissor([0, 0, self.window_size[0], self.window_size[1]]);
-        // self.root.head.draw(viewport, gl, &draw_state, 0, 0);
+    pub fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program) {
+        self.root.head.draw(display, target, program, 0, 0);
     }
 
 
@@ -335,7 +336,8 @@ pub trait UiHead {
     fn set_position(&mut self, _x: i32, _y: i32) {
     }
 
-    fn draw(&self, _x: i32, _y: i32) {
+    fn draw(&self, _display: &Display<WindowSurface>, _target: &mut Frame, _program: &Program,
+            _x: i32, _y: i32) {
     } 
 
     fn handle_button_event(&mut self, _event: &ButtonEvent) -> Option<&dyn UiHead> {
@@ -407,10 +409,11 @@ impl UiHead for UiContainer {
     }
 
 
-    fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+            x: i32, y: i32) {
         // draw only children which are inside visible area
-/*
-        let scissor = draw_state.scissor.unwrap();
+
+        // let scissor = draw_state.scissor.unwrap();
         let xp = x + self.area.x;
         let yp = y + self.area.y;
 
@@ -418,13 +421,12 @@ impl UiHead for UiContainer {
             let child = &self.children[i];    
             let a = child.head.area();
 
-            if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
-               xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.y <= (scissor[1] + scissor[3]) as i32 {
+//            if xp + a.x + a.w >= scissor[0] as i32 && yp + a.y + a.h >= scissor[1] as i32 &&
+//               xp + a.x <= (scissor[0] + scissor[2]) as i32 && yp + a.y <= (scissor[1] + scissor[3]) as i32 {
 
-                child.head.draw(xp, yp);
-            }
+                child.head.draw(display, target, program, xp, yp);
+//            }
         }
-            */
     }
 
 
@@ -500,7 +502,7 @@ impl UiHead for UiButton {
         &self.area
     }
 
-    fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, x: i32, y: i32) {
 
         let area = self.area();
 /*
@@ -514,7 +516,7 @@ impl UiHead for UiButton {
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + (area.h - self.font.lineheight) / 2;
 
-        // self.font.draw(label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
+        self.font.draw(display, target, program, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
     } 
 
 }
@@ -538,38 +540,37 @@ impl UiHead for UiIcon
     }
 
 
-    fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
+            x: i32, y: i32) {
         let area = self.area();
-        let xp = x + area.x;
-        let yp = y + area.y;
-/*
-        gl.draw(viewport, |c, gl| {
+        let xp = (x + area.x) as f32;
+        let yp = (y + area.y) as f32;
 
-            
-            let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
-            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
+        //    let rect = Rectangle::new([0.1, 0.1, 0.1, 1.0]); 
+        //    rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
 
-            let tw = self.tile.size[0] * 0.25;
-            let th = self.tile.size[1] * 0.25;
+        let tw = self.tile.tex.width() as f32 * 0.25;
+        let th = self.tile.tex.height() as f32 * 0.25;
 
-            let y_base = yp + area.h - 26; // space for a label below the icon image
+        let y_base = yp + area.h as f32 - 26.0; // space for a label below the icon image
 
-            let image_x = xp + (area.w - tw as i32) / 2;
-            let image_y = y_base - th as i32;
+        let image_x = xp + (area.w as f32 - tw) / 2.0;
+        let image_y = y_base - th;
 
-            let image   = 
-                Image::new()
-                    .rect([image_x as f64, image_y as f64, tw, th])
-                    .color([1.0, 1.0, 1.0, 1.0]);
-            image.draw(&self.tile.tex, draw_state, c.transform, gl);
-        });
+        draw_texture(display, target, program,
+            BlendMode::Add,
+            &self.tile.tex,
+            image_x,
+            image_y, 
+            0.25, 
+            0.25,
+            &[1.0, 1.0, 1.0, 1.0]);    
 
         let label_width = self.font.calc_string_width(&self.label) as i32;
-        let label_x = xp + (area.w - label_width) / 2;
-        let label_y = yp + area.h - self.font.lineheight;
+        let label_x = xp as i32 + (area.w - label_width) / 2;
+        let label_y = yp as i32 + area.h - self.font.lineheight;
 
-        self.font.draw(viewport, gl, draw_state, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
-        */
+        self.font.draw(display, target, program, label_x, label_y, &self.label, &[0.4, 0.6, 0.7, 1.0]);
     } 
 
 
@@ -609,7 +610,8 @@ impl UiHead for UiScrollpane
     }
 
 
-    fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+            x: i32, y: i32) {
         let area = self.area();
         let xp = x + area.x;
         let yp = y + area.y;
@@ -623,7 +625,7 @@ impl UiHead for UiScrollpane
 */
 
         // let scissor_state = draw_state.scissor([xp as u32, yp as u32, area.w as u32, area.h as u32]);
-        self.child.head.draw(xp + self.offset_x, yp + self.offset_y);
+        self.child.head.draw(display, target, program, xp + self.offset_x, yp + self.offset_y);
     }
 
 
@@ -653,9 +655,7 @@ impl UiHead for UiScrollpane
 
         self.child.head.handle_button_event(&event.translate(-self.area.x-self.offset_x, -self.area.y-self.offset_y))
     }
-
 }
-
 
 
 pub struct UiColorchoice {
@@ -793,7 +793,7 @@ impl UiHead for UiColorchoice
         self.area.y = y;
     }
 
-    fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, x: i32, y: i32) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;

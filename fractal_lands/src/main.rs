@@ -305,9 +305,7 @@ impl App {
                 */
             }
 
-            let tpos = Self::calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
-            // let image = build_image(tile, mob.visual.color);
-            // image.draw(&tile.tex, &ds.blend(mob.visual.blend), tf, gl);
+            let tpos = calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
 
             draw_texture(display, target, program,
                 mob.visual.blend,
@@ -322,7 +320,7 @@ impl App {
             if tileset_id == 5 {
 
                 let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
-                let tpos = Self::calc_tile_position(&mob.position, glow_tile.foot, 0.9, player_position, &window_center);
+                let tpos = calc_tile_position(&mob.position, glow_tile.foot, 0.9, player_position, &window_center);
 
                 draw_texture(display, target, program,
                     BlendMode::Add,
@@ -361,20 +359,6 @@ impl App {
             });
             */
         }    
-    }
-
-
-    fn calc_tile_position(position: &Vector2<f64>, foot: Vector2<f64>, scale: f64, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [f32; 2] {
-        
-        let mut pos_x = position[0] - player_position[0];
-        let mut pos_y = (position[1] - player_position[1]) * 0.5;  
-        
-        pos_x += window_center[0];
-        pos_y += window_center[1];
-        pos_x += -foot[0] * scale;
-        pos_y += -foot[1] * scale;
-        
-        [pos_x as f32, pos_y as f32]
     }
 
 
@@ -591,7 +575,7 @@ impl App {
     }
     */
 
-
+    
     fn move_player(&mut self, window_center: Vector2<f64>) {
         
         let screen_direction = vec2_sub(self.ui.mouse_state.position, window_center);
@@ -698,25 +682,19 @@ pub fn screen_to_world_pos(ui: &UI, player_pos: &Vector2<f64>, screen_pos: &Vect
     world_pos
 }
 
-/*
-pub fn build_transform(transform: &Matrix2d<f64>, position: &Vector2<f64>, scale: f64, foot: Vector2<f64>, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [[f64; 3]; 2] {
-    let rel_pos_x = position[0] - player_position[0];        
-    let rel_pos_y = position[1] - player_position[1];  
 
-    transform
-        .trans(window_center[0], window_center[1])
-        .trans(rel_pos_x, rel_pos_y * 0.5)
-        .scale(scale, scale)
-        .trans(-foot[0], -foot[1])
+pub fn calc_tile_position(position: &Vector2<f64>, foot: Vector2<f64>, scale: f64, player_position: &Vector2<f64>, window_center: &Vector2<f64>) -> [f32; 2] {
+        
+    let mut pos_x = position[0] - player_position[0];
+    let mut pos_y = (position[1] - player_position[1]) * 0.5;  
+    
+    pos_x += window_center[0];
+    pos_y += window_center[1];
+    pos_x += -foot[0] * scale;
+    pos_y += -foot[1] * scale;
+    
+    [pos_x as f32, pos_y as f32]
 }
-
-
-pub fn build_image(tile: &Tile, color: [f32; 4]) -> Image {
-    Image::new()
-        .rect([0.0, 0.0, tile.size[0], tile.size[1]])
-        .color(color)        
-}
-*/
 
 
 fn quadratic_fade(x: f64) -> f32 {
