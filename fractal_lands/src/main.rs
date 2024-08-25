@@ -109,22 +109,22 @@ pub struct App {
 
 impl App {
     
-    fn new(display: &Display<WindowSurface>, window_size: [u32; 2]) -> App {
+    fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> App {
 
         let map_image_file = "map_wasteland.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
-        let map_texture = load_texture(display, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
-        let map_backdrop = load_texture(display, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
+        let map_texture = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
+        let map_backdrop = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
 
-        let ground_tiles = TileSet::load(display, "../tiny_places_client/resources/grounds", "map_objects.tica");
-        let decoration_tiles = TileSet::load(display, "../tiny_places_client/resources/objects", "map_objects.tica");
-        let item_tiles = TileSet::load(display, "../tiny_places_client/resources/items", "items.tica");
-        let cloud_tiles = TileSet::load(display, "../tiny_places_client/resources/clouds", "map_objects.tica");
-        let creature_tiles = TileSet::load(display, "../tiny_places_client/resources/creatures", "creatures.tica");
-        let player_tiles = TileSet::load(display, "../tiny_places_client/resources/players", "players.tica");
-        let projectile_tiles = TileSet::load(display, "../tiny_places_client/resources/projectiles", "projectiles.tica");
-        let animation_tiles = TileSet::load(display, "../tiny_places_client/resources/animations", "animations.tica");
+        let ground_tiles = TileSet::load(&display, "../tiny_places_client/resources/grounds", "map_objects.tica");
+        let decoration_tiles = TileSet::load(&display, "../tiny_places_client/resources/objects", "map_objects.tica");
+        let item_tiles = TileSet::load(&display, "../tiny_places_client/resources/items", "items.tica");
+        let cloud_tiles = TileSet::load(&display, "../tiny_places_client/resources/clouds", "map_objects.tica");
+        let creature_tiles = TileSet::load(&display, "../tiny_places_client/resources/creatures", "creatures.tica");
+        let player_tiles = TileSet::load(&display, "../tiny_places_client/resources/players", "players.tica");
+        let projectile_tiles = TileSet::load(&display, "../tiny_places_client/resources/projectiles", "projectiles.tica");
+        let animation_tiles = TileSet::load(&display, "../tiny_places_client/resources/animations", "animations.tica");
 
         let layer_tileset = [
             ground_tiles,
@@ -143,9 +143,9 @@ impl App {
 
         let ui = UI::new(display, window_size);
         
-        let editor = MapEditor::new();
+        let editor = MapEditor::new(&ui);
 
-        let inventory_bg = load_texture(display, "resources/ui/inventory_bg.png");
+        let inventory_bg = load_texture(&ui.display, "resources/ui/inventory_bg.png");
         let game = Game::new(inventory_bg, &ui, &layer_tileset[6]);
 
         let mut inv = Inventory::new();
@@ -208,7 +208,7 @@ impl App {
     }
 
 
-    fn render(&mut self, display: &Display<WindowSurface>, program: &Program) {
+    fn render(&mut self, program: &Program) {
 
         let world = &self.world;
 
@@ -226,31 +226,31 @@ impl App {
         let back_off_x = - player_x / 2.0;
         let back_off_y = - player_y / 4.0;
 
-        let mut target = display.draw();
+        let mut target = self.ui.display.draw();
         target.clear_color(0.0, 0.0, 1.0, 1.0);
 
-        draw_texture(display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
+        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
                      0.0, 0.0, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
-        draw_texture(display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
+        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
         let tex_white = &self.ui.context.tex_white;
 
         // draw ground decorations (flat)
-        Self::render_layer(display, &mut target, program, world, tex_white, MAP_GROUND_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_GROUND_LAYER);
 
         // draw decorations (upright things)
-        Self::render_layer(display, &mut target, program, world, tex_white, MAP_OBJECT_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_OBJECT_LAYER);
 
         // draw clouds
-        Self::render_layer(display, &mut target, program, world, tex_white, MAP_CLOUD_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_CLOUD_LAYER);
 
         {
             let world = &mut self.world;
             let ui = &mut self.ui;
-            self.controllers.current().draw(display, &mut target, program, ui, world);    
-            self.controllers.current().draw_overlay(display, &mut target, program, ui, world);    
+            self.controllers.current().draw(&mut target, program, ui, world);    
+            self.controllers.current().draw_overlay(&mut target, program, ui, world);    
         }
 
         target.finish().unwrap();
@@ -514,14 +514,14 @@ fn main() {
         .expect("event loop building");
 
     let (window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
-        .with_title("Glium tutorial #1")
+        .with_title("Fractal Lands GL v0.0.1")
         .with_inner_size(window_size[0], window_size[1])
         .build(&event_loop);
 
 
     let program = build_program(&display);
 
-    let mut app = App::new(&display, window_size);
+    let mut app = App::new(display, window_size);
 
     // Now we wait until the program is closed
     #[allow(deprecated)]
@@ -535,12 +535,12 @@ fn main() {
                 // We now need to render everyting in response to a RedrawRequested event due to the animation
                 glium::winit::event::WindowEvent::RedrawRequested => {
                     app.update();
-                    app.render(&display, &program);
+                    app.render(&program);
                 },
                 // Because glium doesn't know about windows we need to resize the display
                 // when the window's size has changed.
                 glium::winit::event::WindowEvent::Resized(window_size) => {
-                    display.resize(window_size.into());
+                    app.ui.display.resize(window_size.into());
                 },
 
                 glium::winit::event::WindowEvent::MouseInput { device_id, button, state } => {

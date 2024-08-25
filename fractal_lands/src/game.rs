@@ -121,7 +121,7 @@ impl UiController for Game {
     }
 
 
-    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw(&mut self, target: &mut Frame, program: &Program,
             ui: &mut UI, world: &mut Self::Appdata) {
         /*
         ui.draw(viewport, gl);
@@ -133,9 +133,9 @@ impl UiController for Game {
     }
 
 
-    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw_overlay(&mut self, target: &mut Frame, program: &Program,
                     ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.context.font_14.draw(display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
+        ui.context.font_14.draw(&ui.display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 

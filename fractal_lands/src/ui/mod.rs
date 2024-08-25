@@ -110,12 +110,12 @@ pub trait UiController {
         false
     }
 
-    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw(&mut self, target: &mut Frame, program: &Program,
             _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
     
-    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw_overlay(&mut self, target: &mut Frame, program: &Program,
                     _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
@@ -164,23 +164,24 @@ pub struct UI
 {
     pub root: UiComponent,
     pub context: UiContext,
+
+    pub display: Display<WindowSurface>,
 }
 
 
 impl UI {
 
-    pub fn new(display: &Display<WindowSurface>, window_size: [u32; 2]) -> UI {
+    pub fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> UI {
         
         let pixels = vec![255_u8; 1024];
-
-        let tex_white = texture_from_data(display, pixels, 16, 16);
+        let tex_white = texture_from_data(&display, pixels, 16, 16);
 
         let c = UiContext { 
             window_size,
             scissors: None,
 
-            font_10: Rc::new(UiFont::new(display, 10)),
-            font_14: Rc::new(UiFont::new(display, 14)),
+            font_10: Rc::new(UiFont::new(&display, 10)),
+            font_14: Rc::new(UiFont::new(&display, 14)),
             tex_white: Rc::new(tex_white),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
@@ -189,6 +190,7 @@ impl UI {
 
         UI { 
             root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
+            display,
             context: c,
         }
     }
@@ -240,7 +242,7 @@ impl UI {
 
 
     pub fn make_icon(&self, x: i32, y: i32, w: i32, h: i32, 
-                     tile: &Rc<Tile>, label: &str, id: usize) -> Rc<UiComponent> {
+                     tile: &Rc<Tile>, label: &str, id: usize) -> UiComponent {
         let icon = UiIcon {
             area: UiArea {
                 x, 
@@ -254,9 +256,9 @@ impl UI {
             id,
         };
         
-        Rc::new(UiComponent {
+        UiComponent {
             head: Box::new(icon),
-        })        
+        }        
     }
 
     
@@ -283,7 +285,7 @@ impl UI {
 
 
     pub fn make_color_choice(&self, x: i32, y: i32, w: i32, h: i32, id: usize, color: [f32;4]) -> UiComponent {
-        let colorchoice = UiColorchoice::new(x, y, w, h, id, color); 
+        let colorchoice = UiColorchoice::new(&self.display, x, y, w, h, id, color); 
 
         UiComponent {
             head: Box::new(colorchoice),
@@ -291,10 +293,10 @@ impl UI {
     }
 
 
-    pub fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program) {
+    pub fn draw(&mut self, target: &mut Frame, program: &Program) {
         let context = &mut self.context;
         let head = &self.root.head;
-        head.draw(display, target, program, context, 0, 0);
+        head.draw(&self.display, target, program, context, 0, 0);
     }
 
 
@@ -376,7 +378,11 @@ pub trait UiHead {
         None
     }
 
-    fn add_child(&mut self, _child: Rc<UiComponent>) {
+    /**
+     * Because children have to be mutable. e.g. to change their looks upon
+     * mouse cursor pointing to them, the UI must own the components.
+     */
+    fn add_child(&mut self, _child: UiComponent) {
         println!("This component cannot store children.");
     }
 
@@ -395,28 +401,31 @@ pub trait UiHead {
 
 pub struct UiContainer {
     pub area: UiArea,
-    pub children: Vec<Rc<UiComponent>>,
+    pub children: Vec<UiComponent>,
 }
 
 
 impl UiContainer {
 
-    fn find_child_at(&mut self, x: i32, y: i32) -> Option<&mut UiComponent> {
+    /**
+     * Returns the index of the child at the given position or None
+     */ 
+    fn find_child_at(&mut self, x: i32, y: i32) -> Option<usize> {
 
         let rel_x = x - self.area.x;
         let rel_y = y - self.area.y;
 
         // println!("Checking relative to container origin {}, {}", rel_x, rel_y);
 
-        for child in &mut self.children {
-            let area = &child.head.area();
+        for i in 0 .. self.children.len() {
+            let area = &self.children[i].head.area();
 
             // println!("Area {}, {}, {}, {}", area.x, area.y, area.w, area.h);
 
             if area.contains(rel_x, rel_y) {
                 // println!("Found a child at {}, {}", x, y);
 
-                return Rc::<UiComponent>::get_mut(child);
+                return Some(i);
             }
         }
 
@@ -462,11 +471,14 @@ impl UiHead for UiContainer {
 
         let option = self.find_child_at(event.mx as i32, event.my as i32);
                 
+        println!("event received at {}, {} -> child={}", event.mx, event.my, option.is_some());
+
         match option {
             None => {
             },
             Some(child) => {
-                return child.head.handle_button_event(event);
+                let c = &mut self.children[child];
+                return c.head.handle_button_event(event);
             }
         }
 
@@ -482,7 +494,8 @@ impl UiHead for UiContainer {
             },
             Some(child) => {
                 // println!("Mouse moved to {}, {}", event.mx, event.my);
-                return child.head.handle_mouse_move_event(event, mouse);
+                let c = &mut self.children[child];
+                return c.head.handle_mouse_move_event(event, mouse);
             }
         }
 
@@ -498,7 +511,8 @@ impl UiHead for UiContainer {
             None => {
             },
             Some(child) => {
-                return child.head.handle_scroll_event(event);
+                let c = &mut self.children[child];
+                return c.head.handle_scroll_event(event);
             }
         }
 
@@ -506,7 +520,7 @@ impl UiHead for UiContainer {
     }
 
 
-    fn add_child(&mut self, child: Rc<UiComponent>) {
+    fn add_child(&mut self, child: UiComponent) {
         self.children.push(child);
     }
 
@@ -531,23 +545,26 @@ impl UiHead for UiButton {
     }
 
     fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
-            _context: &mut UiContext, x: i32, y: i32) {
+            context: &mut UiContext, x: i32, y: i32) {
 
         let area = self.area();
-/*
-        gl.draw(viewport, |c, gl| {
+        
+        draw_texture_clip(display, target, program,
+            BlendMode::Blend,
+            &context.tex_white,
+            (area.x + x) as f32,
+            (area.y + y) as f32, 
+            area.w as f32 / 16.0, 
+            area.h as f32 / 16.0,
+            &[0.1, 0.1, 0.1, 1.0],
+            &context.scissors);
 
-            let rect = Rectangle::new([1.0, 0.5, 0.0, 1.0]); 
-            rect.draw([x as f64, y as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl)
-        });
-*/
         let label_width = self.font.calc_string_width(&self.label) as i32;
         let label_x = x + (area.w - label_width) / 2;
         let label_y = y + (area.h - self.font.lineheight) / 2;
 
         self.font.draw(display, target, program, label_x, label_y, &self.label, &[1.0, 1.0, 1.0, 1.0]);
     } 
-
 }
 
 
@@ -639,7 +656,6 @@ pub struct UiScrollpane
 
 impl UiHead for UiScrollpane
 {
-
     fn area(&self) -> &UiArea {
         &self.area
     }
@@ -702,9 +718,9 @@ pub struct UiColorchoice {
     pub area: UiArea,
     bandwidth: i32,
     pub id: usize,
-//    tex: Texture,
-//    light: Texture,
-//    trans: Texture,
+    tex: Texture2d,
+    light: Texture2d,
+    trans: Texture2d,
     r: u32,
     g: u32,
     b: u32,
@@ -714,7 +730,8 @@ pub struct UiColorchoice {
 
 
 impl UiColorchoice {
-    pub fn new(x: i32, y: i32, w: i32, h: i32, id: usize, color: [f32;4]) -> UiColorchoice {
+    pub fn new(display: &Display<WindowSurface>,
+               x: i32, y: i32, w: i32, h: i32, id: usize, color: [f32;4]) -> UiColorchoice {
 
         println!("make UiColorchoice at {} {} {} {}", x, y, w, h);
 
@@ -734,16 +751,16 @@ impl UiColorchoice {
             b: (color[2] * 255.0) as u32,
             a: (color[3] * 255.0) as u32,
             lightness: 255,
-            // tex: UiColorchoice::make_color_tex((w - tw) as u32, (h - tw) as u32),
-            // light: UiColorchoice::make_light_tex((w - tw) as u32, (tw-4) as u32),
-            // trans: UiColorchoice::make_trans_tex((tw - 4) as u32, (h - tw) as u32),
+            tex: UiColorchoice::make_color_tex(display, (w - tw) as u32, (h - tw) as u32),
+            light: UiColorchoice::make_light_tex(display, (w - tw) as u32, (tw-4) as u32),
+            trans: UiColorchoice::make_trans_tex(display, (tw - 4) as u32, (h - tw) as u32),
         }
     }
 
-/*
-    fn make_color_tex(w: u32, h: u32) -> Texture {
+
+    fn make_color_tex(display: &Display<WindowSurface>, w: u32, h: u32) -> Texture2d {
         
-        let mut img = RgbaImage::new(w, h);
+        let mut img = Vec::with_capacity((w * h) as usize);
 
         // color field
         for j in 0..h {
@@ -755,18 +772,18 @@ impl UiColorchoice {
 
                 let (r, g, b) = Self::yuv_to_rgb(y, u as i32, v as i32);
 
-                img.put_pixel(i, j, Rgba([r, g, b, 255]));
+                img.push(r);
+                img.push(g);
+                img.push(b);
+                img.push(255);
             }
         }
 
-        // let ibuf = img.to_rgba8();
-        let ibuf = img;
-        let tex = Texture::from_image(&ibuf, &TextureSettings::new());
-        
+        let tex = texture_from_data(display, img, w, h);        
 
         tex
     }
-*/
+
     
     fn yuv_to_rgb(y: i32, u: i32, v: i32) -> (u8, u8, u8) {
         // R = (y + 1.4075 * (v - 128));
@@ -782,42 +799,47 @@ impl UiColorchoice {
         (max(min(r, 255), 0) as u8, max(min(g, 255), 0) as u8, max(min(b, 255), 0) as u8)
     }
 
-/*
-    fn make_light_tex(w: u32, h: u32) -> Texture {
+
+    fn make_light_tex(display: &Display<WindowSurface>, w: u32, h: u32) -> Texture2d {
         
-        let mut img = RgbaImage::new(w, h);
+        let mut img = Vec::with_capacity((w * h) as usize);
 
         // color field
         for j in 0..h {
             for i in 0..w {
                 let y = (i * 255 / w) as u8;
-                img.put_pixel(i, j, Rgba([y, y, y, 255]));
+                img.push(y);
+                img.push(y);
+                img.push(y);
+                img.push(255);
             }
         }
 
-        let tex = Texture::from_image(&img, &TextureSettings::new());
+        let tex = texture_from_data(display, img, w, h);        
 
         tex
     }
 
 
-    fn make_trans_tex(w: u32, h: u32) -> Texture {
+    fn make_trans_tex(display: &Display<WindowSurface>, w: u32, h: u32) -> Texture2d {
         
-        let mut img = RgbaImage::new(w, h);
+        let mut img = Vec::with_capacity((w * h) as usize);
 
         // color field
         for j in 0..h {
             for i in 0..w {
                 let y = (j * 255 / h) as u8;
-                img.put_pixel(i, j, Rgba([255, 255, 255, 255 - y]));
+                img.push(255);
+                img.push(255);
+                img.push(255);
+                img.push(255 - y);
             }
         }
 
-        let tex = Texture::from_image(&img, &TextureSettings::new());
+        let tex = texture_from_data(display, img, w, h);        
 
         tex
     }
-        */
 }
 
 
@@ -834,7 +856,7 @@ impl UiHead for UiColorchoice
     }
 
     fn draw(&self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program, 
-            _context: &mut UiContext, x: i32, y: i32) {
+            context: &mut UiContext, x: i32, y: i32) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;
@@ -842,7 +864,53 @@ impl UiHead for UiColorchoice
         let bw = self.bandwidth;
 
         // println!("Drawing at {} {} {} {}", xp, yp, area.w, area.h);
-/*
+
+
+        // white "reset" area
+        draw_texture_clip(display, target, program,
+            BlendMode::Blend,
+            &context.tex_white,
+            (xp + area.w - bw + 4) as f32,
+            yp as f32, 
+            (bw - 4) as f32 / 16.0, 
+            (bw - 4) as f32 / 16.0, 
+            &[1.0, 1.0, 1.0, 1.0], 
+            &context.scissors);    
+
+        // lightness
+        draw_texture_clip(display, target, program,
+            BlendMode::Blend,
+            &self.light,
+            xp as f32,
+            yp as f32, 
+            1.0, 
+            1.0, 
+            &[1.0, 1.0, 1.0, 1.0], 
+            &context.scissors);
+            
+        // transparency
+        draw_texture_clip(display, target, program,
+            BlendMode::Blend,
+            &self.trans,
+            (xp + area.w - bw + 4) as f32,
+            (yp + bw) as f32, 
+            1.0, 
+            1.0, 
+            &[1.0, 1.0, 1.0, 1.0], 
+            &context.scissors);
+
+        // color
+        draw_texture_clip(display, target, program,
+            BlendMode::Blend,
+            &self.tex,
+            xp as f32,
+            (yp + bw) as f32, 
+            1.0, 
+            1.0, 
+            &[1.0, 1.0, 1.0, 1.0], 
+            &context.scissors);
+
+        /*
         gl.draw(viewport, |c, gl| {
             
             // white "reset" area
@@ -939,6 +1007,3 @@ impl UiHead for UiColorchoice
     }
 
 }
-
-
-

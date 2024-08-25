@@ -22,6 +22,7 @@ use crate::screen_to_world_pos;
 pub struct MapEditor {
     pub selected_tile_id: usize,
     pub show_editor_keys: bool,
+
 }
 
 
@@ -124,7 +125,7 @@ impl UiController for MapEditor {
                     if event.args.button == Button::Keyboard(Key::Named(NamedKey::Space)) {
                         let set = &world.layer_tileset[world.map.selected_layer];
                         let cont = self.make_tile_selector(&ui, set);
-                        ui.root.head.add_child(Rc::new(cont));
+                        ui.root.head.add_child(cont);
                     }        
 
                     if event.args.button == Button::Keyboard(Key::Character("a".into())) {
@@ -138,8 +139,8 @@ impl UiController for MapEditor {
                         match object {
                             None => {},
                             Some(mob) => {
-                                let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, mob.visual.color);
-                                ui.root.head.add_child(Rc::new(color_choice));
+                                let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, [1.0, 1.0, 1.0, 1.0]);
+                                ui.root.head.add_child(color_choice);
                             }
                         }
                     }        
@@ -290,13 +291,13 @@ impl UiController for MapEditor {
     }
 
 
-    fn draw(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw(&mut self, target: &mut Frame, program: &Program,
             ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.draw(display, target, program);
+        ui.draw(target, program);
     }
 
 
-    fn draw_overlay(&mut self, display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+    fn draw_overlay(&mut self, target: &mut Frame, program: &Program,
                     ui: &mut UI, world: &mut Self::Appdata) {
 
         let layer_id = world.map.selected_layer;
@@ -314,7 +315,7 @@ impl UiController for MapEditor {
             let pos = screen_to_world_pos(&ui, player_position, mp);
             let tpos = calc_tile_position(&pos, tile.foot, 1.0, player_position, &window_center);            
             
-            draw_texture(display, target, program,
+            draw_texture(&ui.display, target, program,
                 BlendMode::Blend,
                 &tile.tex,
                 tpos[0],
@@ -326,14 +327,14 @@ impl UiController for MapEditor {
 
         let font = &ui.context.font_14;
         
-        font.draw(display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
-        font.draw(display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(&ui.display, target, program, 10, 20, "Press F1 to see editor hotkeys", &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(&ui.display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
             "Selected layer: ".to_string() + &layer_id.to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
-        font.draw(display, target, program, 10, (ui.context.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
+        font.draw(&ui.display, target, program, 10, (ui.context.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
 
 
         if self.show_editor_keys {
@@ -343,23 +344,23 @@ impl UiController for MapEditor {
             let mut top = 100;
 
 
-            font.draw(display, target, program, left, top, "F1: Show/hide this list", &color);
+            font.draw(&ui.display, target, program, left, top, "F1: Show/hide this list", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "Space: Open tile selector", &color);
+            font.draw(&ui.display, target, program, left, top, "Space: Open tile selector", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "1,2,3,.. : Select map layer", &color);
+            font.draw(&ui.display, target, program, left, top, "1,2,3,.. : Select map layer", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "c: Open color selector for selected item", &color);
+            font.draw(&ui.display, target, program, left, top, "c: Open color selector for selected item", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
+            font.draw(&ui.display, target, program, left, top, "a: Set blend mode on selected item to 'Addition'", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
+            font.draw(&ui.display, target, program, left, top, "m: Set blend mode on selected item to 'Mix' (default)", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "Delete: Removes the selected item from the map", &color);
+            font.draw(&ui.display, target, program, left, top, "Delete: Removes the selected item from the map", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "l: Load a saved map", &color);
+            font.draw(&ui.display, target, program, left, top, "l: Load a saved map", &color);
             top += line_space;
-            font.draw(display, target, program, left, top, "s: Save the map", &color);
+            font.draw(&ui.display, target, program, left, top, "s: Save the map", &color);
             top += line_space;
         }
     }
@@ -377,7 +378,7 @@ impl UiController for MapEditor {
 
 impl MapEditor {
 
-    pub fn new() -> MapEditor {
+    pub fn new(ui: &UI) -> MapEditor {
         MapEditor {
             selected_tile_id: 0,
             show_editor_keys: false,
