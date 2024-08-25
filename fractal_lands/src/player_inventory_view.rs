@@ -2,6 +2,10 @@ use std::rc::Rc;
 use std::collections::HashMap;
 
 use glium::Texture2d;
+use glium::Program;
+use glium::Frame;
+use glutin::surface::WindowSurface;
+use glium::Display;
 
 use crate::ui::{UiArea, UiFont, MouseButton, MouseMoveEvent, MouseState, ButtonEvent};
 use crate::Inventory;
@@ -14,6 +18,8 @@ use crate::sound::Sound;
 use crate::ui::Button;
 use crate::ui::ButtonState;
 
+use crate::gl_support::BlendMode;
+use crate::gl_support::draw_texture;
 
 pub struct PlayerInventoryView {
     area: UiArea,
@@ -172,116 +178,107 @@ impl PlayerInventoryView {
 
 
     fn draw_item(&self,
-                 id: usize, entry_x: f64, entry_y: f64, slot_w: f64, slot_h: f64,
-                 item_inventory_w: f64 , item_inventory_h: f64,
-                 inventory_scale: f64) {
+                 display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                 id: usize, 
+                 entry_x: f32, entry_y: f32, 
+                 slot_w: f32, slot_h: f32,
+                 item_inventory_w: f32 , item_inventory_h: f32,
+                 inventory_scale: f32) {
 
         let tile = self.item_tiles.tiles_by_id.get(&id).unwrap();
-/*
-        let mut tw = tile.tex.get_width() as f64;
-        let mut th = tile.tex.get_height() as f64;
+
+        let mut tw = tile.tex.width() as f32;
+        let mut th = tile.tex.height() as f32;
 
         let s1 = item_inventory_w / tw;
         let s2 = item_inventory_h / th;
 
         let scale = if s1 < s2 { s1 } else { s2 };
+        let scale = scale * 0.95 * inventory_scale;
 
-        tw = tw * scale * 0.95 * inventory_scale;
-        th = th * scale * 0.95 * inventory_scale;
+        tw = tw * scale;
+        th = th * scale;
 
         let ox = (slot_w - tw) / 2.0;
         let oy = (slot_h - th) / 2.0;
 
-        let image = 
-            Image::new()
-                .rect([entry_x + ox, entry_y + oy, tw, th])
-                .color([1.0, 1.0, 1.0, 1.0]);
-        image.draw(&tile.tex, draw_state, tf, gl);
-        */
+        draw_texture(&display, target, program, BlendMode::Blend, 
+                     &tile.tex, 
+                     entry_x + ox, entry_y + oy, scale, scale, &[1.0, 1.0, 1.0, 1.0]);
     }
 
 
-    pub fn draw(&self, x: i32, y: i32, inventory: &Inventory) {
+    pub fn draw(&self, 
+                display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                x: i32, y: i32, inventory: &Inventory) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;
-/*
-        gl.draw(viewport, |c, gl| {
 
-            // placeholder
-            /*
-            let rect = Rectangle::new([0.0, 0.0, 0.0, 0.3]); 
-            rect.draw([xp as f64, yp as f64, area.w as f64, area.h as f64], draw_state, c.transform, gl);
-            */
+        draw_texture(&display, target, program, BlendMode::Blend, 
+                &self.texture, 
+                xp as f32, yp as f32, 1.0, 1.0, &[1.0, 1.0, 1.0, 0.95]);
 
-            let tf = c.transform;
-            let m_image = 
-                Image::new()
-                    .rect([xp as f64, yp as f64, self.texture.get_width() as f64, self.texture.get_height() as f64])
-                    .color([1.0, 1.0, 1.0, 0.95]);
-            m_image.draw(&self.texture, draw_state, tf, gl);
+        // show all items which are in the inventory space
+        for entry in &inventory.entries {
 
-            // show all items which are in the inventory space
-            for entry in &inventory.entries {
+            if entry.slot != Slot::Stash && entry.slot != Slot::OnCursor {
+                let offsets = self.slot_offsets.get(&entry.slot).unwrap();
+                let entry_x = (xp + offsets[0] + entry.location_x * 32) as f32;
+                let entry_y = (yp + offsets[1] + entry.location_y * 32) as f32;
+                
+                let item = inventory.bag.get(&entry.item_id).unwrap();
+                let size = self.find_slot_size(item, entry.slot);
+                let w = size[0] as f32;
+                let h = size[1] as f32;
 
-                if entry.slot != Slot::Stash && entry.slot != Slot::OnCursor {
+                if self.hover_item == Some(item.id) {
+//                    let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
+//                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                }
+                else {
+//                    let rect = Rectangle::new([0.0, 0.02, 0.1, 0.7]); 
+//                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                }
+
+                self.draw_item(display, target, program,
+                    item.inventory_tile_id, entry_x, entry_y, w, h, 
+                    (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
+                    item.inventory_scale as f32);
+            }
+        }
+/*        
+        match self.hover_item {
+            None => {},
+            Some(id) => {
+                let idx = inventory.find_entry_for_id(id).unwrap();
+                let entry = &inventory.entries[idx];
+
+                if self.dragged_item.is_none() && entry.slot != Slot::OnCursor {
                     let offsets = self.slot_offsets.get(&entry.slot).unwrap();
-                    let entry_x = (xp + offsets[0] + entry.location_x * 32) as f64;
-                    let entry_y = (yp + offsets[1] + entry.location_y * 32) as f64;
-                    
-                    let item = inventory.bag.get(&entry.item_id).unwrap();
-                    let size = self.find_slot_size(item, entry.slot);
-                    let w = size[0] as f64;
-                    let h = size[1] as f64;
-
-                    if self.hover_item == Some(item.id) {
-                        let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
-                        rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
-                    }
-                    else {
-                        let rect = Rectangle::new([0.0, 0.02, 0.1, 0.7]); 
-                        rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
-                    }
-
-                    self.draw_item(gl, draw_state, tf,
-                        item.inventory_tile_id, entry_x, entry_y, w, h, 
-                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64,
-                        item.inventory_scale);
-                }
-            }
-        
-            match self.hover_item {
-                None => {},
-                Some(id) => {
-                    let idx = inventory.find_entry_for_id(id).unwrap();
-                    let entry = &inventory.entries[idx];
-
-                    if self.dragged_item.is_none() && entry.slot != Slot::OnCursor {
-                        let offsets = self.slot_offsets.get(&entry.slot).unwrap();
-                        let item = inventory.bag.get(&id).unwrap();
-
-                        let entry_x = xp + offsets[0] + entry.location_x * 32;
-                        let entry_y = yp + offsets[1] + entry.location_y * 32;
-
-                        self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
-                    }
-                }
-            }
-
-            match self.dragged_item {
-                None => {},
-                Some(id) => {
                     let item = inventory.bag.get(&id).unwrap();
 
-                    self.draw_item(gl, draw_state, tf,
-                        item.inventory_tile_id, (self.drag_x - 16) as f64, (self.drag_y - 16) as f64, 
-                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64, 
-                        (item.inventory_w * 32) as f64, (item.inventory_h * 32) as f64,
-                        item.inventory_scale);
+                    let entry_x = xp + offsets[0] + entry.location_x * 32;
+                    let entry_y = yp + offsets[1] + entry.location_y * 32;
+
+                    self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
                 }
             }
-        });
-        */
+        }
+*/
+        match self.dragged_item {
+            None => {},
+            Some(id) => {
+                let item = inventory.bag.get(&id).unwrap();
+
+                self.draw_item(display, target, program,
+                    item.inventory_tile_id, 
+                    (self.drag_x - 16.0) as f32, (self.drag_y - 16.0) as f32, 
+                    (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32, 
+                    (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
+                    item.inventory_scale as f32);
+            }
+        }
     }
 
 

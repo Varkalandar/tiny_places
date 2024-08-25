@@ -81,7 +81,7 @@ impl UiController for Game {
                         map.layers[MAP_OBJECT_LAYER].insert(projectile.uid, projectile);
                     }
 
-                    if event.args.button == Button::Keyboard(Key::Character("I".into())) {
+                    if event.args.button == Button::Keyboard(Key::Character("i".into())) {
                         self.show_inventory = !self.show_inventory;
                     }        
                 },
@@ -123,13 +123,12 @@ impl UiController for Game {
 
     fn draw(&mut self, target: &mut Frame, program: &Program,
             ui: &mut UI, world: &mut Self::Appdata) {
-        /*
-        ui.draw(viewport, gl);
+
+        ui.draw(target, program);
  
         if self.show_inventory {
-            self.piv.draw(0, 10, &world.player_inventory)
+            self.piv.draw(&ui.display, target, program, 0, 10, &world.player_inventory)
         }
-            */
     }
 
 
