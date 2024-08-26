@@ -122,7 +122,7 @@ fn load_tile(display: &Display<WindowSurface>, path_str: &str, lines: &Vec<&str>
         let filename = 
             path_str.to_string() + "/" + &id.to_string() + "-" + name + ".png";
         
-        let mut tex = load_texture(display, &filename);
+        let tex = load_texture(display, &filename);
 
         result = Some(Tile {
             id,

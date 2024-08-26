@@ -110,12 +110,12 @@ pub trait UiController {
         false
     }
 
-    fn draw(&mut self, target: &mut Frame, program: &Program,
+    fn draw(&mut self, _target: &mut Frame, _program: &Program,
             _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
     
-    fn draw_overlay(&mut self, target: &mut Frame, program: &Program,
+    fn draw_overlay(&mut self, _target: &mut Frame, _program: &Program,
                     _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
@@ -805,7 +805,7 @@ impl UiColorchoice {
         let mut img = Vec::with_capacity((w * h) as usize);
 
         // color field
-        for j in 0..h {
+        for _j in 0..h {
             for i in 0..w {
                 let y = (i * 255 / w) as u8;
                 img.push(y);
@@ -827,7 +827,7 @@ impl UiColorchoice {
 
         // color field
         for j in 0..h {
-            for i in 0..w {
+            for _i in 0..w {
                 let y = (j * 255 / h) as u8;
                 img.push(255);
                 img.push(255);

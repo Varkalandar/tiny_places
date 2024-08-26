@@ -1,14 +1,9 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
-use std::path::Path;
-
 use glium::Texture2d;
 use glium::winit::keyboard::Key;
-use glium::winit::keyboard::NamedKey;
 use glium::Program;
 use glium::Frame;
-use glutin::surface::WindowSurface;
-use glium::Display;
 
 use crate::ui::{UI, UiController, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::GameWorld;

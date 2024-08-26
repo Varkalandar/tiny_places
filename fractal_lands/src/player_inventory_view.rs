@@ -138,7 +138,6 @@ impl PlayerInventoryView {
 
 
     fn find_slot_at(&self, mx: i32, my: i32) -> Option<Slot> {
-        let area = &self.area;
 
         for key in self.slot_offsets.keys() {
             let offset = self.slot_offsets.get(key).unwrap();

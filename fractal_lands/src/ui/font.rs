@@ -6,11 +6,10 @@ use glium::Texture2d;
 use glium::Program;
 use glium::Frame;
 
-use crate::gl_support::texture_from_data;
-use crate::gl_support::RectF32;
-use crate::gl_support::draw_tex_area;
-use crate::gl_support::draw_texture;
 use crate::gl_support::BlendMode;
+use crate::gl_support::RectF32;
+use crate::gl_support::texture_from_data;
+use crate::gl_support::draw_tex_area;
 
 const PITCH: u32 = 1024;
 
@@ -133,7 +132,7 @@ fn create_glyphs(display: &Display<WindowSurface>, face: &freetype::Face, glyphs
             let bitmap = gs.bitmap();
             let m = gs.metrics();
             
-            let ascend = face.ascender() as i32 / 64;
+            // let ascend = face.ascender() as i32 / 64;
 
             let ug = UiGlyph {
                 metrics: m,
@@ -146,7 +145,7 @@ fn create_glyphs(display: &Display<WindowSurface>, face: &freetype::Face, glyphs
                 bm_h: bitmap.rows() as f32,
             };
 
-            let left = gs.bitmap_left();
+            // let left = gs.bitmap_left();
             // println!("glyph {} has advance={}, ascend={}, left={}", idx, ug.advance / 64.0, ascend, left);
             
             cursor = convert_bitmap(&mut buffer, &bitmap, cursor, lineheight);

@@ -1,13 +1,9 @@
-use std::rc::Rc;
-
 use vecmath::Vector2;
 
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
 use glium::Program;
 use glium::Frame;
-use glutin::surface::WindowSurface;
-use glium::Display;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
@@ -22,7 +18,6 @@ use crate::screen_to_world_pos;
 pub struct MapEditor {
     pub selected_tile_id: usize,
     pub show_editor_keys: bool,
-
 }
 
 
@@ -139,7 +134,7 @@ impl UiController for MapEditor {
                         match object {
                             None => {},
                             Some(mob) => {
-                                let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, [1.0, 1.0, 1.0, 1.0]);
+                                let color_choice = ui.make_color_choice(100, 100, 256, 256, 1000, mob.visual.color);
                                 ui.root.head.add_child(color_choice);
                             }
                         }
@@ -331,7 +326,7 @@ impl UiController for MapEditor {
         font.draw(&ui.display, target, program, 10, 40, "Press g to enter game mode", &[1.0, 1.0, 1.0, 1.0]);
 
         let layer_msg = 
-            "Selected layer: ".to_string() + &layer_id.to_string() + 
+            "Selected layer: ".to_string() + &(layer_id + 1).to_string() + 
             "  Selected tile: " + &self.selected_tile_id.to_string();
 
         font.draw(&ui.display, target, program, 10, (ui.context.window_size[1] - 24) as i32, &layer_msg, &[1.0, 1.0, 1.0, 1.0]);
@@ -361,7 +356,7 @@ impl UiController for MapEditor {
             font.draw(&ui.display, target, program, left, top, "l: Load a saved map", &color);
             top += line_space;
             font.draw(&ui.display, target, program, left, top, "s: Save the map", &color);
-            top += line_space;
+            // top += line_space;
         }
     }
 
@@ -378,7 +373,7 @@ impl UiController for MapEditor {
 
 impl MapEditor {
 
-    pub fn new(ui: &UI) -> MapEditor {
+    pub fn new() -> MapEditor {
         MapEditor {
             selected_tile_id: 0,
             show_editor_keys: false,

@@ -8,15 +8,12 @@ extern crate rand;
 
 use glutin::surface::WindowSurface;
 
-use glium::Surface;
 use glium::Display;
 use glium::Frame;
 use glium::Texture2d;
 use glium::Program;
 use glium::winit::keyboard::Key;
 use glium::winit::event::MouseScrollDelta;
-use glium::implement_vertex;
-use glium::uniform;
 
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
@@ -25,7 +22,6 @@ use std::time::SystemTime;
 use std::fs::read_to_string;
 use std::path::Path;
 use std::cmp::Ordering;
-use std::rc::Rc;
 
 mod item;
 mod creature;
@@ -43,7 +39,7 @@ mod player_inventory_view;
 mod gl_support;
 
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
-use ui::{UI, UiController, TileSet, Tile, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
+use ui::{UI, UiController, TileSet, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
 use item::ItemFactory;
@@ -53,7 +49,6 @@ use sound::SoundPlayer;
 use gl_support::BlendMode;
 use gl_support::load_texture;
 use gl_support::build_program;
-use gl_support::Vertex;
 use gl_support::draw_texture;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
@@ -143,7 +138,7 @@ impl App {
 
         let ui = UI::new(display, window_size);
         
-        let editor = MapEditor::new(&ui);
+        let editor = MapEditor::new();
 
         let inventory_bg = load_texture(&ui.display, "resources/ui/inventory_bg.png");
         let game = Game::new(inventory_bg, &ui, &layer_tileset[6]);
@@ -227,10 +222,10 @@ impl App {
         let back_off_y = - player_y / 4.0;
 
         let mut target = self.ui.display.draw();
-        target.clear_color(0.0, 0.0, 1.0, 1.0);
+        // target.clear_color(0.0, 0.0, 1.0, 1.0);
 
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
-                     0.0, 0.0, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
+                     back_off_x, back_off_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
@@ -541,9 +536,10 @@ fn main() {
                 // when the window's size has changed.
                 glium::winit::event::WindowEvent::Resized(window_size) => {
                     app.ui.display.resize(window_size.into());
+                    app.ui.context.window_size = [window_size.width, window_size.height];
                 },
 
-                glium::winit::event::WindowEvent::MouseInput { device_id, button, state } => {
+                glium::winit::event::WindowEvent::MouseInput { device_id: _, button, state } => {
     
                     let button_event = ButtonEvent {
                         args: ButtonArgs {
@@ -560,7 +556,7 @@ fn main() {
                     app.handle_button_event(&button_event);
                 },
 
-                glium::winit::event::WindowEvent::CursorMoved { device_id, position } => {
+                glium::winit::event::WindowEvent::CursorMoved { device_id: _, position } => {
                     // println!("mouse position = {:?}", position);
 
                     let event = MouseMoveEvent {
@@ -570,7 +566,7 @@ fn main() {
                     app.handle_mouse_move_event(&event);
                 },
 
-                glium::winit::event::WindowEvent::MouseWheel { device_id, delta, phase } => {
+                glium::winit::event::WindowEvent::MouseWheel { device_id: _, delta, phase: _ } => {
                     println!("wheel delta = {:?}", delta);
 
                     match delta {
@@ -589,7 +585,7 @@ fn main() {
                     }
                 },
 
-                glium::winit::event::WindowEvent::KeyboardInput { device_id, event, is_synthetic } => {
+                glium::winit::event::WindowEvent::KeyboardInput { device_id: _, event, is_synthetic: _ } => {
                     
                     println!("key event = {:?}", event);
                     // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
