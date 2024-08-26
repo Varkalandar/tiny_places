@@ -15,6 +15,7 @@ use crate::TileSet;
 use crate::item::Item;
 use crate::GameWorld;
 use crate::sound::Sound;
+use crate::ui::UI;
 use crate::ui::Button;
 use crate::ui::ButtonState;
 
@@ -91,7 +92,9 @@ impl PlayerInventoryView {
     }
 
 
-    fn show_item_popup(&self, x: i32, y: i32, item: &Item) {
+    fn show_item_popup(&self, 
+                       ui: &UI, target: &mut Frame, program: &Program,
+                       x: i32, y: i32, item: &Item) {
 
         let line_space = 20;
 
@@ -105,15 +108,13 @@ impl PlayerInventoryView {
 
         let mut line = y - line_count * line_space;
 
-        /*
-        gl.draw(viewport, |c, gl| {
-            // show decorated box  ... todo
-            let rect = Rectangle::new([0.0, 0.0, 0.0, 0.5]); 
-            rect.draw([x as f64, line as f64, 200.0, (line_count * line_space) as f64], draw_state, c.transform, gl);
-        });
-        */
+        draw_texture(&ui.display, target, program, BlendMode::Blend, 
+            &ui.context.tex_white, 
+            x as f32, line as f32, 
+            200.0 / 16.0, (line_count * line_space) as f32 / 16.0, 
+            &[0.0, 0.0, 0.0, 0.5]);
 
-        // self.font.draw(x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
+        self.font.draw(&ui.display, target, program, x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
         line += line_space;
 
         for modifier in &item.mods {
@@ -129,7 +130,7 @@ impl PlayerInventoryView {
                 };
 
                 let text = modifier.attribute.to_string() + ": " + &range;
-                // self.font.draw(x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+                self.font.draw(&ui.display, target, program, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
                 line += line_space;
             }
         }
@@ -209,15 +210,15 @@ impl PlayerInventoryView {
 
 
     pub fn draw(&self, 
-                display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                ui: &UI, target: &mut Frame, program: &Program,
                 x: i32, y: i32, inventory: &Inventory) {
         let area = &self.area;
         let xp = x + area.x;
         let yp = y + area.y;
 
-        draw_texture(&display, target, program, BlendMode::Blend, 
-                &self.texture, 
-                xp as f32, yp as f32, 1.0, 1.0, &[1.0, 1.0, 1.0, 0.95]);
+        draw_texture(&ui.display, target, program, BlendMode::Blend, 
+                     &self.texture, 
+                     xp as f32, yp as f32, 1.0, 1.0, &[1.0, 1.0, 1.0, 0.95]);
 
         // show all items which are in the inventory space
         for entry in &inventory.entries {
@@ -233,21 +234,29 @@ impl PlayerInventoryView {
                 let h = size[1] as f32;
 
                 if self.hover_item == Some(item.id) {
-//                    let rect = Rectangle::new([0.2, 0.7, 0.0, 0.05]); 
-//                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                    draw_texture(&ui.display, target, program, BlendMode::Blend, 
+                                 &ui.context.tex_white, 
+                                 entry_x as f32 + 1.0, entry_y as f32 + 1.0, 
+                                 (w - 2.0) / 16.0, 
+                                 (h - 2.0) / 16.0, 
+                                 &[0.2, 0.7, 0.0, 0.05]);
                 }
                 else {
-//                    let rect = Rectangle::new([0.0, 0.02, 0.1, 0.7]); 
-//                    rect.draw([entry_x as f64 + 1.0, entry_y as f64 + 1.0, w - 2.0, h - 2.0], draw_state, c.transform, gl);
+                    draw_texture(&ui.display, target, program, BlendMode::Blend, 
+                        &ui.context.tex_white, 
+                        entry_x as f32 + 1.0, entry_y as f32 + 1.0, 
+                        (w - 2.0) / 16.0, 
+                        (h - 2.0) / 16.0, 
+                        &[0.0, 0.02, 0.1, 0.7]);
                 }
 
-                self.draw_item(display, target, program,
+                self.draw_item(&ui.display, target, program,
                     item.inventory_tile_id, entry_x, entry_y, w, h, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
                     item.inventory_scale as f32);
             }
         }
-/*        
+       
         match self.hover_item {
             None => {},
             Some(id) => {
@@ -261,17 +270,17 @@ impl PlayerInventoryView {
                     let entry_x = xp + offsets[0] + entry.location_x * 32;
                     let entry_y = yp + offsets[1] + entry.location_y * 32;
 
-                    self.show_item_popup(viewport, gl, draw_state, entry_x, entry_y, item);
+                    self.show_item_popup(ui, target, program, entry_x, entry_y, item);
                 }
             }
         }
-*/
+
         match self.dragged_item {
             None => {},
             Some(id) => {
                 let item = inventory.bag.get(&id).unwrap();
 
-                self.draw_item(display, target, program,
+                self.draw_item(&ui.display, target, program,
                     item.inventory_tile_id, 
                     (self.drag_x - 16.0) as f32, (self.drag_y - 16.0) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32, 

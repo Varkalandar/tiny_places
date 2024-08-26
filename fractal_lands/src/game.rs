@@ -127,7 +127,7 @@ impl UiController for Game {
         ui.draw(target, program);
  
         if self.show_inventory {
-            self.piv.draw(&ui.display, target, program, 0, 10, &world.player_inventory)
+            self.piv.draw(ui, target, program, 0, 10, &world.player_inventory)
         }
     }
 
