@@ -1,14 +1,17 @@
 // the item grid size of a map cell. I.e. a cell can hold SUB*SUB items 
 pub const CELL_SUB: u32 = 11;
 
-const K_DECO: u8 = 1;
-const K_ITEM: u8 = 2;
-const K_CURRENCY: u8 = 4;
+const K_DECO: u8 = 1;        // decorations only consist of their image (graphical tile) id
+const K_ITEM: u8 = 2;        // items are indices for the items table (kept in the map data)
+const K_CURRENCY: u8 = 4;    // currency are stackable items, i.e. all items of a stack must be identical
 
 
 pub struct MapCell {
     value: [u16; (CELL_SUB * CELL_SUB) as usize],
     kind:  [u8; (CELL_SUB * CELL_SUB) as usize],
+
+    floor: u16,            // tile id of the floor graphics
+    walls: [u16; 4],       // tile ids of the wall graphics
 }
 
 impl MapCell {
@@ -17,6 +20,8 @@ impl MapCell {
         MapCell {
             value: [0u16; (CELL_SUB * CELL_SUB) as usize],
             kind:  [0u8; (CELL_SUB * CELL_SUB) as usize],
+            floor: 0,
+            walls: [0u16; 4],
         }
     }
 
