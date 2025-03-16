@@ -28,6 +28,7 @@ mod creature;
 mod inventory;
 mod projectile;
 mod map;
+mod cell_map;
 mod editor;
 mod game;
 mod ui;
@@ -39,6 +40,7 @@ mod player_inventory_view;
 mod gl_support;
 
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
+// use cell_map::CellMap;
 use ui::{UI, UiController, TileSet, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
