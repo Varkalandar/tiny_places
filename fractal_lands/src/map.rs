@@ -1,6 +1,8 @@
 use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_len, vec2_square_len};
-use std::f64::consts::PI;
+use geo::Polygon;
+use geo::LineString;
 
+use std::f64::consts::PI;
 use std::io::prelude::*;
 use std::io::{Result, BufWriter};
 use std::fs::File;
@@ -37,6 +39,9 @@ pub struct Map {
     pub animations: HashMap<u64, Box<dyn Animated>>,
     pub transitions: Vec<MapTransition>,
     
+    // the map area which can be walked. New areas must be merged into this
+    pub walkable: Polygon,
+
     // 'AI' controlled objects
     pub mob_groups: Vec<MobGroup>,
 
@@ -96,6 +101,8 @@ impl Map {
             animations: HashMap::new(),
             transitions: Vec::new(),
             mob_groups: Vec::new(),
+
+            walkable: Polygon::new(LineString::from(vec![(1000.0, 1000.0)]), vec![]),
 
             items: Inventory::new(),
             has_selection: false,

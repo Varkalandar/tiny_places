@@ -27,6 +27,7 @@ mod item;
 mod creature;
 mod inventory;
 mod projectile;
+mod dungeon;
 mod map;
 mod cell_map;
 mod editor;
@@ -39,6 +40,7 @@ mod mob_group;
 mod player_inventory_view;
 mod gl_support;
 
+use dungeon::*;
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
 // use cell_map::CellMap;
 use ui::{UI, UiController, TileSet, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
@@ -108,7 +110,8 @@ impl App {
     
     fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> App {
 
-        let map_image_file = "map_wasteland.png";
+        // let map_image_file = "map_wasteland.png";
+        let map_image_file = "map_transparent.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
         let map_texture = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
@@ -136,7 +139,10 @@ impl App {
 
         let rng = rand::rngs::StdRng::seed_from_u64(12345678901);
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
-        map.load("start.map");
+        // map.load("start.map");
+
+        // Testing dungeon generation
+        generate_dungeon(&mut map);
 
         let ui = UI::new(display, window_size);
         
@@ -147,6 +153,7 @@ impl App {
 
         let mut inv = Inventory::new();
 
+        // Some inventory contents for testing
         let mut factory = ItemFactory::new();
         let demo_item = factory.create(0);
         inv.put_item(demo_item, Slot::Bag);
