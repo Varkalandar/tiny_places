@@ -47,7 +47,9 @@ impl RectF32 {
 }
 
 pub fn load_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, filename: &str) -> glium::Texture2d {
-    
+
+    println!("Loading {}", filename);
+
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 

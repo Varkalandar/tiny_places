@@ -5,6 +5,7 @@ use vecmath::Vector2;
 use rand::prelude::*;
 
 use crate::MAP_GROUND_LAYER;
+use crate::MAP_OBJECT_LAYER;
 use crate::Map;
 use crate::map::MapObject;
 
@@ -84,6 +85,37 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx:
             place_floor_tile(map, x, y);
         }
     }
+
+    // tall back walls
+
+    // left
+    for x in sx .. dx {
+        place_wall_tile(map, x+1, sy-2, -30, 494);
+    }
+
+    // right
+    for y in sy .. dy {
+        place_wall_tile(map, dx+1, y-2, 76, 495);
+    }
+
+    // short front walls
+    
+    // right
+    for x in sx .. dx {
+        place_wall_tile(map, x+1, dy-2, 98, 497);
+    }
+
+    // left
+    for y in sy .. dy {
+        place_wall_tile(map, sx, y-1, -6, 496);
+    }
+
+
+    // left room corner
+    place_wall_tile(map, sx, sy-1, 132, 498);
+
+    // right room corner
+    place_wall_tile(map, dx, dy-1, 128, 501);
 }
 
 
@@ -171,22 +203,35 @@ fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
     }
 }
 
+
 fn place_floor_tile(map: &mut Map, x: i32, y: i32) {
     let layer = MAP_GROUND_LAYER;
     let height = 0.0;
     let id = 50;
-    let scale = 0.25;
+    let scale = 1.0;
 
-    create_mob(map, id, layer, map_pos(x, y, scale), height, scale);
+    let mob_id = create_mob(map, id, layer, map_pos(x, y, 0, scale), height, scale);
+
+    let mob = map.layers[layer].get_mut(&mob_id).unwrap();
+
+    mob.visual.color = [0.69f32, 0.71, 0.725, 1.0];
 }
 
 
-fn map_pos(x: i32, y: i32, scale: f64) -> [f64; 2] {
+fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize) {
+    let layer = MAP_OBJECT_LAYER;
+    let height = 0.0;
+    let scale = 1.0;
+    let pos = map_pos(x, y, z_off, scale);
+
+    create_mob(map, id, layer, pos, height, scale);
+}
+
+
+fn map_pos(x: i32, y: i32, z_off: i32, scale: f64) -> [f64; 2] {
 
     let fx = ((y + x) * 108) as f64; 
-    let fy = ((y - x) * 108) as f64;
-    // let fx = ((y + x) * 54) as f64; 
-    // let fy = ((y - x) * 54) as f64;
+    let fy = ((y - x) * 108 + z_off) as f64;
 
     // println!("{}, {} -> {}, {}", x, y, fx, fy);
 

@@ -72,6 +72,7 @@ pub struct GameWorld {
 
     rng: rand::rngs::StdRng,
 
+    black_texture: Texture2d,
     map_texture: Texture2d,
     map_backdrop: Texture2d,
 }
@@ -111,9 +112,10 @@ impl App {
     fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> App {
 
         // let map_image_file = "map_wasteland.png";
-        let map_image_file = "map_transparent.png";
+        let map_image_file = "map_soft_grass.png";
         let map_backdrop_file = "backdrop_red_blue.png";
 
+        let black_texture = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + "map_black.png"));
         let map_texture = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + map_image_file));
         let map_backdrop = load_texture(&display, &(MAP_RESOURCE_PATH.to_string() + map_backdrop_file));
 
@@ -181,6 +183,7 @@ impl App {
 
                 rng,
 
+                black_texture,
                 map_texture,
                 map_backdrop,
             },
@@ -234,11 +237,16 @@ impl App {
         let mut target = self.ui.display.draw();
         // target.clear_color(0.0, 0.0, 1.0, 1.0);
 
+        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.black_texture, 
+            0.0, 0.0, 1000.0, 1000.0, &[0.8, 0.8, 0.8, 1.0]);
+
+        /*
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
                      back_off_x, back_off_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
+        */
 
         let tex_white = &self.ui.context.tex_white;
 
@@ -268,7 +276,8 @@ impl App {
         let (width, height) = display.get_framebuffer_dimensions();
         let window_center = [width as f64 * 0.5, height as f64 * 0.5];
 
-        let player_position = &world.map.get_player_position();
+        let pos_frac = &world.map.get_player_position();
+        let player_position = &[pos_frac[0].floor(), pos_frac[1].floor()];
         let mut objects = Vec::new();
 
         for (_key, mob) in &world.map.layers[layer_id] {
