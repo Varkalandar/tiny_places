@@ -29,10 +29,42 @@ pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
     let mut rng = rand::rng();
 
     // place_floor_tile(map, -5 + 5, 5 + 5);
-    // build_winded_corridor(map, &mut rng, 0, 10, 10, 20);
-    build_winded_corridor(map, &mut rng, 0, 0, 10, 10);
+    // build_winded_corridor(map, &mut rng, 0, 0, 10, 10);
+
+    rooms_and_corridors(map, &mut rng);
 
     [0.0, 0.0]
+}
+
+
+fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
+
+    for ry in 0 .. 4 {
+        for rx in 0 .. 4 {
+            let x = rx * 12;
+            let y = ry * 12;
+
+            let l = x - rng.random_range(1..4);
+            let t = y - rng.random_range(1..4); 
+            let r = x + rng.random_range(2..5);
+            let b = y + rng.random_range(2..5);
+
+            build_room(map, rng, l, t, r, b);
+        }
+    }
+
+    for ry in 0 .. 3 {
+        for rx in 0 .. 3 {
+            let x = rx * 12;
+            let y = ry * 12;
+
+            let wriggle_prob = rng.random_range(0.1 .. 1.0);
+            build_winded_corridor(map, rng, x, y, x+12, y, wriggle_prob);
+
+            let wriggle_prob = rng.random_range(0.1 .. 1.0);
+            build_winded_corridor(map, rng, x, y, x, y+12, wriggle_prob);
+        }
+    }
 }
 
 
@@ -45,13 +77,24 @@ fn create_mob(map: &mut Map, tile_id: usize, layer: usize, position: Vector2<f64
 }
 
 
-fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32) {
+fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32) {
+
+    for y in sy .. dy {
+        for x in sx .. dx {
+            place_floor_tile(map, x, y);
+        }
+    }
+}
+
+
+fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+                                          wriggle_prob: f64) {
     // is this straight?
 
     if sx == dx || sy == dy {
         // straight corridor
 
-        subdivide_corridor(map, rng, sx, sy, dx, dy);
+        subdivide_corridor(map, rng, sx, sy, dx, dy, wriggle_prob);
     }
     else {
         // L-shaped corridor, split it into two straight parts
@@ -59,24 +102,26 @@ fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, s
         // two options to chose
 
         if rng.random() {
-            subdivide_corridor(map, rng, sx, sy, sx, dy);
-            subdivide_corridor(map, rng, sx, dy, dx, dy);
+            subdivide_corridor(map, rng, sx, sy, sx, dy, wriggle_prob);
+            subdivide_corridor(map, rng, sx, dy, dx, dy, wriggle_prob);
         }
         else {
-            subdivide_corridor(map, rng, sx, sy, sy, dx);
-            subdivide_corridor(map, rng, sy, dx, dx, dy);    
+            subdivide_corridor(map, rng, sx, sy, sy, dx, wriggle_prob);
+            subdivide_corridor(map, rng, sy, dx, dx, dy, wriggle_prob);    
         }
     }
 }
 
 
-fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32) {
+fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+                                       wriggle_prob: f64) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
 
     let n = cmp::max((dx - sx).abs(), (dy - sy).abs());
+    let p: f64 = rng.random();
 
-    if n < 5 {
+    if n < 5 || p > wriggle_prob{
         // too short to be wriggled. Build straight
         build_straight_corridor(map, sx, sy, dx, dy);
     }
@@ -93,13 +138,16 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: 
         // U turn
 
         subdivide_corridor(map, rng, sx + min * vx, sy + min * vy, 
-                                    sx + min * vx + d * vy, sy + min * vy + d * -vx);
+                                     sx + min * vx + d * vy, sy + min * vy + d * -vx,
+                                wriggle_prob);
 
         subdivide_corridor(map, rng, sx + min * vx + d * vy, sy + min * vy + d * -vx, 
-                                    sx + max * vx + d * vy, sy + max * vy + d * -vx);
+                                     sx + max * vx + d * vy, sy + max * vy + d * -vx,
+                                wriggle_prob);
 
         subdivide_corridor(map, rng, sx + max * vx + d * vy, sy + max * vy + d * -vx, 
-                                    sx + max * vx, sy + max * vy);
+                                     sx + max * vx, sy + max * vy,
+                                wriggle_prob);
 
         // end piece
         build_straight_corridor(map, sx + max * vx, sy + max * vy, dx, dy);
@@ -127,20 +175,20 @@ fn place_floor_tile(map: &mut Map, x: i32, y: i32) {
     let layer = MAP_GROUND_LAYER;
     let height = 0.0;
     let id = 50;
-    let scale = 0.5;
+    let scale = 0.25;
 
-    create_mob(map, id, layer, map_pos(x, y), height, scale);
+    create_mob(map, id, layer, map_pos(x, y, scale), height, scale);
 }
 
 
-fn map_pos(x: i32, y: i32) -> [f64; 2] {
+fn map_pos(x: i32, y: i32, scale: f64) -> [f64; 2] {
 
-    // let fx = ((y + x) * 108) as f64; 
-    // let fy = ((y - x) * 108) as f64;
-    let fx = ((y + x) * 54) as f64; 
-    let fy = ((y - x) * 54) as f64;
+    let fx = ((y + x) * 108) as f64; 
+    let fy = ((y - x) * 108) as f64;
+    // let fx = ((y + x) * 54) as f64; 
+    // let fy = ((y - x) * 54) as f64;
 
     // println!("{}, {} -> {}, {}", x, y, fx, fy);
 
-    [fx, fy]
+    [fx * scale, fy * scale]
 }
