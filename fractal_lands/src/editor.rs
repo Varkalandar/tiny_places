@@ -49,7 +49,7 @@ impl UiController for MapEditor {
                             return ok;
                         }
                         else {
-                            let pos = screen_to_world_pos(&ui, &world.map.player_position(), 
+                            let pos = screen_to_world_pos(&ui, &world.map.get_player_position(), 
                                                           &ui.context.mouse_state.position);
                             world.speaker.play(Sound::Click, 0.5);
                             println!("creating map object {} at {:?}", id, pos);
@@ -164,7 +164,7 @@ impl UiController for MapEditor {
                     }
 
                     if event.args.button == Button::Keyboard(Key::Character("p".into())) {
-                        let pos = screen_to_world_pos(&ui, &world.map.player_position(), 
+                        let pos = screen_to_world_pos(&ui, &world.map.get_player_position(), 
                                                       &ui.context.mouse_state.position);
                         place_particle_generator(world, pos);
                     }
@@ -230,7 +230,7 @@ impl UiController for MapEditor {
 
         match comp {
             None => {
-                let pos = screen_to_world_pos(ui, &world.map.player_position(), 
+                let pos = screen_to_world_pos(ui, &world.map.get_player_position(), 
                                               &ui.context.mouse_state.position);
 
                 let map = &mut world.map;
@@ -259,7 +259,7 @@ impl UiController for MapEditor {
 
         ui.handle_mouse_move_event(event);
 
-        let player_position = &world.map.player_position();
+        let player_position = &world.map.get_player_position();
         let mp = &ui.context.mouse_state.position;
         let pos = screen_to_world_pos(&ui, player_position, mp);
 
@@ -302,7 +302,7 @@ impl UiController for MapEditor {
 
         if tile_opt.is_some() {
             let tile = tile_opt.unwrap();
-            let player_position = &world.map.player_position();
+            let player_position = &world.map.get_player_position();
 
             let mp = &ui.context.mouse_state.position;
             let window_center: Vector2<f64> = ui.window_center(); 
@@ -382,7 +382,7 @@ impl MapEditor {
 
 
     fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
-        let pos = screen_to_world_pos(ui, &world.map.player_position(), &ui.context.mouse_state.position);
+        let pos = screen_to_world_pos(ui, &world.map.get_player_position(), &ui.context.mouse_state.position);
         let map = &mut world.map;
         let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
 

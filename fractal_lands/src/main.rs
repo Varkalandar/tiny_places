@@ -142,7 +142,8 @@ impl App {
         // map.load("start.map");
 
         // Testing dungeon generation
-        generate_dungeon(&mut map);
+        let start_position = generate_dungeon(&mut map);
+        map.set_player_position(start_position);
 
         let ui = UI::new(display, window_size);
         
@@ -219,7 +220,7 @@ impl App {
         let width = self.ui.context.window_size[0] as f32;
         let height = self.ui.context.window_size[1] as f32;
 
-        let player_position = &world.map.player_position();
+        let player_position = &world.map.get_player_position();
         let player_x = player_position[0] as f32;
         let player_y = player_position[1] as f32;
 
@@ -267,7 +268,7 @@ impl App {
         let (width, height) = display.get_framebuffer_dimensions();
         let window_center = [width as f64 * 0.5, height as f64 * 0.5];
 
-        let player_position = &world.map.player_position();
+        let player_position = &world.map.get_player_position();
         let mut objects = Vec::new();
 
         for (_key, mob) in &world.map.layers[layer_id] {

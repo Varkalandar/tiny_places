@@ -121,10 +121,17 @@ impl Map {
     }
 
 
-    pub fn player_position(&self) -> Vector2<f64> {
+    pub fn get_player_position(&self) -> Vector2<f64> {
 
-        let mob = self.layers[MAP_OBJECT_LAYER].get(&self.player_id).unwrap();
+        let mob: &MapObject = self.layers[MAP_OBJECT_LAYER].get(&self.player_id).unwrap();
         return mob.position;
+    }
+
+
+    pub fn set_player_position(&mut self, position: Vector2<f64>) {
+
+        let mob: &mut MapObject = self.layers[MAP_OBJECT_LAYER].get_mut(&self.player_id).unwrap();
+        mob.position = position;
     }
 
 
@@ -195,8 +202,8 @@ impl Map {
 
                 if len > 0 {
                     let chance = particles.spawn_chance * dt;
-                    if rng.gen::<f64>() < chance {
-                        let spark = particles.spawn_ids[rng.gen_range(0..len)];
+                    if rng.random::<f64>() < chance {
+                        let spark = particles.spawn_ids[rng.random_range(0..len)];
                         
                         particles.add_particle(0.0, -400.0, 0.0, 0.0, 0.0, 0.0, 
                                                0.1, spark, [0.7, 0.75, 0.9]);
@@ -327,14 +334,14 @@ impl Map {
                 speaker.play(Sound::FireballHit, 0.5);
 
                 for _i in 0..10 {
-                    let xv = rng.gen::<f64>() * 2.0 - 1.0;
-                    let yv = rng.gen::<f64>() * 2.0 - 1.0;
-                    let zv = rng.gen::<f64>();
+                    let xv = rng.random::<f64>() * 2.0 - 1.0;
+                    let yv = rng.random::<f64>() * 2.0 - 1.0;
+                    let zv = rng.random::<f64>();
 
-                    let color = [0.8 + rng.gen::<f32>() * 0.4, 0.5 + rng.gen::<f32>() * 0.4, 0.1 + rng.gen::<f32>() * 0.4];
-                    let tile = sparks[rng.gen_range(0..sparks.len())];
+                    let color = [0.8 + rng.random::<f32>() * 0.4, 0.5 + rng.random::<f32>() * 0.4, 0.1 + rng.random::<f32>() * 0.4];
+                    let tile = sparks[rng.random_range(0..sparks.len())];
 
-                    let speed = if tile == 403 {100.0} else {100.0 + rng.gen_range(1.0..50.0)};
+                    let speed = if tile == 403 {100.0} else {100.0 + rng.random_range(1.0..50.0)};
 
                     target.visual.particles.add_particle(0.0, 0.0, z_off, xv * speed, yv * speed, zv * speed, 0.7, tile, color);
                     target.visual.color = [0.0, 0.0, 0.0, 0.0];
@@ -562,7 +569,7 @@ impl Map {
 
     pub fn make_creatures(&mut self, id: &str, min_count: i32, max_count: i32, center: Vector2<f64>, spacing: f64, scale: f64, rng: &mut StdRng) -> Vec<MapObject> {
 
-        let count = rng.gen_range(min_count ..= max_count) as usize;
+        let count = rng.random_range(min_count ..= max_count) as usize;
 
         let mut list: Vec<MapObject> = Vec::with_capacity(count);
     
@@ -574,8 +581,8 @@ impl Map {
             // don't place mobs in the same spot if possible
             // 10 tries will be made to find a clear spot
             loop {
-                let x = center[0] + spacing * (rng.gen::<f64>() * 10.0 - 5.0);
-                let y = center[1] + spacing * (rng.gen::<f64>() * 10.0 - 5.0);
+                let x = center[0] + spacing * (rng.random::<f64>() * 10.0 - 5.0);
+                let y = center[1] + spacing * (rng.random::<f64>() * 10.0 - 5.0);
     
                 let mut ok = true;
                 for mob in &list {
@@ -594,7 +601,7 @@ impl Map {
                     let mut mob = self.factory.create_mob(creature.base_tile_id, CREATURE_TILESET, [x, y], 32.0, scale);
                     mob.mob_type = MobType::Creature;
                     mob.creature = Some(creature);
-                    mob.animation_timer = rng.gen::<f64>(); // otherwise all start with the very same frame
+                    mob.animation_timer = rng.random::<f64>(); // otherwise all start with the very same frame
                     list.push(mob);
 
                     break; 
@@ -638,16 +645,16 @@ fn emit_drive_particles(mob: &mut MapObject, dt: f64, rng: &mut StdRng) {
     let chance_per_second = 20.0;
     let chance = chance_per_second * dt;
 
-    if rng.gen::<f64>() < chance {
-        let xp = direction[0] * rad + direction[1] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
-        let yp = direction[1] * rad + direction[0] * (rng.gen::<f64>() * 2.0 - 1.0) * 0.15;
+    if rng.random::<f64>() < chance {
+        let xp = direction[0] * rad + direction[1] * (rng.random::<f64>() * 2.0 - 1.0) * 0.15;
+        let yp = direction[1] * rad + direction[0] * (rng.random::<f64>() * 2.0 - 1.0) * 0.15;
 
-        let xv = direction[0] + rng.gen::<f64>() * 2.0 - 1.0;
-        let yv = direction[1] + rng.gen::<f64>() * 2.0 - 1.0;
-        let zv = (rng.gen::<f64>() *2.0 - 1.0) * 0.15;
+        let xv = direction[0] + rng.random::<f64>() * 2.0 - 1.0;
+        let yv = direction[1] + rng.random::<f64>() * 2.0 - 1.0;
+        let zv = (rng.random::<f64>() *2.0 - 1.0) * 0.15;
         let speed = 1.0;
 
-        let spark = 1993 + (rng.gen::<f64>() * 5.0) as usize;
+        let spark = 1993 + (rng.random::<f64>() * 5.0) as usize;
 
         mob.visual.particles.add_particle(xp, yp, 25.0, xv * speed, yv * speed, zv * speed, 1.0, spark, [0.5, 0.8, 1.0]);
     }

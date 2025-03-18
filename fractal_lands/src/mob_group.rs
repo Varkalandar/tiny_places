@@ -39,7 +39,7 @@ impl MobGroup {
         for id in mobs {
             members.push(MobGroupMember {
                 id,
-                action_countdown: 0.1 + rng.gen::<f64>(),
+                action_countdown: 0.1 + rng.random::<f64>(),
                 mobile,
             });
         }
@@ -75,7 +75,7 @@ impl MobGroup {
                     if member.action_countdown < 0.0 {
 
                         // fire at a player?
-                        if rng.gen::<f64>() < 0.25 {
+                        if rng.random::<f64>() < 0.25 {
 
                             // player in range?
                             let len = vec2_square_len(vec2_sub(mob.position, player_position));
@@ -86,7 +86,7 @@ impl MobGroup {
                                 projectile_builder.configure_projectile("Iron shot", &mut projectile.visual, &mut projectile.velocity, speaker);
                                 mobs.insert(projectile.uid, projectile);
 
-                                member.action_countdown = 1.0 + rng.gen::<f64>();
+                                member.action_countdown = 1.0 + rng.random::<f64>();
                             }
                         }
                         else if member.mobile {
@@ -97,8 +97,8 @@ impl MobGroup {
                             let mut y;
 
                             loop {
-                                x = mob.position[0] + 100.0 - rng.gen::<f64>() * 200.0;
-                                y = mob.position[1] + 100.0 - rng.gen::<f64>() * 200.0;
+                                x = mob.position[0] + 100.0 - rng.random::<f64>() * 200.0;
+                                y = mob.position[1] + 100.0 - rng.random::<f64>() * 200.0;
 
                                 let dx = x - self.center[0];
                                 let dy = y - self.center[1];
@@ -113,8 +113,8 @@ impl MobGroup {
 
                             if count >= 5 {
                                 println!("make {} return from {:?} to group center at {:?}", mob.uid, mob.position, self.center);
-                                x = self.center[0] + 50.0 - rng.gen::<f64>() * 100.0;
-                                y = self.center[1] + 50.0 - rng.gen::<f64>() * 100.0;
+                                x = self.center[0] + 50.0 - rng.random::<f64>() * 100.0;
+                                y = self.center[1] + 50.0 - rng.random::<f64>() * 100.0;
                             }
 
                             // println!("id=" + creature.id + "moves to " + x + ", " + y);
@@ -122,7 +122,7 @@ impl MobGroup {
                             let creature = mob.creature.as_ref().unwrap();
                             move_mob(mob, [x, y], creature.base_speed);
                             
-                            member.action_countdown = 3.0 + rng.gen::<f64>() * 2.0;
+                            member.action_countdown = 3.0 + rng.random::<f64>() * 2.0;
                         }
                     }
                 }

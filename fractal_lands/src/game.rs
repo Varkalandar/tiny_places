@@ -43,7 +43,7 @@ impl UiController for Game {
             match comp {
                 None => {
 
-                    let pos = screen_to_world_pos(&ui, &world.map.player_position(), &ui.context.mouse_state.position);
+                    let pos = screen_to_world_pos(&ui, &world.map.get_player_position(), &ui.context.mouse_state.position);
                     
                     if event.args.button == Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
