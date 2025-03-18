@@ -8600,8 +8600,8 @@
       <Description>
         <version>4</version>
         <id>494</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>190</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8609,7 +8609,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_left_back</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8617,8 +8617,8 @@
       <Description>
         <version>4</version>
         <id>495</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>190</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8626,7 +8626,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_right_back</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8634,8 +8634,8 @@
       <Description>
         <version>4</version>
         <id>496</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>119</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8643,7 +8643,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_left_front</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8651,8 +8651,8 @@
       <Description>
         <version>4</version>
         <id>497</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>120</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8660,7 +8660,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_right_front</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8668,16 +8668,16 @@
       <Description>
         <version>4</version>
         <id>498</id>
-        <width>1</width>
-        <height>1</height>
+        <width>26</width>
+        <height>136</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>25</footX>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_left_end</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8685,8 +8685,8 @@
       <Description>
         <version>4</version>
         <id>499</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>150</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8702,8 +8702,8 @@
       <Description>
         <version>4</version>
         <id>500</id>
-        <width>1</width>
-        <height>1</height>
+        <width>51</width>
+        <height>150</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8719,16 +8719,16 @@
       <Description>
         <version>4</version>
         <id>501</id>
-        <width>1</width>
-        <height>1</height>
+        <width>25</width>
+        <height>136</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
-        <footY>0</footY>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_wall_right_end</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8906,8 +8906,8 @@
       <Description>
         <version>4</version>
         <id>512</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>186</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8923,8 +8923,8 @@
       <Description>
         <version>4</version>
         <id>513</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>183</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8940,8 +8940,8 @@
       <Description>
         <version>4</version>
         <id>514</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>77</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8957,8 +8957,8 @@
       <Description>
         <version>4</version>
         <id>515</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>76</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>

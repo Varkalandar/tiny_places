@@ -8095,7 +8095,7 @@ data
 Tile Description
 v.5
 494
-1 1
+108 190
 0 0
 0 0
 End Of Header
@@ -8103,7 +8103,7 @@ Item
 v.1
 data
 2
-
+dungeon_wall_left_back
 
 1
 0
@@ -8111,7 +8111,7 @@ data
 Tile Description
 v.5
 495
-1 1
+108 190
 0 0
 0 0
 End Of Header
@@ -8119,7 +8119,7 @@ Item
 v.1
 data
 2
-
+dungeon_wall_right_back
 
 1
 0
@@ -8127,7 +8127,7 @@ data
 Tile Description
 v.5
 496
-1 1
+108 119
 0 0
 0 0
 End Of Header
@@ -8135,7 +8135,7 @@ Item
 v.1
 data
 2
-
+dungeon_wall_left_front
 
 1
 0
@@ -8143,7 +8143,7 @@ data
 Tile Description
 v.5
 497
-1 1
+108 120
 0 0
 0 0
 End Of Header
@@ -8151,7 +8151,7 @@ Item
 v.1
 data
 2
-
+dungeon_wall_right_front
 
 1
 0
@@ -8159,15 +8159,15 @@ data
 Tile Description
 v.5
 498
-1 1
+26 136
 0 0
-0 0
+25 135
 End Of Header
 Item
 v.1
 data
 2
-
+dungeon_wall_left_end
 
 1
 0
@@ -8175,7 +8175,7 @@ data
 Tile Description
 v.5
 499
-1 1
+51 150
 0 0
 0 0
 End Of Header
@@ -8191,7 +8191,7 @@ data
 Tile Description
 v.5
 500
-1 1
+51 150
 0 0
 0 0
 End Of Header
@@ -8207,15 +8207,15 @@ data
 Tile Description
 v.5
 501
-1 1
+25 136
 0 0
-0 0
+0 135
 End Of Header
 Item
 v.1
 data
 2
-
+dungeon_wall_right_end
 
 1
 0
@@ -8383,7 +8383,7 @@ rough wall 8
 Tile Description
 v.5
 512
-1 1
+108 186
 0 0
 0 0
 End Of Header
@@ -8399,7 +8399,7 @@ data
 Tile Description
 v.5
 513
-1 1
+108 183
 0 0
 0 0
 End Of Header
@@ -8415,7 +8415,7 @@ data
 Tile Description
 v.5
 514
-1 1
+108 77
 0 0
 0 0
 End Of Header
@@ -8431,7 +8431,7 @@ data
 Tile Description
 v.5
 515
-1 1
+108 76
 0 0
 0 0
 End Of Header
