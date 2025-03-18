@@ -40,30 +40,112 @@ pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
 
 fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
 
+    let mut entrances: [i32; 16 * 8] = [0; 16 * 8];
+
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
-            let x = rx * 12;
-            let y = ry * 12;
+            let x = rx * 12 + rng.random_range(-3..3);
+            let y = ry * 12 + rng.random_range(-3..3);
 
-            let l = x - rng.random_range(1..4);
-            let t = y - rng.random_range(1..4); 
-            let r = x + rng.random_range(2..5);
-            let b = y + rng.random_range(2..5);
+            let l = x - rng.random_range(1..3);
+            let t = y - rng.random_range(1..3); 
+            let r = x + rng.random_range(1..3);
+            let b = y + rng.random_range(1..3);
 
-            build_room(map, rng, l, t, r, b);
+            // keep track of entrances
+
+            // start index of the room data in the array. 4 coordinates, 2 values each
+            let room: usize = ((ry * 4 + rx) * 8) as usize;
+
+            entrances[room + 0] = x;
+            entrances[room + 1] = t;
+
+            entrances[room + 2] = r;
+            entrances[room + 3] = y;
+
+            entrances[room + 4] = x;
+            entrances[room + 5] = b;
+
+            entrances[room + 6] = l;
+            entrances[room + 7] = y;
+
+            build_room(map, rng, l, t, r, b, &entrances[room .. room + 8]);
         }
     }
 
-    for ry in 0 .. 3 {
-        for rx in 0 .. 3 {
-            let x = rx * 12;
-            let y = ry * 12;
+    for ry in 0 .. 4 {
+        for rx in 0 .. 4 {
 
-            let wriggle_prob = rng.random_range(0.1 .. 1.0);
-            build_winded_corridor(map, rng, x, y, x+12, y, wriggle_prob);
+            let room = (ry * 4 + rx) * 8;
+            
+            // "down right" corridors
 
-            let wriggle_prob = rng.random_range(0.1 .. 1.0);
-            build_winded_corridor(map, rng, x, y, x, y+12, wriggle_prob);
+            // straight starting stubs
+            if ry > 0 {
+                build_straight_corridor(map,
+                    entrances[room + 0], //  = x;
+                    entrances[room + 1] - 1, //  = b;
+                    entrances[room + 0], //  = x;
+                    entrances[room + 1] - 2, //  = b;
+                );
+            }
+
+            if ry < 3 {
+                build_straight_corridor(map,
+                    entrances[room + 4], //  = x;
+                    entrances[room + 5] + 1, //  = b;
+                    entrances[room + 4], //  = x;
+                    entrances[room + 5] + 2, //  = b;
+                );
+
+                // now the windy connection
+                let wriggle_prob = rng.random_range(0.1 .. 1.0);
+                build_winded_corridor(map, rng, 
+                    entrances[room + 4], //  = x;
+                    entrances[room + 5] + 2, //  = b;
+        
+                    entrances[room + 8 * 4], //  = x;
+                    entrances[room + 8 * 4 + 1] - 2, //  = t;
+
+                    wriggle_prob);
+            }
+           
+
+            // "up right" corridors
+
+            // straight starting stubs
+            if rx > 0 {
+                println!("{}, {}", entrances[room + 2], entrances[room + 3]);
+
+                build_straight_corridor(map,
+                    entrances[room + 6] - 1,
+                    entrances[room + 7],
+                    entrances[room + 6] - 2,
+                    entrances[room + 7],
+                );
+            }
+
+            
+            if rx < 3 {
+                
+                build_straight_corridor(map,
+                    entrances[room + 2] + 1,
+                    entrances[room + 3],
+                    entrances[room + 2] + 2,
+                    entrances[room + 3],
+                );
+
+                let wriggle_prob = rng.random_range(0.1 .. 1.0);
+                build_winded_corridor(map, rng, 
+                    entrances[room + 2] + 2,
+                    entrances[room + 3],
+                    entrances[room + 8 + 6] - 2,
+                    entrances[room + 8 + 7],
+
+                    wriggle_prob);
+                    
+            }
+              
         }
     }
 }
@@ -78,44 +160,52 @@ fn create_mob(map: &mut Map, tile_id: usize, layer: usize, position: Vector2<f64
 }
 
 
-fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32) {
+fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+                               entrances: &[i32]) {
 
-    for y in sy .. dy {
-        for x in sx .. dx {
-            place_floor_tile(map, x, y);
+    for y in sy .. dy + 1 {
+        for x in sx .. dx + 1 {
+            place_floor_tile(map, x, y, 49);
         }
     }
 
     // tall back walls
 
     // left
-    for x in sx .. dx {
-        place_wall_tile(map, x+1, sy-2, -30, 494);
+    for x in sx .. dx + 1 {
+        if sy < 3 || entrances[4] != x {
+            place_wall_tile(map, x+1, sy-2, -30, 494);
+        }
     }
 
     // right
-    for y in sy .. dy {
-        place_wall_tile(map, dx+1, y-2, 76, 495);
+    for y in sy .. dy + 1 {
+        if dx > 12 * 3 - 6 || entrances[3] != y {
+            place_wall_tile(map, dx+2, y-2, 76, 495);
+        }
     }
 
     // short front walls
     
     // right
-    for x in sx .. dx {
-        place_wall_tile(map, x+1, dy-2, 98, 497);
+    for x in sx .. dx + 1 {
+        if dy > 12 * 3 - 6 || entrances[0] != x {
+            place_wall_tile(map, x+1, dy-1, 98, 497);
+        }
     }
 
     // left
-    for y in sy .. dy {
-        place_wall_tile(map, sx, y-1, -6, 496);
+    for y in sy .. dy + 1 {
+        if sx < 3 || entrances[7] != y {
+            place_wall_tile(map, sx, y-1, -6, 496);
+        }
     }
-
 
     // left room corner
     place_wall_tile(map, sx, sy-1, 132, 498);
 
     // right room corner
-    place_wall_tile(map, dx, dy-1, 128, 501);
+    place_wall_tile(map, dx+1, dy, 128, 501);
 }
 
 
@@ -138,8 +228,8 @@ fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, s
             subdivide_corridor(map, rng, sx, dy, dx, dy, wriggle_prob);
         }
         else {
-            subdivide_corridor(map, rng, sx, sy, sy, dx, wriggle_prob);
-            subdivide_corridor(map, rng, sy, dx, dx, dy, wriggle_prob);    
+            subdivide_corridor(map, rng, sx, sy, dx, sy, wriggle_prob);
+            subdivide_corridor(map, rng, dx, sy, dx, dy, wriggle_prob);    
         }
     }
 }
@@ -149,6 +239,10 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: 
                                        wriggle_prob: f64) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
+
+    if vx != 0 && vy != 0 {
+        panic!("Diagonal corridor {}, {}", vx, vy);
+    }
 
     let n = cmp::max((dx - sx).abs(), (dy - sy).abs());
     let p: f64 = rng.random();
@@ -191,12 +285,12 @@ fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
 
-    let n = cmp::max((dx - sx).abs(), (dy - sy).abs());
+    let n = cmp::max((dx - sx).abs(), (dy - sy).abs()) + 1;
     let mut x = sx;
     let mut y = sy;
 
     for i in 0..n {
-        place_floor_tile(map, x, y);
+        place_floor_tile(map, x, y, 50);
 
         x += vx;
         y += vy;
@@ -204,24 +298,23 @@ fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
 }
 
 
-fn place_floor_tile(map: &mut Map, x: i32, y: i32) {
+fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize) {
     let layer = MAP_GROUND_LAYER;
     let height = 0.0;
-    let id = 50;
-    let scale = 1.0;
+    let scale = 0.2;
 
     let mob_id = create_mob(map, id, layer, map_pos(x, y, 0, scale), height, scale);
 
     let mob = map.layers[layer].get_mut(&mob_id).unwrap();
 
-    mob.visual.color = [0.69f32, 0.71, 0.725, 1.0];
+    mob.visual.color = [0.69f32, 0.71, 0.725, 0.8];
 }
 
 
 fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize) {
     let layer = MAP_OBJECT_LAYER;
     let height = 0.0;
-    let scale = 1.0;
+    let scale = 0.2;
     let pos = map_pos(x, y, z_off, scale);
 
     create_mob(map, id, layer, pos, height, scale);
