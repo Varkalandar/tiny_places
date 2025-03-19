@@ -384,6 +384,14 @@ pub fn draw_shape_wb<T: SurfaceTypeTrait + ResizeableSurface>(
     let params = glium::DrawParameters {
         blend: gl_blend,
         scissor,
+        /*
+        depth: glium::Depth {
+            test: glium::draw_parameters::DepthTest::IfLess,
+            write: true,
+            .. Default::default()
+        },
+        */
+
         .. Default::default()
     };
 

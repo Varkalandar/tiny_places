@@ -301,7 +301,7 @@ fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
 fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize) {
     let layer = MAP_GROUND_LAYER;
     let height = 0.0;
-    let scale = 0.2;
+    let scale = 1.0;
 
     let mob_id = create_mob(map, id, layer, map_pos(x, y, 0, scale), height, scale);
 
@@ -314,7 +314,7 @@ fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize) {
 fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize) {
     let layer = MAP_OBJECT_LAYER;
     let height = 0.0;
-    let scale = 0.2;
+    let scale = 1.0;
     let pos = map_pos(x, y, z_off, scale);
 
     create_mob(map, id, layer, pos, height, scale);

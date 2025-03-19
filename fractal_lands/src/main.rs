@@ -15,11 +15,15 @@ use glium::Program;
 use glium::winit::keyboard::Key;
 use glium::winit::event::MouseScrollDelta;
 use glium::VertexBuffer;
+use glium::Surface;
 
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
 
 use std::time::SystemTime;
+use std::time::Duration;
+use std::thread::sleep;
+
 use std::fs::read_to_string;
 use std::path::Path;
 use std::cmp::Ordering;
@@ -210,8 +214,15 @@ impl App {
         let difference = now.duration_since(self.update_time);
 
         if difference.is_ok() {
-            self.update_time = now;
             let secs = difference.unwrap().as_secs_f64();
+/*
+            // try to limit to 100 updates per second
+            if secs < 0.1 {
+                // too early
+                return;
+            }
+*/
+            self.update_time = now;
 
             // println!("seconds: {}", secs);
 
@@ -221,6 +232,8 @@ impl App {
 
 
     fn render(&mut self, program: &Program) {
+
+        let t0 = SystemTime::now();
 
         let buffer = build_dynamic_quad_buffer(&self.ui.display);
         let world = &self.world;
@@ -240,10 +253,14 @@ impl App {
         let back_off_y = - player_y / 4.0;
 
         let mut target = self.ui.display.draw();
-        // target.clear_color(0.0, 0.0, 1.0, 1.0);
+                
+        target.clear_color(0.0, 1.0, 1.0, 1.0);
+        target.clear_depth(1.0);
 
+        
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.black_texture, 
-            0.0, 0.0, 1000.0, 1000.0, &[0.8, 0.8, 0.8, 1.0]);
+                     0.0, 0.0, 1000.0, 1000.0, &[0.8, 0.8, 0.8, 1.0]);
+        
 
         /*
         draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
@@ -255,6 +272,7 @@ impl App {
 
         let tex_white = &self.ui.context.tex_white;
 
+        
         // draw ground decorations (flat)
         Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_GROUND_LAYER);
 
@@ -263,6 +281,7 @@ impl App {
 
         // draw clouds
         Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_CLOUD_LAYER);
+        
 
         {
             let world = &mut self.world;
@@ -270,6 +289,21 @@ impl App {
             self.controllers.current().draw(&mut target, program, ui, world);    
             self.controllers.current().draw_overlay(&mut target, program, ui, world);    
         }
+
+
+        
+        let now = SystemTime::now();
+        let difference = now.duration_since(t0);
+
+        if difference.is_ok() {
+            self.update_time = now;
+            let secs = difference.unwrap().as_secs_f64();
+            let s = format!("Time: {}s", secs);
+            let font = &self.ui.context.font_14;
+        
+            font.draw(&self.ui.display, &mut target, program, 10, 600, &s, &[1.0, 1.0, 1.0, 1.0]);
+        }
+        
 
         target.finish().unwrap();
     }
@@ -287,7 +321,15 @@ impl App {
         let mut objects = Vec::with_capacity(world.map.layers.len());
 
         for (_key, mob) in &world.map.layers[layer_id] {
-            objects.push(mob);
+
+            let xd = mob.position[0] - pos_frac[0];
+            let yd = mob.position[1] - pos_frac[1];
+            let distance = xd * xd + yd * yd; 
+            let max = window_center[0] * window_center[0] + window_center[1] * window_center[1];
+
+            if distance < max * 3.0 {
+                objects.push(mob);
+            }
         }
 
         
@@ -544,17 +586,17 @@ fn main() {
         .expect("event loop building");
 
     let (window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
-        .with_title("Fractal Lands GL v0.0.1")
+        .with_title("Fractal Lands GL v0.0.2")
         .with_inner_size(window_size[0], window_size[1])
         .build(&event_loop);
 
+    window.focus_window();
 
     let program = build_program(&display);
 
     let mut app = App::new(display, window_size);
 
     // Now we wait until the program is closed
-    #[allow(deprecated)]
     event_loop.run(move |event, window_target| {
         match event {
             glium::winit::event::Event::WindowEvent { event, .. } => match event {
