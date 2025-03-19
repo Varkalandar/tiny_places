@@ -16,6 +16,7 @@ use glium::Blend;
 use glium::Rect;
 use glium::implement_vertex;
 use glium::uniform;
+use glium::VertexBuffer;
 
 use crate::ui::UiArea;
 
@@ -48,9 +49,13 @@ impl RectF32 {
 
 pub fn load_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>, filename: &str) -> glium::Texture2d {
 
-    println!("Loading {}", filename);
+    let file_try = File::open(filename);
 
-    let file = File::open(filename).unwrap();
+    if !file_try.is_ok() {
+        panic!("Failed to open texture {}", filename);
+    }
+    let file = file_try.unwrap();
+
     let reader = BufReader::new(file);
 
     let image = image::load(reader, image::ImageFormat::Png).unwrap().to_rgba8();
@@ -104,6 +109,30 @@ pub fn build_program(display: &Display<WindowSurface>) -> glium::Program {
     program
 }
 
+pub fn build_dynamic_quad_buffer<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>) 
+    -> VertexBuffer<Vertex> 
+{
+    let xp = 0.0;
+    let yp = 0.0;
+    let fw = 1.0;
+    let fh = 1.0;
+
+    let shape = vec![
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+        Vertex { position: [xp +  fw, yp + 0.0], tex_coords: [1.0, 0.0] },
+        Vertex { position: [xp +  fw, yp +  fh], tex_coords: [1.0, 1.0] },
+
+        Vertex { position: [xp +  fw,  yp + fh], tex_coords: [1.0, 1.0] },
+        Vertex { position: [xp + 0.0,  yp + fh], tex_coords: [0.0, 1.0] },
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+    ];
+
+    let vertex_buffer = glium::VertexBuffer::dynamic(display, &shape).unwrap();
+
+    return vertex_buffer;
+}
+
+
 pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
                                                              target: &mut Frame,   
                                                              program: &Program,  
@@ -128,7 +157,7 @@ pub fn draw_texture<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
     ];
 
-    draw_shape(display, target, program, blend, shape, texture, color, None);
+    draw_shape(display, target, program, blend, &shape, texture, color, None);
 }
 
 pub fn draw_texture_clip<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
@@ -167,7 +196,7 @@ pub fn draw_texture_clip<T: SurfaceTypeTrait + ResizeableSurface>(display: &Disp
             None => None,
         };
 
-    draw_shape(display, target, program, blend, shape, texture, color, clip);
+    draw_shape(display, target, program, blend, &shape, texture, color, clip);
 }
 
 pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
@@ -205,7 +234,7 @@ pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
     ];
 
-    draw_shape(display, target, program, blend, shape, texture, color, None);
+    draw_shape(display, target, program, blend, &shape, texture, color, None);
 }
 
 pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
@@ -213,12 +242,12 @@ pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
     target: &mut Frame,   
     program: &Program,  
     blend: BlendMode,
-    shape: Vec<Vertex>,
+    shape: &Vec<Vertex>,
     texture: &Texture2d,
     color: &[f32; 4],
     scissor: Option<Rect>) {
 
-    let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
+    let vertex_buffer = glium::VertexBuffer::new(display, shape).unwrap();
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
 
     let (d_width, d_height) = display.get_framebuffer_dimensions();
@@ -263,4 +292,100 @@ pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
     };
 
     target.draw(&vertex_buffer, &indices, program, &uniforms, &params).unwrap();
+}
+
+
+
+
+pub fn draw_texture_wb<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
+    target: &mut Frame,   
+    program: &Program,
+    buffer: &VertexBuffer<Vertex>,
+    blend: BlendMode,
+    display_width: u32,
+    display_height: u32,
+    texture: &Texture2d,
+    xp: f32,
+    yp: f32, 
+    sx: f32, 
+    sy: f32,
+    color: &[f32; 4]) {
+
+    let fw = texture.width() as f32 * sx;
+    let fh = texture.height() as f32 * sy;
+
+    let shape = vec![
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+        Vertex { position: [xp +  fw, yp + 0.0], tex_coords: [1.0, 0.0] },
+        Vertex { position: [xp +  fw, yp +  fh], tex_coords: [1.0, 1.0] },
+
+        Vertex { position: [xp +  fw,  yp + fh], tex_coords: [1.0, 1.0] },
+        Vertex { position: [xp + 0.0,  yp + fh], tex_coords: [0.0, 1.0] },
+        Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
+    ];
+
+    draw_shape_wb(display, target, program, buffer, blend, 
+                  display_width, display_height,
+                  &shape, texture, color, None);
+}
+
+
+pub fn draw_shape_wb<T: SurfaceTypeTrait + ResizeableSurface>(
+    display: &Display<T>,
+    target: &mut Frame,   
+    program: &Program,  
+    buffer: &VertexBuffer<Vertex>,
+    blend: BlendMode,
+    display_width: u32,
+    display_height: u32,
+    shape: &Vec<Vertex>,
+    texture: &Texture2d,
+    color: &[f32; 4],
+    scissor: Option<Rect>) {
+
+    
+    buffer.write(shape);
+    let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+
+    let fdw = display_width as f32;
+    let fdh = display_height as f32;
+
+    let xf: f32 = 2.0 / fdw; 
+    let yf: f32 = 2.0 / fdh; 
+
+    let uniforms = uniform! {
+        matrix: [
+            [  xf,  0.0,  0.0,  0.0],
+            [ 0.0,  -yf,  0.0,  0.0],
+            [ 0.0,  0.0,  1.0,  0.0],
+            [-1.0,  1.0,  0.0,  1.0],
+        ],                        
+        tex: texture,
+        col: *color,
+    };
+
+    let gl_blend = if blend == BlendMode::Blend {
+        glium::Blend::alpha_blending()
+    }
+    else {
+        Blend {
+            color: BlendingFunction::Addition {
+                source: LinearBlendingFactor::SourceAlpha,
+                destination: LinearBlendingFactor::One,
+            },
+                alpha: BlendingFunction::Addition {
+                source: LinearBlendingFactor::One,
+                destination: LinearBlendingFactor::One
+            },
+            constant_value: (0.0, 0.0, 0.0, 0.0)
+        }
+    };
+
+    let params = glium::DrawParameters {
+        blend: gl_blend,
+        scissor,
+        .. Default::default()
+    };
+
+    target.draw(buffer, &indices, program, &uniforms, &params).unwrap();
 }

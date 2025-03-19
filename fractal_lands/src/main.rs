@@ -14,6 +14,7 @@ use glium::Texture2d;
 use glium::Program;
 use glium::winit::keyboard::Key;
 use glium::winit::event::MouseScrollDelta;
+use glium::VertexBuffer;
 
 use vecmath::{vec2_add, vec2_len, vec2_scale, vec2_sub, Vector2};
 use rand::SeedableRng;
@@ -50,10 +51,13 @@ use item::ItemFactory;
 use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
 
+use gl_support::Vertex;
 use gl_support::BlendMode;
 use gl_support::load_texture;
 use gl_support::build_program;
 use gl_support::draw_texture;
+use gl_support::draw_texture_wb;
+use gl_support::build_dynamic_quad_buffer;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
 const CREATURE_TILESET: usize = 3;
@@ -218,6 +222,7 @@ impl App {
 
     fn render(&mut self, program: &Program) {
 
+        let buffer = build_dynamic_quad_buffer(&self.ui.display);
         let world = &self.world;
 
         let width = self.ui.context.window_size[0] as f32;
@@ -251,13 +256,13 @@ impl App {
         let tex_white = &self.ui.context.tex_white;
 
         // draw ground decorations (flat)
-        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_GROUND_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_GROUND_LAYER);
 
         // draw decorations (upright things)
-        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_OBJECT_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_OBJECT_LAYER);
 
         // draw clouds
-        Self::render_layer(&self.ui.display, &mut target, program, world, tex_white, MAP_CLOUD_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_CLOUD_LAYER);
 
         {
             let world = &mut self.world;
@@ -271,19 +276,21 @@ impl App {
 
 
     fn render_layer(display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
+                    buffer: &VertexBuffer<Vertex>,
                     world: &GameWorld, tex_white: &Texture2d, layer_id: usize) {
 
-        let (width, height) = display.get_framebuffer_dimensions();
-        let window_center = [width as f64 * 0.5, height as f64 * 0.5];
+        let (display_width, display_height) = display.get_framebuffer_dimensions();
+        let window_center = [display_width as f64 * 0.5, display_height as f64 * 0.5];
 
         let pos_frac = &world.map.get_player_position();
         let player_position = &[pos_frac[0].floor(), pos_frac[1].floor()];
-        let mut objects = Vec::new();
+        let mut objects = Vec::with_capacity(world.map.layers.len());
 
         for (_key, mob) in &world.map.layers[layer_id] {
             objects.push(mob);
         }
 
+        
         objects.sort_unstable_by(|a, b| -> Ordering {
             let ap = a.position[0] + a.position[1] * 10000.0;
             let bp = b.position[0] + b.position[1] * 10000.0;
@@ -295,7 +302,8 @@ impl App {
             } else {
                 Ordering::Equal
             }
-        });
+        });        
+
 
         for mob in objects {
             let tileset_id = mob.visual.tileset_id;
@@ -307,8 +315,10 @@ impl App {
 
             let tpos = calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
 
-            draw_texture(display, target, program,
+            draw_texture_wb(display, target, program, &buffer,
                 mob.visual.blend,
+                display_width,
+                display_height,
                 &tile.tex,
                 tpos[0],
                 tpos[1], 
@@ -321,8 +331,10 @@ impl App {
                layer_id == world.map.selected_layer &&
                mob.uid == world.map.selected_item {
                 
-                draw_texture(display, target, program,
+                draw_texture_wb(display, target, program, buffer,
                     BlendMode::Add,
+                    display_width,
+                    display_height,
                     tex_white,
                     tpos[0],
                     tpos[1], 
@@ -337,8 +349,10 @@ impl App {
                 let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
                 let tpos = calc_tile_position(&mob.position, glow_tile.foot, 0.9, player_position, &window_center);
 
-                draw_texture(display, target, program,
+                draw_texture_wb(display, target, program, buffer,
                     BlendMode::Add,
+                    display_width,
+                    display_height,
                     &glow_tile.tex,
                     tpos[0] - 170.0,
                     tpos[1] - 50.0, 
@@ -366,8 +380,10 @@ impl App {
 
                         let fade = quadratic_fade(p.age / p.lifetime);
 
-                        draw_texture(display, target, program,
+                        draw_texture_wb(display, target, program, buffer,
                             BlendMode::Add,
+                            display_width,
+                            display_height,
                             &tile.tex,
                             tpos[0] + xp,
                             tpos[1] + yp, 
