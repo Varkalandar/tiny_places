@@ -207,7 +207,13 @@ impl App {
     }
 
 
-    fn update(&mut self) {
+    /**
+     * Updates the game world using the time passed since the last update
+     * to determine how much things have moved etc.
+     *
+     * @return true if the display must be updated too, false otherwise.
+     */
+    fn update(&mut self) -> bool {
         let world = &mut self.world;
 
         let now = SystemTime::now();
@@ -215,19 +221,21 @@ impl App {
 
         if difference.is_ok() {
             let secs = difference.unwrap().as_secs_f64();
-/*
+
             // try to limit to 100 updates per second
-            if secs < 0.1 {
+            if secs < 0.01 {
                 // too early
-                return;
+                return false;
             }
-*/
+
             self.update_time = now;
 
             // println!("seconds: {}", secs);
 
             self.controllers.current().update(world, secs);
         }
+
+        true
     }
 
 
@@ -606,8 +614,10 @@ fn main() {
                 },
                 // We now need to render everyting in response to a RedrawRequested event due to the animation
                 glium::winit::event::WindowEvent::RedrawRequested => {
-                    app.update();
-                    app.render(&program);
+                    let redraw_required = app.update();
+                    if redraw_required {
+                        app.render(&program);
+                    }
                 },
                 // Because glium doesn't know about windows we need to resize the display
                 // when the window's size has changed.

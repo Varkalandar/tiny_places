@@ -8605,7 +8605,7 @@
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
-        <footY>0</footY>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -8621,8 +8621,8 @@
         <height>190</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>108</footX>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -8906,16 +8906,16 @@
       <Description>
         <version>4</version>
         <id>512</id>
-        <width>108</width>
-        <height>186</height>
+        <width>144</width>
+        <height>188</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
-        <footY>0</footY>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tunnel_left_wall_back</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8924,15 +8924,15 @@
         <version>4</version>
         <id>513</id>
         <width>108</width>
-        <height>183</height>
+        <height>180</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>108</footX>
+        <footY>135</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tunnel_right_wall_back</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8945,11 +8945,11 @@
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
-        <footY>0</footY>
+        <footY>76</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tunnel_right_wall_front</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8961,12 +8961,12 @@
         <height>76</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>108</footX>
+        <footY>51</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tunnel_left_wall_front</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -8974,8 +8974,8 @@
       <Description>
         <version>4</version>
         <id>516</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>188</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -8991,8 +8991,8 @@
       <Description>
         <version>4</version>
         <id>517</id>
-        <width>1</width>
-        <height>1</height>
+        <width>108</width>
+        <height>180</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>

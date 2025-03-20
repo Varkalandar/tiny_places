@@ -1,7 +1,7 @@
+use std::collections::HashMap;
 use std::cmp;
 
 use vecmath::Vector2;
-// use rand::Rng;
 use rand::prelude::*;
 
 use crate::MAP_GROUND_LAYER;
@@ -73,6 +73,11 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
         }
     }
 
+    // to avoid double tiles and easier wall placement in corridors we first collect all
+    // floor coordinates and then actually build the corridor
+
+    let mut floors: HashMap<i32, [i32; 2]> = HashMap::new();
+
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
 
@@ -80,27 +85,31 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
             
             // "down right" corridors
 
+            floors.clear();
+
             // straight starting stubs
             if ry > 0 {
-                build_straight_corridor(map,
+                build_straight_corridor(map, &mut floors,
                     entrances[room + 0], //  = x;
                     entrances[room + 1] - 1, //  = b;
                     entrances[room + 0], //  = x;
                     entrances[room + 1] - 2, //  = b;
+                    0
                 );
             }
 
             if ry < 3 {
-                build_straight_corridor(map,
+                build_straight_corridor(map, &mut floors,
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 1, //  = b;
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 2, //  = b;
+                    0
                 );
 
                 // now the windy connection
                 let wriggle_prob = rng.random_range(0.1 .. 1.0);
-                build_winded_corridor(map, rng, 
+                build_winded_corridor(map, &mut floors, rng, 
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 2, //  = b;
         
@@ -110,42 +119,47 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
                     wriggle_prob);
             }
            
+            build_corridor_from_coordinates(map, &floors);
 
             // "up right" corridors
+
+            floors.clear();
 
             // straight starting stubs
             if rx > 0 {
                 println!("{}, {}", entrances[room + 2], entrances[room + 3]);
 
-                build_straight_corridor(map,
+                build_straight_corridor(map, &mut floors,
                     entrances[room + 6] - 1,
                     entrances[room + 7],
                     entrances[room + 6] - 2,
                     entrances[room + 7],
+                    0,
                 );
             }
 
             
             if rx < 3 {
                 
-                build_straight_corridor(map,
+                build_straight_corridor(map, &mut floors,
                     entrances[room + 2] + 1,
                     entrances[room + 3],
                     entrances[room + 2] + 2,
                     entrances[room + 3],
+                    0,
                 );
 
                 let wriggle_prob = rng.random_range(0.1 .. 1.0);
-                build_winded_corridor(map, rng, 
+                build_winded_corridor(map, &mut floors, rng, 
                     entrances[room + 2] + 2,
                     entrances[room + 3],
                     entrances[room + 8 + 6] - 2,
                     entrances[room + 8 + 7],
 
                     wriggle_prob);
-                    
             }
-              
+
+            build_corridor_from_coordinates(map, &floors);
         }
     }
 }
@@ -163,9 +177,11 @@ fn create_mob(map: &mut Map, tile_id: usize, layer: usize, position: Vector2<f64
 fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
                                entrances: &[i32]) {
 
+    let wall_color = [1.0, 1.0, 1.0, 1.0];
+
     for y in sy .. dy + 1 {
         for x in sx .. dx + 1 {
-            place_floor_tile(map, x, y, 49);
+            place_floor_tile(map, x, y, rng.random_range(51..=53), [0.97, 0.92, 0.9, 1.0]);
         }
     }
 
@@ -174,14 +190,32 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx:
     // left
     for x in sx .. dx + 1 {
         if sy < 3 || entrances[4] != x {
-            place_wall_tile(map, x+1, sy-2, -30, 494);
+            place_wall_tile(map, x-1, sy, -194, 494, wall_color);
+        }
+        else {
+            // the walls need end pieces ...
+
+            // left corner
+            place_wall_tile(map, x, sy, -86, 498, wall_color);
+
+            // right corner
+            place_wall_tile(map, x-1, sy, -86, 501, wall_color);
         }
     }
 
     // right
     for y in sy .. dy + 1 {
         if dx > 12 * 3 - 6 || entrances[3] != y {
-            place_wall_tile(map, dx+2, y-2, 76, 495);
+            place_wall_tile(map, dx, y+1, -194, 495, wall_color);
+        }
+        else {
+            // the walls need end pieces ...
+
+            // left corner
+            place_wall_tile(map, dx, y+1, -86, 498, wall_color);
+
+            // right corner
+            place_wall_tile(map, dx, y, -86, 501, wall_color);
         }
     }
 
@@ -190,33 +224,34 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx:
     // right
     for x in sx .. dx + 1 {
         if dy > 12 * 3 - 6 || entrances[0] != x {
-            place_wall_tile(map, x+1, dy-1, 98, 497);
+            place_wall_tile(map, x+1, dy-1, 98, 497, wall_color);
         }
     }
 
     // left
     for y in sy .. dy + 1 {
         if sx < 3 || entrances[7] != y {
-            place_wall_tile(map, sx, y-1, -6, 496);
+            place_wall_tile(map, sx, y-1, -6, 496, wall_color);
         }
     }
 
     // left room corner
-    place_wall_tile(map, sx, sy-1, 132, 498);
+    place_wall_tile(map, sx, sy-1, 130, 498, wall_color);
 
     // right room corner
-    place_wall_tile(map, dx+1, dy, 128, 501);
+    place_wall_tile(map, dx+1, dy, 131, 501, wall_color);
 }
 
 
-fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, [i32; 2]>, rng: &mut R, 
+                                          sx: i32, sy: i32, dx: i32, dy: i32,
                                           wriggle_prob: f64) {
     // is this straight?
 
     if sx == dx || sy == dy {
         // straight corridor
 
-        subdivide_corridor(map, rng, sx, sy, dx, dy, wriggle_prob);
+        subdivide_corridor(map, floors, rng, sx, sy, dx, dy, wriggle_prob);
     }
     else {
         // L-shaped corridor, split it into two straight parts
@@ -224,18 +259,19 @@ fn build_winded_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, s
         // two options to chose
 
         if rng.random() {
-            subdivide_corridor(map, rng, sx, sy, sx, dy, wriggle_prob);
-            subdivide_corridor(map, rng, sx, dy, dx, dy, wriggle_prob);
+            subdivide_corridor(map, floors, rng, sx, sy, sx, dy, wriggle_prob);
+            subdivide_corridor(map, floors, rng, sx, dy, dx, dy, wriggle_prob);
         }
         else {
-            subdivide_corridor(map, rng, sx, sy, dx, sy, wriggle_prob);
-            subdivide_corridor(map, rng, dx, sy, dx, dy, wriggle_prob);    
+            subdivide_corridor(map, floors, rng, sx, sy, dx, sy, wriggle_prob);
+            subdivide_corridor(map, floors, rng, dx, sy, dx, dy, wriggle_prob);    
         }
     }
 }
 
 
-fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, [i32; 2]>, rng: &mut R,
+                                       sx: i32, sy: i32, dx: i32, dy: i32,
                                        wriggle_prob: f64) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
@@ -247,50 +283,56 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: 
     let n = cmp::max((dx - sx).abs(), (dy - sy).abs());
     let p: f64 = rng.random();
 
-    if n < 5 || p > wriggle_prob{
-        // too short to be wriggled. Build straight
-        build_straight_corridor(map, sx, sy, dx, dy);
+    if n < 6 || p > wriggle_prob{
+        // too short to be wriggled. Build straight, include end piece
+        build_straight_corridor(map, floors, sx, sy, dx, dy, 1);
     }
     else {
         let min = 2;
         let max = n - 2;
 
         // start piece
-        build_straight_corridor(map, sx, sy, sx + min * vx, sy + min * vy);
+        build_straight_corridor(map, floors, sx, sy, sx + min * vx, sy + min * vy, 0);
 
         // depth of turn
         let d:i32 = rng.random_range(-n/2 .. n/2);
 
         // U turn
 
-        subdivide_corridor(map, rng, sx + min * vx, sy + min * vy, 
+        subdivide_corridor(map, floors, rng, sx + min * vx, sy + min * vy, 
                                      sx + min * vx + d * vy, sy + min * vy + d * -vx,
                                 wriggle_prob);
 
-        subdivide_corridor(map, rng, sx + min * vx + d * vy, sy + min * vy + d * -vx, 
-                                     sx + max * vx + d * vy, sy + max * vy + d * -vx,
+        subdivide_corridor(map, floors, rng, sx + (min + 1) * vx + d * vy, sy + (min + 1) * vy + d * -vx, 
+                                     sx + (max - 1) * vx + d * vy, sy +  (max - 1) * vy + d * -vx,
                                 wriggle_prob);
 
-        subdivide_corridor(map, rng, sx + max * vx + d * vy, sy + max * vy + d * -vx, 
-                                     sx + max * vx, sy + max * vy,
+        subdivide_corridor(map, floors, rng, sx + max * vx + d * vy, sy + max * vy + d * -vx, 
+                                     sx + max * vx + 1 * vy, sy + max * vy + 1 * -vx,
                                 wriggle_prob);
 
         // end piece
-        build_straight_corridor(map, sx + max * vx, sy + max * vy, dx, dy);
+        build_straight_corridor(map, floors, sx + max * vx, sy + max * vy, dx, dy, 1);
     }
 }
 
 
-fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
+/**
+ * Builds a straight corridor.
+ *
+ * @param end The end piece of the corridor will be omitted of end is zero. Pass one to place the end piece too
+ */
+fn build_straight_corridor(map: &mut Map, floors: &mut HashMap<i32, [i32; 2]>,
+                           sx: i32, sy: i32, dx: i32, dy: i32, end: i32) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
 
-    let n = cmp::max((dx - sx).abs(), (dy - sy).abs()) + 1;
+    let n = cmp::max((dx - sx).abs(), (dy - sy).abs()) + end;
     let mut x = sx;
     let mut y = sy;
 
     for i in 0..n {
-        place_floor_tile(map, x, y, 50);
+        add_floor_coordinate(floors, x, y);
 
         x += vx;
         y += vy;
@@ -298,7 +340,60 @@ fn build_straight_corridor(map: &mut Map, sx: i32, sy: i32, dx: i32, dy: i32) {
 }
 
 
-fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize) {
+fn floor_key(x: i32, y: i32) -> i32 {
+    y * 1000 + x
+}
+
+
+fn add_floor_coordinate(floors: &mut HashMap<i32, [i32; 2]>, x: i32, y: i32) {
+    let key = floor_key(x, y);
+    floors.insert(key, [x, y]);
+}
+
+
+fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]>)
+{
+    // let wall_color = [0.63, 0.64, 0.65, 1.0];
+    // let floor_color = [0.38, 0.36, 0.33, 1.0];
+    let wall_color = [0.53, 0.54, 0.55, 1.0];
+    let floor_color = [0.32, 0.30, 0.27, 1.0];
+
+    for (key, value) in floors {
+        let x = value[0];
+        let y = value[1];
+
+        place_floor_tile(map, x, y, 47, floor_color);
+
+        // placement helper
+        // place_wall_tile(map, x+1, y, 0, 692);
+
+        // back walls
+        // left
+        if floors.get(&floor_key(x, y-1)).is_none() {
+            place_wall_tile(map, x-1, y, -202, 512, wall_color);  
+        }
+        
+        // right
+        if floors.get(&floor_key(x+1, y)).is_none() {
+            place_wall_tile(map, x+1, y, 20, 513, wall_color);
+        }
+
+        // front walls
+
+        // left
+        if floors.get(&floor_key(x-1, y)).is_none() {
+            place_wall_tile(map, x, y, 60, 515, wall_color);
+        }
+
+        // right
+        if floors.get(&floor_key(x, y+1)).is_none() {
+            place_wall_tile(map, x, y, 110, 514, wall_color);  
+        }
+    }
+}
+
+
+fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize, color: [f32; 4]) {
     let layer = MAP_GROUND_LAYER;
     let height = 0.0;
     let scale = 1.0;
@@ -307,17 +402,20 @@ fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize) {
 
     let mob = map.layers[layer].get_mut(&mob_id).unwrap();
 
-    mob.visual.color = [0.69f32, 0.71, 0.725, 0.8];
+    mob.visual.color = color;
 }
 
 
-fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize) {
+fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize, color: [f32; 4]) {
     let layer = MAP_OBJECT_LAYER;
     let height = 0.0;
     let scale = 1.0;
     let pos = map_pos(x, y, z_off, scale);
 
-    create_mob(map, id, layer, pos, height, scale);
+    let mob_id = create_mob(map, id, layer, pos, height, scale);
+    let mob = map.layers[layer].get_mut(&mob_id).unwrap();
+
+    mob.visual.color = color;
 }
 
 

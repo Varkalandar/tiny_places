@@ -797,16 +797,16 @@
       <Description>
         <version>4</version>
         <id>47</id>
-        <width>1</width>
-        <height>1</height>
+        <width>218</width>
+        <height>107</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>53</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>tunnel_floor</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -814,16 +814,16 @@
       <Description>
         <version>4</version>
         <id>48</id>
-        <width>1</width>
-        <height>1</height>
+        <width>216</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>53</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dark_roman_tiles</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -865,16 +865,16 @@
       <Description>
         <version>4</version>
         <id>51</id>
-        <width>1</width>
-        <height>1</height>
+        <width>214</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>53</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_floor_1</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -882,16 +882,16 @@
       <Description>
         <version>4</version>
         <id>52</id>
-        <width>1</width>
-        <height>1</height>
+        <width>214</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>53</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_floor_2</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -899,16 +899,16 @@
       <Description>
         <version>4</version>
         <id>53</id>
-        <width>1</width>
-        <height>1</height>
+        <width>214</width>
+        <height>108</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>107</footX>
+        <footY>53</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>dungeon_floor_3</string>
         <string></string>
       </Metadata>
     </Tile>

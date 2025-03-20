@@ -8097,7 +8097,7 @@ v.5
 494
 108 190
 0 0
-0 0
+0 135
 End Of Header
 Item
 v.1
@@ -8113,7 +8113,7 @@ v.5
 495
 108 190
 0 0
-0 0
+108 135
 End Of Header
 Item
 v.1
@@ -8383,15 +8383,15 @@ rough wall 8
 Tile Description
 v.5
 512
-108 186
+144 188
 0 0
-0 0
+0 135
 End Of Header
 Item
 v.1
 data
 2
-
+tunnel_left_wall_back
 
 1
 0
@@ -8399,15 +8399,15 @@ data
 Tile Description
 v.5
 513
-108 183
+108 180
 0 0
-0 0
+108 135
 End Of Header
 Item
 v.1
 data
 2
-
+tunnel_right_wall_back
 
 1
 0
@@ -8417,13 +8417,13 @@ v.5
 514
 108 77
 0 0
-0 0
+0 76
 End Of Header
 Item
 v.1
 data
 2
-
+tunnel_right_wall_front
 
 1
 0
@@ -8433,13 +8433,13 @@ v.5
 515
 108 76
 0 0
-0 0
+108 51
 End Of Header
 Item
 v.1
 data
 2
-
+tunnel_left_wall_front
 
 1
 0
@@ -8447,7 +8447,7 @@ data
 Tile Description
 v.5
 516
-1 1
+108 188
 0 0
 0 0
 End Of Header
@@ -8463,7 +8463,7 @@ data
 Tile Description
 v.5
 517
-1 1
+108 180
 0 0
 0 0
 End Of Header
