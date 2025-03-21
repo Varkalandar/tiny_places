@@ -4143,15 +4143,15 @@ radar
 Tile Description
 v.5
 247
-1 1
+131 94
 0 0
-0 0
+65 94
 End Of Header
 Item
 v.1
 data
 2
-
+spiral_stairs_down
 
 1
 0
@@ -4159,15 +4159,15 @@ data
 Tile Description
 v.5
 248
-1 1
+159 165
 0 0
-0 0
+68 110
 End Of Header
 Item
 v.1
 data
 2
-
+spiral_stairs_up
 
 1
 0

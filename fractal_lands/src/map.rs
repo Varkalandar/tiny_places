@@ -66,7 +66,7 @@ pub struct Map {
 impl Map {
     pub fn new(name: &str, map_image_name: &str, backdrop_image_name: &str) -> Map {
         let mut layers = [HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(), HashMap::new(),];
-        
+/*        
         let player_visual = Visual {
             base_image_id: 39,
             tileset_id: 4,
@@ -75,6 +75,20 @@ impl Map {
             phases: 1, 
             height: 24.0,
             scale: 0.75,
+            color: [1.0, 1.0, 1.0, 1.0],
+            glow: [1.0, 1.0, 1.0, 1.0],
+            blend: BlendMode::Blend,
+            particles: ParticleDriver::new(),       
+        };
+*/
+        let player_visual = Visual {
+            base_image_id: 1,
+            tileset_id: 4,
+            current_image_id: 1,
+            directions: 8,
+            phases: 1, 
+            height: 24.0,
+            scale: 1.5,
             color: [1.0, 1.0, 1.0, 1.0],
             glow: [1.0, 1.0, 1.0, 1.0],
             blend: BlendMode::Blend,

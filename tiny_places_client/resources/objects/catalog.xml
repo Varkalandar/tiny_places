@@ -4401,16 +4401,16 @@
       <Description>
         <version>4</version>
         <id>247</id>
-        <width>1</width>
-        <height>1</height>
+        <width>131</width>
+        <height>94</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>65</footX>
+        <footY>94</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spiral_stairs_down</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -4418,16 +4418,16 @@
       <Description>
         <version>4</version>
         <id>248</id>
-        <width>1</width>
-        <height>1</height>
+        <width>159</width>
+        <height>165</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>68</footX>
+        <footY>110</footY>
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>spiral_stairs_up</string>
         <string></string>
       </Metadata>
     </Tile>

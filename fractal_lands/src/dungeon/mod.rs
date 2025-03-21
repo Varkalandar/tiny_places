@@ -32,15 +32,22 @@ pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
     // place_floor_tile(map, -5 + 5, 5 + 5);
     // build_winded_corridor(map, &mut rng, 0, 0, 10, 10);
 
-    rooms_and_corridors(map, &mut rng);
+    let start_pos = rooms_and_corridors(map, &mut rng);
 
-    [0.0, 0.0]
+    // place stairs
+    place_wall_tile(map, start_pos[0], start_pos[1], 0, 248, [1.0, 1.0, 1.0, 1.0]);
+
+    let mp = map_pos(start_pos[0], start_pos[1] + 1, 0, 1.0);
+
+    mp
 }
 
 
-fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
+fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) -> [i32; 2] {
 
     let mut entrances: [i32; 16 * 8] = [0; 16 * 8];
+    let mut startpos_x = 0;
+    let mut startpos_y = 0;
 
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
@@ -70,6 +77,12 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
             entrances[room + 7] = y;
 
             build_room(map, rng, l, t, r, b, &entrances[room .. room + 8]);
+
+            // record starting position
+            if rx == 0 && ry == 0 {
+                startpos_x = x;
+                startpos_y = y-1;
+            }
         }
     }
 
@@ -155,6 +168,8 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
             build_corridor_from_coordinates(map, &floors);
         }
     }
+
+    [startpos_x, startpos_y]
 }
 
 
