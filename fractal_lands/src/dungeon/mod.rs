@@ -44,8 +44,8 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
 
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
-            let x = rx * 12 + rng.random_range(-3..3);
-            let y = ry * 12 + rng.random_range(-3..3);
+            let x = rx * 13 + rng.random_range(-3..3);
+            let y = ry * 13 + rng.random_range(-3..3);
 
             let l = x - rng.random_range(1..3);
             let t = y - rng.random_range(1..3); 
@@ -87,23 +87,21 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
 
             floors.clear();
 
-            // straight starting stubs
-            if ry > 0 {
-                build_straight_corridor(map, &mut floors,
-                    entrances[room + 0], //  = x;
-                    entrances[room + 1] - 1, //  = b;
-                    entrances[room + 0], //  = x;
-                    entrances[room + 1] - 2, //  = b;
-                    0
-                );
-            }
-
             if ry < 3 {
+                // straight starting stubs
                 build_straight_corridor(map, &mut floors,
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 1, //  = b;
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 2, //  = b;
+                    0
+                );
+
+                build_straight_corridor(map, &mut floors,
+                    entrances[room + 8 * 4 + 0], //  = x;
+                    entrances[room + 8 * 4 + 1] - 1, //  = b;
+                    entrances[room + 8 * 4 + 0], //  = x;
+                    entrances[room + 8 * 4 + 1] - 2, //  = b;
                     0
                 );
 
@@ -125,21 +123,8 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
 
             floors.clear();
 
-            // straight starting stubs
-            if rx > 0 {
-                println!("{}, {}", entrances[room + 2], entrances[room + 3]);
-
-                build_straight_corridor(map, &mut floors,
-                    entrances[room + 6] - 1,
-                    entrances[room + 7],
-                    entrances[room + 6] - 2,
-                    entrances[room + 7],
-                    0,
-                );
-            }
-
-            
             if rx < 3 {
+                // straight starting stubs
                 
                 build_straight_corridor(map, &mut floors,
                     entrances[room + 2] + 1,
@@ -149,6 +134,14 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) {
                     0,
                 );
 
+                build_straight_corridor(map, &mut floors,
+                    entrances[room + 8 + 6] - 1,
+                    entrances[room + 8 + 7],
+                    entrances[room + 8 + 6] - 2,
+                    entrances[room + 8 + 7],
+                    0,
+                );
+    
                 let wriggle_prob = rng.random_range(0.1 .. 1.0);
                 build_winded_corridor(map, &mut floors, rng, 
                     entrances[room + 2] + 2,
@@ -299,17 +292,20 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, 
 
         // U turn
 
-        subdivide_corridor(map, floors, rng, sx + min * vx, sy + min * vy, 
-                                     sx + min * vx + d * vy, sy + min * vy + d * -vx,
-                                wriggle_prob);
+        subdivide_corridor(map, floors, rng, 
+                           sx + min * vx, sy + min * vy, 
+                           sx + min * vx + d * vy, sy + min * vy + d * -vx,
+                           wriggle_prob);
 
-        subdivide_corridor(map, floors, rng, sx + (min + 1) * vx + d * vy, sy + (min + 1) * vy + d * -vx, 
-                                     sx + (max - 1) * vx + d * vy, sy +  (max - 1) * vy + d * -vx,
-                                wriggle_prob);
+        subdivide_corridor(map, floors, rng, 
+                           sx + min * vx + d * vy, sy + min * vy + d * -vx, 
+                           sx + max * vx + d * vy, sy + max * vy + d * -vx,
+                           wriggle_prob);
 
-        subdivide_corridor(map, floors, rng, sx + max * vx + d * vy, sy + max * vy + d * -vx, 
-                                     sx + max * vx + 1 * vy, sy + max * vy + 1 * -vx,
-                                wriggle_prob);
+        subdivide_corridor(map, floors, rng, 
+                           sx + max * vx + d * vy, sy + max * vy + d * -vx, 
+                           sx + max * vx, sy + max * vy,
+                           wriggle_prob);
 
         // end piece
         build_straight_corridor(map, floors, sx + max * vx, sy + max * vy, dx, dy, 1);
@@ -364,29 +360,51 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
 
         place_floor_tile(map, x, y, 47, floor_color);
 
+        // check connections to neighboring floor tiles
+        let north = floors.get(&floor_key(x+1, y)).is_some();
+        let south = floors.get(&floor_key(x-1, y)).is_some();
+
+        let east = floors.get(&floor_key(x, y+1)).is_some();
+        let west = floors.get(&floor_key(x, y-1)).is_some();
+
+        // count connections, we need to handle end pieces specially
+        let mut connections = 0;
+        if north { connections += 1};
+        if south { connections += 1};
+        if east { connections += 1};
+        if west { connections += 1};
+
+        let end_piece = connections == 1;
+
+        if end_piece {
+            println!("End piece detected at {}, {}", x, y);
+        }
+
         // placement helper
-        // place_wall_tile(map, x+1, y, 0, 692);
+        // place_wall_tile(map, x, y+1, 0, 692, [1.0, 1.0, 1.0, 1.0]);
+
+        // place walls if there is no connection
 
         // back walls
         // left
-        if floors.get(&floor_key(x, y-1)).is_none() {
+        if !west && !(end_piece && east) {             
             place_wall_tile(map, x-1, y, -202, 512, wall_color);  
         }
         
         // right
-        if floors.get(&floor_key(x+1, y)).is_none() {
+        if !north && !(end_piece && south) {
             place_wall_tile(map, x+1, y, 20, 513, wall_color);
         }
 
         // front walls
 
         // left
-        if floors.get(&floor_key(x-1, y)).is_none() {
+        if !south && !(end_piece && north) {
             place_wall_tile(map, x, y, 60, 515, wall_color);
         }
 
         // right
-        if floors.get(&floor_key(x, y+1)).is_none() {
+        if !east && !(end_piece && west) {
             place_wall_tile(map, x, y, 110, 514, wall_color);  
         }
     }
