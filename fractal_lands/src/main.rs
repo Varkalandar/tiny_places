@@ -147,12 +147,13 @@ impl App {
             animation_tiles,
             ];        
 
+        let mut factory = ItemFactory::new();
         let rng = rand::rngs::StdRng::seed_from_u64(12345678901);
         let mut map = Map::new("Demo Map", map_image_file, map_backdrop_file);
         // map.load("start.map");
 
         // Testing dungeon generation
-        let start_position = generate_dungeon(&mut map);
+        let start_position = generate_dungeon(&mut map, &mut factory);
         map.set_player_position(start_position);
 
         let ui = UI::new(display, window_size);

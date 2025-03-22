@@ -19,6 +19,7 @@ pub struct Item {
     pub inventory_scale: f64,
     pub slot: Slot,
     pub map_tile_id: usize,
+    pub stack_size: u32,         // some items can be stacked and must have a stack count
 }
 
 
@@ -83,6 +84,7 @@ impl ItemFactory {
             slot: proto.slot,
         
             map_tile_id: proto.map_tile_id,
+            stack_size: 1,
         }
     }
 }
@@ -104,6 +106,7 @@ fn read_proto_items() -> Vec<Item> {
             inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
             inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
             slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),
+            stack_size: parts.next().unwrap().parse::<u32>().unwrap(),
             mods: parse_mods(&mut parts),
         });
     }
@@ -129,6 +132,7 @@ fn read_plugins() -> Vec<Item> {
             inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
             inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
             slot: Slot::Bag,
+            stack_size: 1,
             mods: Vec::new(),
         });
     }

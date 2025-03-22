@@ -687,7 +687,7 @@ data
 Tile Description
 v.5
 43
-1 1
+6 5
 0 0
 0 0
 End Of Header
@@ -695,7 +695,7 @@ Item
 v.1
 data
 2
-
+copper_1_map
 
 1
 0
@@ -703,7 +703,7 @@ data
 Tile Description
 v.5
 44
-1 1
+12 10
 0 0
 0 0
 End Of Header
@@ -711,7 +711,7 @@ Item
 v.1
 data
 2
-
+copper_1_inv
 
 1
 0
@@ -719,7 +719,7 @@ data
 Tile Description
 v.5
 45
-1 1
+9 6
 0 0
 0 0
 End Of Header
@@ -727,7 +727,7 @@ Item
 v.1
 data
 2
-
+copper_2_map
 
 1
 0
@@ -735,7 +735,7 @@ data
 Tile Description
 v.5
 46
-1 1
+18 11
 0 0
 0 0
 End Of Header
@@ -743,7 +743,7 @@ Item
 v.1
 data
 2
-
+copper_2_inv
 
 1
 0
@@ -751,7 +751,7 @@ data
 Tile Description
 v.5
 47
-1 1
+10 8
 0 0
 0 0
 End Of Header
@@ -759,7 +759,7 @@ Item
 v.1
 data
 2
-
+copper_3_map
 
 1
 0
@@ -767,7 +767,7 @@ data
 Tile Description
 v.5
 48
-1 1
+20 15
 0 0
 0 0
 End Of Header
@@ -775,7 +775,7 @@ Item
 v.1
 data
 2
-
+copper_3_inv
 
 1
 0
@@ -783,7 +783,7 @@ data
 Tile Description
 v.5
 49
-1 1
+16 8
 0 0
 0 0
 End Of Header
@@ -791,7 +791,7 @@ Item
 v.1
 data
 2
-
+copper_4_map
 
 1
 0
@@ -799,7 +799,7 @@ data
 Tile Description
 v.5
 50
-1 1
+32 16
 0 0
 0 0
 End Of Header
@@ -807,7 +807,7 @@ Item
 v.1
 data
 2
-
+copper_4_inv
 
 1
 0
@@ -815,7 +815,7 @@ data
 Tile Description
 v.5
 51
-1 1
+18 10
 0 0
 0 0
 End Of Header
@@ -823,7 +823,7 @@ Item
 v.1
 data
 2
-
+copper_5_map
 
 1
 0
@@ -831,7 +831,7 @@ data
 Tile Description
 v.5
 52
-1 1
+35 19
 0 0
 0 0
 End Of Header
@@ -839,7 +839,7 @@ Item
 v.1
 data
 2
-
+copper_5_inv
 
 1
 0
@@ -847,7 +847,7 @@ data
 Tile Description
 v.5
 53
-1 1
+19 11
 0 0
 0 0
 End Of Header
@@ -855,7 +855,7 @@ Item
 v.1
 data
 2
-
+copper_6_map
 
 1
 0
@@ -863,7 +863,7 @@ data
 Tile Description
 v.5
 54
-1 1
+38 21
 0 0
 0 0
 End Of Header
@@ -871,7 +871,7 @@ Item
 v.1
 data
 2
-
+copper_6_inv
 
 1
 0

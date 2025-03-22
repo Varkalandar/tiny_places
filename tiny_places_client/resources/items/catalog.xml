@@ -729,8 +729,8 @@
       <Description>
         <version>4</version>
         <id>43</id>
-        <width>1</width>
-        <height>1</height>
+        <width>6</width>
+        <height>5</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -738,7 +738,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_1_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -746,8 +746,8 @@
       <Description>
         <version>4</version>
         <id>44</id>
-        <width>1</width>
-        <height>1</height>
+        <width>12</width>
+        <height>10</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -755,7 +755,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_1_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -763,8 +763,8 @@
       <Description>
         <version>4</version>
         <id>45</id>
-        <width>1</width>
-        <height>1</height>
+        <width>9</width>
+        <height>6</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -772,7 +772,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_2_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -780,8 +780,8 @@
       <Description>
         <version>4</version>
         <id>46</id>
-        <width>1</width>
-        <height>1</height>
+        <width>18</width>
+        <height>11</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -789,7 +789,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_2_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -797,8 +797,8 @@
       <Description>
         <version>4</version>
         <id>47</id>
-        <width>1</width>
-        <height>1</height>
+        <width>10</width>
+        <height>8</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -806,7 +806,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_3_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -814,8 +814,8 @@
       <Description>
         <version>4</version>
         <id>48</id>
-        <width>1</width>
-        <height>1</height>
+        <width>20</width>
+        <height>15</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -823,7 +823,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_3_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -831,8 +831,8 @@
       <Description>
         <version>4</version>
         <id>49</id>
-        <width>1</width>
-        <height>1</height>
+        <width>16</width>
+        <height>8</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -840,7 +840,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_4_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -848,8 +848,8 @@
       <Description>
         <version>4</version>
         <id>50</id>
-        <width>1</width>
-        <height>1</height>
+        <width>32</width>
+        <height>16</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -857,7 +857,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_4_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -865,8 +865,8 @@
       <Description>
         <version>4</version>
         <id>51</id>
-        <width>1</width>
-        <height>1</height>
+        <width>18</width>
+        <height>10</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -874,7 +874,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_5_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -882,8 +882,8 @@
       <Description>
         <version>4</version>
         <id>52</id>
-        <width>1</width>
-        <height>1</height>
+        <width>35</width>
+        <height>19</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -891,7 +891,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_5_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -899,8 +899,8 @@
       <Description>
         <version>4</version>
         <id>53</id>
-        <width>1</width>
-        <height>1</height>
+        <width>19</width>
+        <height>11</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -908,7 +908,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_6_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -916,8 +916,8 @@
       <Description>
         <version>4</version>
         <id>54</id>
-        <width>1</width>
-        <height>1</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -925,7 +925,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>copper_6_inv</string>
         <string></string>
       </Metadata>
     </Tile>

@@ -8,8 +8,9 @@ use crate::MAP_GROUND_LAYER;
 use crate::MAP_OBJECT_LAYER;
 use crate::Map;
 use crate::map::MapObject;
+use crate::ItemFactory;
 
-pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
+pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> [f64; 2] {
 
 /*
     let layer = MAP_GROUND_LAYER;
@@ -32,7 +33,7 @@ pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
     // place_floor_tile(map, -5 + 5, 5 + 5);
     // build_winded_corridor(map, &mut rng, 0, 0, 10, 10);
 
-    let start_pos = rooms_and_corridors(map, &mut rng);
+    let start_pos = rooms_and_corridors(map, factory, &mut rng);
 
     // place stairs
     place_wall_tile(map, start_pos[0], start_pos[1], 0, 248, [1.0, 1.0, 1.0, 1.0]);
@@ -43,7 +44,7 @@ pub fn generate_dungeon(map: &mut Map) -> [f64; 2] {
 }
 
 
-fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) -> [i32; 2] {
+fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &mut R) -> [i32; 2] {
 
     let mut entrances: [i32; 16 * 8] = [0; 16 * 8];
     let mut startpos_x = 0;
@@ -76,7 +77,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) -> [i32; 2] 
             entrances[room + 6] = l;
             entrances[room + 7] = y;
 
-            build_room(map, rng, l, t, r, b, &entrances[room .. room + 8]);
+            build_room(map, factory, rng, l, t, r, b, &entrances[room .. room + 8]);
 
             // record starting position
             if rx == 0 && ry == 0 {
@@ -173,16 +174,8 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, rng: &mut R) -> [i32; 2] 
 }
 
 
-fn create_mob(map: &mut Map, tile_id: usize, layer: usize, position: Vector2<f64>, height: f64, scale: f64) -> u64 {
-    let mob = map.factory.create_mob(tile_id, layer, position, height, scale);
-    let mob_id = mob.uid;
-    map.layers[layer].insert(mob_id, mob);
-
-    mob_id
-}
-
-
-fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx: i32, dy: i32,
+fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &mut R, 
+                               sx: i32, sy: i32, dx: i32, dy: i32,
                                entrances: &[i32]) {
 
     let wall_color = [1.0, 1.0, 1.0, 1.0];
@@ -248,6 +241,9 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, rng: &mut R, sx: i32, sy: i32, dx:
 
     // right room corner
     place_wall_tile(map, dx+1, dy, 131, 501, wall_color);
+
+
+    place_coins(map, factory, sx + 1, sy + 1, 3, rng.random_range(1 .. 6));
 }
 
 
@@ -449,6 +445,36 @@ fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize, color: 
     let mob = map.layers[layer].get_mut(&mob_id).unwrap();
 
     mob.visual.color = color;
+}
+
+
+fn place_coins(map: &mut Map, factory: &mut ItemFactory,
+               x: i32, y: i32, id: usize, count: u32) -> u64 {
+    let layer = MAP_OBJECT_LAYER;
+    let height = 0.0;
+    let scale = 1.0;
+
+    let mob_id = create_mob(map, 0, layer, map_pos(x, y, 0, scale), height, scale);
+
+    let mob = map.layers[layer].get_mut(&mob_id).unwrap();
+
+    let mut item = factory.create(id);
+    item.stack_size = count;
+
+    mob.visual.tileset_id = 6;
+    mob.visual.base_image_id = item.map_tile_id + (count * 2) as usize;  // two ids: map image id, inventory image id -> count * 2
+    mob.visual.current_image_id = mob.visual.base_image_id;
+    mob.item = Some(item);
+    mob_id
+}
+
+
+fn create_mob(map: &mut Map, tile_id: usize, layer: usize, position: Vector2<f64>, height: f64, scale: f64) -> u64 {
+    let mob = map.factory.create_mob(tile_id, layer, position, height, scale);
+    let mob_id = mob.uid;
+    map.layers[layer].insert(mob_id, mob);
+
+    mob_id
 }
 
 
