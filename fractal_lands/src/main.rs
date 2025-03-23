@@ -12,6 +12,10 @@ use glium::Display;
 use glium::Frame;
 use glium::Texture2d;
 use glium::Program;
+use glium::winit::application::ApplicationHandler;
+use glium::winit::event_loop::ActiveEventLoop;
+use glium::winit::event::WindowEvent;
+use glium::winit::window::{Window, WindowId};
 use glium::winit::keyboard::Key;
 use glium::winit::event::MouseScrollDelta;
 use glium::VertexBuffer;
@@ -117,7 +121,7 @@ pub struct App {
 
 impl App {
     
-    fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> App {
+    fn new(window: Window, display: Display<WindowSurface>, program: Program, window_size: [u32; 2]) -> App {
 
         // let map_image_file = "map_wasteland.png";
         let map_image_file = "map_soft_grass.png";
@@ -156,7 +160,7 @@ impl App {
         let start_position = generate_dungeon(&mut map, &mut factory);
         map.set_player_position(start_position);
 
-        let ui = UI::new(display, window_size);
+        let ui = UI::new(window, display, program, window_size);
         
         let editor = MapEditor::new();
 
@@ -240,7 +244,7 @@ impl App {
     }
 
 
-    fn render(&mut self, program: &Program) {
+    fn render(&mut self) {
 
         let t0 = SystemTime::now();
 
@@ -267,15 +271,15 @@ impl App {
         target.clear_depth(1.0);
 
         
-        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.black_texture, 
+        draw_texture(&self.ui.display, &mut target, &self.ui.program, BlendMode::Blend, &self.world.black_texture, 
                      0.0, 0.0, 1000.0, 1000.0, &[0.8, 0.8, 0.8, 1.0]);
         
 
         /*
-        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_backdrop, 
+        draw_texture(&self.ui.display, &mut target, &self.ui.program, BlendMode::Blend, &self.world.map_backdrop, 
                      back_off_x, back_off_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
 
-        draw_texture(&self.ui.display, &mut target, program, BlendMode::Blend, &self.world.map_texture, 
+        draw_texture(&self.ui.display, &mut target, &self.ui.program, BlendMode::Blend, &self.world.map_texture, 
                      offset_x, offset_y, 2.0, 2.0, &[0.8, 0.8, 0.8, 1.0]);
         */
 
@@ -283,22 +287,21 @@ impl App {
 
         
         // draw ground decorations (flat)
-        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_GROUND_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, &self.ui.program, &buffer, world, tex_white, MAP_GROUND_LAYER);
 
         // draw decorations (upright things)
-        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_OBJECT_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, &self.ui.program, &buffer, world, tex_white, MAP_OBJECT_LAYER);
 
         // draw clouds
-        Self::render_layer(&self.ui.display, &mut target, program, &buffer, world, tex_white, MAP_CLOUD_LAYER);
+        Self::render_layer(&self.ui.display, &mut target, &self.ui.program, &buffer, world, tex_white, MAP_CLOUD_LAYER);
         
 
         {
             let world = &mut self.world;
             let ui = &mut self.ui;
-            self.controllers.current().draw(&mut target, program, ui, world);    
-            self.controllers.current().draw_overlay(&mut target, program, ui, world);    
+            self.controllers.current().draw(&mut target, ui, world);    
+            self.controllers.current().draw_overlay(&mut target, ui, world);    
         }
-
 
         
         let now = SystemTime::now();
@@ -310,7 +313,7 @@ impl App {
             let s = format!("Time: {}s", secs);
             let font = &self.ui.context.font_14;
         
-            font.draw(&self.ui.display, &mut target, program, 10, 600, &s, &[1.0, 1.0, 1.0, 1.0]);
+            font.draw(&self.ui.display, &mut target, &self.ui.program, 10, 600, &s, &[1.0, 1.0, 1.0, 1.0]);
         }
         
 
@@ -583,111 +586,115 @@ fn quadratic_fade(x: f64) -> f32 {
     (1.0 - (x*x)) as f32
 }
 
-/*
+
 impl ApplicationHandler for App {
 
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        self.window = Some(event_loop.create_window(glium::winit::window::Window::default_attributes()).unwrap());
+        // Why and how to do that?
+        // self.window = Some(event_loop.create_window(glium::winit::window::Window::default_attributes()).unwrap());
     }
     
     fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
         match event {
-            glium::winit::event::Event::WindowEvent { event, .. } => match event {            
-                glium::winit::event::Event::WindowEvent::CloseRequested => {
-                    println!("The close button was pressed; stopping");
-                    event_loop.exit();
-                },
 
-                glium::winit::event::Event::WindowEvent::RedrawRequested => {
-                    let redraw_required = self.update();
-                    if redraw_required {
-                        self.render(&program);
-                    }
-                }
-
-                // Because glium doesn't know about windows we need to resize the display
-                // when the window's size has changed.
-                glium::winit::event::WindowEvent::Resized(window_size) => {
-                    self.ui.display.resize(window_size.into());
-                    self.ui.context.window_size = [window_size.width, window_size.height];
-                },
-
-                glium::winit::event::WindowEvent::MouseInput { device_id: _, button, state } => {
-    
-                    let button_event = ButtonEvent {
-                        args: ButtonArgs {
-                            state: if state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
-                            button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
-                            scancode: None,
-                        },
-                        mx: self.ui.context.mouse_state.position[0],
-                        my: self.ui.context.mouse_state.position[1],
-                    };
-
-                    // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
-
-                    self.handle_button_event(&button_event);
-                },
-
-                glium::winit::event::WindowEvent::CursorMoved { device_id: _, position } => {
-                    // println!("mouse position = {:?}", position);
-
-                    let event = MouseMoveEvent {
-                        mx: position.x,
-                        my: position.y,
-                    };
-                    self.handle_mouse_move_event(&event);
-                },
-
-                glium::winit::event::WindowEvent::MouseWheel { device_id: _, delta, phase: _ } => {
-                    println!("wheel delta = {:?}", delta);
-
-                    match delta {
-                        MouseScrollDelta::LineDelta(dx, dy) => {
-                            let event = ScrollEvent {
-                                dx: dx as f64,
-                                dy: dy as f64,
-                                mx: app.ui.context.mouse_state.position[0],
-                                my: app.ui.context.mouse_state.position[1],
-                            };
-                            self.handle_scroll_event(&event);
-                        },
-                        _ => {
-
-                        }
-                    }
-                },
-
-                glium::winit::event::WindowEvent::KeyboardInput { device_id: _, event, is_synthetic: _ } => {
-                    
-                    println!("key event = {:?}", event);
-                    // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
-
-                    let button_event = ButtonEvent {
-                        args: ButtonArgs {
-                            state: if event.state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
-                            button: Button::Keyboard(event.logical_key),
-                            scancode: None,
-                        },
-                        mx: self.ui.context.mouse_state.position[0],
-                        my: self.ui.context.mouse_state.position[1],
-                    };
-
-                    app.handle_button_event(&button_event);
-                }
-
-                _ => (),
+            WindowEvent::CloseRequested => {
+                println!("The close button was pressed; stopping");
+                event_loop.exit();
             },
+
+            WindowEvent::RedrawRequested => {
+                let redraw_required = self.update();
+                if redraw_required {
+                    self.render();
+                }
+
+                self.ui.window.request_redraw();                
+            }
+
+            // Because glium doesn't know about windows we need to resize the display
+            // when the window's size has changed.
+            glium::winit::event::WindowEvent::Resized(window_size) => {
+                self.ui.display.resize(window_size.into());
+                self.ui.context.window_size = [window_size.width, window_size.height];
+            },
+
+            glium::winit::event::WindowEvent::MouseInput { device_id: _, button, state } => {
+
+                let button_event = ButtonEvent {
+                    args: ButtonArgs {
+                        state: if state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                        button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
+                        scancode: None,
+                    },
+                    mx: self.ui.context.mouse_state.position[0],
+                    my: self.ui.context.mouse_state.position[1],
+                };
+
+                // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
+
+                self.handle_button_event(&button_event);
+            },
+
+            glium::winit::event::WindowEvent::CursorMoved { device_id: _, position } => {
+                // println!("mouse position = {:?}", position);
+
+                let event = MouseMoveEvent {
+                    mx: position.x,
+                    my: position.y,
+                };
+                self.handle_mouse_move_event(&event);
+            },
+
+            glium::winit::event::WindowEvent::MouseWheel { device_id: _, delta, phase: _ } => {
+                println!("wheel delta = {:?}", delta);
+
+                match delta {
+                    MouseScrollDelta::LineDelta(dx, dy) => {
+                        let event = ScrollEvent {
+                            dx: dx as f64,
+                            dy: dy as f64,
+                            mx: self.ui.context.mouse_state.position[0],
+                            my: self.ui.context.mouse_state.position[1],
+                        };
+                        self.handle_scroll_event(&event);
+                    },
+                    _ => {
+
+                    }
+                }
+            },
+
+            glium::winit::event::WindowEvent::KeyboardInput { device_id: _, event, is_synthetic: _ } => {
+                
+                println!("key event = {:?}", event);
+                // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
+
+                let button_event = ButtonEvent {
+                    args: ButtonArgs {
+                        state: if event.state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                        button: Button::Keyboard(event.logical_key),
+                        scancode: None,
+                    },
+                    mx: self.ui.context.mouse_state.position[0],
+                    my: self.ui.context.mouse_state.position[1],
+                };
+
+                self.handle_button_event(&button_event);
+            }
+
+            /*
             // By requesting a redraw in response to a RedrawEventsCleared event we get continuous rendering.
             // For applications that only change due to user input you could remove this handler.
             glium::winit::event::Event::AboutToWait => {
                 window.request_redraw();
             },
+            */
+
             _ => (),
-        };
+        }
     }
 }
-*/
+
 
 fn main() {
     
@@ -708,103 +715,7 @@ fn main() {
 
     let program = build_program(&display);
 
-    let mut app = App::new(display, window_size);
+    let mut app = App::new(window, display, program, window_size);
 
-    // Now we wait until the program is closed
-    event_loop.run(move |event, window_target| {
-        match event {
-            glium::winit::event::Event::WindowEvent { event, .. } => match event {
-                // This event is sent by the OS when you close the Window, or request the program to quit via the taskbar.
-                glium::winit::event::WindowEvent::CloseRequested => {
-                    window_target.exit();
-                },
-                // We now need to render everyting in response to a RedrawRequested event due to the animation
-                glium::winit::event::WindowEvent::RedrawRequested => {
-                    let redraw_required = app.update();
-                    if redraw_required {
-                        app.render(&program);
-                    }
-                },
-                // Because glium doesn't know about windows we need to resize the display
-                // when the window's size has changed.
-                glium::winit::event::WindowEvent::Resized(window_size) => {
-                    app.ui.display.resize(window_size.into());
-                    app.ui.context.window_size = [window_size.width, window_size.height];
-                },
-
-                glium::winit::event::WindowEvent::MouseInput { device_id: _, button, state } => {
-    
-                    let button_event = ButtonEvent {
-                        args: ButtonArgs {
-                            state: if state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
-                            button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
-                            scancode: None,
-                        },
-                        mx: app.ui.context.mouse_state.position[0],
-                        my: app.ui.context.mouse_state.position[1],
-                    };
-
-                    // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
-
-                    app.handle_button_event(&button_event);
-                },
-
-                glium::winit::event::WindowEvent::CursorMoved { device_id: _, position } => {
-                    // println!("mouse position = {:?}", position);
-
-                    let event = MouseMoveEvent {
-                        mx: position.x,
-                        my: position.y,
-                    };
-                    app.handle_mouse_move_event(&event);
-                },
-
-                glium::winit::event::WindowEvent::MouseWheel { device_id: _, delta, phase: _ } => {
-                    println!("wheel delta = {:?}", delta);
-
-                    match delta {
-                        MouseScrollDelta::LineDelta(dx, dy) => {
-                            let event = ScrollEvent {
-                                dx: dx as f64,
-                                dy: dy as f64,
-                                mx: app.ui.context.mouse_state.position[0],
-                                my: app.ui.context.mouse_state.position[1],
-                            };
-                            app.handle_scroll_event(&event);
-                        },
-                        _ => {
-
-                        }
-                    }
-                },
-
-                glium::winit::event::WindowEvent::KeyboardInput { device_id: _, event, is_synthetic: _ } => {
-                    
-                    println!("key event = {:?}", event);
-                    // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
-
-                    let button_event = ButtonEvent {
-                        args: ButtonArgs {
-                            state: if event.state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
-                            button: Button::Keyboard(event.logical_key),
-                            scancode: None,
-                        },
-                        mx: app.ui.context.mouse_state.position[0],
-                        my: app.ui.context.mouse_state.position[1],
-                    };
-
-                    app.handle_button_event(&button_event);
-                }
-
-                _ => (),
-            },
-            // By requesting a redraw in response to a RedrawEventsCleared event we get continuous rendering.
-            // For applications that only change due to user input you could remove this handler.
-            glium::winit::event::Event::AboutToWait => {
-                window.request_redraw();
-            },
-            _ => (),
-        };
-    })
-    .unwrap();
+    event_loop.run_app(&mut app).unwrap();
 }

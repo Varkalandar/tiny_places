@@ -116,20 +116,20 @@ impl UiController for Game {
     }
 
 
-    fn draw(&mut self, target: &mut Frame, program: &Program,
+    fn draw(&mut self, target: &mut Frame,
             ui: &mut UI, world: &mut Self::Appdata) {
 
-        ui.draw(target, program);
+        ui.draw(target);
  
         if self.show_inventory {
-            self.piv.draw(ui, target, program, 0, 10, &world.player_inventory)
+            self.piv.draw(ui, target, 0, 10, &world.player_inventory)
         }
     }
 
 
-    fn draw_overlay(&mut self, target: &mut Frame, program: &Program,
+    fn draw_overlay(&mut self, target: &mut Frame,
                     ui: &mut UI, _world: &mut Self::Appdata) {
-        ui.context.font_14.draw(&ui.display, target, program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
+        ui.context.font_14.draw(&ui.display, target, &ui.program, 10, 20, "Game testing mode", &[1.0, 1.0, 1.0, 1.0]);
     }
 
 

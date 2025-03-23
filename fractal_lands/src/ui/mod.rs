@@ -8,6 +8,7 @@ use std::cmp::{min, max};
 
 use glutin::surface::WindowSurface;
 use glium::Display;
+use glium::winit::window::Window;
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
 use glium::Program;
@@ -110,12 +111,12 @@ pub trait UiController {
         false
     }
 
-    fn draw(&mut self, _target: &mut Frame, _program: &Program,
+    fn draw(&mut self, _target: &mut Frame,
             _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
     
-    fn draw_overlay(&mut self, _target: &mut Frame, _program: &Program,
+    fn draw_overlay(&mut self, _target: &mut Frame,
                     _ui: &mut UI, _appdata: &mut Self::Appdata) {
 
     }
@@ -165,18 +166,20 @@ pub struct UI
     pub root: UiComponent,
     pub context: UiContext,
 
+    pub window: Window,
     pub display: Display<WindowSurface>,
+    pub program: Program,
 }
 
 
 impl UI {
 
-    pub fn new(display: Display<WindowSurface>, window_size: [u32; 2]) -> UI {
+    pub fn new(window: Window, display: Display<WindowSurface>, program: Program, window_size: [u32; 2]) -> UI {
         
         let pixels = vec![255_u8; 1024];
         let tex_white = texture_from_data(&display, pixels, 16, 16);
 
-        let c = UiContext { 
+        let context = UiContext { 
             window_size,
             scissors: None,
 
@@ -190,8 +193,10 @@ impl UI {
 
         UI { 
             root: UI::make_container_intern(0, 0, window_size[0] as i32, window_size[1] as i32),
+            window,
             display,
-            context: c,
+            program,
+            context,
         }
     }
 
@@ -293,10 +298,10 @@ impl UI {
     }
 
 
-    pub fn draw(&mut self, target: &mut Frame, program: &Program) {
+    pub fn draw(&mut self, target: &mut Frame) {
         let context = &mut self.context;
         let head = &self.root.head;
-        head.draw(&self.display, target, program, context, 0, 0);
+        head.draw(&self.display, target, &self.program, context, 0, 0);
     }
 
 
