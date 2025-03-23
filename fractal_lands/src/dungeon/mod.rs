@@ -9,6 +9,7 @@ use crate::MAP_OBJECT_LAYER;
 use crate::Map;
 use crate::map::MapObject;
 use crate::ItemFactory;
+use crate::item::Item;
 
 pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> [f64; 2] {
 
@@ -462,8 +463,8 @@ fn place_coins(map: &mut Map, factory: &mut ItemFactory,
     item.stack_size = count;
 
     mob.visual.tileset_id = 6;
-    mob.visual.base_image_id = item.map_tile_id + (count * 2) as usize;  // two ids: map image id, inventory image id -> count * 2
-    mob.visual.current_image_id = mob.visual.base_image_id;
+    mob.visual.base_image_id = item.map_tile_id;  
+    mob.visual.current_image_id = item.map_tile_id + Item::calc_image_offset_for_stack_size(count);
     mob.item = Some(item);
     mob_id
 }

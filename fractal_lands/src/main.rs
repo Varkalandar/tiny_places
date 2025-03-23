@@ -583,6 +583,111 @@ fn quadratic_fade(x: f64) -> f32 {
     (1.0 - (x*x)) as f32
 }
 
+/*
+impl ApplicationHandler for App {
+
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        self.window = Some(event_loop.create_window(glium::winit::window::Window::default_attributes()).unwrap());
+    }
+    
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
+        match event {
+            glium::winit::event::Event::WindowEvent { event, .. } => match event {            
+                glium::winit::event::Event::WindowEvent::CloseRequested => {
+                    println!("The close button was pressed; stopping");
+                    event_loop.exit();
+                },
+
+                glium::winit::event::Event::WindowEvent::RedrawRequested => {
+                    let redraw_required = self.update();
+                    if redraw_required {
+                        self.render(&program);
+                    }
+                }
+
+                // Because glium doesn't know about windows we need to resize the display
+                // when the window's size has changed.
+                glium::winit::event::WindowEvent::Resized(window_size) => {
+                    self.ui.display.resize(window_size.into());
+                    self.ui.context.window_size = [window_size.width, window_size.height];
+                },
+
+                glium::winit::event::WindowEvent::MouseInput { device_id: _, button, state } => {
+    
+                    let button_event = ButtonEvent {
+                        args: ButtonArgs {
+                            state: if state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                            button: if button == glium::winit::event::MouseButton::Left {Button::Mouse(MouseButton::Left)} else {Button::Mouse(MouseButton::Right)},
+                            scancode: None,
+                        },
+                        mx: self.ui.context.mouse_state.position[0],
+                        my: self.ui.context.mouse_state.position[1],
+                    };
+
+                    // println!("Button = {:?}, state = {:?}, button_event = {:?}", button, state, button_event);
+
+                    self.handle_button_event(&button_event);
+                },
+
+                glium::winit::event::WindowEvent::CursorMoved { device_id: _, position } => {
+                    // println!("mouse position = {:?}", position);
+
+                    let event = MouseMoveEvent {
+                        mx: position.x,
+                        my: position.y,
+                    };
+                    self.handle_mouse_move_event(&event);
+                },
+
+                glium::winit::event::WindowEvent::MouseWheel { device_id: _, delta, phase: _ } => {
+                    println!("wheel delta = {:?}", delta);
+
+                    match delta {
+                        MouseScrollDelta::LineDelta(dx, dy) => {
+                            let event = ScrollEvent {
+                                dx: dx as f64,
+                                dy: dy as f64,
+                                mx: app.ui.context.mouse_state.position[0],
+                                my: app.ui.context.mouse_state.position[1],
+                            };
+                            self.handle_scroll_event(&event);
+                        },
+                        _ => {
+
+                        }
+                    }
+                },
+
+                glium::winit::event::WindowEvent::KeyboardInput { device_id: _, event, is_synthetic: _ } => {
+                    
+                    println!("key event = {:?}", event);
+                    // println!("Key = {:?} state = {:?} modifiers = {:?}", event.keycode, event.state, event.modifiers);
+
+                    let button_event = ButtonEvent {
+                        args: ButtonArgs {
+                            state: if event.state == glium::winit::event::ElementState::Pressed { ButtonState::Press } else { ButtonState::Release },
+                            button: Button::Keyboard(event.logical_key),
+                            scancode: None,
+                        },
+                        mx: self.ui.context.mouse_state.position[0],
+                        my: self.ui.context.mouse_state.position[1],
+                    };
+
+                    app.handle_button_event(&button_event);
+                }
+
+                _ => (),
+            },
+            // By requesting a redraw in response to a RedrawEventsCleared event we get continuous rendering.
+            // For applications that only change due to user input you could remove this handler.
+            glium::winit::event::Event::AboutToWait => {
+                window.request_redraw();
+            },
+            _ => (),
+        };
+    }
+}
+*/
 
 fn main() {
     

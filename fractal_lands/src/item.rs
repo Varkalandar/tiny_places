@@ -25,10 +25,10 @@ pub struct Item {
 
 impl Item {
     
-    pub fn get_attribute_total_mod(self, attribute: Attribute) -> f32 {
+    pub fn get_attribute_total_mod(&self, attribute: Attribute) -> f32 {
         let mut sum: f32 = 0.0;
 
-        for m in self.mods {
+        for m in &self.mods {
             if m.attribute == attribute {
                 sum = sum + m.min_value as f32;
             }            
@@ -37,9 +37,23 @@ impl Item {
         sum
     }
     
-    pub fn print_debug(self) {
+    pub fn calc_image_offset_for_stack_size(stack_size: u32) -> usize {
+        match stack_size {
+            0 => 0,    
+            1 => 1,    
+            2 => 2,
+            3 .. 10 => 3,
+            10 .. 100 => 4,
+            100 .. 10000 => 5,
+            
+            _ => 0,
+        }
+    }
+
+    pub fn print_debug(&self) {
         println!("{}", self.name);
     }
+
 }
 
 
