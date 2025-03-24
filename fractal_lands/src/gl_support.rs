@@ -297,7 +297,7 @@ pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
 
 
 
-pub fn draw_texture_wb<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
+pub fn draw_texture_wb(
     target: &mut Frame,   
     program: &Program,
     buffer: &VertexBuffer<Vertex>,
@@ -324,14 +324,13 @@ pub fn draw_texture_wb<T: SurfaceTypeTrait + ResizeableSurface>(display: &Displa
         Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [0.0, 0.0] },
     ];
 
-    draw_shape_wb(display, target, program, buffer, blend, 
+    draw_shape_wb(target, program, buffer, blend, 
                   display_width, display_height,
                   &shape, texture, color, None);
 }
 
 
-pub fn draw_shape_wb<T: SurfaceTypeTrait + ResizeableSurface>(
-    display: &Display<T>,
+pub fn draw_shape_wb(
     target: &mut Frame,   
     program: &Program,  
     buffer: &VertexBuffer<Vertex>,

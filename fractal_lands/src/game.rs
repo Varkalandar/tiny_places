@@ -2,7 +2,6 @@ use vecmath::{Vector2, vec2_sub, vec2_add, vec2_scale, vec2_normalized};
 
 use glium::Texture2d;
 use glium::winit::keyboard::Key;
-use glium::Program;
 use glium::Frame;
 
 use crate::ui::{UI, UiController, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
@@ -14,7 +13,6 @@ use crate::map::MoveEndAction;
 use crate::map::MapObject;
 use crate::map::MapObjectFactory;
 use crate::map::MobType;
-use crate::MAP_RESOURCE_PATH;
 use crate::MAP_OBJECT_LAYER;
 use crate::PROJECTILE_TILESET;
 

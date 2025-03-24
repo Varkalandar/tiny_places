@@ -211,12 +211,12 @@ impl PlayerInventoryView {
         tw = tw * scale;
         th = th * scale;
 
-        let ox = (slot_w - tw) / 2.0;
-        let oy = (slot_h - th) / 2.0;
+        let origin_x = (slot_w - tw) / 2.0;
+        let origin_y = (slot_h - th) / 2.0;
 
         draw_texture(&display, target, program, BlendMode::Blend, 
                      &tile.tex, 
-                     entry_x + ox, entry_y + oy, scale, scale, &[1.0, 1.0, 1.0, 1.0]);
+                     entry_x + origin_x, entry_y + origin_y, scale, scale, &[1.0, 1.0, 1.0, 1.0]);
     }
 
 

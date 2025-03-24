@@ -7,7 +7,6 @@ use rand::prelude::*;
 use crate::MAP_GROUND_LAYER;
 use crate::MAP_OBJECT_LAYER;
 use crate::Map;
-use crate::map::MapObject;
 use crate::ItemFactory;
 use crate::item::Item;
 
@@ -104,7 +103,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
 
             if ry < 3 {
                 // straight starting stubs
-                build_straight_corridor(map, &mut floors,
+                build_straight_corridor(&mut floors,
                     entrances[room + 4], //  = x;
                     entrances[room + 5] + 1, //  = b;
                     entrances[room + 4], //  = x;
@@ -112,7 +111,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
                     0
                 );
 
-                build_straight_corridor(map, &mut floors,
+                build_straight_corridor(&mut floors,
                     entrances[room + 8 * 4 + 0], //  = x;
                     entrances[room + 8 * 4 + 1] - 1, //  = b;
                     entrances[room + 8 * 4 + 0], //  = x;
@@ -141,7 +140,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
             if rx < 3 {
                 // straight starting stubs
                 
-                build_straight_corridor(map, &mut floors,
+                build_straight_corridor(&mut floors,
                     entrances[room + 2] + 1,
                     entrances[room + 3],
                     entrances[room + 2] + 2,
@@ -149,7 +148,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
                     0,
                 );
 
-                build_straight_corridor(map, &mut floors,
+                build_straight_corridor(&mut floors,
                     entrances[room + 8 + 6] - 1,
                     entrances[room + 8 + 7],
                     entrances[room + 8 + 6] - 2,
@@ -290,14 +289,14 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, 
 
     if n < 6 || p > wriggle_prob{
         // too short to be wriggled. Build straight, include end piece
-        build_straight_corridor(map, floors, sx, sy, dx, dy, 1);
+        build_straight_corridor(floors, sx, sy, dx, dy, 1);
     }
     else {
         let min = 2;
         let max = n - 2;
 
         // start piece
-        build_straight_corridor(map, floors, sx, sy, sx + min * vx, sy + min * vy, 0);
+        build_straight_corridor(floors, sx, sy, sx + min * vx, sy + min * vy, 0);
 
         // depth of turn
         let d:i32 = rng.random_range(-n/2 .. n/2);
@@ -320,7 +319,7 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, 
                            wriggle_prob);
 
         // end piece
-        build_straight_corridor(map, floors, sx + max * vx, sy + max * vy, dx, dy, 1);
+        build_straight_corridor(floors, sx + max * vx, sy + max * vy, dx, dy, 1);
     }
 }
 
@@ -330,7 +329,7 @@ fn subdivide_corridor<R: Rng + ?Sized>(map: &mut Map, floors: &mut HashMap<i32, 
  *
  * @param end The end piece of the corridor will be omitted of end is zero. Pass one to place the end piece too
  */
-fn build_straight_corridor(map: &mut Map, floors: &mut HashMap<i32, [i32; 2]>,
+fn build_straight_corridor(floors: &mut HashMap<i32, [i32; 2]>,
                            sx: i32, sy: i32, dx: i32, dy: i32, end: i32) {
     let vx = (dx - sx).signum();
     let vy = (dy - sy).signum();
@@ -339,7 +338,7 @@ fn build_straight_corridor(map: &mut Map, floors: &mut HashMap<i32, [i32; 2]>,
     let mut x = sx;
     let mut y = sy;
 
-    for i in 0..n {
+    for _i in 0..n {
         add_floor_coordinate(floors, x, y);
 
         x += vx;
@@ -366,7 +365,7 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
     let wall_color = [0.53, 0.54, 0.55, 1.0];
     let floor_color = [0.32, 0.30, 0.27, 1.0];
 
-    for (key, value) in floors {
+    for (_key, value) in floors {
         let x = value[0];
         let y = value[1];
 

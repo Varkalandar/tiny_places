@@ -38,7 +38,6 @@ mod inventory;
 mod projectile;
 mod dungeon;
 mod map;
-mod cell_map;
 mod editor;
 mod game;
 mod ui;
@@ -51,7 +50,6 @@ mod gl_support;
 
 use dungeon::*;
 use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
-// use cell_map::CellMap;
 use ui::{UI, UiController, TileSet, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
@@ -372,7 +370,7 @@ impl App {
 
             let tpos = calc_tile_position(&mob.position, tile.foot, mob.visual.scale, player_position, &window_center);
 
-            draw_texture_wb(display, target, program, &buffer,
+            draw_texture_wb(target, program, &buffer,
                 mob.visual.blend,
                 display_width,
                 display_height,
@@ -388,7 +386,7 @@ impl App {
                layer_id == world.map.selected_layer &&
                mob.uid == world.map.selected_item {
                 
-                draw_texture_wb(display, target, program, buffer,
+                draw_texture_wb(target, program, buffer,
                     BlendMode::Add,
                     display_width,
                     display_height,
@@ -406,7 +404,7 @@ impl App {
                 let glow_tile = &world.layer_tileset[2].tiles_by_id[&21]; // cloud set
                 let tpos = calc_tile_position(&mob.position, glow_tile.foot, 0.9, player_position, &window_center);
 
-                draw_texture_wb(display, target, program, buffer,
+                draw_texture_wb(target, program, buffer,
                     BlendMode::Add,
                     display_width,
                     display_height,
@@ -437,7 +435,7 @@ impl App {
 
                         let fade = quadratic_fade(p.age / p.lifetime);
 
-                        draw_texture_wb(display, target, program, buffer,
+                        draw_texture_wb(target, program, buffer,
                             BlendMode::Add,
                             display_width,
                             display_height,
@@ -592,12 +590,12 @@ fn quadratic_fade(x: f64) -> f32 {
 
 impl ApplicationHandler for App {
 
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+    fn resumed(&mut self, _event_loop: &ActiveEventLoop) {
         // Why and how to do that?
         // self.window = Some(event_loop.create_window(glium::winit::window::Window::default_attributes()).unwrap());
     }
     
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, _id: WindowId, event: WindowEvent) {
         match event {
 
             WindowEvent::CloseRequested => {
