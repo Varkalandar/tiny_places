@@ -49,7 +49,7 @@ mod player_inventory_view;
 mod gl_support;
 
 use dungeon::*;
-use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
+use map::{Map, MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER, MoveEndAction};
 use ui::{UI, UiController, TileSet, Button, ButtonState, ButtonArgs, MouseButton, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use editor::MapEditor;
 use game::Game;
@@ -488,10 +488,16 @@ impl App {
             if event.args.button == Button::Keyboard(Key::Character("e".into())) {    
                 self.controllers.edit = true;
                 println!("Switching to editor mode.");
+
+                let player = self.world.map.layers[MAP_OBJECT_LAYER].get_mut(&self.world.map.player_id).unwrap();
+                player.move_end_action = MoveEndAction::None;
             }
             if event.args.button == Button::Keyboard(Key::Character("g".into())) {                        
                 self.controllers.edit = false;
                 println!("Switching to game mode.");
+                
+                let player = self.world.map.layers[MAP_OBJECT_LAYER].get_mut(&self.world.map.player_id).unwrap();
+                player.move_end_action = MoveEndAction::PickItemsUp;
             }        
         }
 

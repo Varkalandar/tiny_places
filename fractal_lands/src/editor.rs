@@ -7,6 +7,7 @@ use glium::Frame;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};
 use crate::map::{MAP_GROUND_LAYER, MAP_OBJECT_LAYER, MAP_CLOUD_LAYER};
+use crate::Map;
 use crate::GameWorld;
 use crate::sound::Sound;
 use crate::gl_support::BlendMode;
@@ -234,7 +235,7 @@ impl UiController for MapEditor {
                                               &ui.context.mouse_state.position);
 
                 let map = &mut world.map;
-                let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
+                let option = Map::find_nearest_object(&map.layers[map.selected_layer], &pos, 100.0, 0);
         
                 match option {
                     None => {
@@ -266,7 +267,7 @@ impl UiController for MapEditor {
         // Dragging?
         if ui.context.mouse_state.left_pressed {
             let map = &mut world.map; 
-            let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
+            let option = Map::find_nearest_object(&map.layers[map.selected_layer], &pos, 100.0, 0);
 
             match option {
                 None => {
@@ -363,10 +364,11 @@ impl UiController for MapEditor {
 
     fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
         let map = &mut world.map;
+        let inv = &mut world.player_inventory;
         let rng = &mut world.rng;
         let speaker = &mut world.speaker;
 
-        map.update(dt, rng, speaker);
+        map.update(dt, inv, rng, speaker);
     }
 }
 
@@ -384,7 +386,7 @@ impl MapEditor {
     fn select_nearest_item(&self, ui: &UI, world: &mut GameWorld) -> bool {
         let pos = screen_to_world_pos(ui, &world.map.get_player_position(), &ui.context.mouse_state.position);
         let map = &mut world.map;
-        let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
+        let option = Map::find_nearest_object(&map.layers[map.selected_layer], &pos, 100.0, 0);
 
         match option {
             None => {

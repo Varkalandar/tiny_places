@@ -43,11 +43,15 @@ impl Inventory {
 
     pub fn put_item(&mut self, item: Item, slot: Slot) {
 
+        println!("Adding item {:?} to inventory slot {:?}", item, slot);
+
         let spot = 
             if slot == Slot::Bag 
                 {self.find_free_location(&item)}
             else
                 {[0, 0]};
+
+        println!("  at position {}, {}", spot[0], spot[1]);
 
         let entry = Entry {
             item_id: item.id,
@@ -58,8 +62,8 @@ impl Inventory {
 
         self.bag.insert(item.id, item);
         self.entries.push(entry);
-
     }
+
 
     fn find_free_location(&self, item: &Item) -> [i32; 2] {
 

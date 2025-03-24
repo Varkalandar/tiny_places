@@ -45,20 +45,6 @@ impl UiController for Game {
                     
                     if event.args.button == Button::Mouse(MouseButton::Left) {
                         ui.root.head.clear();
-
-                        let map = &mut world.map;
-                        let option = map.find_nearest_object(map.selected_layer, &pos, 100.0, 0);
-
-                        match option {
-                            None => {
-                                // nothing clicked -> move player
-                                map.has_selection = false;
-                            },
-                            Some(_idx) => {
-                                // pick up the item?
-                                // -> move to it first
-                            }
-                        }
                     }
 
                     if event.args.button == Button::Mouse(MouseButton::Right) {
@@ -133,9 +119,10 @@ impl UiController for Game {
 
     fn update(&mut self, world: &mut Self::Appdata, dt: f64) {
         let map = &mut world.map;
+        let inv = &mut world.player_inventory;
         let rng = &mut world.rng;
         let speaker = &mut world.speaker;
-        map.update(dt, rng, speaker);
+        map.update(dt, inv, rng, speaker);
 
         let reload = map.check_player_transition(rng);
 

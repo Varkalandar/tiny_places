@@ -26,6 +26,7 @@ use crate::mob_group::MobGroup;
 use crate::CREATURE_TILESET;
 use crate::parse_rgba;
 use crate::gl_support::BlendMode;
+use crate::Slot;
 
 
 pub const MAP_GROUND_LAYER:usize = 0;
@@ -149,12 +150,11 @@ impl Map {
     }
 
 
-    pub fn find_nearest_object(&self, layer: usize, position: &Vector2<f64>, search_radius: f64, ignore_uid: u64) -> Option<u64> {
-        let objects = &self.layers[layer];
+    pub fn find_nearest_object(layer: &HashMap<u64, MapObject>, position: &Vector2<f64>, search_radius: f64, ignore_uid: u64) -> Option<u64> {
         let mut distance = search_radius * search_radius;
         let mut best_id = 0;
 
-        for (_key, object) in objects {
+        for (_key, object) in layer {
             let dx = object.position[0] - position[0];
             let dy = object.position[1] - position[1];
             let d2 = dx * dx + dy * dy;
@@ -178,7 +178,8 @@ impl Map {
     }
 
 
-    pub fn update(&mut self, dt: f64, rng: &mut StdRng, speaker: &mut SoundPlayer) {
+    pub fn update(&mut self, dt: f64, 
+                  inventory: &mut Inventory, rng: &mut StdRng, speaker: &mut SoundPlayer) {
 
         let mut kill_list = Vec::new();
         let mut phit_list = Vec::new();
@@ -194,6 +195,7 @@ impl Map {
             }
         }
 
+        let mut pickup_position = None;
 
         for (_key, mob) in &mut self.layers[MAP_OBJECT_LAYER] {
             let before = mob.move_time_left;
@@ -203,6 +205,10 @@ impl Map {
             // did the move just end?
             if before > 0.0 && after <= 0.0 {
                 mob.visual.particles.clear();
+
+                if mob.move_end_action == MoveEndAction::PickItemsUp {
+                    pickup_position = Some(mob.position);
+                }
 
                 if mob.move_end_action == MoveEndAction::RemoveFromMap {
                     kill_list.push(mob.uid);
@@ -246,13 +252,19 @@ impl Map {
             }
         }
 
+        // player might have picked something up
+        if pickup_position.is_some() {
+            Self::check_pickup(&mut self.layers[MAP_OBJECT_LAYER], &pickup_position.unwrap(), 
+                               inventory, self.player_id);
+        }
+
         for (_key, mob) in &self.layers[MAP_OBJECT_LAYER] {
 
             let mob_type = mob.mob_type;
             if mob_type == MobType::PlayerProjectile || mob_type == MobType::CreatureProjectile {
 
                 // projectiles may have hit something in the move
-                let target = self.find_nearest_object(MAP_OBJECT_LAYER, &mob.position, 80.0, mob.uid);
+                let target = Self::find_nearest_object(&self.layers[MAP_OBJECT_LAYER], &mob.position, 80.0, mob.uid);
                 match target {
                     None => {}
                     Some(uid) => {
@@ -278,6 +290,30 @@ impl Map {
         for id in kill_list {
             self.layers[MAP_OBJECT_LAYER].remove(&id);
             self.animations.remove(&id);
+        }
+    }
+
+    fn check_pickup(layer: &mut HashMap<u64, MapObject>, position: &Vector2<f64>,
+        inventory: &mut Inventory, player_id: u64) {
+        let option = Map::find_nearest_object(layer, position, 100.0, player_id);
+        match option {
+            None => {},
+            Some(key) => {
+                let mob_option = layer.get(&key);
+                match mob_option {
+                    None => {},
+                    Some(mob) => {
+
+                        println!("Found a map object: {}, item option is {:?}", mob.uid, mob.item);
+
+                        if mob.item.is_some() {
+                            let mob = layer.remove(&key);
+                            let item = mob.unwrap().item;
+                            inventory.put_item(item.unwrap(), Slot::Bag);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -800,6 +836,7 @@ impl MapObjectFactory {
 pub enum MoveEndAction {
     None,
     RemoveFromMap,
+    PickItemsUp,
 }
 
 
