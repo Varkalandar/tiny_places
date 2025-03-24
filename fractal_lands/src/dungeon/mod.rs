@@ -244,7 +244,7 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &m
     place_wall_tile(map, dx+1, dy, 131, 501, wall_color);
 
 
-    place_coins(map, factory, sx + 1, sy + 1, 3, rng.random_range(1 .. 6));
+    place_coins(map, factory, sx + 1, sy + 1, "copper_coin", rng.random_range(1 .. 6));
 }
 
 
@@ -450,7 +450,7 @@ fn place_wall_tile(map: &mut Map, x: i32, y: i32, z_off: i32, id: usize, color: 
 
 
 fn place_coins(map: &mut Map, factory: &mut ItemFactory,
-               x: i32, y: i32, id: usize, count: u32) -> u64 {
+               x: i32, y: i32, id: &str, count: u32) -> u64 {
     let layer = MAP_OBJECT_LAYER;
     let height = 0.0;
     let scale = 1.0;

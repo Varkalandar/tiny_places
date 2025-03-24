@@ -1,5 +1,6 @@
 use std::fmt::Formatter;
 use core::str::Split;
+use std::collections::HashMap;
 
 use crate::inventory::Slot;
 use crate::read_lines;
@@ -10,7 +11,9 @@ pub struct Item {
     // the ID must be unique in a game
     pub id: usize,
 
-    pub name: String,
+    pub key: String,              // for prototype lookup
+    pub singular: String,         // name for stack size == 1
+    pub plural: String,           // name for stack size >= 2
     pub mods: Vec<Mod>,
     
     pub inventory_tile_id: usize,
@@ -24,6 +27,19 @@ pub struct Item {
 
 
 impl Item {
+
+    pub fn name(&self) -> String {
+        if self.stack_size == 1 {
+            return self.singular.to_string();
+        }
+        else {
+            if self.plural.len() > 0 {
+                return self.stack_size.to_string() + " " + &self.plural;
+            }
+        }
+
+        return self.singular.to_string();
+    }
     
     pub fn get_attribute_total_mod(&self, attribute: Attribute) -> f32 {
         let mut sum: f32 = 0.0;
@@ -39,19 +55,19 @@ impl Item {
     
     pub fn calc_image_offset_for_stack_size(stack_size: u32) -> usize {
         match stack_size {
-            0 => 0,    
-            1 => 1,    
-            2 => 2,
-            3 .. 10 => 3,
-            10 .. 100 => 4,
-            100 .. 10000 => 5,
+            0 => 0 * 2,    
+            1 => 1 * 2,    
+            2 => 2 * 2,
+            3 .. 10 => 3 * 2,
+            10 .. 100 => 4 * 2,
+            100 .. 10000 => 5 * 2,
             
-            _ => 0,
+            _ => 0 * 2,
         }
     }
 
     pub fn print_debug(&self) {
-        println!("{}", self.name);
+        println!("{}", self.name());
     }
 
 }
@@ -61,7 +77,7 @@ pub struct ItemFactory
 {
     next_id: usize,
 
-    proto_items: Vec<Item>,
+    proto_items: HashMap<String, Item>,
 }
 
 
@@ -69,10 +85,13 @@ impl ItemFactory {
     pub fn new() -> ItemFactory {
 
         let mut proto_items = read_proto_items();
-        let mut plugins = read_plugins();
+        let plugins = read_plugins();
 
-        proto_items.append(&mut plugins);
-
+        for plugin in plugins {
+            let key = plugin.key.to_string();
+            proto_items.insert(key, plugin);
+        }
+        
         ItemFactory {
             next_id: 0,
             proto_items,
@@ -80,15 +99,17 @@ impl ItemFactory {
     }
 
 
-    pub fn create(&mut self, key: usize) -> Item {
+    pub fn create(&mut self, key: &str) -> Item {
         let id = self.next_id;
         self.next_id += 1;
         
-        let proto = &self.proto_items[key];
+        let proto = self.proto_items.get(key).unwrap();
 
         Item {
             id, 
-            name: proto.name.to_string(),
+            key: proto.key.to_string(),
+            singular: proto.singular.to_string(),
+            plural: proto.plural.to_string(),
             mods: proto.mods.clone(),
 
             inventory_tile_id: proto.inventory_tile_id,
@@ -101,28 +122,35 @@ impl ItemFactory {
             stack_size: 1,
         }
     }
+
 }
 
-fn read_proto_items() -> Vec<Item> {
+fn read_proto_items() -> HashMap<String, Item> {
 
     let lines = read_lines("resources/items/items.csv");
-    let mut proto_items: Vec<Item> = Vec::new();
+    let mut proto_items: HashMap<String, Item> = HashMap::new();
 
     for i in 1..lines.len() {
         let mut parts = lines[i].split(",");
-
-        proto_items.push(Item {
-            id: 0,
-            name: parts.next().unwrap().to_string(),
-            inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
-            map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
-            inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
-            inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
-            inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
-            slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),
-            stack_size: parts.next().unwrap().parse::<u32>().unwrap(),
-            mods: parse_mods(&mut parts),
-        });
+        let key = parts.next().unwrap().to_string();
+        
+        proto_items.insert(
+            key.to_string(),
+            Item {
+                id: 0,      // just a placeholder in case of item prototypes.
+                key,
+                singular: parts.next().unwrap().to_string(),
+                plural:  parts.next().unwrap().to_string(),
+                inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+                map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
+                inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),
+                inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
+                inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
+                slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),
+                stack_size: parts.next().unwrap().parse::<u32>().unwrap(),
+                mods: parse_mods(&mut parts),
+            }
+        );
     }
 
     proto_items
@@ -139,7 +167,9 @@ fn read_plugins() -> Vec<Item> {
 
         plugins.push(Item {
             id: 0,
-            name: parts.next().unwrap().to_string(),
+            key: parts.next().unwrap().to_string(),
+            singular: parts.next().unwrap().to_string(),
+            plural: "".to_string(),
             inventory_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
             map_tile_id: parts.next().unwrap().parse::<usize>().unwrap(),
             inventory_w: parts.next().unwrap().parse::<i32>().unwrap(),

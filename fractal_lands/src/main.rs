@@ -171,19 +171,22 @@ impl App {
 
         // Some inventory contents for testing
         let mut factory = ItemFactory::new();
-        let demo_item = factory.create(0);
+        let demo_item = factory.create("fusion_blaster");
         inv.put_item(demo_item, Slot::Bag);
 
-        let laser = factory.create(1);
+        let laser = factory.create("laser");
         inv.put_item(laser, Slot::RWing);
 
-        let engine = factory.create(2);
-        inv.put_item(engine, Slot::Bag);
+        let mut coins = factory.create("copper_coin");
+        coins.stack_size = 1000;
+        inv.put_item(coins, Slot::Bag);
 
+        /*
         for plugin_no in 3..10 {
             let plugin = factory.create(plugin_no);
             inv.put_item(plugin, Slot::Bag);
         }
+        */
 
         App {        
             ui,

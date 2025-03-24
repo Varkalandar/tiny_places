@@ -114,7 +114,7 @@ impl PlayerInventoryView {
             200.0 / 16.0, (line_count * line_space) as f32 / 16.0, 
             &[0.0, 0.0, 0.0, 0.5]);
 
-        self.font.draw(&ui.display, target, &ui.program, x, line, &item.name, &[0.8, 1.0, 0.0, 1.0]);
+        self.font.draw(&ui.display, target, &ui.program, x, line, &item.name(), &[0.8, 1.0, 0.0, 1.0]);
         line += line_space;
 
         for modifier in &item.mods {
@@ -179,13 +179,25 @@ impl PlayerInventoryView {
 
     fn draw_item(&self,
                  display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
-                 id: usize, 
+                 id: usize,
+                 stack_size: u32, 
                  entry_x: f32, entry_y: f32, 
                  slot_w: f32, slot_h: f32,
                  item_inventory_w: f32 , item_inventory_h: f32,
-                 inventory_scale: f32) {
+                 mut inventory_scale: f32) {
 
-        let tile = self.item_tiles.tiles_by_id.get(&id).unwrap();
+        // item stacks have several images.
+        let mut image_id = id;
+
+        if stack_size > 1 {
+            let offset = Item::calc_image_offset_for_stack_size(stack_size);
+            image_id += offset;
+
+            // we need to shrink the graphics if there are fewer coins in the stack
+            inventory_scale *= 0.5 + (offset as f32) * 0.05;
+        }
+
+        let tile = self.item_tiles.tiles_by_id.get(&image_id).unwrap();
 
         let mut tw = tile.tex.width() as f32;
         let mut th = tile.tex.height() as f32;
@@ -250,7 +262,8 @@ impl PlayerInventoryView {
                 }
 
                 self.draw_item(&ui.display, target, &ui.program,
-                    item.inventory_tile_id, entry_x, entry_y, w, h, 
+                    item.inventory_tile_id, item.stack_size,
+                    entry_x, entry_y, w, h, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
                     item.inventory_scale as f32);
             }
@@ -280,7 +293,7 @@ impl PlayerInventoryView {
                 let item = inventory.bag.get(&id).unwrap();
 
                 self.draw_item(&ui.display, target, &ui.program,
-                    item.inventory_tile_id, 
+                    item.inventory_tile_id, item.stack_size,
                     (self.drag_x - 16.0) as f32, (self.drag_y - 16.0) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
@@ -331,7 +344,7 @@ impl PlayerInventoryView {
                         entry.slot = slot;
                         self.dragged_item = None;
 
-                        println!("Dropped an {} to slot {:?}", item.name, slot);
+                        println!("Dropped an {} to slot {:?}", item.name(), slot);
 
                         if slot == Slot::Bag {
                             let offsets = self.slot_offsets.get(&Slot::Bag).unwrap();
