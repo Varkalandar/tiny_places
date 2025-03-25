@@ -184,7 +184,7 @@ impl PlayerInventoryView {
                  entry_x: f32, entry_y: f32, 
                  slot_w: f32, slot_h: f32,
                  item_inventory_w: f32 , item_inventory_h: f32,
-                 mut inventory_scale: f32) {
+                 inventory_scale: f32) {
 
         // item stacks have several images.
         let mut image_id = id;
@@ -192,9 +192,6 @@ impl PlayerInventoryView {
         if stack_size > 1 {
             let offset = Item::calc_image_offset_for_stack_size(stack_size);
             image_id += offset;
-
-            // we need to shrink the graphics if there are fewer coins in the stack
-            inventory_scale *= 0.5 + (offset as f32) * 0.05;
         }
 
         let tile = self.item_tiles.tiles_by_id.get(&image_id).unwrap();
@@ -265,7 +262,7 @@ impl PlayerInventoryView {
                     item.inventory_tile_id, item.stack_size,
                     entry_x, entry_y, w, h, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
-                    item.inventory_scale as f32);
+                    item.calc_inventory_scale());
             }
         }
        
@@ -297,7 +294,7 @@ impl PlayerInventoryView {
                     (self.drag_x - 16.0) as f32, (self.drag_y - 16.0) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
-                    item.inventory_scale as f32);
+                    item.calc_inventory_scale());
             }
         }
     }

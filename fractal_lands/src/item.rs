@@ -23,6 +23,7 @@ pub struct Item {
     pub slot: Slot,
     pub map_tile_id: usize,
     pub stack_size: u32,         // some items can be stacked and must have a stack count
+    pub max_stack_size: u32,
 }
 
 
@@ -55,21 +56,32 @@ impl Item {
     
     pub fn calc_image_offset_for_stack_size(stack_size: u32) -> usize {
         match stack_size {
-            0 => 0 * 2,    
-            1 => 1 * 2,    
-            2 => 2 * 2,
-            3 .. 10 => 3 * 2,
-            10 .. 100 => 4 * 2,
-            100 .. 10000 => 5 * 2,
+            0 => 0,    
+            1 => 0,    
+            2 => 1 * 2,
+            3 => 2 * 2,
+            4 .. 100 => 3 * 2,
+            100 .. 10000 => 4 * 2,
             
             _ => 0 * 2,
+        }
+    }
+
+    pub fn calc_inventory_scale(&self) -> f32 {
+
+        if self.max_stack_size > 1 {
+            // we need to shrink the graphics if there are fewer coins in the stack
+            let offset = Self::calc_image_offset_for_stack_size(self.stack_size);
+            return (self.inventory_scale * 0.2 + (offset as f64) * 0.11) as f32;
+        }
+        else {
+            return self.inventory_scale as f32
         }
     }
 
     pub fn print_debug(&self) {
         println!("{}", self.name());
     }
-
 }
 
 
@@ -120,6 +132,7 @@ impl ItemFactory {
         
             map_tile_id: proto.map_tile_id,
             stack_size: 1,
+            max_stack_size: proto.max_stack_size,
         }
     }
 }
@@ -147,7 +160,8 @@ fn read_proto_items() -> HashMap<String, Item> {
                 inventory_h: parts.next().unwrap().parse::<i32>().unwrap(),
                 inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
                 slot: calc_slot(parts.next().unwrap().parse::<i32>().unwrap()),
-                stack_size: parts.next().unwrap().parse::<u32>().unwrap(),
+                stack_size: 1,
+                max_stack_size: parts.next().unwrap().parse::<u32>().unwrap(),
                 mods: parse_mods(&mut parts),
             }
         );
@@ -177,6 +191,7 @@ fn read_plugins() -> Vec<Item> {
             inventory_scale: parts.next().unwrap().parse::<f64>().unwrap(),
             slot: Slot::Bag,
             stack_size: 1,
+            max_stack_size: 1,
             mods: Vec::new(),
         });
     }
