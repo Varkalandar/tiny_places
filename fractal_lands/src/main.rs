@@ -168,7 +168,7 @@ impl App {
         let mut inv = Inventory::new();
 
         // Some inventory contents for testing
-        let mut factory = ItemFactory::new();
+
         let demo_item = factory.create("fusion_blaster");
         inv.put_item(demo_item, Slot::Bag);
 

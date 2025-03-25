@@ -122,8 +122,8 @@ impl ItemFactory {
             stack_size: 1,
         }
     }
-
 }
+
 
 fn read_proto_items() -> HashMap<String, Item> {
 

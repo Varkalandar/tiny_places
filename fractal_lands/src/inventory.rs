@@ -112,5 +112,18 @@ impl Inventory {
         }
 
         None
-    } 
+    }
+    
+    pub fn print_contents(&self) {
+        println!("Inventory listing:");
+        
+        for entry in &self.entries {
+            println!("  id={}, pos={}, {}, slot={:?}", 
+                     entry.item_id, entry.location_x, entry.location_y, entry.slot);
+        }
+
+        for (key, value) in &self.bag {
+            println!("  id={}, item={}", key, value.name()); 
+        }
+    }
 }

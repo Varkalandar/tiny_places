@@ -315,6 +315,8 @@ impl Map {
                 }
             }
         }
+
+        // inventory.print_contents();
     }
 
 
