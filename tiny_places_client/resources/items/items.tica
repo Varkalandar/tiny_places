@@ -689,7 +689,7 @@ v.5
 43
 6 5
 0 0
-0 0
+2 3
 End Of Header
 Item
 v.1
@@ -703,7 +703,7 @@ copper_1_map
 Tile Description
 v.5
 44
-12 10
+38 21
 0 0
 0 0
 End Of Header
@@ -721,7 +721,7 @@ v.5
 45
 9 6
 0 0
-0 0
+4 4
 End Of Header
 Item
 v.1
@@ -735,7 +735,7 @@ copper_2_map
 Tile Description
 v.5
 46
-18 11
+38 21
 0 0
 0 0
 End Of Header
@@ -753,7 +753,7 @@ v.5
 47
 10 8
 0 0
-0 0
+5 5
 End Of Header
 Item
 v.1
@@ -767,7 +767,7 @@ copper_3_map
 Tile Description
 v.5
 48
-20 15
+38 21
 0 0
 0 0
 End Of Header
@@ -785,7 +785,7 @@ v.5
 49
 16 8
 0 0
-0 0
+7 5
 End Of Header
 Item
 v.1
@@ -799,7 +799,7 @@ copper_4_map
 Tile Description
 v.5
 50
-32 16
+38 21
 0 0
 0 0
 End Of Header
@@ -817,7 +817,7 @@ v.5
 51
 18 10
 0 0
-0 0
+9 7
 End Of Header
 Item
 v.1
@@ -831,7 +831,7 @@ copper_5_map
 Tile Description
 v.5
 52
-35 19
+38 21
 0 0
 0 0
 End Of Header
@@ -849,7 +849,7 @@ v.5
 53
 19 11
 0 0
-0 0
+10 7
 End Of Header
 Item
 v.1

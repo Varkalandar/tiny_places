@@ -733,8 +733,8 @@
         <height>5</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>2</footX>
+        <footY>3</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -746,8 +746,8 @@
       <Description>
         <version>4</version>
         <id>44</id>
-        <width>12</width>
-        <height>10</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -767,8 +767,8 @@
         <height>6</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>4</footX>
+        <footY>4</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -780,8 +780,8 @@
       <Description>
         <version>4</version>
         <id>46</id>
-        <width>18</width>
-        <height>11</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -801,8 +801,8 @@
         <height>8</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>5</footX>
+        <footY>5</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -814,8 +814,8 @@
       <Description>
         <version>4</version>
         <id>48</id>
-        <width>20</width>
-        <height>15</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -835,8 +835,8 @@
         <height>8</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>7</footX>
+        <footY>5</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -848,8 +848,8 @@
       <Description>
         <version>4</version>
         <id>50</id>
-        <width>32</width>
-        <height>16</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -869,8 +869,8 @@
         <height>10</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>9</footX>
+        <footY>7</footY>
       </Description>
       <Metadata>
         <int>0</int>
@@ -882,8 +882,8 @@
       <Description>
         <version>4</version>
         <id>52</id>
-        <width>35</width>
-        <height>19</height>
+        <width>38</width>
+        <height>21</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -903,8 +903,8 @@
         <height>11</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
-        <footX>0</footX>
-        <footY>0</footY>
+        <footX>10</footX>
+        <footY>7</footY>
       </Description>
       <Metadata>
         <int>0</int>

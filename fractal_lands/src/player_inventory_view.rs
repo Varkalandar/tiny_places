@@ -262,7 +262,7 @@ impl PlayerInventoryView {
                     item.inventory_tile_id, item.stack_size,
                     entry_x, entry_y, w, h, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
-                    item.calc_inventory_scale());
+                    item.inventory_scale);
             }
         }
        
@@ -294,7 +294,7 @@ impl PlayerInventoryView {
                     (self.drag_x - 16.0) as f32, (self.drag_y - 16.0) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32, 
                     (item.inventory_w * 32) as f32, (item.inventory_h * 32) as f32,
-                    item.calc_inventory_scale());
+                    item.inventory_scale);
             }
         }
     }
