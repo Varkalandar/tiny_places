@@ -52,10 +52,7 @@ pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> Dungeon {
 
     let dungeon = rooms_and_corridors(map, factory, &mut rng);
 
-    // place stairs
-    place_wall_tile(map, dungeon.rooms[0].x2, dungeon.rooms[0].y1, 
-                    0, 248, [1.0, 1.0, 1.0, 1.0]);
-
+    furnish_dungeon(&dungeon, map, factory, &mut rng);
     dungeon
 }
 
@@ -195,6 +192,22 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
 }
 
 
+fn furnish_dungeon<R: Rng + ?Sized>(dungeon: &Dungeon, 
+                                    map: &mut Map, factory: &mut ItemFactory, rng: &mut R) {
+
+    // place entrance stairs
+    place_wall_tile(map, dungeon.rooms[0].x2, dungeon.rooms[0].y1, 
+                    0, 248, [1.0, 1.0, 1.0, 1.0]);
+
+    for i in 1 .. dungeon.rooms.len() {
+        place_coins(map, factory, 
+                    rng.random_range(dungeon.rooms[i].x1 .. dungeon.rooms[i].x2), 
+                    rng.random_range(dungeon.rooms[i].y1 .. dungeon.rooms[i].y2), 
+                    "copper_coin", rng.random_range(1 .. 6));
+    }
+}
+
+
 fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &mut R, 
                                sx: i32, sy: i32, dx: i32, dy: i32,
                                entrances: &[i32]) {
@@ -262,9 +275,6 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &m
 
     // right room corner
     place_wall_tile(map, dx+1, dy, 131, 501, wall_color);
-
-
-    place_coins(map, factory, sx + 1, sy + 1, "copper_coin", rng.random_range(1 .. 6));
 }
 
 
