@@ -10,7 +10,24 @@ use crate::Map;
 use crate::ItemFactory;
 use crate::item::Item;
 
-pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> [f64; 2] {
+
+struct Room {
+    pub x1: i32,
+    pub y1: i32,
+    pub x2: i32,
+    pub y2: i32,
+}
+
+pub struct Dungeon {
+    pub start_position: [f64; 2],
+
+    pub rooms: Vec<Room>,
+    pub corridors: Vec<HashMap<i32, [i32; 2]>>,
+}
+
+
+
+pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> Dungeon {
 
 /*
     let layer = MAP_GROUND_LAYER;
@@ -33,32 +50,32 @@ pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> [f64; 2] {
     // place_floor_tile(map, -5 + 5, 5 + 5);
     // build_winded_corridor(map, &mut rng, 0, 0, 10, 10);
 
-    let start_pos = rooms_and_corridors(map, factory, &mut rng);
+    let dungeon = rooms_and_corridors(map, factory, &mut rng);
 
     // place stairs
-    place_wall_tile(map, start_pos[0], start_pos[1], 0, 248, [1.0, 1.0, 1.0, 1.0]);
+    place_wall_tile(map, dungeon.rooms[0].x2, dungeon.rooms[0].y1, 
+                    0, 248, [1.0, 1.0, 1.0, 1.0]);
 
-    let mp = map_pos(start_pos[0], start_pos[1] + 1, 0, 1.0);
-
-    mp
+    dungeon
 }
 
 
-fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &mut R) -> [i32; 2] {
+fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &mut R) -> Dungeon {
+
+    let mut corridors: Vec<HashMap<i32, [i32; 2]>> = Vec::new();
+    let mut rooms: Vec<Room> = Vec::new();
 
     let mut entrances: [i32; 16 * 8] = [0; 16 * 8];
-    let mut startpos_x = 0;
-    let mut startpos_y = 0;
 
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
             let x = rx * 13 + rng.random_range(-3..3);
             let y = ry * 13 + rng.random_range(-3..3);
 
-            let l = x - rng.random_range(1..3);
-            let t = y - rng.random_range(1..3); 
-            let r = x + rng.random_range(1..3);
-            let b = y + rng.random_range(1..3);
+            let x1 = x - rng.random_range(1..3);
+            let y1 = y - rng.random_range(1..3); 
+            let x2 = x + rng.random_range(1..3);
+            let y2 = y + rng.random_range(1..3);
 
             // keep track of entrances
 
@@ -66,31 +83,29 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
             let room: usize = ((ry * 4 + rx) * 8) as usize;
 
             entrances[room + 0] = x;
-            entrances[room + 1] = t;
+            entrances[room + 1] = y1;
 
-            entrances[room + 2] = r;
+            entrances[room + 2] = x2;
             entrances[room + 3] = y;
 
             entrances[room + 4] = x;
-            entrances[room + 5] = b;
+            entrances[room + 5] = y2;
 
-            entrances[room + 6] = l;
+            entrances[room + 6] = x1;
             entrances[room + 7] = y;
 
-            build_room(map, factory, rng, l, t, r, b, &entrances[room .. room + 8]);
+            build_room(map, factory, rng, x1, y1, x2, y2, &entrances[room .. room + 8]);
 
-            // record starting position
-            if rx == 0 && ry == 0 {
-                startpos_x = x;
-                startpos_y = y-1;
-            }
+            rooms.push(Room {
+                x1, x2, y1, y2,
+            })
         }
     }
 
     // to avoid double tiles and easier wall placement in corridors we first collect all
     // floor coordinates and then actually build the corridor
 
-    let mut floors: HashMap<i32, [i32; 2]> = HashMap::new();
+    let mut floors: HashMap<i32, [i32; 2]>; 
 
     for ry in 0 .. 4 {
         for rx in 0 .. 4 {
@@ -99,7 +114,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
             
             // "down right" corridors
 
-            floors.clear();
+            floors = HashMap::new();
 
             if ry < 3 {
                 // straight starting stubs
@@ -132,10 +147,11 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
             }
            
             build_corridor_from_coordinates(map, &floors);
+            corridors.push(floors);
 
             // "up right" corridors
 
-            floors.clear();
+            floors = HashMap::new();
 
             if rx < 3 {
                 // straight starting stubs
@@ -167,10 +183,15 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
             }
 
             build_corridor_from_coordinates(map, &floors);
+            corridors.push(floors);
         }
     }
 
-    [startpos_x, startpos_y]
+    Dungeon {
+        start_position: map_pos(rooms[0].x2 - 1, rooms[0].y1 + 1, 0, 1.0),
+        rooms, 
+        corridors,
+    }
 }
 
 

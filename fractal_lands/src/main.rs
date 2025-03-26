@@ -155,8 +155,8 @@ impl App {
         // map.load("start.map");
 
         // Testing dungeon generation
-        let start_position = generate_dungeon(&mut map, &mut factory);
-        map.set_player_position(start_position);
+        let dungeon = generate_dungeon(&mut map, &mut factory);
+        map.set_player_position(dungeon.start_position);
 
         let ui = UI::new(window, display, program, window_size);
         
