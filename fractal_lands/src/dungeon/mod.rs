@@ -143,7 +143,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
                     wriggle_prob);
             }
            
-            build_corridor_from_coordinates(map, &floors);
+            build_tunnel_from_coordinates(map, &floors);
             corridors.push(floors);
 
             // "up right" corridors
@@ -179,6 +179,7 @@ fn rooms_and_corridors<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory
                     wriggle_prob);
             }
 
+            // build_tunnel_from_coordinates(map, &floors);
             build_corridor_from_coordinates(map, &floors);
             corridors.push(floors);
         }
@@ -389,7 +390,7 @@ fn add_floor_coordinate(floors: &mut HashMap<i32, [i32; 2]>, x: i32, y: i32) {
 }
 
 
-fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]>)
+fn build_tunnel_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]>)
 {
     // let wall_color = [0.63, 0.64, 0.65, 1.0];
     // let floor_color = [0.38, 0.36, 0.33, 1.0];
@@ -409,7 +410,7 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
         let east = floors.get(&floor_key(x, y+1)).is_some();
         let west = floors.get(&floor_key(x, y-1)).is_some();
 
-        // count connections, we need to handle end pieces specially
+        // count connections, we need to leave end pieces without wall into a room
         let mut connections = 0;
         if north { connections += 1};
         if south { connections += 1};
@@ -452,6 +453,63 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
     }
 }
 
+fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]>)
+{
+    let floor_color = [0.68, 0.66, 0.63, 1.0];
+    let wall_color = [0.53, 0.54, 0.55, 1.0];
+
+    for (_key, value) in floors {
+        let x = value[0];
+        let y = value[1];
+
+        place_floor_tile(map, x, y, 48, floor_color);
+
+        // check connections to neighboring floor tiles
+        let north = floors.get(&floor_key(x+1, y)).is_some();
+        let south = floors.get(&floor_key(x-1, y)).is_some();
+
+        let east = floors.get(&floor_key(x, y+1)).is_some();
+        let west = floors.get(&floor_key(x, y-1)).is_some();
+
+        // count connections, we need to leave end pieces without wall into a room
+        let mut connections = 0;
+        if north { connections += 1};
+        if south { connections += 1};
+        if east { connections += 1};
+        if west { connections += 1};
+
+        let end_piece = connections == 1;
+
+        if end_piece {
+            println!("End piece detected at {}, {}", x, y);
+        }
+
+        // place walls if there is no connection
+
+        // back walls
+        // left
+        if !west && !(end_piece && east) {             
+            place_wall_tile(map, x-1, y, -202, 511, wall_color);  
+        }
+        
+        // right
+        if !north && !(end_piece && south) {
+            place_wall_tile(map, x+1, y, 20, 506, wall_color);
+        }
+
+        // front walls
+
+        // left
+        if !south && !(end_piece && north) {
+            place_wall_tile(map, x, y, 30, 503, wall_color);
+        }
+
+        // right
+        if !east && !(end_piece && west) {
+            place_wall_tile(map, x, y, 110, 509, wall_color);  
+        }
+    }
+}
 
 fn place_floor_tile(map: &mut Map, x: i32, y: i32, id: usize, color: [f32; 4]) {
     let layer = MAP_GROUND_LAYER;
