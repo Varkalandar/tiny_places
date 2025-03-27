@@ -226,32 +226,32 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &m
     // left
     for x in sx .. dx + 1 {
         if sy < 3 || entrances[4] != x {
-            place_wall_tile(map, x-1, sy, -194, 494, wall_color);
+            place_wall_tile(map, x-1, sy, -226, 494, wall_color);
         }
         else {
             // the walls need end pieces ...
 
             // left corner
-            place_wall_tile(map, x, sy, -86, 498, wall_color);
+            place_wall_tile(map, x, sy, -118, 498, wall_color);
 
             // right corner
-            place_wall_tile(map, x-1, sy, -86, 501, wall_color);
+            place_wall_tile(map, x-1, sy, -118, 501, wall_color);
         }
     }
 
     // right
     for y in sy .. dy + 1 {
         if dx > 12 * 3 - 6 || entrances[3] != y {
-            place_wall_tile(map, dx, y+1, -194, 495, wall_color);
+            place_wall_tile(map, dx, y+1, -226, 495, wall_color);
         }
         else {
             // the walls need end pieces ...
 
             // left corner
-            place_wall_tile(map, dx, y+1, -86, 498, wall_color);
+            place_wall_tile(map, dx, y+1, -118, 498, wall_color);
 
             // right corner
-            place_wall_tile(map, dx, y, -86, 501, wall_color);
+            place_wall_tile(map, dx, y, -118, 501, wall_color);
         }
     }
 
@@ -260,7 +260,7 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &m
     // right
     for x in sx .. dx + 1 {
         if dy > 12 * 3 - 6 || entrances[0] != x {
-            place_wall_tile(map, x+1, dy-1, 98, 497, wall_color);
+            place_wall_tile(map, x+1, dy-1, 100, 497, wall_color);
         }
     }
 
@@ -272,10 +272,10 @@ fn build_room<R: Rng + ?Sized>(map: &mut Map, factory: &mut ItemFactory, rng: &m
     }
 
     // left room corner
-    place_wall_tile(map, sx, sy-1, 130, 498, wall_color);
+    place_wall_tile(map, sx, sy-1, 98, 498, wall_color);
 
     // right room corner
-    place_wall_tile(map, dx+1, dy, 131, 501, wall_color);
+    place_wall_tile(map, dx+1, dy, 98, 501, wall_color);
 }
 
 
@@ -489,12 +489,12 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
         // back walls
         // left
         if !west && !(end_piece && east) {             
-            place_wall_tile(map, x-1, y, -202, 511, wall_color);  
+            place_wall_tile(map, x-1, y, -202, 519, wall_color);  
         }
         
         // right
         if !north && !(end_piece && south) {
-            place_wall_tile(map, x+1, y, 20, 506, wall_color);
+            place_wall_tile(map, x+1, y, 18, 518, wall_color);
         }
 
         // front walls
@@ -506,7 +506,7 @@ fn build_corridor_from_coordinates(map: &mut Map, floors: &HashMap<i32, [i32; 2]
 
         // right
         if !east && !(end_piece && west) {
-            place_wall_tile(map, x, y, 110, 509, wall_color);  
+            place_wall_tile(map, x, y, 94, 509, wall_color);  
         }
     }
 }

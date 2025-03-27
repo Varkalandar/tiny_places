@@ -8097,7 +8097,7 @@ v.5
 494
 108 190
 0 0
-0 135
+0 120
 End Of Header
 Item
 v.1
@@ -8113,7 +8113,7 @@ v.5
 495
 108 190
 0 0
-108 135
+108 120
 End Of Header
 Item
 v.1
@@ -8161,7 +8161,7 @@ v.5
 498
 26 136
 0 0
-25 135
+25 120
 End Of Header
 Item
 v.1
@@ -8209,7 +8209,7 @@ v.5
 501
 25 136
 0 0
-0 135
+0 120
 End Of Header
 Item
 v.1
@@ -8337,7 +8337,7 @@ v.5
 509
 120 102
 0 0
-0 95
+0 90
 End Of Header
 Item
 v.1
@@ -8479,15 +8479,15 @@ data
 Tile Description
 v.5
 518
-1 1
+120 168
 0 0
-0 0
+108 114
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 9
 
 1
 0
@@ -8495,15 +8495,15 @@ data
 Tile Description
 v.5
 519
-1 1
+120 168
 0 0
-0 0
+0 114
 End Of Header
 Item
 v.1
 data
 2
-
+rough wall 10
 
 1
 0
