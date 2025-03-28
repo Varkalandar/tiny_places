@@ -18,6 +18,10 @@ use glium::implement_vertex;
 use glium::uniform;
 use glium::VertexBuffer;
 
+use geo::Coord;
+use geo::Polygon;
+use geo::CoordsIter;
+
 use crate::ui::UiArea;
 
 #[derive(Copy, Clone)]
@@ -236,6 +240,38 @@ pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<
 
     draw_shape(display, target, program, blend, &shape, texture, color, None);
 }
+
+
+pub fn draw_polygon<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
+    target: &mut Frame,   
+    program: &Program,  
+    blend: BlendMode,
+    texture: &Texture2d,
+    polygon: &Polygon<f32>,
+    color: &[f32; 4]) {
+
+    let mut iter = polygon.coords_iter();
+
+    let p1: Coord<f32> = iter.next().unwrap();
+    let p2: Coord<f32> = iter.next().unwrap();
+    let p3: Coord<f32> = iter.next().unwrap();
+    let p4: Coord<f32> = iter.next().unwrap();
+
+    let shape = vec![
+        Vertex { position: [p1.x, p1.y], tex_coords: [0.0, 0.0] },
+        Vertex { position: [p2.x, p2.y], tex_coords: [1.0, 0.0] },
+        Vertex { position: [p3.x, p3.y], tex_coords: [1.0, 1.0] },
+
+        // second triangle
+
+        Vertex { position: [p3.x, p3.y], tex_coords: [1.0, 1.0] },
+        Vertex { position: [p4.x, p4.y], tex_coords: [0.0, 1.0] },
+        Vertex { position: [p1.x, p1.y], tex_coords: [0.0, 0.0] },
+    ];
+
+    draw_shape(display, target, program, blend, &shape, texture, color, None);
+}
+
 
 pub fn draw_shape<T: SurfaceTypeTrait + ResizeableSurface>(
     display: &Display<T>,

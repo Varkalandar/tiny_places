@@ -64,6 +64,7 @@ use gl_support::build_program;
 use gl_support::draw_texture;
 use gl_support::draw_texture_wb;
 use gl_support::build_dynamic_quad_buffer;
+use gl_support::draw_polygon;
 
 const MAP_RESOURCE_PATH: &str = "resources/map/";
 const CREATURE_TILESET: usize = 3;
@@ -114,6 +115,7 @@ pub struct App {
     controllers: GameControllers,
 
     update_time: SystemTime,
+    need_focus: bool,
 }
 
 
@@ -169,22 +171,15 @@ impl App {
 
         // Some inventory contents for testing
 
-        let demo_item = factory.create("fusion_blaster");
+        let demo_item = factory.create("wooden_wand");
         inv.put_item(demo_item, Slot::Bag);
 
-        let laser = factory.create("laser");
+        let laser = factory.create("engraved_wand");
         inv.put_item(laser, Slot::RWing);
 
         let mut coins = factory.create("copper_coin");
         coins.stack_size = 1000;
         inv.put_item(coins, Slot::Bag);
-
-        /*
-        for plugin_no in 3..10 {
-            let plugin = factory.create(plugin_no);
-            inv.put_item(plugin, Slot::Bag);
-        }
-        */
 
         App {        
             ui,
@@ -209,6 +204,7 @@ impl App {
             },
 
             update_time: SystemTime::now(),
+            need_focus: true,
         }
     }
 
@@ -296,6 +292,14 @@ impl App {
         // draw clouds
         Self::render_layer(&self.ui.display, &mut target, &self.ui.program, &buffer, world, tex_white, MAP_CLOUD_LAYER);
         
+        /*
+        draw_polygon(&self.ui.display, &mut target, &self.ui.program,
+            BlendMode::Blend,
+            tex_white,
+            &self.world.map.walkable[0],
+            &[1.0, 1.0, 1.0, 1.0]);
+        */
+
 
         {
             let world = &mut self.world;
@@ -317,6 +321,7 @@ impl App {
             font.draw(&self.ui.display, &mut target, &self.ui.program, 10, 600, &s, &[1.0, 1.0, 1.0, 1.0]);
         }
         
+
 
         target.finish().unwrap();
     }
@@ -602,6 +607,18 @@ impl ApplicationHandler for App {
     }
     
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _id: WindowId, event: WindowEvent) {
+
+        // we can only request focus when visible. So after application start we must wait till
+        // the window becomes visible and only then can request focus. Maybe there is a better method?
+        if self.need_focus {
+            let visible = self.ui.window.is_visible();
+
+            if visible.is_some() && visible.unwrap() {
+                self.ui.window.focus_window();
+                self.need_focus = false;
+            }
+        }
+
         match event {
 
             WindowEvent::CloseRequested => {
@@ -717,8 +734,6 @@ fn main() {
         .with_title("Fractal Lands GL v0.0.2")
         .with_inner_size(window_size[0], window_size[1])
         .build(&event_loop);
-
-    window.focus_window();
 
     let program = build_program(&display);
 

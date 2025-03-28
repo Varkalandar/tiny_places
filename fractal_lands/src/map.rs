@@ -41,7 +41,8 @@ pub struct Map {
     pub transitions: Vec<MapTransition>,
     
     // the map area which can be walked. New areas must be merged into this
-    pub walkable: Polygon,
+    pub walkable: Vec<Polygon<f32>>,
+    pub blocked: Vec<Polygon<f32>>,  // non-walkable areas inside the walkable area
 
     // 'AI' controlled objects
     pub mob_groups: Vec<MobGroup>,
@@ -110,6 +111,13 @@ impl Map {
         player.creature = Some(creature_factory.create("Player"));
         layers[MAP_OBJECT_LAYER].insert(player.uid, player);
 
+
+        // testing
+
+        // let area = Polygon::new(LineString::from(vec![(100.0, 100.0), (1000.0, 100.0), (1000.0, 500.0), (100.0, 500.0)]), vec![]);
+        let walkable = Vec::new();
+        // walkable.push(area);
+
         Map {
             layers,
 
@@ -117,7 +125,8 @@ impl Map {
             transitions: Vec::new(),
             mob_groups: Vec::new(),
 
-            walkable: Polygon::new(LineString::from(vec![(1000.0, 1000.0)]), vec![]),
+            walkable,
+            blocked: Vec::new(),
 
             items: Inventory::new(),
             has_selection: false,

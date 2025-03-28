@@ -111,10 +111,17 @@ impl PlayerInventoryView {
         draw_texture(&ui.display, target, &ui.program, BlendMode::Blend, 
             &ui.context.tex_white, 
             x as f32, line as f32, 
-            200.0 / 16.0, (line_count * line_space) as f32 / 16.0, 
+            200.0 / 16.0, (line_count * line_space) as f32 / 16.0 + 0.5, 
             &[0.0, 0.0, 0.0, 0.5]);
 
-        self.font.draw(&ui.display, target, &ui.program, x, line, &item.name(), &[0.8, 1.0, 0.0, 1.0]);
+        let left = x + 4;
+
+        line += 4;
+
+        let headline_width = self.font.calc_string_width(&item.name()) as i32;
+        self.font.draw(&ui.display, target, &ui.program, x + (200 - headline_width) / 2, line, &item.name(), &[0.8, 1.0, 0.2, 1.0]);
+
+        line += 2;
         line += line_space;
 
         for modifier in &item.mods {
@@ -130,7 +137,7 @@ impl PlayerInventoryView {
                 };
 
                 let text = modifier.attribute.to_string() + ": " + &range;
-                self.font.draw(&ui.display, target, &ui.program, x, line, &text, &[0.8, 1.0, 0.0, 1.0]);
+                self.font.draw(&ui.display, target, &ui.program, left, line, &text, &[0.8, 0.8, 0.8, 1.0]);
                 line += line_space;
             }
         }

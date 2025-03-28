@@ -212,7 +212,7 @@ fn parse_mods(parts: &mut Split<&str>) -> Vec<Mod> {
     result.push(parse_mod(parts.next(), Attribute::Computation));
     result.push(parse_mod(parts.next(), Attribute::Speed));
     result.push(parse_mod(parts.next(), Attribute::PhysicalDamage));
-    result.push(parse_mod(parts.next(), Attribute::PlasmaDamage));
+    result.push(parse_mod(parts.next(), Attribute::SpellDamage));
     result.push(parse_mod(parts.next(), Attribute::RadiationDamage));
 
     result
@@ -254,7 +254,7 @@ pub enum Attribute {
     Computation,
     Speed,
     PhysicalDamage,
-    PlasmaDamage,
+    SpellDamage,
     RadiationDamage,
 
     Integrity,
@@ -271,7 +271,7 @@ impl std::fmt::Display for Attribute {
             Attribute::Computation => "Computation",
             Attribute::Speed => "Speed",
             Attribute::PhysicalDamage => "Physical Damage",
-            Attribute::PlasmaDamage => "Plasma Damage",
+            Attribute::SpellDamage => "Added Spell Damage",
             Attribute::RadiationDamage => "Radiation Damage",
                 
             Attribute::Integrity => "Integrity",

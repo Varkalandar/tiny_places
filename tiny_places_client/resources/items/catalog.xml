@@ -1443,8 +1443,8 @@
       <Description>
         <version>4</version>
         <id>85</id>
-        <width>1</width>
-        <height>1</height>
+        <width>191</width>
+        <height>41</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -1452,7 +1452,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>wooden_wand_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1460,8 +1460,8 @@
       <Description>
         <version>4</version>
         <id>86</id>
-        <width>1</width>
-        <height>1</height>
+        <width>23</width>
+        <height>227</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -1469,7 +1469,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>wooden_wand_inv</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1477,8 +1477,8 @@
       <Description>
         <version>4</version>
         <id>87</id>
-        <width>1</width>
-        <height>1</height>
+        <width>191</width>
+        <height>41</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -1486,7 +1486,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>engraved_wand_map</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -1494,8 +1494,8 @@
       <Description>
         <version>4</version>
         <id>88</id>
-        <width>1</width>
-        <height>1</height>
+        <width>23</width>
+        <height>227</height>
         <offsetX>0</offsetX>
         <offsetY>0</offsetY>
         <footX>0</footX>
@@ -1503,7 +1503,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string></string>
+        <string>engraved_wand_inv</string>
         <string></string>
       </Metadata>
     </Tile>
