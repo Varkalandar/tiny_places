@@ -9017,7 +9017,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string>rough wall 9</string>
+        <string>rough_wall_9</string>
         <string></string>
       </Metadata>
     </Tile>
@@ -9034,7 +9034,7 @@
       </Description>
       <Metadata>
         <int>0</int>
-        <string>rough wall 10</string>
+        <string>rough_wall_10</string>
         <string></string>
       </Metadata>
     </Tile>

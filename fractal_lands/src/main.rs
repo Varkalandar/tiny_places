@@ -57,7 +57,7 @@ use item::ItemFactory;
 use inventory::{Inventory, Slot};
 use sound::SoundPlayer;
 
-use gl_support::Vertex;
+pub use gl_support::Vertex;
 use gl_support::BlendMode;
 use gl_support::load_texture;
 use gl_support::build_program;

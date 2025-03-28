@@ -5,11 +5,14 @@ use glium::Display;
 use glium::Texture2d;
 use glium::Program;
 use glium::Frame;
+use glium::VertexBuffer;
 
+use crate::gl_support::Vertex;
 use crate::gl_support::BlendMode;
 use crate::gl_support::RectF32;
 use crate::gl_support::texture_from_data;
 use crate::gl_support::draw_tex_area;
+use crate::gl_support::build_dynamic_quad_buffer;
 
 const PITCH: u32 = 1024;
 
@@ -23,6 +26,7 @@ struct UiGlyph {
     left: f32, // left-right shift
     bm_w: f32,
     bm_h: f32,
+
 }
 
 
@@ -32,6 +36,8 @@ pub struct UiFont {
     
     glyphs: HashMap<usize, UiGlyph>,
     texture: Texture2d,
+
+    vertex_buffer: VertexBuffer<Vertex>,
 }
 
 
@@ -50,11 +56,14 @@ impl UiFont {
         let mut glyphs = HashMap::new();
         let texture = create_glyphs(display, &face, &mut glyphs, lineheight as u32);
 
+        let vertex_buffer = build_dynamic_quad_buffer(display);
+
         UiFont {
             face,
             lineheight,
             glyphs,
             texture,
+            vertex_buffer,
         }        
     }
 

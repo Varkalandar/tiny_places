@@ -366,6 +366,50 @@ pub fn draw_texture_wb(
 }
 
 
+pub fn draw_tex_area_wb(
+    target: &mut Frame,   
+    program: &Program,  
+    buffer: &VertexBuffer<Vertex>,
+    blend: BlendMode,
+    display_width: u32,
+    display_height: u32,
+    texture: &Texture2d,
+    src_rect: RectF32, 
+    dst_rect: RectF32,
+    color: &[f32; 4]) {
+
+    let tw = texture.width() as f32;
+    let th = texture.height() as f32;
+
+    let xp = dst_rect.x;
+    let yp = dst_rect.y;
+    let fw = dst_rect.width;
+    let fh = dst_rect.height;
+
+    let tcx = src_rect.x / tw;
+    let tcy = src_rect.y / th;
+    let tcw = src_rect.width / tw;
+    let tch = src_rect.height / th;
+
+    // println!("tex coords = {}, {}, {}, {}", tcx, tcy, tcw, tch);
+    // println!("vertex coords = {}, {}, {}, {}", xp, yp, fw, fh);
+
+    let shape = vec![
+    Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
+    Vertex { position: [xp +  fw, yp + 0.0], tex_coords: [tcx + tcw, tcy] },
+    Vertex { position: [xp +  fw, yp +  fh], tex_coords: [tcx + tcw, tcy + tch] },
+
+    Vertex { position: [xp +  fw,  yp + fh], tex_coords: [tcx + tcw, tcy + tch] },
+    Vertex { position: [xp + 0.0,  yp + fh], tex_coords: [tcx      , tcy + tch] },
+    Vertex { position: [xp + 0.0, yp + 0.0], tex_coords: [tcx      , tcy] },
+    ];
+
+    draw_shape_wb(target, program, buffer, blend, 
+                  display_width, display_height,
+                  &shape, texture, color, None);
+}
+
+
 pub fn draw_shape_wb(
     target: &mut Frame,   
     program: &Program,  
