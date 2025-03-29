@@ -11,8 +11,8 @@ use crate::gl_support::Vertex;
 use crate::gl_support::BlendMode;
 use crate::gl_support::RectF32;
 use crate::gl_support::texture_from_data;
-use crate::gl_support::draw_tex_area;
 use crate::gl_support::build_dynamic_quad_buffer;
+use crate::gl_support::draw_tex_area_wb;
 
 const PITCH: u32 = 1024;
 
@@ -86,6 +86,9 @@ impl UiFont {
                 display: &Display<WindowSurface>, target: &mut Frame, program: &Program,
                 x: i32, y: i32, text: &str, color: &[f32; 4])
     {
+        let (d_width, d_height) = display.get_framebuffer_dimensions();
+        let vb = build_dynamic_quad_buffer(display);
+
         let mut xp = x as f32;
         let yp = (y as f32) + (self.face.ascender() / 64) as f32;
         
@@ -95,8 +98,9 @@ impl UiFont {
             let idx = ch as usize;
             let glyph = self.glyphs.get(&idx).unwrap();
 
-            draw_tex_area(display, target, program,
+            draw_tex_area_wb(target, program, &vb,
                 BlendMode::Blend,
+                d_width, d_height,
                 &self.texture,
                 RectF32::new(glyph.tex_x as f32, glyph.tex_y as f32, glyph.bm_w, glyph.bm_h),
                 RectF32::new(xp + glyph.left, yp - glyph.top, glyph.bm_w, glyph.bm_h),

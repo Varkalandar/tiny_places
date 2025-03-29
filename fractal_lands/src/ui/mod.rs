@@ -304,6 +304,16 @@ impl UI {
         head.draw(&self.display, target, &self.program, context, 0, 0);
     }
 
+/*
+    pub fn draw_hline(&self) {
+
+        draw_texture_area(&ui.display, target, &ui.program, BlendMode::Blend, 
+            &ui.context.tex_white, 
+            x as f32, line as f32, 
+            200.0 / 16.0, (line_count * line_space) as f32 / 16.0 + 0.5, 
+            &[0.0, 0.0, 0.0, 0.5]);
+    }
+*/
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
         if event.args.state == ButtonState::Press {
