@@ -103,6 +103,7 @@ impl Inventory {
         return [-1, -1];
     }
 
+    
     pub fn find_entry_for_id(&self, item_id: usize) -> Option<usize> {
         for idx in 0..self.entries.len() {
             let entry = &self.entries[idx];
@@ -114,6 +115,8 @@ impl Inventory {
         None
     }
     
+
+    #[allow(dead_code)]
     pub fn print_contents(&self) {
         println!("Inventory listing:");
         

@@ -5,6 +5,7 @@ use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
 use rodio::source::{Source, Buffered};
 
 
+#[allow(dead_code)]
 pub enum Sound {
     Click = 0,
     FireballLaunch = 1,

@@ -2,7 +2,6 @@ use vecmath::Vector2;
 
 use glium::winit::keyboard::Key;
 use glium::winit::keyboard::NamedKey;
-use glium::Program;
 use glium::Frame;
 
 use crate::ui::{UI, UiController, UiComponent, TileSet, MouseButton, Button, ButtonState, ButtonEvent, MouseMoveEvent, ScrollEvent};

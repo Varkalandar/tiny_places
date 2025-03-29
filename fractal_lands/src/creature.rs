@@ -42,7 +42,7 @@ impl CreatureFactory {
             base_tile_id: proto.base_tile_id,
             frames: proto.frames,
             base_speed: proto.speed,
-            hit_points: proto.max_hp,
+            hit_points: (proto.max_hp + proto.min_hp) / 2,
         }
     }
 }

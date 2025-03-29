@@ -245,6 +245,8 @@ fn parse_range(input: &str) -> (i32, i32) {
     }
 }
 
+
+#[allow(dead_code)]
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Attribute {
 
@@ -260,6 +262,7 @@ pub enum Attribute {
     Integrity,
     Energy,
 }
+
 
 impl std::fmt::Display for Attribute {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {

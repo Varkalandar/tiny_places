@@ -148,7 +148,8 @@ impl ParticleDriver {
         self.last_particle_mark = 0;
     }
 
-
+    
+    #[allow(dead_code)]
     pub fn has_particles(&self) -> bool {
         return self.last_particle_mark > 0;
     }

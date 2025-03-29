@@ -13,12 +13,13 @@ use crate::ItemFactory;
 use crate::item::Item;
 
 
-struct Room {
+pub struct Room {
     pub x1: i32,
     pub y1: i32,
     pub x2: i32,
     pub y2: i32,
 }
+
 
 pub struct Dungeon {
     pub start_position: [f64; 2],
@@ -26,7 +27,6 @@ pub struct Dungeon {
     pub rooms: Vec<Room>,
     pub corridors: Vec<HashMap<i32, [i32; 2]>>,
 }
-
 
 
 pub fn generate_dungeon(map: &mut Map, factory: &mut ItemFactory) -> Dungeon {

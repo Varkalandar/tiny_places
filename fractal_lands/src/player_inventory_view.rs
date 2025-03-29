@@ -113,9 +113,9 @@ impl PlayerInventoryView {
         
         // ui.draw_hline(target, x, line, 200, &[0.6, 0.6, 0.6, 1.0]);
 
-        let left = x + 4;
+        let left = x + 6;
 
-        line += 4;
+        line += 5;
 
         let headline_width = self.font.calc_string_width(&item.name()) as i32;
         self.font.draw(&ui.display, target, &ui.program, x + (200 - headline_width) / 2, line, &item.name(), &[0.8, 1.0, 0.2, 1.0]);

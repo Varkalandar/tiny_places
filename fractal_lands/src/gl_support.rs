@@ -203,6 +203,7 @@ pub fn draw_texture_clip<T: SurfaceTypeTrait + ResizeableSurface>(display: &Disp
     draw_shape(display, target, program, blend, &shape, texture, color, clip);
 }
 
+/*
 pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
                                                              target: &mut Frame,   
                                                              program: &Program,  
@@ -240,7 +241,7 @@ pub fn draw_tex_area<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<
 
     draw_shape(display, target, program, blend, &shape, texture, color, None);
 }
-
+*/
 
 pub fn draw_polygon<T: SurfaceTypeTrait + ResizeableSurface>(display: &Display<T>,
     target: &mut Frame,   

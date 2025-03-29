@@ -17,6 +17,7 @@ use crate::gl_support::draw_tex_area_wb;
 const PITCH: u32 = 1024;
 
 
+#[allow(dead_code)]
 struct UiGlyph {
     pub metrics: freetype::GlyphMetrics,
     tex_x: u32,
@@ -26,7 +27,6 @@ struct UiGlyph {
     left: f32, // left-right shift
     bm_w: f32,
     bm_h: f32,
-
 }
 
 
@@ -87,7 +87,6 @@ impl UiFont {
                 x: i32, y: i32, text: &str, color: &[f32; 4])
     {
         let (d_width, d_height) = display.get_framebuffer_dimensions();
-        let vb = build_dynamic_quad_buffer(display);
 
         let mut xp = x as f32;
         let yp = (y as f32) + (self.face.ascender() / 64) as f32;
@@ -98,7 +97,7 @@ impl UiFont {
             let idx = ch as usize;
             let glyph = self.glyphs.get(&idx).unwrap();
 
-            draw_tex_area_wb(target, program, &vb,
+            draw_tex_area_wb(target, program, &self.vertex_buffer,
                 BlendMode::Blend,
                 d_width, d_height,
                 &self.texture,
