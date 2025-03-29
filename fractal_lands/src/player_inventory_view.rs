@@ -108,11 +108,10 @@ impl PlayerInventoryView {
 
         let mut line = y - line_count * line_space;
 
-        draw_texture(&ui.display, target, &ui.program, BlendMode::Blend, 
-            &ui.context.tex_white, 
-            x as f32, line as f32, 
-            200.0 / 16.0, (line_count * line_space) as f32 / 16.0 + 0.5, 
-            &[0.0, 0.0, 0.0, 0.5]);
+        ui.fill_box(target, x, line, 200, (line_count * line_space) + 8, &[0.1, 0.1, 0.1, 0.9]);
+        ui.draw_box(target, x, line, 200, (line_count * line_space) + 8, &[0.6, 0.6, 0.6, 1.0]);
+        
+        // ui.draw_hline(target, x, line, 200, &[0.6, 0.6, 0.6, 1.0]);
 
         let left = x + 4;
 
@@ -286,7 +285,7 @@ impl PlayerInventoryView {
                     let entry_x = xp + offsets[0] + entry.location_x * 32;
                     let entry_y = yp + offsets[1] + entry.location_y * 32;
 
-                    self.show_item_popup(ui, target, entry_x, entry_y, item);
+                    self.show_item_popup(ui, target, entry_x - 4, entry_y, item);
                 }
             }
         }

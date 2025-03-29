@@ -14,6 +14,7 @@ use glium::winit::keyboard::NamedKey;
 use glium::Program;
 use glium::Frame;
 use glium::Texture2d;
+use glium::VertexBuffer;
 
 pub use tileset::*;
 pub use font::UiFont;
@@ -21,6 +22,11 @@ use crate::BlendMode;
 use crate::gl_support::draw_texture;
 use crate::gl_support::texture_from_data;
 use crate::gl_support::draw_texture_clip;
+use crate::gl_support::draw_tex_area_wb;
+use crate::gl_support::build_dynamic_quad_buffer;
+use crate::gl_support::Vertex;
+use crate::gl_support::RectF32;
+
 
 
 #[derive(PartialEq, Clone, Debug)]
@@ -154,6 +160,8 @@ pub struct UiContext
     pub font_14: Rc<UiFont>,
     pub tex_white: Rc<Texture2d>,
 
+    pub vertex_buffer: VertexBuffer<Vertex>,
+    
     pub window_size: [u32; 2],
     pub scissors: Option<UiArea>,
     pub mouse_state: MouseState,
@@ -186,6 +194,8 @@ impl UI {
             font_10: Rc::new(UiFont::new(&display, 10)),
             font_14: Rc::new(UiFont::new(&display, 14)),
             tex_white: Rc::new(tex_white),
+
+            vertex_buffer: build_dynamic_quad_buffer(&display),
 
             mouse_state: MouseState{position: [0.0, 0.0], drag_start: [0.0, 0.0], left_pressed: false,},
             keyboard_state: KeyboardState{shift_pressed: false, ctrl_pressed: false},
@@ -304,16 +314,43 @@ impl UI {
         head.draw(&self.display, target, &self.program, context, 0, 0);
     }
 
-/*
-    pub fn draw_hline(&self) {
 
-        draw_texture_area(&ui.display, target, &ui.program, BlendMode::Blend, 
-            &ui.context.tex_white, 
-            x as f32, line as f32, 
-            200.0 / 16.0, (line_count * line_space) as f32 / 16.0 + 0.5, 
-            &[0.0, 0.0, 0.0, 0.5]);
+    pub fn draw_hline(&self, target: &mut Frame, x: i32, y: i32, width: i32, color: &[f32; 4]) {
+        let context = &self.context;
+
+        draw_tex_area_wb(target, &self.program, &context.vertex_buffer,
+            BlendMode::Blend, 
+            context.window_size[0], context.window_size[1],
+            &context.tex_white, 
+            RectF32::new(0.0, 0.0, 1.0, 1.0),
+            RectF32::new(x as f32, y as f32, width as f32, 1.0),
+            color);
     }
-*/
+
+
+    pub fn draw_box(&self, target: &mut Frame, x: i32, y: i32, width: i32, height: i32, color: &[f32; 4]) {
+        let context = &self.context;
+        self.draw_hline(target, x, y, width, color);
+        self.draw_hline(target, x, y + height - 1, width, color);
+
+        // vertical sides
+        self.fill_box(target, x, y + 1, 1, height - 2, color);
+        self.fill_box(target, x + width - 1, y + 1, 1, height - 2, color);
+    }
+    
+
+    pub fn fill_box(&self, target: &mut Frame, x: i32, y: i32, width: i32, height: i32, color: &[f32; 4]) {
+        let context = &self.context;
+
+        draw_tex_area_wb(target, &self.program, &context.vertex_buffer,
+            BlendMode::Blend, 
+            context.window_size[0], context.window_size[1],
+            &context.tex_white, 
+            RectF32::new(0.0, 0.0, 1.0, 1.0),
+            RectF32::new(x as f32, y as f32, width as f32, height as f32),
+            color);
+    }
+
 
     pub fn handle_button_event(&mut self, event: &ButtonEvent) -> Option<&dyn UiHead> {
         if event.args.state == ButtonState::Press {
